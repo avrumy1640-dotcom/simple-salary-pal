@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import { fmtUSD } from "@/lib/payroll";
 
-export const Route = createFileRoute("/_app/reports")({
+export const Route = createFileRoute("/app/reports")({
   head: () => ({ meta: [{ title: "Reports — Paylo" }] }),
   component: ReportsPage,
 });

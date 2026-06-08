@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Users, Wallet, Clock, ArrowRight } from "lucide-react";
 import { fmtUSD } from "@/lib/payroll";
 
-export const Route = createFileRoute("/_app/dashboard")({
+export const Route = createFileRoute("/app/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — Paylo" }] }),
   component: Dashboard,
 });
@@ -47,7 +47,7 @@ function Dashboard() {
           <h1 className="text-2xl font-semibold tracking-tight">Welcome back 👋</h1>
           <p className="text-sm text-muted-foreground">Here's a quick look at your payroll.</p>
         </div>
-        <Link to="/payroll"><Button className="gap-2">Run payroll <ArrowRight className="h-4 w-4" /></Button></Link>
+        <Link to="/app/payroll"><Button className="gap-2">Run payroll <ArrowRight className="h-4 w-4" /></Button></Link>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -57,9 +57,9 @@ function Dashboard() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
-        <QuickCard to="/employees" title="Add an employee" desc="Set up hourly or salary." />
-        <QuickCard to="/time" title="Log hours" desc="Track work for this pay period." />
-        <QuickCard to="/payroll" title="Run payroll" desc="Calculate pay and taxes." />
+        <QuickCard to="/app/employees" title="Add an employee" desc="Set up hourly or salary." />
+        <QuickCard to="/app/time" title="Log hours" desc="Track work for this pay period." />
+        <QuickCard to="/app/payroll" title="Run payroll" desc="Calculate pay and taxes." />
       </div>
     </div>
   );

@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { calcPay, fmtUSD } from "@/lib/payroll";
 import { CheckCircle2, PlayCircle } from "lucide-react";
 
-export const Route = createFileRoute("/_app/payroll")({
+export const Route = createFileRoute("/app/payroll")({
   head: () => ({ meta: [{ title: "Run payroll — Paylo" }] }),
   component: PayrollPage,
 });
