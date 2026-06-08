@@ -14,7 +14,224 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      employees: {
+        Row: {
+          created_at: string
+          email: string | null
+          federal_allowances: number
+          full_name: string
+          id: string
+          job_title: string | null
+          owner_id: string
+          pay_rate: number
+          pay_type: string
+          start_date: string | null
+          state: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          federal_allowances?: number
+          full_name: string
+          id?: string
+          job_title?: string | null
+          owner_id: string
+          pay_rate?: number
+          pay_type?: string
+          start_date?: string | null
+          state?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          federal_allowances?: number
+          full_name?: string
+          id?: string
+          job_title?: string | null
+          owner_id?: string
+          pay_rate?: number
+          pay_type?: string
+          start_date?: string | null
+          state?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      payroll_items: {
+        Row: {
+          created_at: string
+          employee_id: string
+          employee_name: string
+          federal_tax: number
+          gross_pay: number
+          id: string
+          medicare: number
+          net_pay: number
+          overtime_hours: number
+          owner_id: string
+          regular_hours: number
+          run_id: string
+          social_security: number
+          state_tax: number
+        }
+        Insert: {
+          created_at?: string
+          employee_id: string
+          employee_name: string
+          federal_tax?: number
+          gross_pay?: number
+          id?: string
+          medicare?: number
+          net_pay?: number
+          overtime_hours?: number
+          owner_id: string
+          regular_hours?: number
+          run_id: string
+          social_security?: number
+          state_tax?: number
+        }
+        Update: {
+          created_at?: string
+          employee_id?: string
+          employee_name?: string
+          federal_tax?: number
+          gross_pay?: number
+          id?: string
+          medicare?: number
+          net_pay?: number
+          overtime_hours?: number
+          owner_id?: string
+          regular_hours?: number
+          run_id?: string
+          social_security?: number
+          state_tax?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payroll_items_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payroll_items_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "payroll_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payroll_runs: {
+        Row: {
+          created_at: string
+          gross_total: number
+          id: string
+          net_total: number
+          owner_id: string
+          pay_date: string
+          period_end: string
+          period_start: string
+          status: string
+          tax_total: number
+        }
+        Insert: {
+          created_at?: string
+          gross_total?: number
+          id?: string
+          net_total?: number
+          owner_id: string
+          pay_date: string
+          period_end: string
+          period_start: string
+          status?: string
+          tax_total?: number
+        }
+        Update: {
+          created_at?: string
+          gross_total?: number
+          id?: string
+          net_total?: number
+          owner_id?: string
+          pay_date?: string
+          period_end?: string
+          period_start?: string
+          status?: string
+          tax_total?: number
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          company_name: string | null
+          created_at: string
+          full_name: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          company_name?: string | null
+          created_at?: string
+          full_name?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          company_name?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      time_entries: {
+        Row: {
+          created_at: string
+          employee_id: string
+          hours: number
+          id: string
+          notes: string | null
+          overtime_hours: number
+          owner_id: string
+          work_date: string
+        }
+        Insert: {
+          created_at?: string
+          employee_id: string
+          hours?: number
+          id?: string
+          notes?: string | null
+          overtime_hours?: number
+          owner_id: string
+          work_date: string
+        }
+        Update: {
+          created_at?: string
+          employee_id?: string
+          hours?: number
+          id?: string
+          notes?: string | null
+          overtime_hours?: number
+          owner_id?: string
+          work_date?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "time_entries_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
