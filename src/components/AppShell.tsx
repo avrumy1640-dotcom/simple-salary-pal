@@ -6,11 +6,11 @@ import { LayoutDashboard, Users, Clock, Wallet, FileText, LogOut, Menu, X } from
 import { cn } from "@/lib/utils";
 
 const nav = [
-  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/employees", label: "Employees", icon: Users },
-  { to: "/time", label: "Time", icon: Clock },
-  { to: "/payroll", label: "Payroll", icon: Wallet },
-  { to: "/reports", label: "Reports", icon: FileText },
+  { to: "/app/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/app/employees", label: "Employees", icon: Users },
+  { to: "/app/time", label: "Time", icon: Clock },
+  { to: "/app/payroll", label: "Payroll", icon: Wallet },
+  { to: "/app/reports", label: "Reports", icon: FileText },
 ] as const;
 
 export function AppShell() {
@@ -70,7 +70,7 @@ export function AppShell() {
           </div>
           <nav className="flex flex-col gap-1 p-3">
             {nav.map((n) => {
-              const active = path === n.to || (n.to !== "/dashboard" && path.startsWith(n.to));
+              const active = path === n.to || (n.to !== "/app/dashboard" && path.startsWith(n.to));
               return (
                 <Link
                   key={n.to}
