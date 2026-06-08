@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Users, Wallet, Clock, ArrowRight } from "lucide-react";
 import { fmtUSD } from "@/lib/payroll";
 
-export const Route = createFileRoute("/_app/dashboard")({
+export const Route = createFileRoute("/app/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — Paylo" }] }),
   component: Dashboard,
 });

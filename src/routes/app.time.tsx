@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import { Plus, Trash2 } from "lucide-react";
 
-export const Route = createFileRoute("/_app/time")({
+export const Route = createFileRoute("/app/time")({
   head: () => ({ meta: [{ title: "Time tracking — Paylo" }] }),
   component: TimePage,
 });

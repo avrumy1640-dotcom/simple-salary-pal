@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { fmtUSD } from "@/lib/payroll";
 
-export const Route = createFileRoute("/_app/employees")({
+export const Route = createFileRoute("/app/employees")({
   head: () => ({ meta: [{ title: "Employees — Paylo" }] }),
   component: EmployeesPage,
 });
