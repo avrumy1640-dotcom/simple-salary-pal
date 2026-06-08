@@ -32,8 +32,9 @@ function EmployeesPage() {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Employee | null>(null);
 
-  const empty = { full_name: "", email: "", job_title: "", pay_type: "hourly" as const, pay_rate: 20, status: "active" as const };
-  const [form, setForm] = useState<typeof empty>(empty);
+  type FormState = { full_name: string; email: string; job_title: string; pay_type: "hourly" | "salary"; pay_rate: number; status: "active" | "inactive" };
+  const empty: FormState = { full_name: "", email: "", job_title: "", pay_type: "hourly", pay_rate: 20, status: "active" };
+  const [form, setForm] = useState<FormState>(empty);
 
   async function refresh() {
     setLoading(true);
