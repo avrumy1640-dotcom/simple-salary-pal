@@ -18,6 +18,7 @@ import { Route as AppTimeRouteImport } from './routes/app.time'
 import { Route as AppTaxesRouteImport } from './routes/app.taxes'
 import { Route as AppTaxFilingRouteImport } from './routes/app.tax-filing'
 import { Route as AppSettingsRouteImport } from './routes/app.settings'
+import { Route as AppSelfServiceRouteImport } from './routes/app.self-service'
 import { Route as AppReportsRouteImport } from './routes/app.reports'
 import { Route as AppPtoRouteImport } from './routes/app.pto'
 import { Route as AppPaystubsRouteImport } from './routes/app.paystubs'
@@ -75,6 +76,11 @@ const AppTaxFilingRoute = AppTaxFilingRouteImport.update({
 const AppSettingsRoute = AppSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSelfServiceRoute = AppSelfServiceRouteImport.update({
+  id: '/self-service',
+  path: '/self-service',
   getParentRoute: () => AppRoute,
 } as any)
 const AppReportsRoute = AppReportsRouteImport.update({
@@ -161,6 +167,7 @@ export interface FileRoutesByFullPath {
   '/app/paystubs': typeof AppPaystubsRoute
   '/app/pto': typeof AppPtoRoute
   '/app/reports': typeof AppReportsRoute
+  '/app/self-service': typeof AppSelfServiceRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/tax-filing': typeof AppTaxFilingRoute
   '/app/taxes': typeof AppTaxesRoute
@@ -185,6 +192,7 @@ export interface FileRoutesByTo {
   '/app/paystubs': typeof AppPaystubsRoute
   '/app/pto': typeof AppPtoRoute
   '/app/reports': typeof AppReportsRoute
+  '/app/self-service': typeof AppSelfServiceRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/tax-filing': typeof AppTaxFilingRoute
   '/app/taxes': typeof AppTaxesRoute
@@ -210,6 +218,7 @@ export interface FileRoutesById {
   '/app/paystubs': typeof AppPaystubsRoute
   '/app/pto': typeof AppPtoRoute
   '/app/reports': typeof AppReportsRoute
+  '/app/self-service': typeof AppSelfServiceRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/tax-filing': typeof AppTaxFilingRoute
   '/app/taxes': typeof AppTaxesRoute
@@ -236,6 +245,7 @@ export interface FileRouteTypes {
     | '/app/paystubs'
     | '/app/pto'
     | '/app/reports'
+    | '/app/self-service'
     | '/app/settings'
     | '/app/tax-filing'
     | '/app/taxes'
@@ -260,6 +270,7 @@ export interface FileRouteTypes {
     | '/app/paystubs'
     | '/app/pto'
     | '/app/reports'
+    | '/app/self-service'
     | '/app/settings'
     | '/app/tax-filing'
     | '/app/taxes'
@@ -284,6 +295,7 @@ export interface FileRouteTypes {
     | '/app/paystubs'
     | '/app/pto'
     | '/app/reports'
+    | '/app/self-service'
     | '/app/settings'
     | '/app/tax-filing'
     | '/app/taxes'
@@ -361,6 +373,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/app/settings'
       preLoaderRoute: typeof AppSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/self-service': {
+      id: '/app/self-service'
+      path: '/self-service'
+      fullPath: '/app/self-service'
+      preLoaderRoute: typeof AppSelfServiceRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/reports': {
@@ -471,6 +490,7 @@ interface AppRouteChildren {
   AppPaystubsRoute: typeof AppPaystubsRoute
   AppPtoRoute: typeof AppPtoRoute
   AppReportsRoute: typeof AppReportsRoute
+  AppSelfServiceRoute: typeof AppSelfServiceRoute
   AppSettingsRoute: typeof AppSettingsRoute
   AppTaxFilingRoute: typeof AppTaxFilingRoute
   AppTaxesRoute: typeof AppTaxesRoute
@@ -492,6 +512,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppPaystubsRoute: AppPaystubsRoute,
   AppPtoRoute: AppPtoRoute,
   AppReportsRoute: AppReportsRoute,
+  AppSelfServiceRoute: AppSelfServiceRoute,
   AppSettingsRoute: AppSettingsRoute,
   AppTaxFilingRoute: AppTaxFilingRoute,
   AppTaxesRoute: AppTaxesRoute,
