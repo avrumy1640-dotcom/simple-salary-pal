@@ -12,7 +12,9 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "Paylo — Payroll, simplified." },
       { property: "og:description", content: "Run payroll, file taxes, and pay your whole team in minutes." },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "/" },
     ],
+    links: [{ rel: "canonical", href: "/" }],
   }),
   component: Landing,
 });
