@@ -179,7 +179,7 @@ function PayrollWizard() {
                 <div className="flex flex-col items-center gap-1.5">
                   <div className={cn(
                     "grid h-10 w-10 place-items-center rounded-2xl border-2 transition-all duration-300",
-                    done && "border-[#07142A] bg-[#07142A] text-white",
+                    done && "border-[#07142A] bg-[#2563EB] text-white",
                     active && "border-[#07142A] bg-[#C2F5FF] text-[#07142A] shadow-glow scale-110",
                     !done && !active && "border-[#C2F5FF] bg-white text-[#4A6079]",
                   )}>
@@ -193,7 +193,7 @@ function PayrollWizard() {
                 {i < STEPS.length - 1 && (
                   <div className="mx-2 h-0.5 flex-1 rounded-full bg-[#C2F5FF]/60 sm:mx-3">
                     <div
-                      className="h-0.5 rounded-full bg-[#07142A] transition-all duration-500"
+                      className="h-0.5 rounded-full bg-[#2563EB] transition-all duration-500"
                       style={{ width: i < step ? "100%" : "0%" }}
                     />
                   </div>
@@ -249,7 +249,7 @@ function PayrollWizard() {
               <Button variant="outline" className="border-[#07142A]/15 bg-white text-[#07142A] hover:bg-[#ECFAFF]" onClick={() => setShowCancel(false)}>
                 Keep going
               </Button>
-              <Button className="bg-[#07142A] text-white hover:shadow-glow" onClick={() => { setShowCancel(false); setStep(0); }}>
+              <Button className="bg-[#2563EB] text-white hover:shadow-glow" onClick={() => { setShowCancel(false); setStep(0); }}>
                 Yes, cancel
               </Button>
             </div>
@@ -293,7 +293,7 @@ function StepPeriod({ periodStart, setPeriodStart, periodEnd, setPeriodEnd, payD
         </div>
 
         <div className="mt-7 flex justify-end">
-          <Button className="gap-2 bg-[#07142A] text-white font-bold hover:-translate-y-0.5 hover:shadow-glow" onClick={onContinue} disabled={loading}>
+          <Button className="gap-2 bg-[#2563EB] text-white font-bold hover:-translate-y-0.5 hover:shadow-glow" onClick={onContinue} disabled={loading}>
             {loading ? "Loading…" : "Continue"} <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
@@ -333,7 +333,7 @@ function StepEmployees({ rows, setRows, loading, onBack, onContinue}: {
         <div className="mt-6 rounded-2xl border border-dashed border-[#C2F5FF] bg-[#F2FBFF] p-8 text-center">
           <div className="font-display text-lg font-bold text-[#07142A]">No active employees</div>
           <p className="mt-1 text-sm text-[#4A6079]">Add employees first, then come back.</p>
-          <Link to="/app/employees" className="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-[#07142A] px-4 py-2 text-xs font-bold text-white hover:shadow-glow">
+          <Link to="/app/employees" className="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-[#2563EB] px-4 py-2 text-xs font-bold text-white hover:shadow-glow">
             Add employee <ChevronRight className="h-3.5 w-3.5" />
           </Link>
         </div>
@@ -347,7 +347,7 @@ function StepEmployees({ rows, setRows, loading, onBack, onContinue}: {
               >
                 <div className={cn(
                   "grid h-6 w-6 shrink-0 place-items-center rounded-md border-2 transition-all",
-                  r.selected ? "border-[#07142A] bg-[#07142A] text-white" : "border-[#C2F5FF] bg-white",
+                  r.selected ? "border-[#07142A] bg-[#2563EB] text-white" : "border-[#C2F5FF] bg-white",
                 )}>
                   {r.selected && <CheckCircle2 className="h-3.5 w-3.5" />}
                 </div>
@@ -483,7 +483,7 @@ function StepApprove({ calc, totals, periodStart, periodEnd, payDate, submitting
         <Button variant="outline" className="gap-2 border-[#07142A]/15 bg-white text-[#07142A] hover:bg-[#ECFAFF]" onClick={onBack} disabled={submitting}>
           <ChevronLeft className="h-4 w-4" /> Back
         </Button>
-        <Button className="gap-2 bg-[#07142A] text-white font-bold hover:-translate-y-0.5 hover:shadow-glow disabled:opacity-60" onClick={onApprove} disabled={submitting || calc.length === 0}>
+        <Button className="gap-2 bg-[#2563EB] text-white font-bold hover:-translate-y-0.5 hover:shadow-glow disabled:opacity-60" onClick={onApprove} disabled={submitting || calc.length === 0}>
           <PlayCircle className="h-4 w-4" /> {submitting ? "Submitting…" : `Approve & run · ${fmtUSD(totals.net)}`}
         </Button>
       </div>
@@ -507,7 +507,7 @@ function StepConfirm({ netTotal, runId, payDate, count }: { netTotal: number; ru
         {runId && <p className="mt-2 font-mono text-xs text-[#4A6079]">Run ID: {runId.slice(0, 8)}</p>}
         <div className="mt-7 flex flex-wrap justify-center gap-3">
           <Link to="/app/paystubs">
-            <Button className="gap-2 bg-[#07142A] text-white font-bold hover:-translate-y-0.5 hover:shadow-glow">
+            <Button className="gap-2 bg-[#2563EB] text-white font-bold hover:-translate-y-0.5 hover:shadow-glow">
               View pay history <ChevronRight className="h-4 w-4" />
             </Button>
           </Link>
@@ -526,7 +526,7 @@ function Tile({ label, value, accent }: { label: string; value: string; accent?:
   return (
     <div className={cn(
       "rounded-2xl p-4 transition-all hover:-translate-y-0.5",
-      accent ? "bg-[#07142A] text-white shadow-glow" : "bg-white border border-[#C2F5FF]/60 text-[#07142A] shadow-soft",
+      accent ? "bg-[#2563EB] text-white shadow-glow" : "bg-white border border-[#C2F5FF]/60 text-[#07142A] shadow-soft",
     )}>
       <div className={cn("text-[10px] font-bold uppercase tracking-wider", accent ? "text-white/70" : "text-[#4A6079]")}>{label}</div>
       <div className="mt-2 font-display text-2xl font-extrabold tabular">{value}</div>
@@ -540,7 +540,7 @@ function NavRow({ onBack, onContinue, disabled }: { onBack: () => void; onContin
       <Button variant="outline" className="gap-2 border-[#07142A]/15 bg-white text-[#07142A] hover:bg-[#ECFAFF]" onClick={onBack}>
         <ChevronLeft className="h-4 w-4" /> Back
       </Button>
-      <Button className="gap-2 bg-[#07142A] text-white font-bold hover:-translate-y-0.5 hover:shadow-glow" onClick={onContinue} disabled={disabled}>
+      <Button className="gap-2 bg-[#2563EB] text-white font-bold hover:-translate-y-0.5 hover:shadow-glow" onClick={onContinue} disabled={disabled}>
         Continue<ChevronRight className="h-4 w-4" />
       </Button>
     </div>
