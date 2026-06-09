@@ -207,7 +207,7 @@ function SelfServicePage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <div className="text-xs font-semibold uppercase tracking-wider text-slate-400">Preview as employee</div>
+          <div className="text-xs font-semibold uppercase tracking-wider text-white">Preview as employee</div>
           <h1 className="text-2xl font-semibold tracking-tight">Employee self-service portal</h1>
           <p className="text-sm text-muted-foreground">See exactly what each employee sees: pay stubs, time off, and personal info.</p>
         </div>

@@ -8,10 +8,10 @@ import { ScrollReveal, StaggerChildren, StaggerItem } from "@/components/motion/
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Paylo — Payroll, 1099 & Tax Filing for Modern Teams" },
-      { name: "description", content: "Run payroll, file taxes, and pay W-2 employees and 1099 contractors. All in one quiet workflow." },
-      { property: "og:title", content: "Paylo — Payroll, simplified." },
-      { property: "og:description", content: "Run payroll, file taxes, and pay your whole team in minutes." },
+      { title: "Paylo — The Operating System for Your Workforce" },
+      { name: "description", content: "One intelligent platform to run payroll, manage people, track time, and stay compliant. Built for operators and growing businesses." },
+      { property: "og:title", content: "Paylo — The Operating System for Your Workforce" },
+      { property: "og:description", content: "Institutional-grade payroll and HR infrastructure for people-first companies." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "/" },
     ],
@@ -50,19 +50,23 @@ function Landing() {
       <section className="mx-auto max-w-7xl px-5 pt-16 pb-12 text-center md:px-8 md:pt-24">
         <div className="mx-auto inline-flex items-center gap-2 rounded-full border bg-card/85 px-3.5 py-1.5 shadow-soft backdrop-blur">
           <span className="grid h-4 w-4 place-items-center"><span className="h-1.5 w-1.5 rounded-full bg-primary pulse-dot" /></span>
-          <span className="text-[11px] font-extrabold uppercase text-muted-foreground">New · HR documents, tracking, payroll</span>
+          <span className="text-[11px] font-extrabold uppercase text-muted-foreground">Institutional-grade · Payroll, people, compliance</span>
         </div>
 
         <div className="mt-8 mb-2 h-16 sm:h-20 md:h-24 flex items-center justify-center">
-          <span className="script-typer text-4xl sm:text-5xl md:text-6xl">Good Payroll Starts Here</span>
+          <span className="script-typer text-4xl sm:text-5xl md:text-6xl">Built for your people</span>
         </div>
 
-        <h1 className="mx-auto mt-4 max-w-4xl font-display text-4xl font-extrabold leading-tight sm:text-5xl md:text-7xl md:leading-[1.02]">
-          Payroll and HR that feels built for <span className="text-gradient">2030</span>.
+        <h1 className="mx-auto mt-4 max-w-4xl font-display text-4xl font-extrabold leading-tight sm:text-5xl md:text-7xl md:leading-[1.02] text-white">
+          The Operating System for <span className="text-gradient">Your Workforce</span>
         </h1>
 
-        <p className="mx-auto mt-6 max-w-2xl text-base font-medium leading-8 text-muted-foreground md:text-lg">
-          Run payroll, file taxes, collect signatures, track field work, and manage W-2 employees and 1099 contractors in one polished command center.
+        <p className="mx-auto mt-6 max-w-2xl text-base font-medium leading-8 text-white/80 md:text-lg">
+          Paylo gives growing businesses one intelligent platform to run payroll, manage their people, track time, and stay compliant — without the complexity, the accountant fees, or the 4am spreadsheet panic.
+        </p>
+
+        <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-white/60">
+          Built for businesses that are serious about their team.
         </p>
 
         <div className="mt-9 flex flex-col items-center gap-4">
@@ -70,16 +74,16 @@ function Landing() {
             to="/auth"
             className="group inline-flex items-center gap-2.5 rounded-2xl bg-primary px-9 py-4 text-base font-bold text-primary-foreground shadow-float transition-all hover:-translate-y-1 hover:shadow-glow active:scale-[0.98]"
           >
-            Start free trial
+            Get started free — no card needed
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
           </Link>
-          <a href="#how" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+          <a href="#how" className="text-sm font-medium text-white/60 transition-colors hover:text-white">
             See how it works
           </a>
         </div>
 
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[13px] font-bold text-muted-foreground">
-          {["No credit card", "Setup in 10 min", "Cancel anytime"].map((t) => (
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[13px] font-bold text-white/70">
+          {["Backed by results, not promises", "SOC 2 compliant. Bank-level security.", "Setup in under 10 minutes"].map((t) => (
             <span key={t} className="flex items-center gap-1.5">
               <CheckCircle2 className="h-4 w-4 text-primary" /> {t}
             </span>
@@ -163,23 +167,23 @@ function Landing() {
       {/* PLATFORM */}
       <section id="platform" className="mx-auto max-w-7xl px-5 pb-24 md:px-8">
         <ScrollReveal className="mx-auto max-w-2xl text-center">
-          <span className="inline-block rounded-full bg-accent px-3 py-1 text-[10px] font-extrabold uppercase text-accent-foreground">Platform</span>
-          <h2 className="mt-4 font-display text-4xl font-extrabold md:text-5xl">
-            Everything to pay your team compliantly.
+          <span className="inline-block rounded-full bg-primary/15 px-3 py-1 text-[10px] font-extrabold uppercase text-primary border border-primary/30">Platform</span>
+          <h2 className="mt-4 font-display text-4xl font-extrabold md:text-5xl text-white">
+            Infrastructure for people-first companies
           </h2>
-          <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-muted-foreground md:text-base">
-            W-2 payroll, 1099 contractors, federal &amp; state tax filing, direct deposit, time tracking, PTO, benefits — all in one tidy workflow.
+          <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-white/70 md:text-base">
+            The most successful companies know that taking care of their people is not an HR task — it is a competitive advantage. Paylo gives you the tools to do it right.
           </p>
         </ScrollReveal>
 
         <StaggerChildren className="mt-12 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {[
-            { icon: <Wallet className="h-6 w-6 text-orange-500" />, bg: "bg-orange-50", title: "Run payroll", desc: "Auto-calculated gross, taxes, deductions, and net pay. Approve in one click." },
-            { icon: <Briefcase className="h-6 w-6 text-primary" />, bg: "bg-blue-50", title: "1099 contractors", desc: "Pay independent contractors. We generate year-end 1099-NEC forms automatically." },
-            { icon: <ShieldCheck className="h-6 w-6 text-emerald-600" />, bg: "bg-emerald-50", title: "Tax filing", desc: "941, 940, W-2/W-3, 1099-NEC. Quarterly and year-end, handled fully for you." },
-            { icon: <Clock className="h-6 w-6 text-amber-600" />, bg: "bg-amber-50", title: "Time & PTO", desc: "Track hours, overtime, and time off. Flows straight into payroll." },
-            { icon: <CalendarDays className="h-6 w-6 text-rose-500" />, bg: "bg-rose-50", title: "Direct deposit", desc: "ACH batches ready for your bank. Pay stubs delivered to every employee." },
-            { icon: <FileBadge className="h-6 w-6 text-violet-600" />, bg: "bg-violet-50", title: "HR & onboarding", desc: "Documents, signed W-4/I-9/W-9, onboarding checklists — stored and tracked." },
+            { icon: <Wallet className="h-6 w-6 text-primary" />, title: "Run payroll", desc: "Auto-calculated gross, taxes, deductions, and net pay. Approve in one click." },
+            { icon: <Briefcase className="h-6 w-6 text-primary" />, title: "1099 contractors", desc: "Pay independent contractors. Year-end 1099-NEC forms generated automatically." },
+            { icon: <ShieldCheck className="h-6 w-6 text-primary" />, title: "Tax filing", desc: "941, 940, W-2/W-3, 1099-NEC. Quarterly and year-end, handled end-to-end." },
+            { icon: <Clock className="h-6 w-6 text-primary" />, title: "Time & PTO", desc: "Track hours, overtime, and time off. Flows straight into payroll." },
+            { icon: <CalendarDays className="h-6 w-6 text-primary" />, title: "Direct deposit", desc: "ACH batches ready for your bank. Pay stubs delivered to every employee." },
+            { icon: <FileBadge className="h-6 w-6 text-primary" />, title: "HR & onboarding", desc: "Documents, signed W-4/I-9/W-9, onboarding checklists — stored and tracked." },
           ].map((f) => (
             <StaggerItem key={f.title}>
               <Feature {...f} />
@@ -194,22 +198,20 @@ function Landing() {
           <div aria-hidden className="absolute inset-0 grid-bg opacity-20" />
 
           <div className="relative z-10 text-center">
-            <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-[11px] font-bold uppercase text-primary/80">
-              <Sparkles className="h-3 w-3" /> Free first payroll
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[11px] font-bold uppercase text-primary">
+              <Sparkles className="h-3 w-3" /> From zero to first payroll in 10 minutes
             </div>
-            <h2 className="mx-auto mt-6 max-w-2xl font-display text-4xl font-extrabold leading-tight md:text-5xl">
-              Pay your team in minutes, not days.
+            <h2 className="mx-auto mt-6 max-w-2xl font-display text-4xl font-extrabold leading-tight md:text-5xl text-white">
+              Your team deserves a company that gets payroll right
             </h2>
-            <p className="mx-auto mt-5 max-w-lg text-base leading-relaxed text-muted-foreground">
-              Switch from spreadsheets in an afternoon. We'll import your team and run your first payroll free.
+            <p className="mx-auto mt-5 max-w-lg text-base leading-relaxed text-white/75">
+              Join hundreds of operators who stopped dreading payday and started owning it.
             </p>
-            <div className="mt-10 flex flex-col items-center gap-4">
-              <Link to="/auth" className="inline-flex items-center gap-2 rounded-2xl bg-primary px-8 py-4 text-base font-bold text-primary-foreground shadow-2xl transition-all hover:-translate-y-0.5 hover:bg-primary/90">
-                Start free trial <ArrowRight className="h-4 w-4" />
+            <div className="mt-10 flex flex-col items-center gap-3">
+              <Link to="/auth" className="inline-flex items-center gap-2 rounded-2xl bg-primary px-8 py-4 text-base font-bold text-primary-foreground shadow-glow transition-all hover:-translate-y-0.5 glow-pulse">
+                Get started free — no card needed <ArrowRight className="h-4 w-4" />
               </Link>
-              <Link to="/auth" className="rounded-2xl px-8 py-4 text-base font-bold text-muted-foreground transition-colors hover:text-foreground">
-                Sign in
-              </Link>
+              <p className="text-xs font-medium text-white/55">14-day free trial. Cancel anytime. Your first payroll is on us.</p>
             </div>
           </div>
         </ScrollReveal>
@@ -240,14 +242,14 @@ function MockStat({ icon, value, label }: { icon: React.ReactNode; value: string
   );
 }
 
-function Feature({ icon, bg, title, desc }: { icon: React.ReactNode; bg: string; title: string; desc: string }) {
+function Feature({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: string }) {
   return (
-    <div className="group rounded-[28px] border border-border/60 bg-card p-7 transition-all duration-500 hover:-translate-y-0.5 hover:shadow-card">
-      <div className={`mb-5 grid h-12 w-12 place-items-center rounded-2xl ${bg} transition-transform group-hover:scale-110`}>
+    <div className="group rounded-[28px] border border-primary/15 bg-card p-7 transition-all duration-500 hover:-translate-y-0.5 hover:shadow-glow hover:border-primary/40">
+      <div className="mb-5 grid h-12 w-12 place-items-center rounded-2xl bg-primary/10 border border-primary/25 transition-transform group-hover:scale-110">
         {icon}
       </div>
-      <h3 className="text-lg font-semibold tracking-tight text-foreground">{title}</h3>
-      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{desc}</p>
+      <h3 className="text-lg font-semibold tracking-tight text-white">{title}</h3>
+      <p className="mt-2 text-sm leading-relaxed text-white/70">{desc}</p>
     </div>
   );
 }

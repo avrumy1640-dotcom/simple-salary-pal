@@ -154,12 +154,12 @@ function PayrollWizard() {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="font-display text-3xl font-extrabold tracking-tight text-foreground">Run payroll</h1>
-          <p className="mt-1 text-sm text-slate-400">Five quick steps. We do the math, you press approve.</p>
+          <p className="mt-1 text-sm text-white">Five quick steps. We do the math, you press approve.</p>
         </div>
         {step < 4 && (
           <Button
             variant="outline"
-            className="border-white/20/15 bg-white text-foreground hover:bg-muted"
+            className="border-white/20/15 bg-card text-foreground hover:bg-muted"
             onClick={() => setShowCancel(true)}
           >
             Cancel payroll
@@ -181,13 +181,13 @@ function PayrollWizard() {
                     "grid h-10 w-10 place-items-center rounded-2xl border-2 transition-all duration-300",
                     done && "border-foreground bg-primary text-primary-foreground",
                     active && "border-white/20 bg-primary text-primary-foreground shadow-glow scale-110",
-                    !done && !active && "border-primary bg-white text-slate-400",
+                    !done && !active && "border-primary bg-card text-white",
                   )}>
                     {done ? <CheckCircle2 className="h-4 w-4" /> : <Icon className="h-4 w-4" />}
                   </div>
                   <div className={cn(
                     "hidden whitespace-nowrap text-[11px] font-bold uppercase tracking-wider sm:block",
-                    active ? "text-foreground" : "text-slate-400",
+                    active ? "text-foreground" : "text-white",
                   )}>{s.label}</div>
                 </div>
                 {i < STEPS.length - 1 && (
@@ -235,18 +235,18 @@ function PayrollWizard() {
       {/* Cancel modal */}
       {showCancel && (
         <div className="fixed inset-0 z-50 grid place-items-center bg-muted/40 backdrop-blur-sm p-4 animate-in fade-in" onClick={() => setShowCancel(false)}>
-          <div className="w-full max-w-md rounded-3xl bg-white p-6 shadow-float" onClick={(e) => e.stopPropagation()}>
+          <div className="w-full max-w-md rounded-3xl bg-card p-6 shadow-float" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-start gap-3">
               <div className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-[#FEF3C7] text-[#92400E]">
                 <AlertTriangle className="h-5 w-5" />
               </div>
               <div>
                 <div className="font-display text-lg font-bold text-foreground">Cancel this payroll run?</div>
-                <p className="mt-1 text-sm text-slate-400">Nothing is saved yet — your progress in this wizard will be cleared.</p>
+                <p className="mt-1 text-sm text-white">Nothing is saved yet — your progress in this wizard will be cleared.</p>
               </div>
             </div>
             <div className="mt-6 flex justify-end gap-2">
-              <Button variant="outline" className="border-white/20/15 bg-white text-foreground hover:bg-muted" onClick={() => setShowCancel(false)}>
+              <Button variant="outline" className="border-white/20/15 bg-card text-foreground hover:bg-muted" onClick={() => setShowCancel(false)}>
                 Keep going
               </Button>
               <Button className="bg-primary text-primary-foreground hover:shadow-glow" onClick={() => { setShowCancel(false); setStep(0); }}>
@@ -275,7 +275,7 @@ function StepPeriod({ periodStart, setPeriodStart, periodEnd, setPeriodEnd, payD
           <CalendarDays className="h-3.5 w-3.5" /> Step 1 of 5
         </div>
         <h2 className="mt-3 font-display text-2xl font-extrabold text-foreground">When are you paying your team?</h2>
-        <p className="mt-1 text-sm text-slate-400">Pick the work period and the day money lands in their account.</p>
+        <p className="mt-1 text-sm text-white">Pick the work period and the day money lands in their account.</p>
 
         <div className="mt-6 grid gap-4 sm:grid-cols-3">
           <div>
@@ -317,11 +317,11 @@ function StepEmployees({ rows, setRows, loading, onBack, onContinue}: {
             <Users className="h-3.5 w-3.5" /> Step 2 of 5
           </div>
           <h2 className="mt-3 font-display text-2xl font-extrabold text-foreground">Who's getting paid this run?</h2>
-          <p className="mt-1 text-sm text-slate-400">{selectedCount} of {rows.length} employees included.</p>
+          <p className="mt-1 text-sm text-white">{selectedCount} of {rows.length} employees included.</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="border-white/20/15 bg-white text-foreground hover:bg-muted" onClick={() => setRows(rows.map((r) => ({ ...r, selected: true })))}>Select all</Button>
-          <Button variant="outline" className="border-white/20/15 bg-white text-foreground hover:bg-muted" onClick={() => setRows(rows.map((r) => ({ ...r, selected: false })))}>Clear</Button>
+          <Button variant="outline" className="border-white/20/15 bg-card text-foreground hover:bg-muted" onClick={() => setRows(rows.map((r) => ({ ...r, selected: true })))}>Select all</Button>
+          <Button variant="outline" className="border-white/20/15 bg-card text-foreground hover:bg-muted" onClick={() => setRows(rows.map((r) => ({ ...r, selected: false })))}>Clear</Button>
         </div>
       </div>
 
@@ -332,7 +332,7 @@ function StepEmployees({ rows, setRows, loading, onBack, onContinue}: {
       ) : rows.length === 0 ? (
         <div className="mt-6 rounded-2xl border border-dashed border-primary bg-muted p-8 text-center">
           <div className="font-display text-lg font-bold text-foreground">No active employees</div>
-          <p className="mt-1 text-sm text-slate-400">Add employees first, then come back.</p>
+          <p className="mt-1 text-sm text-white">Add employees first, then come back.</p>
           <Link to="/app/employees" className="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-xs font-bold text-primary-foreground hover:shadow-glow">
             Add employee <ChevronRight className="h-3.5 w-3.5" />
           </Link>
@@ -347,13 +347,13 @@ function StepEmployees({ rows, setRows, loading, onBack, onContinue}: {
               >
                 <div className={cn(
                   "grid h-6 w-6 shrink-0 place-items-center rounded-md border-2 transition-all",
-                  r.selected ? "border-foreground bg-primary text-primary-foreground" : "border-primary bg-white",
+                  r.selected ? "border-foreground bg-primary text-primary-foreground" : "border-primary bg-card",
                 )}>
                   {r.selected && <CheckCircle2 className="h-3.5 w-3.5" />}
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="font-semibold text-foreground">{r.emp.full_name}</div>
-                  <div className="text-xs text-slate-400">
+                  <div className="text-xs text-white">
                     {r.emp.pay_type === "hourly" ? `Hourly · ${fmtUSD(r.emp.pay_rate)}/hr` : `Salary · ${fmtUSD(r.emp.pay_rate)}/yr`}
                   </div>
                 </div>
@@ -379,11 +379,11 @@ function StepHours({ rows, setRows, onBack, onContinue}: { rows: Row[]; setRows:
         <Clock className="h-3.5 w-3.5" /> Step 3 of 5
       </div>
       <h2 className="mt-3 font-display text-2xl font-extrabold text-foreground">Review hours worked</h2>
-      <p className="mt-1 text-sm text-slate-400">Edit any hours that look off. Salary employees skip this.</p>
+      <p className="mt-1 text-sm text-white">Edit any hours that look off. Salary employees skip this.</p>
 
-      <div className="mt-5 overflow-x-auto rounded-2xl border border-primary/60 bg-white">
+      <div className="mt-5 overflow-x-auto rounded-2xl border border-primary/60 bg-card">
         <table className="w-full text-sm">
-          <thead className="bg-muted text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">
+          <thead className="bg-muted text-left text-[11px] font-bold uppercase tracking-wider text-white">
             <tr>
               <th className="px-4 py-3">Employee</th>
               <th className="px-4 py-3">Type</th>
@@ -395,10 +395,10 @@ function StepHours({ rows, setRows, onBack, onContinue}: { rows: Row[]; setRows:
             {active.map((r) => (
               <tr key={r.emp.id} className="text-foreground">
                 <td className="px-4 py-3 font-semibold">{r.emp.full_name}</td>
-                <td className="px-4 py-3 capitalize text-slate-400">{r.emp.pay_type}</td>
+                <td className="px-4 py-3 capitalize text-white">{r.emp.pay_type}</td>
                 <td className="px-4 py-3 text-right">
                   {r.emp.pay_type === "salary" ? (
-                    <span className="text-slate-400">—</span>
+                    <span className="text-white">—</span>
                   ) : (
                     <Input type="number" min={0} step="0.25" value={r.regularHours}
                       onChange={(e) => update(r.emp.id, "regularHours", parseFloat(e.target.value))}
@@ -407,7 +407,7 @@ function StepHours({ rows, setRows, onBack, onContinue}: { rows: Row[]; setRows:
                 </td>
                 <td className="px-4 py-3 text-right">
                   {r.emp.pay_type === "salary" ? (
-                    <span className="text-slate-400">—</span>
+                    <span className="text-white">—</span>
                   ) : (
                     <Input type="number" min={0} step="0.25" value={r.overtimeHours}
                       onChange={(e) => update(r.emp.id, "overtimeHours", parseFloat(e.target.value))}
@@ -437,7 +437,7 @@ function StepApprove({ calc, totals, periodStart, periodEnd, payDate, submitting
         <ClipboardCheck className="h-3.5 w-3.5" /> Step 4 of 5
       </div>
       <h2 className="mt-3 font-display text-2xl font-extrabold text-foreground">Final approval</h2>
-      <p className="mt-1 text-sm text-slate-400">
+      <p className="mt-1 text-sm text-white">
         Pay date <span className="font-semibold text-foreground">{new Date(payDate).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</span> ·
         Period {periodStart} → {periodEnd}
       </p>
@@ -449,9 +449,9 @@ function StepApprove({ calc, totals, periodStart, periodEnd, payDate, submitting
         <Tile label="Net take-home" value={fmtUSD(totals.net)} accent />
       </div>
 
-      <div className="mt-6 overflow-x-auto rounded-2xl border border-primary/60 bg-white">
+      <div className="mt-6 overflow-x-auto rounded-2xl border border-primary/60 bg-card">
         <table className="w-full text-sm">
-          <thead className="bg-muted text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">
+          <thead className="bg-muted text-left text-[11px] font-bold uppercase tracking-wider text-white">
             <tr>
               <th className="px-4 py-3">Employee</th>
               <th className="px-4 py-3 text-right">Gross</th>
@@ -465,8 +465,8 @@ function StepApprove({ calc, totals, periodStart, periodEnd, payDate, submitting
               <tr key={row.emp.id}>
                 <td className="px-4 py-3 font-semibold">{row.emp.full_name}</td>
                 <td className="px-4 py-3 text-right tabular">{fmtUSD(pay.gross)}</td>
-                <td className="px-4 py-3 text-right tabular text-slate-400">{fmtUSD(pay.federalTax + pay.stateTax + pay.socialSecurity + pay.medicare)}</td>
-                <td className="px-4 py-3 text-right tabular text-slate-400">{fmtUSD(pay.preTaxDeductions + pay.postTaxDeductions)}</td>
+                <td className="px-4 py-3 text-right tabular text-white">{fmtUSD(pay.federalTax + pay.stateTax + pay.socialSecurity + pay.medicare)}</td>
+                <td className="px-4 py-3 text-right tabular text-white">{fmtUSD(pay.preTaxDeductions + pay.postTaxDeductions)}</td>
                 <td className="px-4 py-3 text-right font-bold tabular">{fmtUSD(pay.net)}</td>
               </tr>
             ))}
@@ -480,7 +480,7 @@ function StepApprove({ calc, totals, periodStart, periodEnd, payDate, submitting
       </div>
 
       <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-        <Button variant="outline" className="gap-2 border-white/20/15 bg-white text-foreground hover:bg-muted" onClick={onBack} disabled={submitting}>
+        <Button variant="outline" className="gap-2 border-white/20/15 bg-card text-foreground hover:bg-muted" onClick={onBack} disabled={submitting}>
           <ChevronLeft className="h-4 w-4" /> Back
         </Button>
         <Button className="gap-2 bg-primary text-primary-foreground font-bold hover:-translate-y-0.5 hover:shadow-glow disabled:opacity-60" onClick={onApprove} disabled={submitting || calc.length === 0}>
@@ -496,15 +496,15 @@ function StepConfirm({ netTotal, runId, payDate, count }: { netTotal: number; ru
     <div className="relative overflow-hidden rounded-3xl surface-hero p-8 text-center sm:p-12">
       <Confetti />
       <div className="relative z-10">
-        <div className="mx-auto grid h-20 w-20 place-items-center rounded-full bg-white text-primary-foreground shadow-glow checkmark-pop">
+        <div className="mx-auto grid h-20 w-20 place-items-center rounded-full bg-card text-primary-foreground shadow-glow checkmark-pop">
           <CheckCircle2 className="h-10 w-10" />
         </div>
         <h2 className="mt-5 font-display text-3xl font-extrabold text-foreground sm:text-4xl">Payroll approved!</h2>
-        <p className="mt-2 text-sm text-slate-400 sm:text-base">
+        <p className="mt-2 text-sm text-white sm:text-base">
           {count} {count === 1 ? "employee" : "employees"} · {fmtUSD(netTotal)} net · paying out{" "}
           <span className="font-semibold text-foreground">{new Date(payDate).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</span>
         </p>
-        {runId && <p className="mt-2 font-mono text-xs text-slate-400">Run ID: {runId.slice(0, 8)}</p>}
+        {runId && <p className="mt-2 font-mono text-xs text-white">Run ID: {runId.slice(0, 8)}</p>}
         <div className="mt-7 flex flex-wrap justify-center gap-3">
           <Link to="/app/paystubs">
             <Button className="gap-2 bg-primary text-primary-foreground font-bold hover:-translate-y-0.5 hover:shadow-glow">
@@ -512,7 +512,7 @@ function StepConfirm({ netTotal, runId, payDate, count }: { netTotal: number; ru
             </Button>
           </Link>
           <Link to="/app/dashboard">
-            <Button variant="outline" className="gap-2 border-white/20/15 bg-white text-foreground hover:bg-muted">
+            <Button variant="outline" className="gap-2 border-white/20/15 bg-card text-foreground hover:bg-muted">
               Back to dashboard
             </Button>
           </Link>
@@ -526,9 +526,9 @@ function Tile({ label, value, accent }: { label: string; value: string; accent?:
   return (
     <div className={cn(
       "rounded-2xl p-4 transition-all hover:-translate-y-0.5",
-      accent ? "bg-primary text-primary-foreground shadow-glow" : "bg-white border border-primary/60 text-foreground shadow-soft",
+      accent ? "bg-primary text-primary-foreground shadow-glow" : "bg-card border border-primary/60 text-foreground shadow-soft",
     )}>
-      <div className={cn("text-[10px] font-bold uppercase tracking-wider", accent ? "text-foreground/70" : "text-slate-400")}>{label}</div>
+      <div className={cn("text-[10px] font-bold uppercase tracking-wider", accent ? "text-foreground/70" : "text-white")}>{label}</div>
       <div className="mt-2 font-display text-2xl font-extrabold tabular">{value}</div>
     </div>
   );
@@ -537,7 +537,7 @@ function Tile({ label, value, accent }: { label: string; value: string; accent?:
 function NavRow({ onBack, onContinue, disabled }: { onBack: () => void; onContinue: () => void; disabled?: boolean }) {
   return (
     <div className="mt-7 flex items-center justify-between">
-      <Button variant="outline" className="gap-2 border-white/20/15 bg-white text-foreground hover:bg-muted" onClick={onBack}>
+      <Button variant="outline" className="gap-2 border-white/20/15 bg-card text-foreground hover:bg-muted" onClick={onBack}>
         <ChevronLeft className="h-4 w-4" /> Back
       </Button>
       <Button className="gap-2 bg-primary text-primary-foreground font-bold hover:-translate-y-0.5 hover:shadow-glow" onClick={onContinue} disabled={disabled}>
