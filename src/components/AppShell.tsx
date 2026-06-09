@@ -24,6 +24,8 @@ const navGroups = [
     items: [
       { to: "/app/employees", label: "Employees (W-2)", icon: Users },
       { to: "/app/contractors", label: "Contractors (1099)", icon: Briefcase },
+      { to: "/app/onboarding", label: "Onboarding checklist", icon: ClipboardCheck },
+      { to: "/app/documents", label: "HR documents", icon: FolderOpen },
       { to: "/app/pto", label: "Time off (PTO)", icon: CalendarDays },
       { to: "/app/benefits", label: "Benefits & deductions", icon: HeartHandshake },
     ],
