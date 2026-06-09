@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
 import {
   ArrowRight, ArrowUpRight, CheckCircle2, Clock, Users, FileText, Wallet,
   ShieldCheck, Banknote, Briefcase, Sparkles, TrendingUp, Calendar,
@@ -66,7 +65,7 @@ function Landing() {
       {/* HERO */}
       <section className="relative">
         <div className="mx-auto max-w-6xl px-5 pt-16 pb-12 md:pt-28 md:pb-16">
-          <div {...fadeUp} className="mx-auto max-w-4xl text-center">
+          <div className="mx-auto max-w-4xl text-center">
             <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/70 px-3.5 py-1.5 text-xs font-medium text-foreground/80 shadow-sm backdrop-blur">
               <Sparkles className="h-3.5 w-3.5" /> New: 1099 contractor payments + e-file
             </div>
@@ -100,16 +99,10 @@ function Landing() {
 
           {/* FLOATING DASHBOARD MOCKUP */}
           <div
-            initial={{ opacity: 0, y: 60, rotateX: 8 }}
-            animate={{ opacity: 1, y: 0, rotateX: 0 }}
-            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] as const, delay: 0.15 }}
-            style={{ perspective: 1200 }}
             className="relative mt-16 md:mt-24"
           >
             {/* Floating accent cards */}
             <div
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
               className="absolute -left-2 -top-8 z-20 w-44 rounded-2xl border border-border/50 bg-[#1a1a1a] p-4 text-background shadow-[0_30px_60px_-20px_rgba(0,0,0,0.5)] md:-left-12 md:w-56"
             >
               <div className="flex items-center gap-2">
@@ -121,8 +114,6 @@ function Landing() {
             </div>
 
             <div
-              animate={{ y: [0, 12, 0] }}
-              transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
               className="absolute -right-2 top-20 z-20 w-44 rounded-2xl border border-border/50 bg-[#d9e8d4] p-4 shadow-[0_30px_60px_-20px_rgba(0,0,0,0.3)] md:-right-12 md:w-56"
             >
               <div className="flex items-center gap-2">
@@ -134,8 +125,6 @@ function Landing() {
             </div>
 
             <div
-              animate={{ y: [0, -8, 0] }}
-              transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
               className="absolute -bottom-6 left-1/2 z-20 w-44 -translate-x-1/2 rounded-2xl border border-border/50 bg-[#e6d9f0] p-4 shadow-[0_30px_60px_-20px_rgba(0,0,0,0.3)] md:w-60"
             >
               <div className="flex items-center gap-2">
@@ -221,7 +210,7 @@ function Landing() {
       {/* FEATURES */}
       <section id="features" className="relative">
         <div className="mx-auto max-w-6xl px-5 py-24 md:px-8 md:py-32">
-          <div {...fadeUp} className="max-w-2xl">
+          <div className="max-w-2xl">
             <div className="inline-flex rounded-full border border-border/60 bg-card px-3 py-1 text-xs font-semibold">PLATFORM</div>
             <h2 className="mt-5 text-4xl font-bold tracking-tight md:text-6xl">
               Everything to pay <br className="hidden md:block" />your team, <span className="italic font-medium" style={{ fontFamily: "'Instrument Serif', serif" }}>compliantly</span>.
@@ -243,10 +232,6 @@ function Landing() {
             ].map((f, i) => (
               <div
                 key={f.title}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: i * 0.06, ease: [0.22, 1, 0.36, 1] as const }}
-                whileHover={{ y: -4 }}
                 className="group rounded-3xl border border-border/60 bg-card p-6 shadow-sm transition-shadow hover:shadow-xl"
               >
                 <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl" style={{ backgroundColor: f.tint }}>
@@ -263,7 +248,6 @@ function Landing() {
       {/* CTA */}
       <section className="relative px-5 pb-24 md:px-8">
         <div
-          {...fadeUp}
           className="mx-auto max-w-5xl overflow-hidden rounded-[32px] bg-foreground p-10 text-background md:p-16"
         >
           <div className="relative z-10">
