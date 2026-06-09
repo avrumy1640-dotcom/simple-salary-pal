@@ -45,24 +45,23 @@ function Landing() {
 
       {/* HERO */}
       <section className="mx-auto max-w-7xl px-5 pt-16 pb-12 text-center md:px-8 md:pt-24">
-        <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/70 px-3.5 py-1.5 shadow-soft backdrop-blur">
-          <span className="grid h-4 w-4 place-items-center"><span className="h-1.5 w-1.5 rounded-full bg-[var(--brand)] pulse-dot" /></span>
-          <span className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">New · 1099 contractor payments + e-file</span>
+        <div className="mx-auto inline-flex items-center gap-2 rounded-full border bg-card/85 px-3.5 py-1.5 shadow-soft backdrop-blur">
+          <span className="grid h-4 w-4 place-items-center"><span className="h-1.5 w-1.5 rounded-full bg-primary pulse-dot" /></span>
+          <span className="text-[11px] font-extrabold uppercase text-muted-foreground">New · HR documents, tracking, payroll</span>
         </div>
 
-        <h1 className="mx-auto mt-7 max-w-3xl font-serif text-[44px] leading-[1.04] tracking-tight md:text-7xl md:leading-[1.02]">
-          Payroll, <em className="font-serif italic text-[var(--brand)]">simplified</em>.<br />
-          Taxes, <em className="font-serif italic">handled</em>.
+        <h1 className="mx-auto mt-7 max-w-4xl font-display text-[46px] font-extrabold leading-[1.04] md:text-7xl md:leading-[1.02]">
+          Payroll and HR that feels built for <span className="text-gradient">2030</span>.
         </h1>
 
-        <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg">
-          Run payroll, file taxes, and pay both W-2 employees and 1099 contractors — all in one quiet workflow.
+        <p className="mx-auto mt-6 max-w-2xl text-base font-medium leading-8 text-muted-foreground md:text-lg">
+          Run payroll, file taxes, collect signatures, track field work, and manage W-2 employees and 1099 contractors in one polished command center.
         </p>
 
         <div className="mt-9 flex flex-col items-center gap-4">
           <Link
             to="/auth"
-            className="group inline-flex items-center gap-2.5 rounded-full bg-foreground px-9 py-4 text-base font-semibold text-background shadow-float transition-all hover:scale-[1.02] active:scale-[0.98]"
+            className="group inline-flex items-center gap-2.5 rounded-2xl bg-primary px-9 py-4 text-base font-bold text-primary-foreground shadow-float transition-all hover:-translate-y-1 hover:shadow-glow active:scale-[0.98]"
           >
             Start free trial
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
@@ -72,7 +71,7 @@ function Landing() {
           </a>
         </div>
 
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[13px] font-medium text-muted-foreground">
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[13px] font-bold text-muted-foreground">
           {["No credit card", "Setup in 10 min", "Cancel anytime"].map((t) => (
             <span key={t} className="flex items-center gap-1.5">
               <CheckCircle2 className="h-4 w-4 text-[var(--brand)]" /> {t}
