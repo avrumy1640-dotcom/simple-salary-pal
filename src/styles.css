@@ -457,3 +457,39 @@ html { scroll-behavior: smooth; }
   animation: radix-pop-close 220ms cubic-bezier(0.55, 0, 0.7, 0.2) both !important;
   transform-origin: var(--radix-popper-transform-origin, top center);
 }
+
+/* ──────────────────────────────────────────────────────────────────────
+   Aurora-Ice readability override.
+   The app pages were authored against a dark theme and use text-white /
+   text-white/NN utilities on what is now a WHITE background. Remap those
+   utilities to the dark foreground inside any app content area so copy
+   remains legible everywhere without rewriting each page.
+   ────────────────────────────────────────────────────────────────────── */
+.page-in .text-white,
+.page-in [class*="text-white/"] {
+  color: #07142A !important;
+}
+.page-in .text-white\/80,
+.page-in .text-white\/75,
+.page-in .text-white\/70,
+.page-in .text-white\/65,
+.page-in .text-white\/60,
+.page-in .text-white\/55,
+.page-in .text-white\/50,
+.page-in .text-white\/45,
+.page-in .text-white\/40 {
+  color: #4A6079 !important;
+}
+
+/* Card surfaces authored as translucent dark blocks become readable
+   light-glass panels on the white theme. */
+.page-in .surface-glass {
+  background: rgba(255,255,255,0.78);
+  border-color: rgba(194,245,255,0.7);
+}
+.page-in [class*="border-white/"] {
+  border-color: rgba(7,20,42,0.08) !important;
+}
+.page-in [class*="bg-white/"] {
+  background-color: rgba(255,255,255,0.7) !important;
+}
