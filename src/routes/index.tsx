@@ -20,19 +20,14 @@ export const Route = createFileRoute("/")({
 function Landing() {
   return (
     <div className="relative min-h-screen overflow-hidden bg-background text-foreground antialiased">
-      {/* Ambient gradient blobs */}
-      <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute -top-32 -right-20 h-[520px] w-[520px] rounded-full bg-[oklch(0.9_0.08_268)] opacity-50 blur-3xl drift-slow" />
-        <div className="absolute top-1/3 -left-32 h-[460px] w-[460px] rounded-full bg-[#fbe6cf] opacity-50 blur-3xl drift-slow" />
-        <div className="absolute bottom-0 right-1/4 h-[380px] w-[380px] rounded-full bg-[#dceadd] opacity-45 blur-3xl drift-slow" />
-      </div>
+      <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 grid-bg opacity-60" />
 
       {/* NAV */}
-      <header className="sticky top-0 z-30 backdrop-blur-xl bg-background/60">
+      <header className="sticky top-0 z-30 border-b bg-background/82 backdrop-blur-2xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 md:px-8">
           <Link to="/" className="flex items-center gap-2">
-            <div className="grid h-8 w-8 place-items-center rounded-full bg-foreground text-background font-bold text-sm shadow-soft">P</div>
-            <span className="text-xl font-semibold tracking-tight">paylo</span>
+            <div className="grid h-9 w-9 place-items-center rounded-2xl gradient-brand text-sm font-extrabold text-primary-foreground shadow-glow">P</div>
+            <span className="font-display text-xl font-extrabold text-gradient">Paylo</span>
           </Link>
           <nav className="hidden items-center gap-8 text-sm font-medium text-foreground/60 md:flex">
             <a className="transition-colors hover:text-foreground" href="#platform">Product</a>
@@ -41,7 +36,7 @@ function Landing() {
           </nav>
           <Link
             to="/auth"
-            className="inline-flex items-center gap-1.5 rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background transition-all hover:scale-[1.02] shadow-soft"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-glow"
           >
             Get started <ArrowUpRight className="h-3.5 w-3.5" />
           </Link>
