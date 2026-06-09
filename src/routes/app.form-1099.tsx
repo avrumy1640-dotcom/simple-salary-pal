@@ -196,7 +196,7 @@ function Form1099Page() {
           <Button variant="outline" className="rounded-full gap-1.5" onClick={downloadCsv}>
             <Download className="h-4 w-4" /> Export CSV
           </Button>
-          <Button onClick={downloadPacket} className="rounded-full bg-foreground text-background hover:bg-foreground/90 gap-1.5">
+          <Button onClick={downloadPacket} className="rounded-full bg-[#2563EB] text-background hover:bg-foreground/90 gap-1.5">
             <Download className="h-4 w-4" /> Generate filing packet
           </Button>
         </div>
@@ -244,7 +244,7 @@ function Form1099Page() {
             key={k}
             onClick={() => setFilter(k)}
             className={`rounded-full border px-3 py-1.5 text-xs font-medium capitalize transition-colors ${
-              filter === k ? "bg-foreground text-background border-foreground" : "bg-card hover:bg-accent"
+              filter === k ? "bg-[#2563EB] text-background border-foreground" : "bg-card hover:bg-accent"
             }`}
           >
             {k === "all" ? "All contractors" : k === "issues" ? "Needs attention" : k === "ready" ? "Ready" : "Reportable ($600+)"}

@@ -87,7 +87,7 @@ function PTOPage() {
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button className="gap-2 rounded-full bg-foreground text-white hover:opacity-90"><Plus className="h-4 w-4" /> Log time off</Button>
+            <Button className="gap-2 rounded-full bg-[#2563EB] text-white hover:opacity-90"><Plus className="h-4 w-4" /> Log time off</Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader><DialogTitle>Log time off</DialogTitle></DialogHeader>

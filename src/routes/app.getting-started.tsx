@@ -56,7 +56,7 @@ function GettingStartedPage() {
         </p>
         <div className="mt-6 flex items-center gap-3">
           <div className="h-2 flex-1 overflow-hidden rounded-full bg-white">
-            <div className="h-full bg-foreground transition-all" style={{ width: `${progress}%` }} />
+            <div className="h-full bg-[#2563EB] transition-all" style={{ width: `${progress}%` }} />
           </div>
           <span className="text-sm font-medium text-muted-foreground">{completed} of {steps.length}</span>
         </div>
@@ -112,7 +112,7 @@ function GettingStartedPage() {
           <h3 className="font-semibold">Need help with a calculation?</h3>
           <p className="text-sm text-muted-foreground">Every payroll preview shows you exactly how each number is calculated — taxes, deductions, net pay — line by line.</p>
         </div>
-        <Link to="/app/payroll" className="rounded-full bg-foreground px-4 py-2 text-sm font-medium text-white hover:opacity-90">Open payroll</Link>
+        <Link to="/app/payroll" className="rounded-full bg-[#2563EB] px-4 py-2 text-sm font-medium text-white hover:opacity-90">Open payroll</Link>
       </div>
     </div>
   );

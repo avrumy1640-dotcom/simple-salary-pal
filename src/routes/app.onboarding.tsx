@@ -184,7 +184,7 @@ function OnboardingPage() {
               </SelectContent>
             </Select>
             {person && personTasks.length === 0 && (
-              <Button onClick={seedDefaults} disabled={busy} className="gap-2 rounded-full bg-foreground text-white">
+              <Button onClick={seedDefaults} disabled={busy} className="gap-2 rounded-full bg-[#2563EB] text-white">
                 <Sparkles className="h-4 w-4" /> Use default checklist
               </Button>
             )}
@@ -206,7 +206,7 @@ function OnboardingPage() {
                     <div className="text-xs text-muted-foreground">{completed}/{personTasks.length} done · {requiredDone}/{required} required</div>
                   </div>
                   <div className="h-2 w-32 overflow-hidden rounded-full bg-muted">
-                    <div className="h-full bg-foreground transition-all" style={{ width: `${pct}%` }} />
+                    <div className="h-full bg-[#2563EB] transition-all" style={{ width: `${pct}%` }} />
                   </div>
                 </div>
               </div>

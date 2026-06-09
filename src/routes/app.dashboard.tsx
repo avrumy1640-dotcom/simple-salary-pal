@@ -114,7 +114,7 @@ function Dashboard() {
         <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 rounded-full border border-[#C2F5FF] bg-white/70 px-3 py-1 text-xs font-semibold text-[#07142A] backdrop-blur">
-              <span className="h-2 w-2 rounded-full bg-[#07142A] pulse-dot" /> Live payroll command center
+              <span className="h-2 w-2 rounded-full bg-[#2563EB] pulse-dot" /> Live payroll command center
             </div>
             <h1 className="mt-4 font-display text-4xl font-extrabold leading-[1.05] text-[#07142A] sm:text-5xl md:text-6xl">
               Welcome back.
@@ -124,7 +124,7 @@ function Dashboard() {
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
               <Link to="/app/payroll">
-                <Button className="gap-2 bg-[#07142A] text-white font-bold hover:-translate-y-0.5 hover:shadow-glow">
+                <Button className="gap-2 bg-[#2563EB] text-white font-bold hover:-translate-y-0.5 hover:shadow-glow">
                   <PlayCircle className="h-4 w-4" /> Run payroll
                 </Button>
               </Link>
@@ -150,7 +150,7 @@ function Dashboard() {
               </div>
             )}
             <Link to="/app/payroll">
-              <Button className="w-full gap-2 bg-[#07142A] text-white font-bold hover:shadow-glow">
+              <Button className="w-full gap-2 bg-[#2563EB] text-white font-bold hover:shadow-glow">
                 Prepare run <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
@@ -215,7 +215,7 @@ function Dashboard() {
               <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-white text-[#07142A] shadow-soft"><Wallet className="h-5 w-5" /></div>
               <div className="mt-3 font-display text-base font-bold text-[#07142A]">No payroll runs yet</div>
               <div className="mt-1 text-sm text-[#4A6079]">Run your first payroll in under 2 minutes.</div>
-              <Link to="/app/payroll" className="mt-3 inline-flex items-center gap-1.5 rounded-xl bg-[#07142A] px-4 py-2 text-xs font-bold text-white hover:shadow-glow">
+              <Link to="/app/payroll" className="mt-3 inline-flex items-center gap-1.5 rounded-xl bg-[#2563EB] px-4 py-2 text-xs font-bold text-white hover:shadow-glow">
                 Run payroll <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </div>
