@@ -293,6 +293,16 @@ function EmployeesPage() {
         </Dialog>
       </div>
 
+      {/* Summary chips */}
+      {!loading && items.length > 0 && (
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <SummaryChip label="Active" value={totalActive} />
+          <SummaryChip label="Inactive" value={totalInactive} muted />
+          <SummaryChip label="Salary" value={totalSalary} />
+          <SummaryChip label="Direct deposit" value={totalDD} />
+        </div>
+      )}
+
       {/* Filters */}
       {!loading && items.length > 0 && (
         <div className="flex flex-wrap items-center gap-3 surface-glass p-3 rounded-xl">
