@@ -244,14 +244,14 @@ function MockStat({ icon, value, label }: { icon: React.ReactNode; value: string
   );
 }
 
-function Feature({ icon, bg, title, desc }: { icon: React.ReactNode; bg: string; title: string; desc: string }) {
+function Feature({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: string }) {
   return (
-    <div className="group rounded-[28px] border border-border/60 bg-card p-7 transition-all duration-500 hover:-translate-y-0.5 hover:shadow-card">
-      <div className={`mb-5 grid h-12 w-12 place-items-center rounded-2xl ${bg} transition-transform group-hover:scale-110`}>
+    <div className="group rounded-[28px] border border-primary/15 bg-card p-7 transition-all duration-500 hover:-translate-y-0.5 hover:shadow-glow hover:border-primary/40">
+      <div className="mb-5 grid h-12 w-12 place-items-center rounded-2xl bg-primary/10 border border-primary/25 transition-transform group-hover:scale-110">
         {icon}
       </div>
-      <h3 className="text-lg font-semibold tracking-tight text-foreground">{title}</h3>
-      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{desc}</p>
+      <h3 className="text-lg font-semibold tracking-tight text-white">{title}</h3>
+      <p className="mt-2 text-sm leading-relaxed text-white/70">{desc}</p>
     </div>
   );
 }
