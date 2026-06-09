@@ -6,6 +6,7 @@ import {
   LayoutDashboard, Users, Clock, Wallet, FileText, LogOut, Menu, X,
   HeartHandshake, CalendarDays, Settings as SettingsIcon, FileBadge, Sparkles,
   Briefcase, Receipt, Landmark, FolderOpen, ClipboardCheck, MapPin,
+  History as HistoryIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
