@@ -1,0 +1,8 @@
+# Paylo
+
+> Payroll, HR, and tax filing for modern teams. Run payroll, pay W-2 employees and 1099 contractors, file federal and state taxes, track time and PTO, manage benefits, and handle onboarding — all in one quiet, fast workflow.
+
+## Pages
+
+- [Home](/): Payroll and HR platform overview for small businesses and growing teams.
+- [Pricing](/pricing): Simple, transparent pricing plans with a 14-day free trial.
