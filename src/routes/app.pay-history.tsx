@@ -254,7 +254,7 @@ function PayHistoryPage() {
                         return (
                           <tr key={it.id} className="border-t border-border/40">
                             <td className="px-3 py-2 font-medium">{it.employee_name}</td>
-                            <td className="px-3 py-2 text-right tabular-nums">{it.hours_worked ?? "—"}</td>
+                            <td className="px-3 py-2 text-right tabular-nums">{(it.regular_hours ?? 0) + (it.overtime_hours ?? 0) || "—"}</td>
                             <td className="px-3 py-2 text-right tabular-nums">{fmtUSD(it.gross_pay)}</td>
                             <td className="px-3 py-2 text-right tabular-nums text-muted-foreground">{fmtUSD(tax)}</td>
                             <td className="px-3 py-2 text-right tabular-nums font-semibold">{fmtUSD(it.net_pay)}</td>
