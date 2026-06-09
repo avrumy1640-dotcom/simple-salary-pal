@@ -502,12 +502,16 @@ function StepApprove({ calc, totals, periodStart, periodEnd, payDate, submitting
         Once approved, this becomes a sealed payroll record. You can view it any time in Pay history.
       </div>
 
-      <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-        <Button variant="outline" className="gap-2 border-white/20/15 bg-card text-foreground hover:bg-muted" onClick={onBack} disabled={submitting}>
-          <ChevronLeft className="h-4 w-4" /> Back
+      <div className="mt-6 space-y-3">
+        <Button
+          className="w-full gap-2 bg-primary text-primary-foreground font-extrabold text-base h-14 rounded-2xl glow-pulse hover:-translate-y-0.5 disabled:opacity-60"
+          onClick={onApprove}
+          disabled={submitting || calc.length === 0}
+        >
+          <PlayCircle className="h-5 w-5" /> {submitting ? "Submitting…" : `Approve & run payroll · ${fmtUSD(totals.net)}`}
         </Button>
-        <Button className="gap-2 bg-primary text-primary-foreground font-bold hover:-translate-y-0.5 hover:shadow-glow disabled:opacity-60" onClick={onApprove} disabled={submitting || calc.length === 0}>
-          <PlayCircle className="h-4 w-4" /> {submitting ? "Submitting…" : `Approve & run · ${fmtUSD(totals.net)}`}
+        <Button variant="outline" className="w-full gap-2 border-primary/30 bg-card text-white hover:bg-primary/5" onClick={onBack} disabled={submitting}>
+          <ChevronLeft className="h-4 w-4" /> Back
         </Button>
       </div>
     </div>
