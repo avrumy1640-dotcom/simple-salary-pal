@@ -8,10 +8,10 @@ import { ScrollReveal, StaggerChildren, StaggerItem } from "@/components/motion/
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Paylo — Payroll, 1099 & Tax Filing for Modern Teams" },
-      { name: "description", content: "Run payroll, file taxes, and pay W-2 employees and 1099 contractors. All in one quiet workflow." },
-      { property: "og:title", content: "Paylo — Payroll, simplified." },
-      { property: "og:description", content: "Run payroll, file taxes, and pay your whole team in minutes." },
+      { title: "Paylo — The Operating System for Your Workforce" },
+      { name: "description", content: "One intelligent platform to run payroll, manage people, track time, and stay compliant. Built for operators and growing businesses." },
+      { property: "og:title", content: "Paylo — The Operating System for Your Workforce" },
+      { property: "og:description", content: "Institutional-grade payroll and HR infrastructure for people-first companies." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "/" },
     ],
