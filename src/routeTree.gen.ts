@@ -13,10 +13,15 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppTimeRouteImport } from './routes/app.time'
+import { Route as AppTaxesRouteImport } from './routes/app.taxes'
+import { Route as AppSettingsRouteImport } from './routes/app.settings'
 import { Route as AppReportsRouteImport } from './routes/app.reports'
+import { Route as AppPtoRouteImport } from './routes/app.pto'
 import { Route as AppPayrollRouteImport } from './routes/app.payroll'
+import { Route as AppGettingStartedRouteImport } from './routes/app.getting-started'
 import { Route as AppEmployeesRouteImport } from './routes/app.employees'
 import { Route as AppDashboardRouteImport } from './routes/app.dashboard'
+import { Route as AppBenefitsRouteImport } from './routes/app.benefits'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -38,14 +43,34 @@ const AppTimeRoute = AppTimeRouteImport.update({
   path: '/time',
   getParentRoute: () => AppRoute,
 } as any)
+const AppTaxesRoute = AppTaxesRouteImport.update({
+  id: '/taxes',
+  path: '/taxes',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSettingsRoute = AppSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppReportsRoute = AppReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
   getParentRoute: () => AppRoute,
 } as any)
+const AppPtoRoute = AppPtoRouteImport.update({
+  id: '/pto',
+  path: '/pto',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppPayrollRoute = AppPayrollRouteImport.update({
   id: '/payroll',
   path: '/payroll',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppGettingStartedRoute = AppGettingStartedRouteImport.update({
+  id: '/getting-started',
+  path: '/getting-started',
   getParentRoute: () => AppRoute,
 } as any)
 const AppEmployeesRoute = AppEmployeesRouteImport.update({
@@ -58,25 +83,40 @@ const AppDashboardRoute = AppDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AppRoute,
 } as any)
+const AppBenefitsRoute = AppBenefitsRouteImport.update({
+  id: '/benefits',
+  path: '/benefits',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
+  '/app/benefits': typeof AppBenefitsRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/employees': typeof AppEmployeesRoute
+  '/app/getting-started': typeof AppGettingStartedRoute
   '/app/payroll': typeof AppPayrollRoute
+  '/app/pto': typeof AppPtoRoute
   '/app/reports': typeof AppReportsRoute
+  '/app/settings': typeof AppSettingsRoute
+  '/app/taxes': typeof AppTaxesRoute
   '/app/time': typeof AppTimeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
+  '/app/benefits': typeof AppBenefitsRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/employees': typeof AppEmployeesRoute
+  '/app/getting-started': typeof AppGettingStartedRoute
   '/app/payroll': typeof AppPayrollRoute
+  '/app/pto': typeof AppPtoRoute
   '/app/reports': typeof AppReportsRoute
+  '/app/settings': typeof AppSettingsRoute
+  '/app/taxes': typeof AppTaxesRoute
   '/app/time': typeof AppTimeRoute
 }
 export interface FileRoutesById {
@@ -84,10 +124,15 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
+  '/app/benefits': typeof AppBenefitsRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/employees': typeof AppEmployeesRoute
+  '/app/getting-started': typeof AppGettingStartedRoute
   '/app/payroll': typeof AppPayrollRoute
+  '/app/pto': typeof AppPtoRoute
   '/app/reports': typeof AppReportsRoute
+  '/app/settings': typeof AppSettingsRoute
+  '/app/taxes': typeof AppTaxesRoute
   '/app/time': typeof AppTimeRoute
 }
 export interface FileRouteTypes {
@@ -96,30 +141,45 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/auth'
+    | '/app/benefits'
     | '/app/dashboard'
     | '/app/employees'
+    | '/app/getting-started'
     | '/app/payroll'
+    | '/app/pto'
     | '/app/reports'
+    | '/app/settings'
+    | '/app/taxes'
     | '/app/time'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/app'
     | '/auth'
+    | '/app/benefits'
     | '/app/dashboard'
     | '/app/employees'
+    | '/app/getting-started'
     | '/app/payroll'
+    | '/app/pto'
     | '/app/reports'
+    | '/app/settings'
+    | '/app/taxes'
     | '/app/time'
   id:
     | '__root__'
     | '/'
     | '/app'
     | '/auth'
+    | '/app/benefits'
     | '/app/dashboard'
     | '/app/employees'
+    | '/app/getting-started'
     | '/app/payroll'
+    | '/app/pto'
     | '/app/reports'
+    | '/app/settings'
+    | '/app/taxes'
     | '/app/time'
   fileRoutesById: FileRoutesById
 }
@@ -159,6 +219,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppTimeRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/taxes': {
+      id: '/app/taxes'
+      path: '/taxes'
+      fullPath: '/app/taxes'
+      preLoaderRoute: typeof AppTaxesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/settings': {
+      id: '/app/settings'
+      path: '/settings'
+      fullPath: '/app/settings'
+      preLoaderRoute: typeof AppSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/reports': {
       id: '/app/reports'
       path: '/reports'
@@ -166,11 +240,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppReportsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/pto': {
+      id: '/app/pto'
+      path: '/pto'
+      fullPath: '/app/pto'
+      preLoaderRoute: typeof AppPtoRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/payroll': {
       id: '/app/payroll'
       path: '/payroll'
       fullPath: '/app/payroll'
       preLoaderRoute: typeof AppPayrollRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/getting-started': {
+      id: '/app/getting-started'
+      path: '/getting-started'
+      fullPath: '/app/getting-started'
+      preLoaderRoute: typeof AppGettingStartedRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/employees': {
@@ -187,22 +275,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDashboardRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/benefits': {
+      id: '/app/benefits'
+      path: '/benefits'
+      fullPath: '/app/benefits'
+      preLoaderRoute: typeof AppBenefitsRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
+  AppBenefitsRoute: typeof AppBenefitsRoute
   AppDashboardRoute: typeof AppDashboardRoute
   AppEmployeesRoute: typeof AppEmployeesRoute
+  AppGettingStartedRoute: typeof AppGettingStartedRoute
   AppPayrollRoute: typeof AppPayrollRoute
+  AppPtoRoute: typeof AppPtoRoute
   AppReportsRoute: typeof AppReportsRoute
+  AppSettingsRoute: typeof AppSettingsRoute
+  AppTaxesRoute: typeof AppTaxesRoute
   AppTimeRoute: typeof AppTimeRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppBenefitsRoute: AppBenefitsRoute,
   AppDashboardRoute: AppDashboardRoute,
   AppEmployeesRoute: AppEmployeesRoute,
+  AppGettingStartedRoute: AppGettingStartedRoute,
   AppPayrollRoute: AppPayrollRoute,
+  AppPtoRoute: AppPtoRoute,
   AppReportsRoute: AppReportsRoute,
+  AppSettingsRoute: AppSettingsRoute,
+  AppTaxesRoute: AppTaxesRoute,
   AppTimeRoute: AppTimeRoute,
 }
 

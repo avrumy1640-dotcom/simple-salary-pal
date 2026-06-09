@@ -2,15 +2,37 @@ import { Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-route
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Users, Clock, Wallet, FileText, LogOut, Menu, X } from "lucide-react";
+import {
+  LayoutDashboard, Users, Clock, Wallet, FileText, LogOut, Menu, X,
+  HeartHandshake, CalendarDays, Settings as SettingsIcon, FileBadge, Sparkles,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const nav = [
-  { to: "/app/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/app/employees", label: "Employees", icon: Users },
-  { to: "/app/time", label: "Time", icon: Clock },
-  { to: "/app/payroll", label: "Payroll", icon: Wallet },
-  { to: "/app/reports", label: "Reports", icon: FileText },
+const navGroups = [
+  {
+    label: "Run your payroll",
+    items: [
+      { to: "/app/dashboard", label: "Dashboard", icon: LayoutDashboard },
+      { to: "/app/payroll", label: "Run payroll", icon: Wallet },
+      { to: "/app/time", label: "Time & attendance", icon: Clock },
+    ],
+  },
+  {
+    label: "People",
+    items: [
+      { to: "/app/employees", label: "Employees", icon: Users },
+      { to: "/app/pto", label: "Time off (PTO)", icon: CalendarDays },
+      { to: "/app/benefits", label: "Benefits & deductions", icon: HeartHandshake },
+    ],
+  },
+  {
+    label: "Compliance",
+    items: [
+      { to: "/app/taxes", label: "Taxes & forms", icon: FileBadge },
+      { to: "/app/reports", label: "Reports", icon: FileText },
+      { to: "/app/settings", label: "Company settings", icon: SettingsIcon },
+    ],
+  },
 ] as const;
 
 export function AppShell() {
@@ -44,10 +66,9 @@ export function AppShell() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Mobile top bar */}
       <div className="flex items-center justify-between border-b bg-sidebar px-4 py-3 md:hidden">
         <div className="flex items-center gap-2">
-          <div className="grid h-7 w-7 place-items-center rounded-md bg-primary text-primary-foreground text-sm font-bold">P</div>
+          <div className="grid h-7 w-7 place-items-center rounded-full bg-[oklch(0.62_0.22_260)] text-white text-sm font-bold">P</div>
           <span className="text-sm font-semibold">{companyName}</span>
         </div>
         <Button variant="ghost" size="icon" onClick={() => setOpen(!open)}>
@@ -56,39 +77,62 @@ export function AppShell() {
       </div>
 
       <div className="flex">
-        {/* Sidebar */}
         <aside className={cn(
-          "fixed inset-y-0 left-0 z-40 w-64 transform border-r bg-sidebar transition-transform md:relative md:translate-x-0",
+          "fixed inset-y-0 left-0 z-40 w-72 transform border-r bg-sidebar transition-transform md:relative md:translate-x-0 flex flex-col",
           open ? "translate-x-0" : "-translate-x-full"
         )}>
           <div className="hidden items-center gap-2 border-b px-5 py-4 md:flex">
-            <div className="grid h-8 w-8 place-items-center rounded-lg bg-primary text-primary-foreground font-bold">P</div>
-            <div className="flex flex-col">
+            <div className="grid h-9 w-9 place-items-center rounded-full bg-[oklch(0.62_0.22_260)] text-white font-bold">P</div>
+            <div className="flex flex-col min-w-0">
               <span className="text-sm font-semibold leading-tight">Paylo</span>
-              <span className="text-xs text-muted-foreground leading-tight truncate max-w-[10rem]">{companyName}</span>
+              <span className="text-xs text-muted-foreground leading-tight truncate">{companyName}</span>
             </div>
           </div>
-          <nav className="flex flex-col gap-1 p-3">
-            {nav.map((n) => {
-              const active = path === n.to || (n.to !== "/app/dashboard" && path.startsWith(n.to));
-              return (
-                <Link
-                  key={n.to}
-                  to={n.to}
-                  onClick={() => setOpen(false)}
-                  className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
-                    active ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium" : "text-sidebar-foreground hover:bg-sidebar-accent/60"
-                  )}
-                >
-                  <n.icon className="h-4 w-4" />
-                  {n.label}
-                </Link>
-              );
-            })}
+
+          <Link
+            to="/app/getting-started"
+            onClick={() => setOpen(false)}
+            className={cn(
+              "mx-3 mt-3 flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors",
+              path === "/app/getting-started"
+                ? "bg-[oklch(0.62_0.22_260)] text-white"
+                : "bg-accent text-[oklch(0.55_0.2_260)] hover:opacity-90"
+            )}
+          >
+            <Sparkles className="h-4 w-4" /> Getting started
+          </Link>
+
+          <nav className="flex-1 overflow-y-auto p-3 space-y-5 mt-2">
+            {navGroups.map((g) => (
+              <div key={g.label}>
+                <div className="px-3 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{g.label}</div>
+                <div className="space-y-1">
+                  {g.items.map((n) => {
+                    const active = path === n.to || (n.to !== "/app/dashboard" && path.startsWith(n.to));
+                    return (
+                      <Link
+                        key={n.to}
+                        to={n.to}
+                        onClick={() => setOpen(false)}
+                        className={cn(
+                          "flex items-center gap-3 rounded-full px-3 py-2 text-sm transition-colors",
+                          active
+                            ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                            : "text-sidebar-foreground hover:bg-sidebar-accent/60"
+                        )}
+                      >
+                        <n.icon className="h-4 w-4" />
+                        {n.label}
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
           </nav>
-          <div className="absolute inset-x-0 bottom-0 border-t p-3">
-            <Button variant="ghost" className="w-full justify-start gap-2" onClick={signOut}>
+
+          <div className="border-t p-3">
+            <Button variant="ghost" className="w-full justify-start gap-2 rounded-full" onClick={signOut}>
               <LogOut className="h-4 w-4" /> Sign out
             </Button>
           </div>
