@@ -71,7 +71,7 @@ function Dashboard() {
       </div>
 
       {!allSetup && (
-        <Link to="/app/getting-started" className="block rounded-2xl border bg-gradient-to-r from-[oklch(0.96_0.04_258)] to-card p-5 hover:shadow-md transition">
+        <Link to="/app/getting-started" className="block rounded-2xl border bg-gradient-to-r from-secondary to-card p-5 hover:shadow-md transition">
           <div className="flex items-center gap-4">
             <div className="grid h-12 w-12 place-items-center rounded-xl bg-foreground text-white"><Sparkles className="h-5 w-5" /></div>
             <div className="flex-1">

@@ -68,8 +68,8 @@ function Landing() {
                 key={p}
                 className={`rounded-full px-4 py-2 text-sm font-medium ${
                   i === 0
-                    ? "bg-[oklch(0.95_0.03_258)] text-foreground opacity-60"
-                    : "bg-[oklch(0.95_0.03_258)] text-foreground"
+                    ? "bg-secondary text-foreground opacity-60"
+                    : "bg-secondary text-foreground"
                 }`}
               >
                 {p}
@@ -84,7 +84,7 @@ function Landing() {
 
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link to="/auth">
-              <Button size="lg" className="rounded-full bg-foreground px-7 text-white hover:bg-[oklch(0.56_0.22_260)]">
+              <Button size="lg" className="rounded-full bg-foreground px-7 text-white hover:bg-foreground/90">
                 Get a Demo <ArrowRight className="ml-1 h-4 w-4" />
               </Button>
             </Link>
@@ -98,8 +98,8 @@ function Landing() {
 
         {/* DASHBOARD MOCKUP */}
         <div className="mx-auto max-w-6xl px-5 pb-20 md:px-8">
-          <div className="rounded-[28px] border bg-card p-3 shadow-[0_30px_80px_-20px_oklch(0.22_0.08_268_/_0.25)] md:p-5">
-            <div className="overflow-hidden rounded-2xl border bg-[oklch(0.985_0.006_255)]">
+          <div className="rounded-[28px] border bg-card p-3 shadow-2xl md:p-5">
+            <div className="overflow-hidden rounded-2xl border bg-secondary/40">
               {/* Mock app top bar */}
               <div className="flex items-center justify-between border-b bg-card px-4 py-3">
                 <div className="flex items-center gap-2">
@@ -138,8 +138,8 @@ function Landing() {
                     </div>
                     <div className="mt-4 flex h-2 overflow-hidden rounded-full bg-muted">
                       <div className="w-3/5 bg-foreground" />
-                      <div className="w-1/5 bg-[oklch(0.78_0.15_78)]" />
-                      <div className="w-1/5 bg-[oklch(0.22_0.08_268)]" />
+                      <div className="w-1/5 bg-warning" />
+                      <div className="w-1/5 bg-foreground" />
                     </div>
                   </div>
                   <div className="rounded-2xl border bg-card p-5">
@@ -148,7 +148,7 @@ function Landing() {
                     <div className="mt-1 text-xs text-muted-foreground">Currently clocked in</div>
                     <div className="mt-4 flex -space-x-2">
                       {[0,1,2,3,4].map(i => (
-                        <div key={i} className="h-8 w-8 rounded-full border-2 border-card bg-[oklch(0.9_0.03_258)]" />
+                        <div key={i} className="h-8 w-8 rounded-full border-2 border-card bg-secondary" />
                       ))}
                       <div className="grid h-8 w-8 place-items-center rounded-full border-2 border-card bg-accent text-[10px] font-semibold text-foreground">+7</div>
                     </div>
@@ -161,7 +161,7 @@ function Landing() {
       </section>
 
       {/* FEATURES */}
-      <section id="features" className="border-t bg-[oklch(0.985_0.006_255)]">
+      <section id="features" className="border-t bg-secondary/40">
         <div className="mx-auto max-w-6xl px-5 py-20 md:px-8">
           <div className="max-w-2xl">
             <div className="inline-flex rounded-full bg-accent px-3 py-1 text-xs font-semibold text-foreground">PLATFORM</div>
@@ -200,7 +200,7 @@ function Landing() {
         </p>
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Link to="/auth">
-            <Button size="lg" className="rounded-full bg-foreground px-8 text-white hover:bg-[oklch(0.56_0.22_260)]">
+            <Button size="lg" className="rounded-full bg-foreground px-8 text-white hover:bg-foreground/90">
               Get a Demo <ArrowRight className="ml-1 h-4 w-4" />
             </Button>
           </Link>
