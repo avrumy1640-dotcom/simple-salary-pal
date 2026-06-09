@@ -9,7 +9,17 @@ import { toast } from "sonner";
 import { Sparkles, ShieldCheck } from "lucide-react";
 
 export const Route = createFileRoute("/auth")({
-  head: () => ({ meta: [{ title: "Sign in — Paylo" }] }),
+  head: () => ({
+    meta: [
+      { title: "Sign in — Paylo" },
+      { name: "description", content: "Sign in to your Paylo account to run payroll, manage your team, and file taxes." },
+      { property: "og:title", content: "Sign in — Paylo" },
+      { property: "og:description", content: "Sign in to your Paylo account." },
+      { property: "og:url", content: "/auth" },
+      { name: "robots", content: "noindex" },
+    ],
+    links: [{ rel: "canonical", href: "/auth" }],
+  }),
   component: AuthPage,
 });
 

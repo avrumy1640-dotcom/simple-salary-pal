@@ -8,7 +8,10 @@ export const Route = createFileRoute("/pricing")({
       { name: "description", content: "Simple, transparent payroll & HR pricing. Plans for teams of every size. 14-day free trial, no credit card required." },
       { property: "og:title", content: "Pricing — Paylo" },
       { property: "og:description", content: "Simple, transparent payroll pricing. Start free for 14 days." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "/pricing" },
     ],
+    links: [{ rel: "canonical", href: "/pricing" }],
   }),
   component: PricingPage,
 });

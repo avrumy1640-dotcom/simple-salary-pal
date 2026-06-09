@@ -12,7 +12,9 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "Paylo — Payroll, simplified." },
       { property: "og:description", content: "Run payroll, file taxes, and pay your whole team in minutes." },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "/" },
     ],
+    links: [{ rel: "canonical", href: "/" }],
   }),
   component: Landing,
 });
@@ -99,7 +101,7 @@ function Landing() {
               <div className="flex items-start justify-between">
                 <div>
                   <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">Good morning, Sarah</p>
-                  <h3 className="mt-0.5 text-2xl font-semibold tracking-tight">Acme Coffee Co.</h3>
+                  <p className="mt-0.5 text-2xl font-semibold tracking-tight">Acme Coffee Co.</p>
                 </div>
                 <div className="flex items-center gap-1.5 rounded-full bg-accent px-3 py-1.5 text-[10px] font-bold text-accent-foreground">
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]" />
@@ -233,7 +235,7 @@ function Feature({ icon, bg, title, desc }: { icon: React.ReactNode; bg: string;
       <div className={`mb-5 grid h-12 w-12 place-items-center rounded-2xl ${bg} transition-transform group-hover:scale-110`}>
         {icon}
       </div>
-      <h4 className="text-lg font-semibold tracking-tight">{title}</h4>
+      <h3 className="text-lg font-semibold tracking-tight">{title}</h3>
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{desc}</p>
     </div>
   );

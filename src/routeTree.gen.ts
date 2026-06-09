@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/app'
@@ -33,6 +34,11 @@ import { Route as AppDashboardRouteImport } from './routes/app.dashboard'
 import { Route as AppContractorsRouteImport } from './routes/app.contractors'
 import { Route as AppBenefitsRouteImport } from './routes/app.benefits'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
@@ -154,6 +160,7 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
   '/pricing': typeof PricingRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/app/benefits': typeof AppBenefitsRoute
   '/app/contractors': typeof AppContractorsRoute
   '/app/dashboard': typeof AppDashboardRoute
@@ -179,6 +186,7 @@ export interface FileRoutesByTo {
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
   '/pricing': typeof PricingRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/app/benefits': typeof AppBenefitsRoute
   '/app/contractors': typeof AppContractorsRoute
   '/app/dashboard': typeof AppDashboardRoute
@@ -205,6 +213,7 @@ export interface FileRoutesById {
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
   '/pricing': typeof PricingRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/app/benefits': typeof AppBenefitsRoute
   '/app/contractors': typeof AppContractorsRoute
   '/app/dashboard': typeof AppDashboardRoute
@@ -232,6 +241,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/auth'
     | '/pricing'
+    | '/sitemap.xml'
     | '/app/benefits'
     | '/app/contractors'
     | '/app/dashboard'
@@ -257,6 +267,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/auth'
     | '/pricing'
+    | '/sitemap.xml'
     | '/app/benefits'
     | '/app/contractors'
     | '/app/dashboard'
@@ -282,6 +293,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/auth'
     | '/pricing'
+    | '/sitemap.xml'
     | '/app/benefits'
     | '/app/contractors'
     | '/app/dashboard'
@@ -308,10 +320,18 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRoute
   PricingRoute: typeof PricingRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/pricing': {
       id: '/pricing'
       path: '/pricing'
@@ -527,6 +547,7 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRoute,
   PricingRoute: PricingRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
