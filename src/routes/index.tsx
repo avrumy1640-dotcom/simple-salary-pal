@@ -21,8 +21,7 @@ export const Route = createFileRoute("/")({
 
 const fadeUp = {
   initial: { opacity: 0, y: 24 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-80px" },
+  animate: { opacity: 1, y: 0 },
   transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] as const },
 };
 
@@ -102,8 +101,7 @@ function Landing() {
           {/* FLOATING DASHBOARD MOCKUP */}
           <motion.div
             initial={{ opacity: 0, y: 60, rotateX: 8 }}
-            whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
+            animate={{ opacity: 1, y: 0, rotateX: 0 }}
             transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] as const, delay: 0.15 }}
             style={{ perspective: 1200 }}
             className="relative mt-16 md:mt-24"
@@ -246,8 +244,7 @@ function Landing() {
               <motion.div
                 key={f.title}
                 initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: i * 0.06, ease: [0.22, 1, 0.36, 1] as const }}
                 whileHover={{ y: -4 }}
                 className="group rounded-3xl border border-border/60 bg-card p-6 shadow-sm transition-shadow hover:shadow-xl"
