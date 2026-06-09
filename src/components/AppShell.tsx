@@ -6,7 +6,7 @@ import {
   LayoutDashboard, Users, Clock, Wallet, FileText, LogOut, Menu, X,
   HeartHandshake, CalendarDays, Settings as SettingsIcon, FileBadge, Sparkles,
   Briefcase, Receipt, Landmark, FolderOpen, ClipboardCheck, MapPin,
-  History as HistoryIcon,
+  History as HistoryIcon, UserCircle2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TopBar } from "@/components/TopBar";
@@ -32,6 +32,7 @@ const navGroups = [
       { to: "/app/documents", label: "HR documents", icon: FolderOpen },
       { to: "/app/pto", label: "Time off (PTO)", icon: CalendarDays },
       { to: "/app/benefits", label: "Benefits & deductions", icon: HeartHandshake },
+      { to: "/app/self-service", label: "Self-service portal", icon: UserCircle2 },
     ],
   },
   {
