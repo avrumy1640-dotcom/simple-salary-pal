@@ -493,3 +493,35 @@ html { scroll-behavior: smooth; }
 .page-in [class*="bg-white/"] {
   background-color: rgba(255,255,255,0.7) !important;
 }
+
+/* ──────────────────────────────────────────────────────────────────────
+   Overlay readability (Radix dialog/popover/dropdown/hover-card/tooltip/
+   sheet/menubar/context-menu/select). These portal OUTSIDE .page-in,
+   so the .page-in overrides above don't reach them. Force dark text +
+   light surfaces on any Radix overlay content.
+   ────────────────────────────────────────────────────────────────────── */
+[data-radix-popper-content-wrapper] [class*="text-white"],
+[role="dialog"] [class*="text-white"],
+[role="menu"] [class*="text-white"],
+[role="listbox"] [class*="text-white"],
+[role="tooltip"] [class*="text-white"] {
+  color: #07142A !important;
+}
+[data-radix-popper-content-wrapper] [class*="text-white\/"],
+[role="dialog"] [class*="text-white\/"],
+[role="menu"] [class*="text-white\/"],
+[role="listbox"] [class*="text-white\/"] {
+  color: #4A6079 !important;
+}
+[data-radix-popper-content-wrapper] [class*="bg-white/"],
+[role="dialog"] [class*="bg-white/"],
+[role="menu"] [class*="bg-white/"] {
+  background-color: rgba(255,255,255,0.92) !important;
+}
+[data-radix-popper-content-wrapper] [class*="border-white/"],
+[role="dialog"] [class*="border-white/"],
+[role="menu"] [class*="border-white/"] {
+  border-color: rgba(7,20,42,0.08) !important;
+}
+/* Ensure tooltip primary-foreground text stays readable on its dark pill */
+[role="tooltip"] { color: #FFFFFF; }
