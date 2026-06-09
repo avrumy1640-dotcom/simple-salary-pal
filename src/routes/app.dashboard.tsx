@@ -1,55 +1,61 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Users, Wallet, Clock, ArrowRight, Sparkles, CalendarDays, CheckCircle2, Circle } from "lucide-react";
+import {
+  Users, Wallet, Clock, ArrowRight, Sparkles, CalendarDays, CheckCircle2,
+  Circle, PlayCircle, UserPlus, BarChart3, Bell, FileBadge, FileText,
+} from "lucide-react";
 import { fmtUSD } from "@/lib/payroll";
+import { useCountUp } from "@/hooks/useCountUp";
 
 export const Route = createFileRoute("/app/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — Paylo" }] }),
   component: Dashboard,
 });
 
-type StatProps = { label: string; value: string; icon: typeof Users; accent?: boolean; gold?: boolean };
-
-function Stat({ label, value, icon: Icon, accent, gold }: StatProps) {
+function KpiCard({
+  label, value, displayValue, icon: Icon, accent, delay = 0,
+}: {
+  label: string;
+  value: number;
+  displayValue: (n: number) => string;
+  icon: typeof Users;
+  accent?: boolean;
+  delay?: number;
+}) {
+  const animated = useCountUp(value, 1100);
   return (
-    <div className={`group relative overflow-hidden rounded-2xl border p-4 transition-all duration-300 hover:-translate-y-1 sm:rounded-3xl sm:p-5 ${
-      gold ? "border-[#F5C518]/30 bg-gradient-to-br from-[#F5C518]/14 to-transparent hover:shadow-gold" :
-      accent ? "border-[#2563EB]/30 bg-gradient-to-br from-[#2563EB]/18 to-transparent hover:shadow-glow" :
-      "surface-glass hover:border-white/20 hover:shadow-card"
-    }`}>
-      <div className="flex items-center justify-between gap-2">
-        <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-white/55 sm:text-[11px]">{label}</span>
-        <div className={`grid h-9 w-9 shrink-0 place-items-center rounded-xl sm:rounded-2xl ${
-          gold ? "bg-[#F5C518]/18 text-[#F5C518]" : accent ? "bg-[#2563EB]/22 text-[#60A5FA]" : "bg-white/6 text-white/75"
-        }`}>
+    <div
+      style={{ animationDelay: `${delay}ms` }}
+      className={[
+        "group relative fade-up overflow-hidden rounded-3xl p-5 transition-all duration-300 hover:-translate-y-1",
+        "surface-glass border border-[#C2F5FF]/60 hover:border-[#07142A]/30 hover:shadow-glow",
+        accent ? "ring-1 ring-[#C2F5FF]" : "",
+      ].join(" ")}
+    >
+      <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#C2F5FF] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+      <div className="flex items-center justify-between">
+        <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#4A6079]">{label}</span>
+        <div className="grid h-10 w-10 place-items-center rounded-2xl bg-[#C2F5FF]/60 text-[#07142A] transition-transform group-hover:scale-110">
           <Icon className="h-4 w-4" />
         </div>
       </div>
-      <div className="mt-4 font-display text-3xl font-bold tabular text-white sm:text-[2rem]">{value}</div>
+      <div className="mt-5 font-display text-[2rem] font-extrabold tabular text-[#07142A] leading-none">
+        {displayValue(animated)}
+      </div>
     </div>
   );
 }
 
 function StatSkeleton() {
   return (
-    <div className="surface-glass rounded-2xl border border-white/8 p-4 sm:rounded-3xl sm:p-5">
+    <div className="surface-glass rounded-3xl p-5">
       <div className="flex items-center justify-between">
         <div className="skeleton h-3 w-20" />
-        <div className="skeleton h-9 w-9 rounded-2xl" />
+        <div className="skeleton h-10 w-10 rounded-2xl" />
       </div>
       <div className="skeleton mt-5 h-8 w-24" />
-    </div>
-  );
-}
-
-function QuickSkeleton() {
-  return (
-    <div className="surface-glass rounded-2xl border border-white/8 p-4 sm:rounded-3xl sm:p-5">
-      <div className="skeleton h-4 w-3/4" />
-      <div className="skeleton mt-3 h-3 w-1/2" />
-      <div className="skeleton mt-5 h-3 w-16" />
     </div>
   );
 }
@@ -58,32 +64,51 @@ function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [empCount, setEmpCount] = useState(0);
   const [lastRun, setLastRun] = useState<{ net_total: number; pay_date: string } | null>(null);
-  const [hoursThisPeriod, setHoursThisPeriod] = useState(0);
+  const [monthTotal, setMonthTotal] = useState(0);
   const [pendingPto, setPendingPto] = useState(0);
   const [nextPayDate, setNextPayDate] = useState<string | null>(null);
+  const [upcomingRuns, setUpcomingRuns] = useState<{ pay_date: string; net_total: number }[]>([]);
+  const [activity, setActivity] = useState<{ id: string; title: string; meta: string; icon: typeof Users }[]>([]);
   const [setupSteps, setSetupSteps] = useState({ company: false, employees: false, payroll: false });
 
   useEffect(() => {
     (async () => {
-      const [{ count: ec }, runsRes, teRes, ptoRes, csRes] = await Promise.all([
+      const firstOfMonth = new Date();
+      firstOfMonth.setDate(1);
+      const fom = firstOfMonth.toISOString().slice(0, 10);
+      const [{ count: ec }, runsRes, monthRunsRes, ptoRes, csRes, recentPto, recentEmps] = await Promise.all([
         supabase.from("employees").select("*", { count: "exact", head: true }).eq("status", "active"),
-        supabase.from("payroll_runs").select("net_total, pay_date").order("pay_date", { ascending: false }).limit(1),
-        supabase.from("time_entries").select("hours, overtime_hours").gte("work_date", new Date(Date.now() - 14 * 86400000).toISOString().slice(0, 10)),
+        supabase.from("payroll_runs").select("net_total, pay_date").order("pay_date", { ascending: false }).limit(6),
+        supabase.from("payroll_runs").select("net_total").gte("pay_date", fom),
         supabase.from("pto_entries").select("*", { count: "exact", head: true }).eq("status", "pending"),
         supabase.from("company_settings").select("next_pay_date, onboarding_complete").maybeSingle(),
+        supabase.from("pto_entries").select("id, employee_name, status, created_at").order("created_at", { ascending: false }).limit(3),
+        supabase.from("employees").select("id, full_name, created_at").order("created_at", { ascending: false }).limit(3),
       ]);
       setEmpCount(ec ?? 0);
-      const runs = runsRes.data;
-      if (runs && runs[0]) setLastRun(runs[0] as { net_total: number; pay_date: string });
-      const total = (teRes.data ?? []).reduce((s, r) => s + Number(r.hours) + Number(r.overtime_hours), 0);
-      setHoursThisPeriod(total);
+      const runs = runsRes.data ?? [];
+      if (runs[0]) setLastRun(runs[0] as { net_total: number; pay_date: string });
+      setMonthTotal((monthRunsRes.data ?? []).reduce((s, r) => s + Number(r.net_total), 0));
       setPendingPto(ptoRes.count ?? 0);
       setNextPayDate(csRes.data?.next_pay_date ?? null);
+      setUpcomingRuns(runs.slice(0, 5).reverse() as typeof upcomingRuns);
       setSetupSteps({
         company: !!csRes.data?.onboarding_complete,
         employees: (ec ?? 0) > 0,
-        payroll: !!(runs && runs.length > 0),
+        payroll: runs.length > 0,
       });
+      const a: typeof activity = [];
+      (recentEmps.data ?? []).forEach((e) =>
+        a.push({ id: `e-${e.id}`, title: `${e.full_name} joined the team`, meta: timeAgo(e.created_at), icon: UserPlus }),
+      );
+      (recentPto.data ?? []).forEach((p) =>
+        a.push({ id: `p-${p.id}`, title: `${p.employee_name} requested time off`, meta: timeAgo(p.created_at), icon: CalendarDays }),
+      );
+      runs.slice(0, 2).forEach((r, i) =>
+        a.push({ id: `r-${i}`, title: `Payroll run — ${fmtUSD(Number(r.net_total))} net`, meta: timeAgo(r.pay_date), icon: Wallet }),
+      );
+      a.sort((x, y) => (x.meta > y.meta ? -1 : 1));
+      setActivity(a.slice(0, 6));
       setLoading(false);
     })();
   }, []);
@@ -91,37 +116,53 @@ function Dashboard() {
   const allSetup = setupSteps.company && setupSteps.employees && setupSteps.payroll;
 
   return (
-    <div className="space-y-5 sm:space-y-7">
+    <div className="space-y-6 sm:space-y-7">
       {/* Hero */}
-      <div className="relative overflow-hidden rounded-[1.5rem] border border-white/10 surface-hero p-5 sm:rounded-[2rem] sm:p-7 md:p-9">
-        <div aria-hidden className="absolute inset-0 grid-bg opacity-30" />
-        <div aria-hidden className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[#2563EB]/30 blur-3xl orb-1" />
-        <div aria-hidden className="absolute -left-16 -bottom-16 h-64 w-64 rounded-full bg-[#F5C518]/14 blur-3xl orb-2" />
+      <div className="relative overflow-hidden rounded-[2rem] surface-hero p-6 sm:p-8 md:p-10">
+        <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[#C2F5FF]/70 blur-3xl orb-1" />
+        <div aria-hidden className="pointer-events-none absolute -left-16 -bottom-16 h-64 w-64 rounded-full bg-[#E8FAFF]/80 blur-3xl orb-2" />
         <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[11px] font-semibold text-white/75 backdrop-blur sm:text-xs">
-              <span className="h-2 w-2 rounded-full bg-[#F5C518] pulse-dot" /> Live payroll command center
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#C2F5FF] bg-white/70 px-3 py-1 text-xs font-semibold text-[#07142A] backdrop-blur">
+              <span className="h-2 w-2 rounded-full bg-[#07142A] pulse-dot" /> Live payroll command center
             </div>
-            <h1 className="mt-4 font-display text-[2rem] font-bold leading-[1.05] text-white sm:mt-5 sm:text-5xl md:text-6xl">
+            <h1 className="mt-4 font-display text-4xl font-extrabold leading-[1.05] text-[#07142A] sm:text-5xl md:text-6xl">
               Welcome back.<br />
-              <span className="script-typer text-[1.5em] leading-none">Run payroll</span>
+              <span className="script-typer text-[1.2em] leading-none">Run payroll</span>
             </h1>
-            <p className="mt-4 max-w-xl text-sm font-medium leading-6 text-white/65 sm:text-base sm:leading-7">
+            <p className="mt-4 max-w-xl text-sm font-medium leading-7 text-[#4A6079] sm:text-base">
               Approve time, review documents, and pay your team — all from one elegant dashboard.
             </p>
+            <div className="mt-6 flex flex-wrap gap-2">
+              <Link to="/app/payroll">
+                <Button className="gap-2 bg-[#07142A] text-white font-bold hover:-translate-y-0.5 hover:shadow-glow">
+                  <PlayCircle className="h-4 w-4" /> Run payroll
+                </Button>
+              </Link>
+              <Link to="/app/employees">
+                <Button variant="outline" className="gap-2 border-[#07142A]/15 bg-white text-[#07142A] hover:bg-[#ECFAFF]">
+                  <UserPlus className="h-4 w-4" /> Add employee
+                </Button>
+              </Link>
+              <Link to="/app/reports">
+                <Button variant="outline" className="gap-2 border-[#07142A]/15 bg-white text-[#07142A] hover:bg-[#ECFAFF]">
+                  <BarChart3 className="h-4 w-4" /> View reports
+                </Button>
+              </Link>
+            </div>
           </div>
-          <div className="grid gap-3 rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl sm:rounded-3xl lg:min-w-[240px]">
-            <div className="text-[11px] font-semibold uppercase tracking-wide text-white/55 sm:text-xs">Next pay date</div>
+          <div className="grid gap-3 rounded-3xl border border-[#C2F5FF] bg-white/85 p-5 backdrop-blur-xl shadow-card lg:min-w-[260px]">
+            <div className="text-[11px] font-bold uppercase tracking-wider text-[#4A6079]">Next pay date</div>
             {loading ? (
               <div className="skeleton h-7 w-28" />
             ) : (
-              <div className="font-display text-2xl font-bold text-white">
-                {nextPayDate ? new Date(nextPayDate).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "Ready"}
+              <div className="font-display text-2xl font-extrabold text-[#07142A]">
+                {nextPayDate ? new Date(nextPayDate).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" }) : "Ready when you are"}
               </div>
             )}
             <Link to="/app/payroll">
-              <Button className="w-full gap-2 gradient-gold text-[#0A0F2C] font-bold hover:opacity-95 hover:shadow-gold">
-                Run payroll <ArrowRight className="h-4 w-4" />
+              <Button className="w-full gap-2 bg-[#07142A] text-white font-bold hover:shadow-glow">
+                Prepare run <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
           </div>
@@ -130,81 +171,154 @@ function Dashboard() {
 
       {/* Setup checklist */}
       {!loading && !allSetup && (
-        <Link to="/app/getting-started" className="block surface-glass rounded-2xl border border-white/10 p-4 transition-all hover:-translate-y-0.5 hover:border-[#F5C518]/40 hover:shadow-gold sm:rounded-3xl sm:p-5">
+        <Link to="/app/getting-started" className="block rounded-3xl surface-glass p-5 transition-all hover:-translate-y-0.5 hover:shadow-glow">
           <div className="flex flex-col gap-4 md:flex-row md:items-center">
             <div className="flex items-center gap-3 md:contents">
-              <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl gradient-gold text-[#0A0F2C] shadow-gold sm:h-14 sm:w-14"><Sparkles className="h-5 w-5" /></div>
+              <div className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-[#C2F5FF] text-[#07142A] shadow-glow"><Sparkles className="h-5 w-5" /></div>
               <div className="flex-1">
-                <div className="font-display text-base font-bold text-white sm:text-lg">Finish setting up your payroll</div>
-                <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1.5 text-sm">
+                <div className="font-display text-lg font-bold text-[#07142A]">Finish setting up your payroll</div>
+                <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1.5 text-sm">
                   <SetupStep done={setupSteps.company} label="Company info" />
                   <SetupStep done={setupSteps.employees} label="Add employees" />
                   <SetupStep done={setupSteps.payroll} label="First payroll" />
                 </div>
               </div>
             </div>
-            <ArrowRight className="hidden h-5 w-5 text-white/60 md:block" />
+            <ArrowRight className="hidden h-5 w-5 text-[#4A6079] md:block" />
           </div>
         </Link>
       )}
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+      {/* KPI cards */}
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         {loading ? (
-          <>
-            <StatSkeleton /><StatSkeleton /><StatSkeleton /><StatSkeleton />
-          </>
+          <><StatSkeleton /><StatSkeleton /><StatSkeleton /><StatSkeleton /></>
         ) : (
           <>
-            <Stat label="Active employees" value={String(empCount)} icon={Users} />
-            <Stat label="Hours (14d)" value={hoursThisPeriod.toFixed(1)} icon={Clock} />
-            <Stat label="Pending PTO" value={String(pendingPto)} icon={CalendarDays} accent />
-            <Stat label="Last net payroll" value={lastRun ? fmtUSD(lastRun.net_total) : "—"} icon={Wallet} gold />
+            <KpiCard
+              label="Payroll this month"
+              value={monthTotal}
+              displayValue={(n) => fmtUSD(n)}
+              icon={Wallet}
+              accent
+              delay={0}
+            />
+            <KpiCard
+              label="Active employees"
+              value={empCount}
+              displayValue={(n) => Math.round(n).toString()}
+              icon={Users}
+              delay={80}
+            />
+            <KpiCard
+              label="Pending approvals"
+              value={pendingPto}
+              displayValue={(n) => Math.round(n).toString()}
+              icon={Clock}
+              delay={160}
+            />
+            <KpiCard
+              label="Last net payroll"
+              value={lastRun ? Number(lastRun.net_total) : 0}
+              displayValue={(n) => fmtUSD(n)}
+              icon={FileBadge}
+              delay={240}
+            />
           </>
         )}
       </div>
 
-      {/* Next pay panel */}
-      {loading ? (
-        <div className="surface-glass rounded-2xl border border-white/8 p-4 sm:rounded-3xl sm:p-5">
-          <div className="flex items-center gap-3">
-            <div className="skeleton h-12 w-12 rounded-2xl" />
-            <div className="flex-1 space-y-2">
-              <div className="skeleton h-3 w-24" />
-              <div className="skeleton h-5 w-48" />
+      {/* Timeline + Activity */}
+      <div className="grid gap-5 lg:grid-cols-3">
+        <div className="rounded-3xl surface-glass p-5 lg:col-span-2">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="font-display text-lg font-bold text-[#07142A]">Payroll timeline</div>
+              <div className="text-xs font-medium text-[#4A6079]">Recent and upcoming pay runs</div>
             </div>
+            <Link to="/app/paystubs" className="text-xs font-bold text-[#07142A] hover:underline">View all</Link>
           </div>
-        </div>
-      ) : nextPayDate ? (
-        <div className="flex flex-col gap-4 surface-glass rounded-2xl border border-white/10 p-4 sm:rounded-3xl sm:p-5 md:flex-row md:items-center">
-          <div className="flex items-center gap-3 md:contents">
-            <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-[#F5C518]/14 text-[#F5C518]"><CalendarDays className="h-5 w-5" /></div>
-            <div className="flex-1 min-w-0">
-              <div className="text-[11px] font-semibold uppercase tracking-wide text-white/55 sm:text-xs">Next pay date</div>
-              <div className="font-display text-base font-bold text-white sm:text-xl">{new Date(nextPayDate).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</div>
+          {loading ? (
+            <div className="mt-5 skeleton h-24 w-full" />
+          ) : upcomingRuns.length === 0 ? (
+            <div className="mt-6 rounded-2xl border border-dashed border-[#C2F5FF] bg-[#F2FBFF] p-6 text-center">
+              <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-white text-[#07142A] shadow-soft"><Wallet className="h-5 w-5" /></div>
+              <div className="mt-3 font-display text-base font-bold text-[#07142A]">No payroll runs yet</div>
+              <div className="mt-1 text-sm text-[#4A6079]">Run your first payroll in under 2 minutes.</div>
+              <Link to="/app/payroll" className="mt-3 inline-flex items-center gap-1.5 rounded-xl bg-[#07142A] px-4 py-2 text-xs font-bold text-white hover:shadow-glow">
+                Run payroll <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
             </div>
-          </div>
-          <Link to="/app/payroll" className="md:ml-auto"><Button variant="outline" className="w-full border-white/15 bg-white/5 text-white hover:bg-white/10 hover:border-[#F5C518]/40 md:w-auto">Prepare payroll</Button></Link>
+          ) : (
+            <div className="relative mt-6 pl-2">
+              <div className="absolute left-3 top-2 bottom-2 w-px bg-gradient-to-b from-[#C2F5FF] via-[#C2F5FF] to-transparent" />
+              <div className="space-y-4">
+                {upcomingRuns.map((r, i) => (
+                  <div key={i} className="relative pl-8" style={{ animationDelay: `${i * 60}ms` }}>
+                    <div className="absolute left-0 top-1.5 grid h-6 w-6 place-items-center rounded-full bg-white ring-2 ring-[#C2F5FF]">
+                      <div className="h-2 w-2 rounded-full bg-[#07142A]" />
+                    </div>
+                    <div className="flex flex-wrap items-baseline justify-between gap-2">
+                      <div className="font-display text-base font-bold text-[#07142A]">
+                        {new Date(r.pay_date).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
+                      </div>
+                      <div className="text-sm font-bold text-[#07142A] tabular">{fmtUSD(Number(r.net_total))} net</div>
+                    </div>
+                    <div className="text-xs font-medium text-[#4A6079]">Direct deposit</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
-      ) : null}
 
-      {/* Quick actions */}
-      <div className="grid gap-3 sm:gap-4 sm:grid-cols-2 md:grid-cols-3">
-        {loading ? (
-          <>
-            <QuickSkeleton /><QuickSkeleton /><QuickSkeleton />
-            <QuickSkeleton /><QuickSkeleton /><QuickSkeleton />
-          </>
-        ) : (
-          <>
-            <QuickCard to="/app/employees" title="Add an employee" desc="Set up hourly or salary." />
-            <QuickCard to="/app/time" title="Log hours" desc="Track work for this pay period." />
-            <QuickCard to="/app/benefits" title="Manage benefits" desc="Health, 401(k), and deductions." />
-            <QuickCard to="/app/pto" title="Approve time off" desc="Review PTO requests." />
-            <QuickCard to="/app/taxes" title="Tax summary" desc="YTD totals and W-2 previews." />
-            <QuickCard to="/app/reports" title="Reports & exports" desc="CSV-ready for accounting." />
-          </>
-        )}
+        <div className="rounded-3xl surface-glass p-5">
+          <div className="flex items-center justify-between">
+            <div className="font-display text-lg font-bold text-[#07142A]">Recent activity</div>
+            <Bell className="h-4 w-4 text-[#4A6079]" />
+          </div>
+          {loading ? (
+            <div className="mt-5 space-y-3">
+              <div className="skeleton h-12 w-full" />
+              <div className="skeleton h-12 w-full" />
+              <div className="skeleton h-12 w-full" />
+            </div>
+          ) : activity.length === 0 ? (
+            <div className="mt-6 text-center">
+              <div className="mx-auto grid h-10 w-10 place-items-center rounded-2xl bg-[#ECFAFF] text-[#07142A]"><Sparkles className="h-4 w-4" /></div>
+              <div className="mt-3 text-sm font-semibold text-[#07142A]">All quiet here</div>
+              <div className="text-xs text-[#4A6079]">Activity will appear as your team uses Paylo.</div>
+            </div>
+          ) : (
+            <ul className="mt-4 space-y-3">
+              {activity.map((a, i) => (
+                <li
+                  key={a.id}
+                  style={{ animationDelay: `${i * 60}ms` }}
+                  className="fade-up flex items-start gap-3 rounded-2xl border border-[#C2F5FF]/50 bg-white/70 p-3 transition-all hover:border-[#07142A]/20 hover:-translate-y-0.5"
+                >
+                  <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[#C2F5FF]/60 text-[#07142A]">
+                    <a.icon className="h-4 w-4" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate text-sm font-semibold text-[#07142A]">{a.title}</div>
+                    <div className="text-xs text-[#4A6079]">{a.meta}</div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+
+      {/* Quick links */}
+      <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+        <QuickCard to="/app/employees" title="Add an employee" desc="Set up hourly or salary." icon={UserPlus} />
+        <QuickCard to="/app/time" title="Log hours" desc="Track work for this pay period." icon={Clock} />
+        <QuickCard to="/app/benefits" title="Manage benefits" desc="Health, 401(k), and deductions." icon={Sparkles} />
+        <QuickCard to="/app/pto" title="Approve time off" desc="Review PTO requests." icon={CalendarDays} />
+        <QuickCard to="/app/taxes" title="Tax summary" desc="YTD totals and W-2 previews." icon={FileBadge} />
+        <QuickCard to="/app/reports" title="Reports & exports" desc="CSV-ready for accounting." icon={FileText} />
       </div>
     </div>
   );
@@ -213,20 +327,40 @@ function Dashboard() {
 function SetupStep({ done, label }: { done: boolean; label: string }) {
   return (
     <span className="inline-flex items-center gap-1.5 text-xs">
-      {done ? <CheckCircle2 className="h-4 w-4 text-[#22C55E]" /> : <Circle className="h-4 w-4 text-white/35" />}
-      <span className={done ? "text-white/50 line-through" : "font-medium text-white/85"}>{label}</span>
+      {done ? <CheckCircle2 className="h-4 w-4 text-[#16A34A]" /> : <Circle className="h-4 w-4 text-[#4A6079]/45" />}
+      <span className={done ? "text-[#4A6079] line-through" : "font-semibold text-[#07142A]"}>{label}</span>
     </span>
   );
 }
 
-function QuickCard({ to, title, desc }: { to: string; title: string; desc: string }) {
+function QuickCard({ to, title, desc, icon: Icon }: { to: string; title: string; desc: string; icon: typeof Users }) {
   return (
-    <Link to={to} className="group surface-glass rounded-2xl border border-white/10 p-4 transition-all duration-300 hover:-translate-y-1 hover:border-[#F5C518]/40 hover:shadow-gold sm:rounded-3xl sm:p-5">
-      <h3 className="font-display text-lg font-bold text-white">{title}</h3>
-      <p className="mt-1 text-sm text-white/60">{desc}</p>
-      <div className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-[#F5C518] sm:mt-5">
+    <Link
+      to={to}
+      className="group rounded-3xl surface-glass p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-glow"
+    >
+      <div className="grid h-10 w-10 place-items-center rounded-2xl bg-[#C2F5FF]/60 text-[#07142A] transition-transform group-hover:scale-110">
+        <Icon className="h-4 w-4" />
+      </div>
+      <h3 className="mt-4 font-display text-lg font-bold text-[#07142A]">{title}</h3>
+      <p className="mt-1 text-sm text-[#4A6079]">{desc}</p>
+      <div className="mt-4 inline-flex items-center gap-1.5 text-sm font-bold text-[#07142A]">
         Open <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
       </div>
     </Link>
   );
+}
+
+function timeAgo(iso: string | null | undefined): string {
+  if (!iso) return "";
+  const d = new Date(iso);
+  const diff = Date.now() - d.getTime();
+  const min = Math.floor(diff / 60000);
+  if (min < 1) return "just now";
+  if (min < 60) return `${min}m ago`;
+  const hr = Math.floor(min / 60);
+  if (hr < 24) return `${hr}h ago`;
+  const day = Math.floor(hr / 24);
+  if (day < 7) return `${day}d ago`;
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
