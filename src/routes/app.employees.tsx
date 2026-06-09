@@ -470,6 +470,14 @@ function DetailRow({ icon: Icon, label, value }: { icon?: any; label: string; va
   );
 }
 
+function SummaryChip({ label, value, muted }: { label: string; value: number; muted?: boolean }) {
+  return (
+    <div className={`rounded-2xl border ${muted ? "border-white/10 bg-card/40" : "border-primary/30 bg-primary/5"} p-4 transition hover:border-primary/60 hover:shadow-glow`}>
+      <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/55">{label}</div>
+      <div className={`mt-1 font-display text-3xl font-extrabold tabular ${muted ? "text-white/80" : "text-primary"}`}>{value}</div>
+    </div>
+  );
+
 function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
   return (
     <div className="space-y-1">
