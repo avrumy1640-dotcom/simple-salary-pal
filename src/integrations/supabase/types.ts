@@ -65,6 +65,131 @@ export type Database = {
         }
         Relationships: []
       }
+      contractor_payments: {
+        Row: {
+          amount: number
+          category: string | null
+          contractor_id: string
+          contractor_name: string
+          created_at: string
+          description: string | null
+          id: string
+          owner_id: string
+          payment_date: string
+          payment_method: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          category?: string | null
+          contractor_id: string
+          contractor_name: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          owner_id: string
+          payment_date?: string
+          payment_method?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          category?: string | null
+          contractor_id?: string
+          contractor_name?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          owner_id?: string
+          payment_date?: string
+          payment_method?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contractor_payments_contractor_id_fkey"
+            columns: ["contractor_id"]
+            isOneToOne: false
+            referencedRelation: "contractors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contractors: {
+        Row: {
+          address_line1: string | null
+          address_line2: string | null
+          bank_account_last4: string | null
+          bank_routing_last4: string | null
+          business_name: string | null
+          city: string | null
+          created_at: string
+          email: string | null
+          full_name: string
+          hourly_rate: number | null
+          id: string
+          notes: string | null
+          owner_id: string
+          payment_method: string | null
+          phone: string | null
+          state: string | null
+          status: string
+          tax_id_last4: string | null
+          tax_id_type: string | null
+          updated_at: string
+          zip: string | null
+        }
+        Insert: {
+          address_line1?: string | null
+          address_line2?: string | null
+          bank_account_last4?: string | null
+          bank_routing_last4?: string | null
+          business_name?: string | null
+          city?: string | null
+          created_at?: string
+          email?: string | null
+          full_name: string
+          hourly_rate?: number | null
+          id?: string
+          notes?: string | null
+          owner_id: string
+          payment_method?: string | null
+          phone?: string | null
+          state?: string | null
+          status?: string
+          tax_id_last4?: string | null
+          tax_id_type?: string | null
+          updated_at?: string
+          zip?: string | null
+        }
+        Update: {
+          address_line1?: string | null
+          address_line2?: string | null
+          bank_account_last4?: string | null
+          bank_routing_last4?: string | null
+          business_name?: string | null
+          city?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string
+          hourly_rate?: number | null
+          id?: string
+          notes?: string | null
+          owner_id?: string
+          payment_method?: string | null
+          phone?: string | null
+          state?: string | null
+          status?: string
+          tax_id_last4?: string | null
+          tax_id_type?: string | null
+          updated_at?: string
+          zip?: string | null
+        }
+        Relationships: []
+      }
       deductions: {
         Row: {
           active: boolean

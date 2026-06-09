@@ -87,7 +87,7 @@ function PTOPage() {
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button className="gap-2 rounded-full bg-[oklch(0.62_0.22_260)] text-white hover:opacity-90"><Plus className="h-4 w-4" /> Log time off</Button>
+            <Button className="gap-2 rounded-full bg-foreground text-white hover:opacity-90"><Plus className="h-4 w-4" /> Log time off</Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader><DialogTitle>Log time off</DialogTitle></DialogHeader>
@@ -134,7 +134,7 @@ function PTOPage() {
             {emps.map((e) => (
               <div key={e.id} className="rounded-xl border bg-background p-4">
                 <div className="text-sm font-medium">{e.full_name}</div>
-                <div className="mt-2 text-2xl font-bold text-[oklch(0.62_0.22_260)]">{Number(e.pto_balance_hours).toFixed(1)}h</div>
+                <div className="mt-2 text-2xl font-bold text-foreground">{Number(e.pto_balance_hours).toFixed(1)}h</div>
                 <div className="text-xs text-muted-foreground">≈ {(Number(e.pto_balance_hours) / 8).toFixed(1)} days available</div>
               </div>
             ))}

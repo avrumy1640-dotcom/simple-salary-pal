@@ -48,7 +48,7 @@ function GettingStartedPage() {
   return (
     <div className="space-y-8">
       <div className="rounded-3xl border bg-gradient-to-br from-[oklch(0.96_0.04_258)] to-card p-6 md:p-8">
-        <div className="inline-flex rounded-full bg-white px-3 py-1 text-xs font-semibold text-[oklch(0.55_0.2_260)]">WELCOME</div>
+        <div className="inline-flex rounded-full bg-white px-3 py-1 text-xs font-semibold text-foreground">WELCOME</div>
         <h1 className="mt-4 text-3xl font-bold tracking-tight md:text-4xl">Let's get your payroll running.</h1>
         <p className="mt-3 max-w-2xl text-muted-foreground">
           New to payroll? No problem. Follow these four steps and you'll be paying your team in minutes.
@@ -56,7 +56,7 @@ function GettingStartedPage() {
         </p>
         <div className="mt-6 flex items-center gap-3">
           <div className="h-2 flex-1 overflow-hidden rounded-full bg-white">
-            <div className="h-full bg-[oklch(0.62_0.22_260)] transition-all" style={{ width: `${progress}%` }} />
+            <div className="h-full bg-foreground transition-all" style={{ width: `${progress}%` }} />
           </div>
           <span className="text-sm font-medium text-muted-foreground">{completed} of {steps.length}</span>
         </div>
@@ -67,7 +67,7 @@ function GettingStartedPage() {
           <Link
             key={step.title}
             to={step.to}
-            className="group flex items-center gap-5 rounded-2xl border bg-card p-5 transition-all hover:border-[oklch(0.62_0.22_260)] hover:shadow-md"
+            className="group flex items-center gap-5 rounded-2xl border bg-card p-5 transition-all hover:border-foreground hover:shadow-md"
           >
             <div className="flex-shrink-0">
               {step.done ? (
@@ -76,7 +76,7 @@ function GettingStartedPage() {
                 <Circle className="h-7 w-7 text-muted-foreground/40" />
               )}
             </div>
-            <div className="grid h-12 w-12 flex-shrink-0 place-items-center rounded-xl bg-accent text-[oklch(0.55_0.2_260)]">
+            <div className="grid h-12 w-12 flex-shrink-0 place-items-center rounded-xl bg-accent text-foreground">
               <step.icon className="h-5 w-5" />
             </div>
             <div className="min-w-0 flex-1">
@@ -84,14 +84,14 @@ function GettingStartedPage() {
               <h3 className="mt-0.5 text-lg font-semibold tracking-tight">{step.title}</h3>
               <p className="text-sm text-muted-foreground">{step.desc}</p>
             </div>
-            <ArrowRight className="h-5 w-5 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-[oklch(0.62_0.22_260)]" />
+            <ArrowRight className="h-5 w-5 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-foreground" />
           </Link>
         ))}
       </div>
 
       <div className="rounded-2xl border bg-card p-6">
         <div className="flex items-center gap-2">
-          <BookOpen className="h-5 w-5 text-[oklch(0.62_0.22_260)]" />
+          <BookOpen className="h-5 w-5 text-foreground" />
           <h2 className="text-lg font-semibold">Payroll, explained simply</h2>
         </div>
         <div className="mt-4 grid gap-4 md:grid-cols-2">
@@ -107,12 +107,12 @@ function GettingStartedPage() {
       </div>
 
       <div className="flex items-center gap-3 rounded-2xl border bg-card p-5">
-        <Calculator className="h-6 w-6 text-[oklch(0.62_0.22_260)]" />
+        <Calculator className="h-6 w-6 text-foreground" />
         <div className="flex-1">
           <h3 className="font-semibold">Need help with a calculation?</h3>
           <p className="text-sm text-muted-foreground">Every payroll preview shows you exactly how each number is calculated — taxes, deductions, net pay — line by line.</p>
         </div>
-        <Link to="/app/payroll" className="rounded-full bg-[oklch(0.62_0.22_260)] px-4 py-2 text-sm font-medium text-white hover:opacity-90">Open payroll</Link>
+        <Link to="/app/payroll" className="rounded-full bg-foreground px-4 py-2 text-sm font-medium text-white hover:opacity-90">Open payroll</Link>
       </div>
     </div>
   );

@@ -12,7 +12,7 @@ export const Route = createFileRoute("/app/dashboard")({
 
 function Stat({ label, value, icon: Icon, accent }: { label: string; value: string; icon: typeof Users; accent?: boolean }) {
   return (
-    <div className={`rounded-2xl border p-5 ${accent ? "bg-gradient-to-br from-[oklch(0.62_0.22_260)] to-[oklch(0.55_0.22_260)] text-white border-transparent" : "bg-card"}`}>
+    <div className={`rounded-2xl border p-5 ${accent ? "bg-foreground text-background border-transparent" : "bg-card"}`}>
       <div className="flex items-center justify-between">
         <span className={`text-xs font-medium uppercase tracking-wider ${accent ? "text-white/80" : "text-muted-foreground"}`}>{label}</span>
         <Icon className={`h-4 w-4 ${accent ? "text-white/80" : "text-muted-foreground"}`} />
@@ -64,16 +64,16 @@ function Dashboard() {
           <p className="text-sm text-muted-foreground">Here's a quick look at your payroll.</p>
         </div>
         <Link to="/app/payroll">
-          <Button className="gap-2 rounded-full bg-[oklch(0.62_0.22_260)] text-white hover:opacity-90 px-6">
+          <Button className="gap-2 rounded-full bg-foreground text-white hover:opacity-90 px-6">
             Run payroll <ArrowRight className="h-4 w-4" />
           </Button>
         </Link>
       </div>
 
       {!allSetup && (
-        <Link to="/app/getting-started" className="block rounded-2xl border bg-gradient-to-r from-[oklch(0.96_0.04_258)] to-card p-5 hover:shadow-md transition">
+        <Link to="/app/getting-started" className="block rounded-2xl border bg-gradient-to-r from-secondary to-card p-5 hover:shadow-md transition">
           <div className="flex items-center gap-4">
-            <div className="grid h-12 w-12 place-items-center rounded-xl bg-[oklch(0.62_0.22_260)] text-white"><Sparkles className="h-5 w-5" /></div>
+            <div className="grid h-12 w-12 place-items-center rounded-xl bg-foreground text-white"><Sparkles className="h-5 w-5" /></div>
             <div className="flex-1">
               <div className="font-semibold">Finish setting up your payroll</div>
               <div className="mt-1.5 flex flex-wrap gap-3 text-sm">
@@ -96,7 +96,7 @@ function Dashboard() {
 
       {nextPayDate && (
         <div className="flex items-center gap-3 rounded-2xl border bg-card p-5">
-          <CalendarDays className="h-5 w-5 text-[oklch(0.62_0.22_260)]" />
+          <CalendarDays className="h-5 w-5 text-foreground" />
           <div className="flex-1">
             <div className="text-sm text-muted-foreground">Next pay date</div>
             <div className="text-lg font-semibold">{new Date(nextPayDate).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</div>
@@ -128,10 +128,10 @@ function SetupStep({ done, label }: { done: boolean; label: string }) {
 
 function QuickCard({ to, title, desc }: { to: string; title: string; desc: string }) {
   return (
-    <Link to={to} className="group rounded-2xl border bg-card p-5 transition-all hover:border-[oklch(0.62_0.22_260)] hover:shadow-md">
+    <Link to={to} className="group rounded-2xl border bg-card p-5 transition-all hover:border-foreground hover:shadow-md">
       <h3 className="font-medium">{title}</h3>
       <p className="mt-1 text-sm text-muted-foreground">{desc}</p>
-      <div className="mt-4 inline-flex items-center gap-1 text-sm text-[oklch(0.62_0.22_260)] font-medium">
+      <div className="mt-4 inline-flex items-center gap-1 text-sm text-foreground font-medium">
         Open <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
       </div>
     </Link>

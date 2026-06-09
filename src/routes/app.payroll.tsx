@@ -203,7 +203,7 @@ function PayrollPage() {
         )}
         <div className="flex justify-between items-center gap-2 border-t p-4 bg-card">
           <div className="flex gap-2 items-start text-xs text-muted-foreground"><Info className="h-3.5 w-3.5 mt-0.5" /> Once approved, this becomes a sealed record on the Reports page.</div>
-          <Button onClick={runPayroll} className="gap-2 rounded-full bg-[oklch(0.62_0.22_260)] text-white hover:opacity-90 px-6"><PlayCircle className="h-4 w-4" /> Approve & run payroll</Button>
+          <Button onClick={runPayroll} className="gap-2 rounded-full bg-foreground text-white hover:opacity-90 px-6"><PlayCircle className="h-4 w-4" /> Approve & run payroll</Button>
         </div>
       </div>
 
@@ -230,7 +230,7 @@ function PayrollPage() {
 
 function Tile({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
   return (
-    <div className={`rounded-2xl border p-4 ${accent ? "bg-gradient-to-br from-[oklch(0.62_0.22_260)] to-[oklch(0.55_0.22_260)] text-white border-transparent" : "bg-card"}`}>
+    <div className={`rounded-2xl border p-4 ${accent ? "bg-foreground text-background border-transparent" : "bg-card"}`}>
       <div className={`text-xs font-medium uppercase tracking-wider ${accent ? "text-white/80" : "text-muted-foreground"}`}>{label}</div>
       <div className="mt-2 text-2xl font-bold">{value}</div>
     </div>

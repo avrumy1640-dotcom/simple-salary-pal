@@ -93,7 +93,7 @@ function TaxesPage() {
           ))}
         </div>
         <div className="flex gap-2 border-t bg-accent/30 px-5 py-3 text-xs text-foreground/80">
-          <Info className="h-3.5 w-3.5 mt-0.5 text-[oklch(0.55_0.2_260)] flex-shrink-0" />
+          <Info className="h-3.5 w-3.5 mt-0.5 text-foreground flex-shrink-0" />
           <span>Use these totals when filing your quarterly <span className="font-medium">Form 941</span> (Employer's Quarterly Federal Tax Return).</span>
         </div>
       </div>
@@ -146,7 +146,7 @@ function TaxesPage() {
 function FormCard({ title, desc, due }: { title: string; desc: string; due: string }) {
   return (
     <div className="rounded-2xl border bg-card p-5">
-      <div className="inline-flex rounded-full bg-accent px-2.5 py-0.5 text-xs font-semibold text-[oklch(0.55_0.2_260)]">{title}</div>
+      <div className="inline-flex rounded-full bg-accent px-2.5 py-0.5 text-xs font-semibold text-foreground">{title}</div>
       <p className="mt-3 text-sm">{desc}</p>
       <p className="mt-2 text-xs text-muted-foreground">Due: {due}</p>
     </div>
