@@ -69,6 +69,17 @@ export function AppShell() {
   const [companyName, setCompanyName] = useState<string>("");
   const [userEmail, setUserEmail] = useState<string>("");
   const [open, setOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return localStorage.getItem("paylo_sidebar_collapsed") === "1";
+  });
+  const [badges, setBadges] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("paylo_sidebar_collapsed", collapsed ? "1" : "0");
+    }
+  }, [collapsed]);
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
@@ -76,6 +87,15 @@ export function AppShell() {
       setUserEmail(data.session.user.email ?? "");
       const { data: prof } = await supabase.from("profiles").select("company_name").eq("id", data.session.user.id).maybeSingle();
       setCompanyName(prof?.company_name || "Your company");
+      // Attention badges
+      const [{ count: ptoCount }, { count: draftRuns }] = await Promise.all([
+        supabase.from("pto_entries").select("*", { count: "exact", head: true }).eq("status", "pending"),
+        supabase.from("payroll_runs").select("*", { count: "exact", head: true }).eq("status", "draft"),
+      ]);
+      setBadges({
+        "/app/pto": ptoCount ?? 0,
+        "/app/payroll": draftRuns ?? 0,
+      });
       setChecking(false);
     });
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => {
