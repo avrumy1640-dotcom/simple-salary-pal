@@ -127,7 +127,7 @@ function PricingPage() {
               ].join(" ")}
             >
               {t.highlight && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-primary to-[#111827] px-4 py-1.5 text-xs font-extrabold uppercase tracking-wider text-primary-foreground shadow-glow">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-primary to-blue-700 px-4 py-1.5 text-xs font-extrabold uppercase tracking-wider text-primary-foreground shadow-glow">
                   Most Popular
                 </div>
               )}
