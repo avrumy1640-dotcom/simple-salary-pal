@@ -124,7 +124,7 @@ function EmployeesPage() {
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button onClick={openNew} className="gap-2 rounded-full bg-[oklch(0.62_0.22_260)] text-white hover:opacity-90"><Plus className="h-4 w-4" /> Add employee</Button>
+            <Button onClick={openNew} className="gap-2 rounded-full bg-foreground text-white hover:opacity-90"><Plus className="h-4 w-4" /> Add employee</Button>
           </DialogTrigger>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
@@ -195,7 +195,7 @@ function EmployeesPage() {
 
               <TabsContent value="tax" className="space-y-3 pt-4">
                 <div className="rounded-lg bg-accent/40 p-3 text-xs text-foreground/80 flex gap-2">
-                  <Info className="h-4 w-4 mt-0.5 text-[oklch(0.55_0.2_260)] flex-shrink-0" />
+                  <Info className="h-4 w-4 mt-0.5 text-foreground flex-shrink-0" />
                   This info comes from your employee's <strong>W-4 form</strong>. It tells you how much federal tax to withhold from each paycheck.
                 </div>
                 <Field label="SSN (last 4 only)" hint="We only store the last 4 digits.">
@@ -223,7 +223,7 @@ function EmployeesPage() {
 
               <TabsContent value="bank" className="space-y-3 pt-4">
                 <div className="rounded-lg bg-accent/40 p-3 text-xs text-foreground/80 flex gap-2">
-                  <Info className="h-4 w-4 mt-0.5 text-[oklch(0.55_0.2_260)] flex-shrink-0" />
+                  <Info className="h-4 w-4 mt-0.5 text-foreground flex-shrink-0" />
                   Direct deposit sends paychecks straight to your employee's bank account. We only store the last 4 digits for security.
                 </div>
                 <div className="flex items-center justify-between rounded-lg border p-3">
@@ -255,7 +255,7 @@ function EmployeesPage() {
 
             <DialogFooter>
               <Button variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
-              <Button onClick={save} className="rounded-full bg-[oklch(0.62_0.22_260)] text-white hover:opacity-90">{editing ? "Save changes" : "Add employee"}</Button>
+              <Button onClick={save} className="rounded-full bg-foreground text-white hover:opacity-90">{editing ? "Save changes" : "Add employee"}</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -267,7 +267,7 @@ function EmployeesPage() {
         ) : items.length === 0 ? (
           <div className="p-10 text-center">
             <p className="text-sm text-muted-foreground">No employees yet.</p>
-            <Button onClick={openNew} className="mt-4 gap-2 rounded-full bg-[oklch(0.62_0.22_260)] text-white hover:opacity-90"><Plus className="h-4 w-4" /> Add your first employee</Button>
+            <Button onClick={openNew} className="mt-4 gap-2 rounded-full bg-foreground text-white hover:opacity-90"><Plus className="h-4 w-4" /> Add your first employee</Button>
           </div>
         ) : (
           <ul className="divide-y">
@@ -280,7 +280,7 @@ function EmployeesPage() {
                   <div className="flex items-center gap-2">
                     <p className="truncate font-medium">{e.full_name}</p>
                     {e.status === "inactive" && <Badge variant="secondary">Inactive</Badge>}
-                    {e.direct_deposit_enabled && <span className="rounded-full bg-accent px-2 py-0.5 text-[10px] font-medium text-[oklch(0.55_0.2_260)]">Direct deposit</span>}
+                    {e.direct_deposit_enabled && <span className="rounded-full bg-accent px-2 py-0.5 text-[10px] font-medium text-foreground">Direct deposit</span>}
                   </div>
                   <p className="truncate text-sm text-muted-foreground">
                     {e.job_title || "—"} · {e.pay_type === "hourly" ? `${fmtUSD(e.pay_rate)}/hr` : `${fmtUSD(e.pay_rate)}/yr`}

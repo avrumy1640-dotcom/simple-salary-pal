@@ -68,7 +68,7 @@ export function AppShell() {
     <div className="min-h-screen bg-background">
       <div className="flex items-center justify-between border-b bg-sidebar px-4 py-3 md:hidden">
         <div className="flex items-center gap-2">
-          <div className="grid h-7 w-7 place-items-center rounded-full bg-[oklch(0.62_0.22_260)] text-white text-sm font-bold">P</div>
+          <div className="grid h-7 w-7 place-items-center rounded-full bg-foreground text-white text-sm font-bold">P</div>
           <span className="text-sm font-semibold">{companyName}</span>
         </div>
         <Button variant="ghost" size="icon" onClick={() => setOpen(!open)}>
@@ -82,7 +82,7 @@ export function AppShell() {
           open ? "translate-x-0" : "-translate-x-full"
         )}>
           <div className="hidden items-center gap-2 border-b px-5 py-4 md:flex">
-            <div className="grid h-9 w-9 place-items-center rounded-full bg-[oklch(0.62_0.22_260)] text-white font-bold">P</div>
+            <div className="grid h-9 w-9 place-items-center rounded-full bg-foreground text-white font-bold">P</div>
             <div className="flex flex-col min-w-0">
               <span className="text-sm font-semibold leading-tight">Paylo</span>
               <span className="text-xs text-muted-foreground leading-tight truncate">{companyName}</span>
@@ -95,8 +95,8 @@ export function AppShell() {
             className={cn(
               "mx-3 mt-3 flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors",
               path === "/app/getting-started"
-                ? "bg-[oklch(0.62_0.22_260)] text-white"
-                : "bg-accent text-[oklch(0.55_0.2_260)] hover:opacity-90"
+                ? "bg-foreground text-white"
+                : "bg-accent text-foreground hover:opacity-90"
             )}
           >
             <Sparkles className="h-4 w-4" /> Getting started

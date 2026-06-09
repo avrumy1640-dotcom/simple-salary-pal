@@ -116,7 +116,7 @@ function SettingsPage() {
       </Section>
 
       <div className="flex justify-end">
-        <Button onClick={save} className="gap-2 rounded-full bg-[oklch(0.62_0.22_260)] px-6 text-white hover:opacity-90">
+        <Button onClick={save} className="gap-2 rounded-full bg-foreground px-6 text-white hover:opacity-90">
           <Save className="h-4 w-4" /> Save settings
         </Button>
       </div>

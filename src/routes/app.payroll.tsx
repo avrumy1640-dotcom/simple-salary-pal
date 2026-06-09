@@ -203,7 +203,7 @@ function PayrollPage() {
         )}
         <div className="flex justify-between items-center gap-2 border-t p-4 bg-card">
           <div className="flex gap-2 items-start text-xs text-muted-foreground"><Info className="h-3.5 w-3.5 mt-0.5" /> Once approved, this becomes a sealed record on the Reports page.</div>
-          <Button onClick={runPayroll} className="gap-2 rounded-full bg-[oklch(0.62_0.22_260)] text-white hover:opacity-90 px-6"><PlayCircle className="h-4 w-4" /> Approve & run payroll</Button>
+          <Button onClick={runPayroll} className="gap-2 rounded-full bg-foreground text-white hover:opacity-90 px-6"><PlayCircle className="h-4 w-4" /> Approve & run payroll</Button>
         </div>
       </div>
 

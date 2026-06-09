@@ -94,7 +94,7 @@ function BenefitsPage() {
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button className="gap-2 rounded-full bg-[oklch(0.62_0.22_260)] text-white hover:opacity-90"><Plus className="h-4 w-4" /> Add deduction</Button>
+            <Button className="gap-2 rounded-full bg-foreground text-white hover:opacity-90"><Plus className="h-4 w-4" /> Add deduction</Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader><DialogTitle>Add a deduction</DialogTitle></DialogHeader>
@@ -159,7 +159,7 @@ function BenefitsPage() {
         </div>
       ) : items.length === 0 ? (
         <div className="rounded-2xl border bg-card p-10 text-center space-y-3">
-          <HeartHandshake className="mx-auto h-10 w-10 text-[oklch(0.62_0.22_260)]" />
+          <HeartHandshake className="mx-auto h-10 w-10 text-foreground" />
           <p className="text-sm text-muted-foreground">No deductions yet. Add health insurance, 401(k), or other recurring deductions.</p>
         </div>
       ) : (
@@ -173,7 +173,7 @@ function BenefitsPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
                         <span className="font-medium">{d.name}</span>
-                        <span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${d.pre_tax ? "bg-accent text-[oklch(0.55_0.2_260)]" : "bg-muted text-muted-foreground"}`}>
+                        <span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${d.pre_tax ? "bg-accent text-foreground" : "bg-muted text-muted-foreground"}`}>
                           {d.pre_tax ? "Pre-tax" : "Post-tax"}
                         </span>
                         {!d.active && <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] text-muted-foreground">Paused</span>}
@@ -193,7 +193,7 @@ function BenefitsPage() {
       )}
 
       <div className="flex gap-2 rounded-xl border bg-accent/40 p-4 text-sm">
-        <Info className="h-4 w-4 mt-0.5 text-[oklch(0.55_0.2_260)] flex-shrink-0" />
+        <Info className="h-4 w-4 mt-0.5 text-foreground flex-shrink-0" />
         <p className="text-foreground/80"><span className="font-medium">Tip:</span> Pre-tax deductions like 401(k) and health insurance reduce the federal tax your employees pay. Post-tax deductions (like garnishments) come out after taxes are calculated.</p>
       </div>
     </div>
