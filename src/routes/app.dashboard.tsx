@@ -12,14 +12,14 @@ export const Route = createFileRoute("/app/dashboard")({
 
 function Stat({ label, value, icon: Icon, accent }: { label: string; value: string; icon: typeof Users; accent?: boolean }) {
   return (
-    <div className={`group overflow-hidden rounded-3xl border p-5 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-float ${accent ? "surface-hero text-primary-foreground" : "surface-panel"}`}>
-      <div className="flex items-center justify-between">
-        <span className={`text-xs font-extrabold uppercase ${accent ? "text-primary-foreground/75" : "text-muted-foreground"}`}>{label}</span>
-        <div className={`grid h-9 w-9 place-items-center rounded-2xl ${accent ? "bg-primary-foreground/12" : "bg-accent"}`}>
+    <div className={`group overflow-hidden rounded-2xl border p-4 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-float sm:rounded-3xl sm:p-5 ${accent ? "surface-hero text-primary-foreground" : "surface-panel"}`}>
+      <div className="flex items-center justify-between gap-2">
+        <span className={`text-[10px] font-extrabold uppercase tracking-wide sm:text-xs ${accent ? "text-primary-foreground/75" : "text-muted-foreground"}`}>{label}</span>
+        <div className={`grid h-8 w-8 shrink-0 place-items-center rounded-xl sm:h-9 sm:w-9 sm:rounded-2xl ${accent ? "bg-primary-foreground/12" : "bg-accent"}`}>
           <Icon className={`h-4 w-4 ${accent ? "text-primary-foreground" : "text-primary"}`} />
         </div>
       </div>
-      <div className="mt-4 font-display text-3xl font-extrabold tabular">{value}</div>
+      <div className="mt-3 font-display text-2xl font-extrabold tabular sm:mt-4 sm:text-3xl">{value}</div>
     </div>
   );
 }
