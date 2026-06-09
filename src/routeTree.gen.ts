@@ -19,6 +19,7 @@ import { Route as AppPayrollRouteImport } from './routes/app.payroll'
 import { Route as AppGettingStartedRouteImport } from './routes/app.getting-started'
 import { Route as AppEmployeesRouteImport } from './routes/app.employees'
 import { Route as AppDashboardRouteImport } from './routes/app.dashboard'
+import { Route as AppBenefitsRouteImport } from './routes/app.benefits'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -70,11 +71,17 @@ const AppDashboardRoute = AppDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AppRoute,
 } as any)
+const AppBenefitsRoute = AppBenefitsRouteImport.update({
+  id: '/benefits',
+  path: '/benefits',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
+  '/app/benefits': typeof AppBenefitsRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/employees': typeof AppEmployeesRoute
   '/app/getting-started': typeof AppGettingStartedRoute
@@ -87,6 +94,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
+  '/app/benefits': typeof AppBenefitsRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/employees': typeof AppEmployeesRoute
   '/app/getting-started': typeof AppGettingStartedRoute
@@ -100,6 +108,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
+  '/app/benefits': typeof AppBenefitsRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/employees': typeof AppEmployeesRoute
   '/app/getting-started': typeof AppGettingStartedRoute
@@ -114,6 +123,7 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/auth'
+    | '/app/benefits'
     | '/app/dashboard'
     | '/app/employees'
     | '/app/getting-started'
@@ -126,6 +136,7 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/auth'
+    | '/app/benefits'
     | '/app/dashboard'
     | '/app/employees'
     | '/app/getting-started'
@@ -138,6 +149,7 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/auth'
+    | '/app/benefits'
     | '/app/dashboard'
     | '/app/employees'
     | '/app/getting-started'
@@ -225,10 +237,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDashboardRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/benefits': {
+      id: '/app/benefits'
+      path: '/benefits'
+      fullPath: '/app/benefits'
+      preLoaderRoute: typeof AppBenefitsRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
+  AppBenefitsRoute: typeof AppBenefitsRoute
   AppDashboardRoute: typeof AppDashboardRoute
   AppEmployeesRoute: typeof AppEmployeesRoute
   AppGettingStartedRoute: typeof AppGettingStartedRoute
@@ -239,6 +259,7 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppBenefitsRoute: AppBenefitsRoute,
   AppDashboardRoute: AppDashboardRoute,
   AppEmployeesRoute: AppEmployeesRoute,
   AppGettingStartedRoute: AppGettingStartedRoute,
