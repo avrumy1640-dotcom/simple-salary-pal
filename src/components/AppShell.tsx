@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import {
   LayoutDashboard, Users, Clock, Wallet, FileText, LogOut, Menu, X,
   HeartHandshake, CalendarDays, Settings as SettingsIcon, FileBadge, Sparkles,
+  Briefcase, Receipt, Landmark,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -15,12 +16,14 @@ const navGroups = [
       { to: "/app/dashboard", label: "Dashboard", icon: LayoutDashboard },
       { to: "/app/payroll", label: "Run payroll", icon: Wallet },
       { to: "/app/time", label: "Time & attendance", icon: Clock },
+      { to: "/app/paystubs", label: "Pay stubs & ACH", icon: Receipt },
     ],
   },
   {
     label: "People",
     items: [
-      { to: "/app/employees", label: "Employees", icon: Users },
+      { to: "/app/employees", label: "Employees (W-2)", icon: Users },
+      { to: "/app/contractors", label: "Contractors (1099)", icon: Briefcase },
       { to: "/app/pto", label: "Time off (PTO)", icon: CalendarDays },
       { to: "/app/benefits", label: "Benefits & deductions", icon: HeartHandshake },
     ],
@@ -29,6 +32,7 @@ const navGroups = [
     label: "Compliance",
     items: [
       { to: "/app/taxes", label: "Taxes & forms", icon: FileBadge },
+      { to: "/app/tax-filing", label: "Tax filing", icon: Landmark },
       { to: "/app/reports", label: "Reports", icon: FileText },
       { to: "/app/settings", label: "Company settings", icon: SettingsIcon },
     ],
