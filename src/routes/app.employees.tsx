@@ -69,6 +69,10 @@ function EmployeesPage() {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Employee | null>(null);
   const [form, setForm] = useState<FormState>(empty);
+  const [detail, setDetail] = useState<Employee | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<Employee | null>(null);
+  const [query, setQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
 
   async function refresh() {
     setLoading(true);
