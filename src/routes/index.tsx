@@ -154,8 +154,8 @@ function Landing() {
       </section>
 
       {/* PLATFORM */}
-      <section id="platform" className="mx-auto max-w-2xl px-5 pb-24 md:px-8">
-        <div className="text-center">
+      <section id="platform" className="mx-auto max-w-7xl px-5 pb-24 md:px-8">
+        <div className="mx-auto max-w-2xl text-center">
           <span className="inline-block rounded-full bg-accent px-3 py-1 text-[10px] font-extrabold uppercase text-accent-foreground">Platform</span>
           <h2 className="mt-4 font-display text-4xl font-extrabold md:text-5xl">
             Everything to pay your team compliantly.
@@ -165,7 +165,7 @@ function Landing() {
           </p>
         </div>
 
-        <div className="mt-12 space-y-4">
+        <div className="mt-12 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           <Feature icon={<Wallet className="h-6 w-6 text-orange-500" />} bg="bg-orange-50" title="Run payroll" desc="Auto-calculated gross, taxes, deductions, and net pay. Approve in one click." />
           <Feature icon={<Briefcase className="h-6 w-6 text-[var(--brand)]" />} bg="bg-[var(--brand-soft)]" title="1099 contractors" desc="Pay independent contractors. We generate year-end 1099-NEC forms automatically." />
           <Feature icon={<ShieldCheck className="h-6 w-6 text-emerald-600" />} bg="bg-emerald-50" title="Tax filing" desc="941, 940, W-2/W-3, 1099-NEC. Quarterly and year-end, handled fully for you." />
