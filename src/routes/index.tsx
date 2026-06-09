@@ -87,7 +87,7 @@ function Landing() {
           <div aria-hidden className="pointer-events-none absolute -inset-8 -z-10 rounded-[60px] bg-[var(--brand-soft)] opacity-60 blur-2xl" />
 
           {/* Main card */}
-          <div className="relative z-10 rounded-[36px] border border-border/50 bg-card shadow-float overflow-hidden float-y">
+          <div className="relative z-10 overflow-hidden rounded-[36px] border bg-card shadow-float float-y">
             <div className="flex items-center gap-1.5 px-7 pt-6 pb-2">
               <div className="h-2.5 w-2.5 rounded-full bg-red-400/40" />
               <div className="h-2.5 w-2.5 rounded-full bg-amber-400/40" />
@@ -101,7 +101,7 @@ function Landing() {
                   <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">Good morning, Sarah</p>
                   <h3 className="mt-0.5 text-2xl font-semibold tracking-tight">Acme Coffee Co.</h3>
                 </div>
-                <div className="flex items-center gap-1.5 rounded-full bg-foreground px-3 py-1.5 text-[10px] font-bold text-background">
+                <div className="flex items-center gap-1.5 rounded-full bg-accent px-3 py-1.5 text-[10px] font-bold text-accent-foreground">
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]" />
                   All systems normal
                 </div>
@@ -109,12 +109,12 @@ function Landing() {
 
               <div className="grid grid-cols-2 gap-3">
                 <MockStat icon={<Users className="h-4 w-4" />} value="14" label="Employees" />
-                <div className="rounded-3xl bg-foreground p-4 text-background shadow-card">
-                  <div className="mb-3 grid h-8 w-8 place-items-center rounded-xl bg-white/10 text-white/60">
+                <div className="rounded-3xl surface-hero p-4 text-primary-foreground shadow-card">
+                  <div className="mb-3 grid h-8 w-8 place-items-center rounded-xl bg-primary-foreground/12 text-primary-foreground/70">
                     <Wallet className="h-4 w-4" />
                   </div>
                   <div className="text-xl font-semibold tabular">$48,210</div>
-                  <div className="text-[10px] font-bold uppercase tracking-wider text-white/50">Next payroll</div>
+                  <div className="text-[10px] font-bold uppercase text-primary-foreground/60">Next payroll</div>
                 </div>
               </div>
 
@@ -127,9 +127,9 @@ function Landing() {
                   <span className="rounded-lg bg-emerald-100 px-2 py-0.5 text-[11px] font-bold text-emerald-700">+8.2%</span>
                 </div>
                 <div className="flex h-2.5 w-full overflow-hidden rounded-full bg-border/60">
-                  <div className="h-full bg-foreground" style={{ width: "65%" }} />
-                  <div className="h-full bg-foreground/40" style={{ width: "20%" }} />
-                  <div className="h-full bg-foreground/20" style={{ width: "15%" }} />
+                  <div className="h-full bg-primary" style={{ width: "65%" }} />
+                  <div className="h-full bg-cyan" style={{ width: "20%" }} />
+                  <div className="h-full bg-accent" style={{ width: "15%" }} />
                 </div>
                 <div className="mt-3 flex flex-wrap gap-4 text-[9px] font-bold uppercase tracking-wider text-muted-foreground">
                   <span className="flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-foreground" /> Net pay</span>
@@ -141,7 +141,7 @@ function Landing() {
           </div>
 
           {/* Floating accent cards */}
-          <div className="absolute -right-4 top-24 z-20 w-32 rounded-3xl bg-[var(--brand)] p-4 text-white shadow-glow float-y-sm">
+          <div className="absolute -right-4 top-24 z-20 w-32 rounded-3xl gradient-brand p-4 text-primary-foreground shadow-glow float-y-sm">
             <div className="text-[10px] font-medium opacity-70">Approvals</div>
             <div className="text-2xl font-bold tabular">98%</div>
           </div>
