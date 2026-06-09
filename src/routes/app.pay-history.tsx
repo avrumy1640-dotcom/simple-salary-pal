@@ -35,9 +35,9 @@ interface Item {
   social_security: number;
   medicare: number;
   state_tax: number;
-  deductions_total: number | null;
   net_pay: number;
-  hours_worked: number | null;
+  regular_hours: number;
+  overtime_hours: number;
   run_id: string;
 }
 

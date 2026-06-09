@@ -22,6 +22,7 @@ import { Route as AppReportsRouteImport } from './routes/app.reports'
 import { Route as AppPtoRouteImport } from './routes/app.pto'
 import { Route as AppPaystubsRouteImport } from './routes/app.paystubs'
 import { Route as AppPayrollRouteImport } from './routes/app.payroll'
+import { Route as AppPayHistoryRouteImport } from './routes/app.pay-history'
 import { Route as AppOnboardingRouteImport } from './routes/app.onboarding'
 import { Route as AppGettingStartedRouteImport } from './routes/app.getting-started'
 import { Route as AppForm1099RouteImport } from './routes/app.form-1099'
@@ -96,6 +97,11 @@ const AppPayrollRoute = AppPayrollRouteImport.update({
   path: '/payroll',
   getParentRoute: () => AppRoute,
 } as any)
+const AppPayHistoryRoute = AppPayHistoryRouteImport.update({
+  id: '/pay-history',
+  path: '/pay-history',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppOnboardingRoute = AppOnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
@@ -150,6 +156,7 @@ export interface FileRoutesByFullPath {
   '/app/form-1099': typeof AppForm1099Route
   '/app/getting-started': typeof AppGettingStartedRoute
   '/app/onboarding': typeof AppOnboardingRoute
+  '/app/pay-history': typeof AppPayHistoryRoute
   '/app/payroll': typeof AppPayrollRoute
   '/app/paystubs': typeof AppPaystubsRoute
   '/app/pto': typeof AppPtoRoute
@@ -173,6 +180,7 @@ export interface FileRoutesByTo {
   '/app/form-1099': typeof AppForm1099Route
   '/app/getting-started': typeof AppGettingStartedRoute
   '/app/onboarding': typeof AppOnboardingRoute
+  '/app/pay-history': typeof AppPayHistoryRoute
   '/app/payroll': typeof AppPayrollRoute
   '/app/paystubs': typeof AppPaystubsRoute
   '/app/pto': typeof AppPtoRoute
@@ -197,6 +205,7 @@ export interface FileRoutesById {
   '/app/form-1099': typeof AppForm1099Route
   '/app/getting-started': typeof AppGettingStartedRoute
   '/app/onboarding': typeof AppOnboardingRoute
+  '/app/pay-history': typeof AppPayHistoryRoute
   '/app/payroll': typeof AppPayrollRoute
   '/app/paystubs': typeof AppPaystubsRoute
   '/app/pto': typeof AppPtoRoute
@@ -222,6 +231,7 @@ export interface FileRouteTypes {
     | '/app/form-1099'
     | '/app/getting-started'
     | '/app/onboarding'
+    | '/app/pay-history'
     | '/app/payroll'
     | '/app/paystubs'
     | '/app/pto'
@@ -245,6 +255,7 @@ export interface FileRouteTypes {
     | '/app/form-1099'
     | '/app/getting-started'
     | '/app/onboarding'
+    | '/app/pay-history'
     | '/app/payroll'
     | '/app/paystubs'
     | '/app/pto'
@@ -268,6 +279,7 @@ export interface FileRouteTypes {
     | '/app/form-1099'
     | '/app/getting-started'
     | '/app/onboarding'
+    | '/app/pay-history'
     | '/app/payroll'
     | '/app/paystubs'
     | '/app/pto'
@@ -379,6 +391,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPayrollRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/pay-history': {
+      id: '/app/pay-history'
+      path: '/pay-history'
+      fullPath: '/app/pay-history'
+      preLoaderRoute: typeof AppPayHistoryRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/onboarding': {
       id: '/app/onboarding'
       path: '/onboarding'
@@ -447,6 +466,7 @@ interface AppRouteChildren {
   AppForm1099Route: typeof AppForm1099Route
   AppGettingStartedRoute: typeof AppGettingStartedRoute
   AppOnboardingRoute: typeof AppOnboardingRoute
+  AppPayHistoryRoute: typeof AppPayHistoryRoute
   AppPayrollRoute: typeof AppPayrollRoute
   AppPaystubsRoute: typeof AppPaystubsRoute
   AppPtoRoute: typeof AppPtoRoute
@@ -467,6 +487,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppForm1099Route: AppForm1099Route,
   AppGettingStartedRoute: AppGettingStartedRoute,
   AppOnboardingRoute: AppOnboardingRoute,
+  AppPayHistoryRoute: AppPayHistoryRoute,
   AppPayrollRoute: AppPayrollRoute,
   AppPaystubsRoute: AppPaystubsRoute,
   AppPtoRoute: AppPtoRoute,
