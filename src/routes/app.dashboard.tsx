@@ -166,25 +166,6 @@ function Dashboard() {
         </div>
       </div>
 
-      {/* Setup checklist */}
-      {!loading && !allSetup && (
-        <Link to="/app/getting-started" className="block rounded-3xl surface-glass p-5 transition-all hover:-translate-y-0.5 hover:shadow-glow">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center">
-            <div className="flex items-center gap-3 md:contents">
-              <div className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-[#C2F5FF] text-[#07142A] shadow-glow"><Sparkles className="h-5 w-5" /></div>
-              <div className="flex-1">
-                <div className="font-display text-lg font-bold text-[#07142A]">Finish setting up your payroll</div>
-                <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1.5 text-sm">
-                  <SetupStep done={setupSteps.company} label="Company info" />
-                  <SetupStep done={setupSteps.employees} label="Add employees" />
-                  <SetupStep done={setupSteps.payroll} label="First payroll" />
-                </div>
-              </div>
-            </div>
-            <ArrowRight className="hidden h-5 w-5 text-[#4A6079] md:block" />
-          </div>
-        </Link>
-      )}
 
       {/* KPI cards */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
