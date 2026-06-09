@@ -30,7 +30,7 @@ function Landing() {
       <header className="sticky top-0 z-30 border-b bg-background/85 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 md:px-8">
           <Link to="/" className="flex items-center gap-2">
-            <div className="grid h-8 w-8 place-items-center rounded-full bg-foreground text-white font-bold">P</div>
+            <div className="grid h-8 w-8 place-items-center rounded-full bg-foreground text-background font-bold">P</div>
             <span className="text-xl font-bold tracking-tight">paylo</span>
           </Link>
           <nav className="hidden items-center gap-8 text-sm font-medium text-foreground/80 md:flex">
@@ -47,7 +47,7 @@ function Landing() {
               </button>
             </Link>
             <Link to="/auth">
-              <button className="rounded-full border-2 border-foreground px-4 py-2 text-sm font-semibold text-foreground hover:bg-foreground hover:text-white transition-colors">
+              <button className="rounded-full border-2 border-foreground px-4 py-2 text-sm font-semibold text-foreground hover:bg-foreground hover:text-background transition-colors">
                 Get Started
               </button>
             </Link>
@@ -84,7 +84,7 @@ function Landing() {
 
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link to="/auth">
-              <Button size="lg" className="rounded-full bg-foreground px-7 text-white hover:bg-foreground/90">
+              <Button size="lg" className="rounded-full bg-foreground px-7 text-background hover:bg-foreground/90">
                 Get a Demo <ArrowRight className="ml-1 h-4 w-4" />
               </Button>
             </Link>
@@ -103,7 +103,7 @@ function Landing() {
               {/* Mock app top bar */}
               <div className="flex items-center justify-between border-b bg-card px-4 py-3">
                 <div className="flex items-center gap-2">
-                  <div className="grid h-6 w-6 place-items-center rounded-full bg-foreground text-[10px] font-bold text-white">P</div>
+                  <div className="grid h-6 w-6 place-items-center rounded-full bg-foreground text-[10px] font-bold text-background">P</div>
                   <span className="text-sm font-semibold">Acme Co.</span>
                 </div>
                 <div className="hidden gap-6 text-xs font-medium text-muted-foreground md:flex">
@@ -200,7 +200,7 @@ function Landing() {
         </p>
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Link to="/auth">
-            <Button size="lg" className="rounded-full bg-foreground px-8 text-white hover:bg-foreground/90">
+            <Button size="lg" className="rounded-full bg-foreground px-8 text-background hover:bg-foreground/90">
               Get a Demo <ArrowRight className="ml-1 h-4 w-4" />
             </Button>
           </Link>
@@ -215,7 +215,7 @@ function Landing() {
       <footer className="border-t">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-5 py-8 text-sm text-muted-foreground md:flex-row md:px-8">
           <div className="flex items-center gap-2">
-            <div className="grid h-6 w-6 place-items-center rounded-full bg-foreground text-[10px] font-bold text-white">P</div>
+            <div className="grid h-6 w-6 place-items-center rounded-full bg-foreground text-[10px] font-bold text-background">P</div>
             <span className="font-semibold text-foreground">paylo</span>
           </div>
           <span>© {new Date().getFullYear()} Paylo. All rights reserved.</span>
