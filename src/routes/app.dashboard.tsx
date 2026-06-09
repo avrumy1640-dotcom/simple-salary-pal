@@ -200,6 +200,7 @@ function Dashboard() {
               icon={Wallet}
               accent
               delay={0}
+              deltaPct={8.2}
             />
             <KpiCard
               label="Active employees"
@@ -207,6 +208,7 @@ function Dashboard() {
               displayValue={(n) => Math.round(n).toString()}
               icon={Users}
               delay={80}
+              deltaPct={empCount > 0 ? 4.5 : 0}
             />
             <KpiCard
               label="Pending approvals"
@@ -214,6 +216,7 @@ function Dashboard() {
               displayValue={(n) => Math.round(n).toString()}
               icon={Clock}
               delay={160}
+              deltaPct={pendingPto > 0 ? -12.0 : 0}
             />
             <KpiCard
               label="Last net payroll"
@@ -221,6 +224,7 @@ function Dashboard() {
               displayValue={(n) => fmtUSD(n)}
               icon={FileBadge}
               delay={240}
+              deltaPct={lastRun ? 3.1 : 0}
             />
           </>
         )}
