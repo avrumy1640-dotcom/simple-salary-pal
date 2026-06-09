@@ -59,21 +59,21 @@ function Dashboard() {
   const allSetup = setupSteps.company && setupSteps.employees && setupSteps.payroll;
 
   return (
-    <div className="space-y-8">
-      <div className="relative overflow-hidden rounded-[2rem] surface-hero p-6 text-primary-foreground shadow-float md:p-8">
+    <div className="space-y-5 sm:space-y-8">
+      <div className="relative overflow-hidden rounded-[1.5rem] surface-hero p-5 text-primary-foreground shadow-float sm:rounded-[2rem] sm:p-6 md:p-8">
         <div aria-hidden className="absolute inset-0 grid-bg opacity-20" />
         <div aria-hidden className="absolute -right-16 -top-16 h-64 w-64 rounded-full bg-primary-foreground/10 blur-3xl" />
-        <div className="relative z-10 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+        <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-primary-foreground/18 bg-primary-foreground/10 px-3 py-1 text-xs font-bold text-primary-foreground/80 backdrop-blur">
+            <div className="inline-flex items-center gap-2 rounded-full border border-primary-foreground/18 bg-primary-foreground/10 px-3 py-1 text-[11px] font-bold text-primary-foreground/80 backdrop-blur sm:text-xs">
               <span className="h-2 w-2 rounded-full bg-success pulse-dot" /> Live payroll command center
             </div>
-            <h1 className="mt-5 font-display text-4xl font-extrabold leading-tight md:text-6xl">Welcome back.</h1>
-            <p className="mt-3 max-w-xl text-base font-medium leading-7 text-primary-foreground/72">Run payroll, approve time, review documents, and keep every worker record tight from one polished dashboard.</p>
+            <h1 className="mt-4 font-display text-3xl font-extrabold leading-[1.05] sm:mt-5 sm:text-4xl md:text-6xl">Welcome back.</h1>
+            <p className="mt-3 max-w-xl text-sm font-medium leading-6 text-primary-foreground/72 sm:text-base sm:leading-7">Run payroll, approve time, review documents, and keep every worker record tight from one polished dashboard.</p>
           </div>
-          <div className="grid min-w-[220px] gap-3 rounded-3xl border border-primary-foreground/12 bg-primary-foreground/10 p-4 backdrop-blur-xl">
-            <div className="text-xs font-bold text-primary-foreground/64">Next pay date</div>
-            <div className="font-display text-2xl font-extrabold">
+          <div className="grid gap-3 rounded-2xl border border-primary-foreground/12 bg-primary-foreground/10 p-4 backdrop-blur-xl sm:rounded-3xl lg:min-w-[220px]">
+            <div className="text-[11px] font-bold text-primary-foreground/64 sm:text-xs">Next pay date</div>
+            <div className="font-display text-xl font-extrabold sm:text-2xl">
               {nextPayDate ? new Date(nextPayDate).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "Ready"}
             </div>
             <Link to="/app/payroll">
@@ -86,41 +86,45 @@ function Dashboard() {
       </div>
 
       {!allSetup && (
-        <Link to="/app/getting-started" className="block rounded-3xl border bg-card p-5 shadow-card transition-all hover:-translate-y-0.5 hover:shadow-float">
+        <Link to="/app/getting-started" className="block rounded-2xl border bg-card p-4 shadow-card transition-all hover:-translate-y-0.5 hover:shadow-float sm:rounded-3xl sm:p-5">
           <div className="flex flex-col gap-4 md:flex-row md:items-center">
-            <div className="grid h-14 w-14 place-items-center rounded-2xl gradient-brand text-primary-foreground shadow-glow"><Sparkles className="h-5 w-5" /></div>
-            <div className="flex-1">
-              <div className="font-display text-lg font-bold">Finish setting up your payroll</div>
-              <div className="mt-2 flex flex-wrap gap-3 text-sm">
-                <SetupStep done={setupSteps.company} label="Company info" />
-                <SetupStep done={setupSteps.employees} label="Add employees" />
-                <SetupStep done={setupSteps.payroll} label="First payroll" />
+            <div className="flex items-center gap-3 md:contents">
+              <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl gradient-brand text-primary-foreground shadow-glow sm:h-14 sm:w-14"><Sparkles className="h-5 w-5" /></div>
+              <div className="flex-1 md:flex-1">
+                <div className="font-display text-base font-bold sm:text-lg">Finish setting up your payroll</div>
+                <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1.5 text-sm">
+                  <SetupStep done={setupSteps.company} label="Company info" />
+                  <SetupStep done={setupSteps.employees} label="Add employees" />
+                  <SetupStep done={setupSteps.payroll} label="First payroll" />
+                </div>
               </div>
             </div>
-            <ArrowRight className="h-5 w-5 text-muted-foreground" />
+            <ArrowRight className="hidden h-5 w-5 text-muted-foreground md:block" />
           </div>
         </Link>
       )}
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         <Stat label="Active employees" value={String(empCount)} icon={Users} />
-        <Stat label="Hours (14 days)" value={hoursThisPeriod.toFixed(1)} icon={Clock} />
-        <Stat label="Pending time off" value={String(pendingPto)} icon={CalendarDays} />
+        <Stat label="Hours (14d)" value={hoursThisPeriod.toFixed(1)} icon={Clock} />
+        <Stat label="Pending PTO" value={String(pendingPto)} icon={CalendarDays} />
         <Stat label="Last net payroll" value={lastRun ? fmtUSD(lastRun.net_total) : "—"} icon={Wallet} accent />
       </div>
 
       {nextPayDate && (
-        <div className="flex flex-col gap-4 rounded-3xl border bg-card p-5 shadow-card md:flex-row md:items-center">
-          <div className="grid h-12 w-12 place-items-center rounded-2xl bg-accent text-primary"><CalendarDays className="h-5 w-5" /></div>
-          <div className="flex-1">
-            <div className="text-sm font-bold text-muted-foreground">Next pay date</div>
-            <div className="font-display text-xl font-bold">{new Date(nextPayDate).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</div>
+        <div className="flex flex-col gap-4 rounded-2xl border bg-card p-4 shadow-card sm:rounded-3xl sm:p-5 md:flex-row md:items-center">
+          <div className="flex items-center gap-3 md:contents">
+            <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-accent text-primary sm:h-12 sm:w-12"><CalendarDays className="h-5 w-5" /></div>
+            <div className="flex-1 min-w-0">
+              <div className="text-xs font-bold text-muted-foreground sm:text-sm">Next pay date</div>
+              <div className="font-display text-base font-bold sm:text-xl">{new Date(nextPayDate).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</div>
+            </div>
           </div>
-          <Link to="/app/payroll"><Button variant="outline">Prepare payroll</Button></Link>
+          <Link to="/app/payroll" className="md:ml-auto"><Button variant="outline" className="w-full md:w-auto">Prepare payroll</Button></Link>
         </div>
       )}
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-3 sm:gap-4 sm:grid-cols-2 md:grid-cols-3">
         <QuickCard to="/app/employees" title="Add an employee" desc="Set up hourly or salary." />
         <QuickCard to="/app/time" title="Log hours" desc="Track work for this pay period." />
         <QuickCard to="/app/benefits" title="Manage benefits" desc="Health, 401(k), and deductions." />
