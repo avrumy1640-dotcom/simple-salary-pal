@@ -12,12 +12,14 @@ export const Route = createFileRoute("/app/dashboard")({
 
 function Stat({ label, value, icon: Icon, accent }: { label: string; value: string; icon: typeof Users; accent?: boolean }) {
   return (
-    <div className={`rounded-2xl border p-5 ${accent ? "bg-foreground text-background border-transparent" : "bg-card"}`}>
+    <div className={`group overflow-hidden rounded-3xl border p-5 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-float ${accent ? "surface-hero text-primary-foreground" : "surface-panel"}`}>
       <div className="flex items-center justify-between">
-        <span className={`text-xs font-medium uppercase tracking-wider ${accent ? "text-white/80" : "text-muted-foreground"}`}>{label}</span>
-        <Icon className={`h-4 w-4 ${accent ? "text-white/80" : "text-muted-foreground"}`} />
+        <span className={`text-xs font-extrabold uppercase ${accent ? "text-primary-foreground/75" : "text-muted-foreground"}`}>{label}</span>
+        <div className={`grid h-9 w-9 place-items-center rounded-2xl ${accent ? "bg-primary-foreground/12" : "bg-accent"}`}>
+          <Icon className={`h-4 w-4 ${accent ? "text-primary-foreground" : "text-primary"}`} />
+        </div>
       </div>
-      <div className="mt-3 text-2xl font-bold tracking-tight">{value}</div>
+      <div className="mt-4 font-display text-3xl font-extrabold tabular">{value}</div>
     </div>
   );
 }
@@ -57,26 +59,39 @@ function Dashboard() {
   const allSetup = setupSteps.company && setupSteps.employees && setupSteps.payroll;
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Welcome back 👋</h1>
-          <p className="text-sm text-muted-foreground">Here's a quick look at your payroll.</p>
+    <div className="space-y-8">
+      <div className="relative overflow-hidden rounded-[2rem] surface-hero p-6 text-primary-foreground shadow-float md:p-8">
+        <div aria-hidden className="absolute inset-0 grid-bg opacity-20" />
+        <div aria-hidden className="absolute -right-16 -top-16 h-64 w-64 rounded-full bg-primary-foreground/10 blur-3xl" />
+        <div className="relative z-10 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-2xl">
+            <div className="inline-flex items-center gap-2 rounded-full border border-primary-foreground/18 bg-primary-foreground/10 px-3 py-1 text-xs font-bold text-primary-foreground/80 backdrop-blur">
+              <span className="h-2 w-2 rounded-full bg-success pulse-dot" /> Live payroll command center
+            </div>
+            <h1 className="mt-5 font-display text-4xl font-extrabold leading-tight md:text-6xl">Welcome back.</h1>
+            <p className="mt-3 max-w-xl text-base font-medium leading-7 text-primary-foreground/72">Run payroll, approve time, review documents, and keep every worker record tight from one polished dashboard.</p>
+          </div>
+          <div className="grid min-w-[220px] gap-3 rounded-3xl border border-primary-foreground/12 bg-primary-foreground/10 p-4 backdrop-blur-xl">
+            <div className="text-xs font-bold text-primary-foreground/64">Next pay date</div>
+            <div className="font-display text-2xl font-extrabold">
+              {nextPayDate ? new Date(nextPayDate).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "Ready"}
+            </div>
+            <Link to="/app/payroll">
+              <Button className="w-full gap-2 bg-primary-foreground text-primary hover:bg-primary-foreground/92">
+                Run payroll <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
         </div>
-        <Link to="/app/payroll">
-          <Button className="gap-2 rounded-full bg-foreground text-white hover:opacity-90 px-6">
-            Run payroll <ArrowRight className="h-4 w-4" />
-          </Button>
-        </Link>
       </div>
 
       {!allSetup && (
-        <Link to="/app/getting-started" className="block rounded-2xl border bg-gradient-to-r from-secondary to-card p-5 hover:shadow-md transition">
-          <div className="flex items-center gap-4">
-            <div className="grid h-12 w-12 place-items-center rounded-xl bg-foreground text-white"><Sparkles className="h-5 w-5" /></div>
+        <Link to="/app/getting-started" className="block rounded-3xl border bg-card p-5 shadow-card transition-all hover:-translate-y-0.5 hover:shadow-float">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center">
+            <div className="grid h-14 w-14 place-items-center rounded-2xl gradient-brand text-primary-foreground shadow-glow"><Sparkles className="h-5 w-5" /></div>
             <div className="flex-1">
-              <div className="font-semibold">Finish setting up your payroll</div>
-              <div className="mt-1.5 flex flex-wrap gap-3 text-sm">
+              <div className="font-display text-lg font-bold">Finish setting up your payroll</div>
+              <div className="mt-2 flex flex-wrap gap-3 text-sm">
                 <SetupStep done={setupSteps.company} label="Company info" />
                 <SetupStep done={setupSteps.employees} label="Add employees" />
                 <SetupStep done={setupSteps.payroll} label="First payroll" />
@@ -95,13 +110,13 @@ function Dashboard() {
       </div>
 
       {nextPayDate && (
-        <div className="flex items-center gap-3 rounded-2xl border bg-card p-5">
-          <CalendarDays className="h-5 w-5 text-foreground" />
+        <div className="flex flex-col gap-4 rounded-3xl border bg-card p-5 shadow-card md:flex-row md:items-center">
+          <div className="grid h-12 w-12 place-items-center rounded-2xl bg-accent text-primary"><CalendarDays className="h-5 w-5" /></div>
           <div className="flex-1">
-            <div className="text-sm text-muted-foreground">Next pay date</div>
-            <div className="text-lg font-semibold">{new Date(nextPayDate).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</div>
+            <div className="text-sm font-bold text-muted-foreground">Next pay date</div>
+            <div className="font-display text-xl font-bold">{new Date(nextPayDate).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</div>
           </div>
-          <Link to="/app/payroll"><Button variant="outline" className="rounded-full">Prepare payroll</Button></Link>
+          <Link to="/app/payroll"><Button variant="outline">Prepare payroll</Button></Link>
         </div>
       )}
 
