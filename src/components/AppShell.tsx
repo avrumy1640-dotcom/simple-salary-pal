@@ -135,15 +135,18 @@ export function AppShell() {
 
       <div className="flex">
         <aside className={cn(
-          "fixed inset-y-0 left-0 z-40 flex w-72 transform flex-col border-r border-border bg-sidebar shadow-float backdrop-blur-2xl transition-transform md:sticky md:top-0 md:h-screen md:translate-x-0",
-          open ? "translate-x-0" : "-translate-x-full"
+          "fixed inset-y-0 left-0 z-40 flex transform flex-col border-r border-primary/15 bg-sidebar shadow-float backdrop-blur-2xl transition-all duration-300 md:sticky md:top-0 md:h-screen md:translate-x-0",
+          collapsed ? "w-20" : "w-72",
+          open ? "translate-x-0 w-72" : "-translate-x-full",
         )}>
-          <div className="hidden items-center gap-3 border-b border-border px-5 py-5 md:flex">
-            <div className="grid h-11 w-11 place-items-center rounded-2xl gradient-brand font-bold text-primary-foreground shadow-glow">P</div>
-            <div className="flex flex-col min-w-0">
-              <span className="font-display text-lg font-bold leading-tight tracking-tight text-foreground">Paylo</span>
-              <span className="truncate text-xs font-medium leading-tight text-muted-foreground">{companyName}</span>
-            </div>
+          <div className={cn("hidden items-center border-b border-primary/15 py-5 md:flex", collapsed ? "px-3 justify-center" : "gap-3 px-5")}>
+            <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl gradient-brand font-bold text-primary-foreground shadow-glow">P</div>
+            {!collapsed && (
+              <div className="flex flex-col min-w-0">
+                <span className="font-display text-lg font-bold leading-tight tracking-tight text-white">Paylo</span>
+                <span className="truncate text-xs font-medium leading-tight text-white/60">{companyName}</span>
+              </div>
+            )}
           </div>
 
           <Link
@@ -151,36 +154,48 @@ export function AppShell() {
             onClick={() => setOpen(false)}
             className={cn(
               "mx-3 mt-4 flex items-center gap-2 rounded-2xl px-4 py-3 text-sm font-semibold transition-all duration-300",
+              collapsed && "justify-center px-2",
               path === "/app/getting-started"
                 ? "gradient-brand text-primary-foreground shadow-glow"
-                : "surface-glass text-foreground hover:-translate-y-0.5 hover:shadow-glow"
+                : "surface-glass text-white hover:-translate-y-0.5 hover:shadow-glow",
             )}
           >
-            <Sparkles className="h-4 w-4" /> Getting started
+            <Sparkles className="h-4 w-4 shrink-0" /> {!collapsed && "Getting started"}
           </Link>
 
           <nav className="mt-4 flex-1 space-y-6 overflow-y-auto px-3 pb-3">
             {navGroups.map((g) => (
               <div key={g.label}>
-                <div className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">{g.label}</div>
+                {!collapsed && <div className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.14em] text-white/45">{g.label}</div>}
                 <div className="space-y-1">
                   {g.items.map((n) => {
                     const active = path === n.to || (n.to !== "/app/dashboard" && path.startsWith(n.to));
+                    const badge = badges[n.to] ?? 0;
                     return (
                       <Link
                         key={n.to}
                         to={n.to}
                         onClick={() => setOpen(false)}
+                        title={collapsed ? n.label : undefined}
                         className={cn(
                           "group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-300",
+                          collapsed && "justify-center px-2",
                           active
-                            ? "bg-primary text-primary-foreground shadow-soft translate-x-1"
-                            : "text-muted-foreground hover:bg-accent hover:text-accent-foreground hover:translate-x-1"
+                            ? "bg-primary/15 text-primary border border-primary/40 shadow-[0_0_20px_-6px_rgba(61,255,255,0.5)]"
+                            : "text-white/70 hover:bg-primary/10 hover:text-white hover:translate-x-1",
                         )}
                       >
-                        {active && <span className="absolute left-0 top-1/2 h-6 w-[3px] -translate-y-1/2 rounded-r-full bg-background" />}
-                        <n.icon className={cn("h-4 w-4 transition-colors", active ? "text-primary-foreground" : "text-muted-foreground group-hover:text-accent-foreground")} />
-                        {n.label}
+                        {active && <span className="absolute left-0 top-1/2 h-7 w-[3px] -translate-y-1/2 rounded-r-full bg-primary shadow-[0_0_8px_rgba(61,255,255,0.8)]" />}
+                        <n.icon className={cn("h-4 w-4 shrink-0 transition-colors", active ? "text-primary" : "text-white/55 group-hover:text-white")} />
+                        {!collapsed && <span className="flex-1 truncate">{n.label}</span>}
+                        {badge > 0 && (
+                          <span className={cn(
+                            "grid h-5 min-w-[20px] place-items-center rounded-full bg-primary px-1.5 text-[10px] font-extrabold text-primary-foreground shadow-[0_0_10px_rgba(61,255,255,0.6)]",
+                            collapsed && "absolute -right-1 -top-1",
+                          )}>
+                            {badge}
+                          </span>
+                        )}
                       </Link>
                     );
                   })}
@@ -189,14 +204,41 @@ export function AppShell() {
             ))}
           </nav>
 
-          <div className="border-t border-border p-3">
-            <Button variant="ghost" className="w-full justify-start gap-2 rounded-xl font-semibold text-foreground hover:bg-muted" onClick={signOut}>
-              <LogOut className="h-4 w-4" /> Sign out
-            </Button>
+          <div className="border-t border-primary/15 p-3 space-y-2">
+            {/* User profile */}
+            {!collapsed && (
+              <div className="flex items-center gap-3 rounded-2xl border border-primary/15 bg-card/40 px-3 py-2.5">
+                <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full gradient-brand text-xs font-bold text-primary-foreground">
+                  {(userEmail || "U").slice(0, 2).toUpperCase()}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="truncate text-sm font-semibold text-white">{companyName}</div>
+                  <div className="truncate text-[10px] text-white/55">{userEmail}</div>
+                </div>
+              </div>
+            )}
+            <div className="flex gap-2">
+              <Button
+                variant="ghost"
+                className={cn("gap-2 rounded-xl font-semibold text-white/85 hover:bg-primary/10 hover:text-white", collapsed ? "w-full justify-center px-2" : "flex-1 justify-start")}
+                onClick={signOut}
+              >
+                <LogOut className="h-4 w-4" /> {!collapsed && "Sign out"}
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+                className="hidden md:grid h-9 w-9 shrink-0 rounded-xl text-primary hover:bg-primary/10"
+                onClick={() => setCollapsed((c) => !c)}
+              >
+                {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+              </Button>
+            </div>
           </div>
         </aside>
 
-        {open && <div className="fixed inset-0 z-30 bg-black/20 backdrop-blur-sm md:hidden" onClick={() => setOpen(false)} />}
+        {open && <div className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm md:hidden" onClick={() => setOpen(false)} />}
 
         <main className="flex-1 min-w-0">
           <TopBar companyName={companyName} userEmail={userEmail} />
