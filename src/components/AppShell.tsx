@@ -103,7 +103,7 @@ export function AppShell() {
   return (
     <div className="min-h-screen text-foreground">
       {/* Mobile top bar */}
-      <div className="sticky top-0 z-50 flex items-center justify-between border-b border-border bg-white/80 px-4 py-3 backdrop-blur-2xl md:hidden">
+      <div className="sticky top-0 z-50 flex items-center justify-between border-b border-border bg-card/80 px-4 py-3 backdrop-blur-2xl md:hidden">
         <div className="flex items-center gap-2">
           <div className="grid h-9 w-9 place-items-center rounded-xl gradient-brand text-sm font-bold text-primary-foreground shadow-glow">P</div>
           <span className="font-display text-base font-bold tracking-tight text-foreground">{companyName}</span>
