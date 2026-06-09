@@ -37,9 +37,6 @@ function KpiCard({
       <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#C2F5FF] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
       <div className="flex items-center justify-between">
         <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#4A6079]">{label}</span>
-        <div className="grid h-10 w-10 place-items-center rounded-2xl bg-[#C2F5FF]/60 text-[#07142A] transition-transform group-hover:scale-110">
-          <Icon className="h-4 w-4" />
-        </div>
       </div>
       <div className="mt-5 font-display text-[2rem] font-extrabold tabular text-[#07142A] leading-none">
         {displayValue(animated)}
@@ -339,9 +336,6 @@ function QuickCard({ to, title, desc, icon: Icon }: { to: string; title: string;
       to={to}
       className="group rounded-3xl surface-glass p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-glow"
     >
-      <div className="grid h-10 w-10 place-items-center rounded-2xl bg-[#C2F5FF]/60 text-[#07142A] transition-transform group-hover:scale-110">
-        <Icon className="h-4 w-4" />
-      </div>
       <h3 className="mt-4 font-display text-lg font-bold text-[#07142A]">{title}</h3>
       <p className="mt-1 text-sm text-[#4A6079]">{desc}</p>
       <div className="mt-4 inline-flex items-center gap-1.5 text-sm font-bold text-[#07142A]">
