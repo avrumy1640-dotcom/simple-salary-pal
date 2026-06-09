@@ -94,7 +94,7 @@ function PricingPage() {
             <Link to="/pricing" className="text-[#07142A]">Pricing</Link>
             <Link to="/auth" className="hover:text-[#07142A]">Sign in</Link>
           </nav>
-          <Link to="/auth" className="inline-flex items-center gap-1.5 rounded-xl bg-[#2563EB] px-5 py-2.5 text-sm font-bold text-white shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-glow">
+          <Link to="/auth" className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-glow">
             Start free <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
@@ -144,7 +144,7 @@ function PricingPage() {
                 className={[
                   "mt-6 inline-flex w-full items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-extrabold transition-all hover:-translate-y-0.5",
                   t.highlight
-                    ? "bg-[#2563EB] text-white hover:shadow-glow"
+                    ? "bg-primary text-primary-foreground hover:shadow-glow"
                     : "border border-[#07142A]/15 bg-white text-[#07142A] hover:bg-[#ECFAFF] hover:shadow-soft",
                 ].join(" ")}
               >
@@ -170,7 +170,7 @@ function PricingPage() {
           <p className="mt-2 text-sm text-[#4A6079]">
             Enterprise teams, accounting firms, and PEOs — we'll build a plan around how you actually work.
           </p>
-          <Link to="/auth" className="mt-5 inline-flex items-center gap-1.5 rounded-xl bg-[#2563EB] px-5 py-2.5 text-sm font-bold text-white hover:-translate-y-0.5 hover:shadow-glow transition-all">
+          <Link to="/auth" className="mt-5 inline-flex items-center gap-1.5 rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground hover:-translate-y-0.5 hover:shadow-glow transition-all">
             Talk to us <ArrowRight className="h-4 w-4" />
           </Link>
         </div>

@@ -207,7 +207,7 @@ function Landing() {
       <footer className="border-t border-border/60 py-10">
         <div className="mx-auto flex max-w-7xl flex-col items-center gap-3 px-5 md:px-8">
           <div className="flex items-center gap-2 opacity-60">
-            <div className="grid h-6 w-6 place-items-center rounded-full bg-[#2563EB] text-[10px] font-bold text-background">P</div>
+            <div className="grid h-6 w-6 place-items-center rounded-full bg-primary text-[10px] font-bold text-background">P</div>
             <span className="text-sm font-semibold tracking-tight">paylo</span>
           </div>
           <p className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground">

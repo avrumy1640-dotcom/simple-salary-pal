@@ -104,7 +104,7 @@ function TaxFilingPage() {
           <h1 className="text-3xl font-semibold tracking-tight">Tax filing</h1>
           <p className="text-sm text-muted-foreground">Federal payroll filings, deadlines, and year-end forms — all in one place.</p>
         </div>
-        <Button onClick={downloadFilingPacket} className="rounded-full bg-[#2563EB] text-background hover:bg-foreground/90 gap-1.5">
+        <Button onClick={downloadFilingPacket} className="rounded-full bg-primary text-background hover:bg-foreground/90 gap-1.5">
           <Download className="h-4 w-4" /> Download filing packet
         </Button>
       </div>
@@ -178,7 +178,7 @@ function StatusBadge({ s }: { s: FilingRow["status"] }) {
     upcoming: { c: "bg-secondary text-foreground", t: "Upcoming", i: <Calendar className="h-3 w-3" /> },
     due_soon: { c: "bg-warning text-warning-foreground", t: "Due soon", i: <AlertCircle className="h-3 w-3" /> },
     overdue: { c: "bg-destructive text-destructive-foreground", t: "Overdue", i: <AlertCircle className="h-3 w-3" /> },
-    filed: { c: "bg-[#2563EB] text-background", t: "Ready", i: <CheckCircle2 className="h-3 w-3" /> },
+    filed: { c: "bg-primary text-background", t: "Ready", i: <CheckCircle2 className="h-3 w-3" /> },
   }[s];
   return <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${map.c}`}>{map.i}{map.t}</span>;
 }
