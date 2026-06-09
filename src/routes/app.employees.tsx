@@ -9,8 +9,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Info, Building2, Banknote, FileText as FileIcon, Phone } from "lucide-react";
+import { Plus, Pencil, Trash2, Info, Building2, Banknote, FileText as FileIcon, Phone, Mail, MapPin, Calendar, DollarSign, Search } from "lucide-react";
 import { fmtUSD } from "@/lib/payroll";
 
 export const Route = createFileRoute("/app/employees")({
