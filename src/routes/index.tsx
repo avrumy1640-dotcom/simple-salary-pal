@@ -81,7 +81,7 @@ function Landing() {
       </section>
 
       {/* FLOATING DASHBOARD MOCKUP */}
-      <section className="px-5 pb-24 md:px-8">
+      <section className="mx-auto max-w-7xl px-5 pb-24 md:px-8">
         <div className="relative mx-auto max-w-md px-2 sm:px-0">
           {/* Glow halo */}
           <div aria-hidden className="pointer-events-none absolute -inset-8 -z-10 rounded-[60px] bg-[var(--brand-soft)] opacity-60 blur-2xl" />
