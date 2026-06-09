@@ -105,7 +105,7 @@ function AuthPage() {
             className="mt-6 w-full border-[#F5C518]/40 bg-white text-white hover:bg-[#111827] hover:border-[#F5C518]/40 hover:shadow-glow transition-all"
             onClick={handleGoogle}
           >
-            Continuewith Google
+            Continue with Google
           </Button>
 
           <div className="my-4 flex items-center gap-3 text-xs text-slate-400">
