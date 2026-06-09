@@ -50,19 +50,23 @@ function Landing() {
       <section className="mx-auto max-w-7xl px-5 pt-16 pb-12 text-center md:px-8 md:pt-24">
         <div className="mx-auto inline-flex items-center gap-2 rounded-full border bg-card/85 px-3.5 py-1.5 shadow-soft backdrop-blur">
           <span className="grid h-4 w-4 place-items-center"><span className="h-1.5 w-1.5 rounded-full bg-primary pulse-dot" /></span>
-          <span className="text-[11px] font-extrabold uppercase text-muted-foreground">New · HR documents, tracking, payroll</span>
+          <span className="text-[11px] font-extrabold uppercase text-muted-foreground">Institutional-grade · Payroll, people, compliance</span>
         </div>
 
         <div className="mt-8 mb-2 h-16 sm:h-20 md:h-24 flex items-center justify-center">
-          <span className="script-typer text-4xl sm:text-5xl md:text-6xl">Good Payroll Starts Here</span>
+          <span className="script-typer text-4xl sm:text-5xl md:text-6xl">Built for your people</span>
         </div>
 
-        <h1 className="mx-auto mt-4 max-w-4xl font-display text-4xl font-extrabold leading-tight sm:text-5xl md:text-7xl md:leading-[1.02]">
-          Payroll and HR that feels built for <span className="text-gradient">2030</span>.
+        <h1 className="mx-auto mt-4 max-w-4xl font-display text-4xl font-extrabold leading-tight sm:text-5xl md:text-7xl md:leading-[1.02] text-white">
+          The Operating System for <span className="text-gradient">Your Workforce</span>
         </h1>
 
-        <p className="mx-auto mt-6 max-w-2xl text-base font-medium leading-8 text-muted-foreground md:text-lg">
-          Run payroll, file taxes, collect signatures, track field work, and manage W-2 employees and 1099 contractors in one polished command center.
+        <p className="mx-auto mt-6 max-w-2xl text-base font-medium leading-8 text-white/80 md:text-lg">
+          Paylo gives growing businesses one intelligent platform to run payroll, manage their people, track time, and stay compliant — without the complexity, the accountant fees, or the 4am spreadsheet panic.
+        </p>
+
+        <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-white/60">
+          Built for businesses that are serious about their team.
         </p>
 
         <div className="mt-9 flex flex-col items-center gap-4">
@@ -70,16 +74,16 @@ function Landing() {
             to="/auth"
             className="group inline-flex items-center gap-2.5 rounded-2xl bg-primary px-9 py-4 text-base font-bold text-primary-foreground shadow-float transition-all hover:-translate-y-1 hover:shadow-glow active:scale-[0.98]"
           >
-            Start free trial
+            Get started free — no card needed
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
           </Link>
-          <a href="#how" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+          <a href="#how" className="text-sm font-medium text-white/60 transition-colors hover:text-white">
             See how it works
           </a>
         </div>
 
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[13px] font-bold text-muted-foreground">
-          {["No credit card", "Setup in 10 min", "Cancel anytime"].map((t) => (
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[13px] font-bold text-white/70">
+          {["Backed by results, not promises", "SOC 2 compliant. Bank-level security.", "Setup in under 10 minutes"].map((t) => (
             <span key={t} className="flex items-center gap-1.5">
               <CheckCircle2 className="h-4 w-4 text-primary" /> {t}
             </span>
