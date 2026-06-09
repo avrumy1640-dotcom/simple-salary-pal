@@ -545,6 +545,15 @@ function StepConfirm({ netTotal, runId, payDate, count }: { netTotal: number; ru
   );
 }
 
+function TotalsRow({ label, value, muted }: { label: string; value: string; muted?: boolean }) {
+  return (
+    <div className="flex items-baseline justify-between">
+      <span className="text-xs font-semibold text-white/60">{label}</span>
+      <span className={`tabular font-bold ${muted ? "text-white/75" : "text-white"}`}>{value}</span>
+    </div>
+  );
+}
+
 function Tile({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
   return (
     <div className={cn(
