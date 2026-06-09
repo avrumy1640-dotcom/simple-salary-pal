@@ -190,7 +190,7 @@ function Landing() {
             <p className="mx-auto mt-5 max-w-lg text-base leading-relaxed text-primary-foreground/68">
               Switch from spreadsheets in an afternoon. We'll import your team and run your first payroll free.
             </p>
-            <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+            <div className="mt-10 flex flex-col items-center gap-4">
               <Link to="/auth" className="inline-flex items-center gap-2 rounded-2xl bg-primary-foreground px-8 py-4 text-base font-bold text-primary shadow-2xl transition-all hover:-translate-y-0.5 hover:bg-primary-foreground/90">
                 Start free trial <ArrowRight className="h-4 w-4" />
               </Link>
