@@ -167,23 +167,23 @@ function Landing() {
       {/* PLATFORM */}
       <section id="platform" className="mx-auto max-w-7xl px-5 pb-24 md:px-8">
         <ScrollReveal className="mx-auto max-w-2xl text-center">
-          <span className="inline-block rounded-full bg-accent px-3 py-1 text-[10px] font-extrabold uppercase text-accent-foreground">Platform</span>
-          <h2 className="mt-4 font-display text-4xl font-extrabold md:text-5xl">
-            Everything to pay your team compliantly.
+          <span className="inline-block rounded-full bg-primary/15 px-3 py-1 text-[10px] font-extrabold uppercase text-primary border border-primary/30">Platform</span>
+          <h2 className="mt-4 font-display text-4xl font-extrabold md:text-5xl text-white">
+            Infrastructure for people-first companies
           </h2>
-          <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-muted-foreground md:text-base">
-            W-2 payroll, 1099 contractors, federal &amp; state tax filing, direct deposit, time tracking, PTO, benefits — all in one tidy workflow.
+          <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-white/70 md:text-base">
+            The most successful companies know that taking care of their people is not an HR task — it is a competitive advantage. Paylo gives you the tools to do it right.
           </p>
         </ScrollReveal>
 
         <StaggerChildren className="mt-12 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {[
-            { icon: <Wallet className="h-6 w-6 text-orange-500" />, bg: "bg-orange-50", title: "Run payroll", desc: "Auto-calculated gross, taxes, deductions, and net pay. Approve in one click." },
-            { icon: <Briefcase className="h-6 w-6 text-primary" />, bg: "bg-blue-50", title: "1099 contractors", desc: "Pay independent contractors. We generate year-end 1099-NEC forms automatically." },
-            { icon: <ShieldCheck className="h-6 w-6 text-emerald-600" />, bg: "bg-emerald-50", title: "Tax filing", desc: "941, 940, W-2/W-3, 1099-NEC. Quarterly and year-end, handled fully for you." },
-            { icon: <Clock className="h-6 w-6 text-amber-600" />, bg: "bg-amber-50", title: "Time & PTO", desc: "Track hours, overtime, and time off. Flows straight into payroll." },
-            { icon: <CalendarDays className="h-6 w-6 text-rose-500" />, bg: "bg-rose-50", title: "Direct deposit", desc: "ACH batches ready for your bank. Pay stubs delivered to every employee." },
-            { icon: <FileBadge className="h-6 w-6 text-violet-600" />, bg: "bg-violet-50", title: "HR & onboarding", desc: "Documents, signed W-4/I-9/W-9, onboarding checklists — stored and tracked." },
+            { icon: <Wallet className="h-6 w-6 text-primary" />, title: "Run payroll", desc: "Auto-calculated gross, taxes, deductions, and net pay. Approve in one click." },
+            { icon: <Briefcase className="h-6 w-6 text-primary" />, title: "1099 contractors", desc: "Pay independent contractors. Year-end 1099-NEC forms generated automatically." },
+            { icon: <ShieldCheck className="h-6 w-6 text-primary" />, title: "Tax filing", desc: "941, 940, W-2/W-3, 1099-NEC. Quarterly and year-end, handled end-to-end." },
+            { icon: <Clock className="h-6 w-6 text-primary" />, title: "Time & PTO", desc: "Track hours, overtime, and time off. Flows straight into payroll." },
+            { icon: <CalendarDays className="h-6 w-6 text-primary" />, title: "Direct deposit", desc: "ACH batches ready for your bank. Pay stubs delivered to every employee." },
+            { icon: <FileBadge className="h-6 w-6 text-primary" />, title: "HR & onboarding", desc: "Documents, signed W-4/I-9/W-9, onboarding checklists — stored and tracked." },
           ].map((f) => (
             <StaggerItem key={f.title}>
               <Feature {...f} />
