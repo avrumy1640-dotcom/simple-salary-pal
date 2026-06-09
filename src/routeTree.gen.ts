@@ -23,6 +23,7 @@ import { Route as AppPayrollRouteImport } from './routes/app.payroll'
 import { Route as AppGettingStartedRouteImport } from './routes/app.getting-started'
 import { Route as AppForm1099RouteImport } from './routes/app.form-1099'
 import { Route as AppEmployeesRouteImport } from './routes/app.employees'
+import { Route as AppDocumentsRouteImport } from './routes/app.documents'
 import { Route as AppDashboardRouteImport } from './routes/app.dashboard'
 import { Route as AppContractorsRouteImport } from './routes/app.contractors'
 import { Route as AppBenefitsRouteImport } from './routes/app.benefits'
@@ -97,6 +98,11 @@ const AppEmployeesRoute = AppEmployeesRouteImport.update({
   path: '/employees',
   getParentRoute: () => AppRoute,
 } as any)
+const AppDocumentsRoute = AppDocumentsRouteImport.update({
+  id: '/documents',
+  path: '/documents',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppDashboardRoute = AppDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -120,6 +126,7 @@ export interface FileRoutesByFullPath {
   '/app/benefits': typeof AppBenefitsRoute
   '/app/contractors': typeof AppContractorsRoute
   '/app/dashboard': typeof AppDashboardRoute
+  '/app/documents': typeof AppDocumentsRoute
   '/app/employees': typeof AppEmployeesRoute
   '/app/form-1099': typeof AppForm1099Route
   '/app/getting-started': typeof AppGettingStartedRoute
@@ -139,6 +146,7 @@ export interface FileRoutesByTo {
   '/app/benefits': typeof AppBenefitsRoute
   '/app/contractors': typeof AppContractorsRoute
   '/app/dashboard': typeof AppDashboardRoute
+  '/app/documents': typeof AppDocumentsRoute
   '/app/employees': typeof AppEmployeesRoute
   '/app/form-1099': typeof AppForm1099Route
   '/app/getting-started': typeof AppGettingStartedRoute
@@ -159,6 +167,7 @@ export interface FileRoutesById {
   '/app/benefits': typeof AppBenefitsRoute
   '/app/contractors': typeof AppContractorsRoute
   '/app/dashboard': typeof AppDashboardRoute
+  '/app/documents': typeof AppDocumentsRoute
   '/app/employees': typeof AppEmployeesRoute
   '/app/form-1099': typeof AppForm1099Route
   '/app/getting-started': typeof AppGettingStartedRoute
@@ -180,6 +189,7 @@ export interface FileRouteTypes {
     | '/app/benefits'
     | '/app/contractors'
     | '/app/dashboard'
+    | '/app/documents'
     | '/app/employees'
     | '/app/form-1099'
     | '/app/getting-started'
@@ -199,6 +209,7 @@ export interface FileRouteTypes {
     | '/app/benefits'
     | '/app/contractors'
     | '/app/dashboard'
+    | '/app/documents'
     | '/app/employees'
     | '/app/form-1099'
     | '/app/getting-started'
@@ -218,6 +229,7 @@ export interface FileRouteTypes {
     | '/app/benefits'
     | '/app/contractors'
     | '/app/dashboard'
+    | '/app/documents'
     | '/app/employees'
     | '/app/form-1099'
     | '/app/getting-started'
@@ -337,6 +349,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppEmployeesRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/documents': {
+      id: '/app/documents'
+      path: '/documents'
+      fullPath: '/app/documents'
+      preLoaderRoute: typeof AppDocumentsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/dashboard': {
       id: '/app/dashboard'
       path: '/dashboard'
@@ -365,6 +384,7 @@ interface AppRouteChildren {
   AppBenefitsRoute: typeof AppBenefitsRoute
   AppContractorsRoute: typeof AppContractorsRoute
   AppDashboardRoute: typeof AppDashboardRoute
+  AppDocumentsRoute: typeof AppDocumentsRoute
   AppEmployeesRoute: typeof AppEmployeesRoute
   AppForm1099Route: typeof AppForm1099Route
   AppGettingStartedRoute: typeof AppGettingStartedRoute
@@ -382,6 +402,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppBenefitsRoute: AppBenefitsRoute,
   AppContractorsRoute: AppContractorsRoute,
   AppDashboardRoute: AppDashboardRoute,
+  AppDocumentsRoute: AppDocumentsRoute,
   AppEmployeesRoute: AppEmployeesRoute,
   AppForm1099Route: AppForm1099Route,
   AppGettingStartedRoute: AppGettingStartedRoute,
@@ -405,3 +426,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
