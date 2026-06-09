@@ -126,11 +126,21 @@
 
 @layer base {
   * { border-color: var(--color-border); }
-  html, body {
+  html, body, #root,
+  [data-radix-popper-content-wrapper],
+  [data-sonner-toaster],
+  [role="dialog"],
+  [role="menu"],
+  [role="listbox"],
+  [role="tooltip"],
+  [cmdk-root] {
     font-family: var(--font-sans);
+  }
+  html, body {
     -webkit-font-smoothing: antialiased;
     color-scheme: light;
   }
+  input, button, textarea, select { font-family: inherit; }
   body {
     background-color: #FFFFFF;
     color: var(--color-foreground);
