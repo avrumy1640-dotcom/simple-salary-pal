@@ -260,6 +260,38 @@
 @utility fade-up { animation: fade-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) both; }
 @utility pop-in { animation: pop-in 0.5s cubic-bezier(0.22, 1.4, 0.36, 1) both; }
 
+/* Wizard step transitions */
+@keyframes slide-in-right {
+  0% { opacity: 0; transform: translateX(28px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+@keyframes slide-in-left {
+  0% { opacity: 0; transform: translateX(-28px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+.slide-in-right { animation: slide-in-right 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.slide-in-left  { animation: slide-in-left  0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* Success checkmark pop */
+@keyframes checkmark-pop {
+  0% { transform: scale(0.4); opacity: 0; }
+  60% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.checkmark-pop { animation: checkmark-pop 0.7s cubic-bezier(0.22, 1.4, 0.36, 1) both; }
+
+/* Confetti */
+@keyframes confetti-fall {
+  0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(520px) rotate(720deg); opacity: 0; }
+}
+.confetti-piece {
+  position: absolute;
+  top: -10px;
+  border-radius: 2px;
+  animation: confetti-fall linear forwards;
+}
+
 /* Staggered children */
 .stagger > * { animation: fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
 .stagger > *:nth-child(1) { animation-delay: 0.05s; }
