@@ -101,7 +101,7 @@ function Landing() {
               <div className="flex items-start justify-between">
                 <div>
                   <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">Good morning, Sarah</p>
-                  <h3 className="mt-0.5 text-2xl font-semibold tracking-tight">Acme Coffee Co.</h3>
+                  <p className="mt-0.5 text-2xl font-semibold tracking-tight">Acme Coffee Co.</p>
                 </div>
                 <div className="flex items-center gap-1.5 rounded-full bg-accent px-3 py-1.5 text-[10px] font-bold text-accent-foreground">
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]" />
