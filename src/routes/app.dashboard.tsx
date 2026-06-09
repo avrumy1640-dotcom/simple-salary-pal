@@ -15,7 +15,7 @@ export const Route = createFileRoute("/app/dashboard")({
 });
 
 function KpiCard({
-  label, value, displayValue, icon: Icon, accent, delay = 0,
+  label, value, displayValue, icon: Icon, accent, delay = 0, deltaPct,
 }: {
   label: string;
   value: number;
@@ -23,24 +23,35 @@ function KpiCard({
   icon: typeof Users;
   accent?: boolean;
   delay?: number;
+  deltaPct?: number;
 }) {
   const animated = useCountUp(value, 1100);
+  const up = (deltaPct ?? 0) >= 0;
   return (
     <div
       style={{ animationDelay: `${delay}ms` }}
       className={[
-        "group relative fade-up overflow-hidden rounded-3xl p-5 transition-all duration-300 hover:-translate-y-1",
-        "surface-glass border border-border hover:border-primary/30 hover:shadow-glow",
-        accent ? "ring-1 ring-primary" : "",
+        "group relative fade-up overflow-hidden rounded-3xl p-6 transition-all duration-300 hover:-translate-y-1",
+        "surface-glass border border-primary/15 hover:border-primary/50 hover:shadow-glow",
+        accent ? "ring-1 ring-primary/40" : "",
       ].join(" ")}
     >
-      <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+      {/* Cyan top border accent */}
+      <div className="absolute inset-x-0 top-0 h-[3px] bg-primary shadow-[0_0_12px_rgba(61,255,255,0.6)]" />
       <div className="flex items-center justify-between">
-        <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">{label}</span>
+        <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/60">{label}</span>
+        <div className="grid h-9 w-9 place-items-center rounded-xl bg-primary/10 text-primary border border-primary/30">
+          <Icon className="h-4 w-4" />
+        </div>
       </div>
-      <div className="mt-5 font-display text-[2rem] font-extrabold tabular text-foreground leading-none">
+      <div className="mt-5 font-display text-[2.25rem] font-extrabold tabular text-white leading-none">
         {displayValue(animated)}
       </div>
+      {deltaPct !== undefined && (
+        <div className={`mt-3 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-bold ${up ? "bg-primary/15 text-primary" : "bg-destructive/15 text-destructive"}`}>
+          {up ? "▲" : "▼"} {Math.abs(deltaPct).toFixed(1)}% vs last period
+        </div>
+      )}
     </div>
   );
 }
