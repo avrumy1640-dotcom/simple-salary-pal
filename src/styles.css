@@ -5,12 +5,14 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-sans: "DM Sans", "DM Sans Fallback", system-ui, sans-serif;
-  --font-display: "Space Grotesk", "Space Grotesk Fallback", system-ui, sans-serif;
+  --font-sans: "Inter", "DM Sans", "DM Sans Fallback", system-ui, sans-serif;
+  --font-display: "Inter", "Space Grotesk", system-ui, sans-serif;
+  --font-serif: "Instrument Serif", "Fraunces", "Georgia", serif;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --radius-xl: calc(var(--radius) + 6px);
+  --radius-2xl: calc(var(--radius) + 14px);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -46,13 +48,13 @@
 }
 
 :root {
-  --radius: 0.875rem;
+  --radius: 1rem;
 
-  /* Paper & Ink — off-white + rich black, editorial fintech */
-  --paper: oklch(0.974 0.005 85);          /* #f5f3ee */
-  --paper-2: oklch(0.935 0.008 80);        /* #e8e4dd */
-  --ink: oklch(0.16 0 0);                  /* near-black #0d0d0d */
-  --ink-soft: oklch(0.28 0 0);             /* #2d2d2d */
+  /* Paper & Ink with an indigo soul — light, warm, premium */
+  --paper: oklch(0.985 0.006 85);         /* #FAF9F6 warm alabaster */
+  --paper-2: oklch(0.96 0.008 80);        /* softer cream */
+  --ink: oklch(0.18 0.005 270);           /* near-black with cool tint */
+  --ink-soft: oklch(0.32 0.005 270);
 
   --background: var(--paper);
   --foreground: var(--ink);
@@ -69,14 +71,17 @@
   --secondary: var(--paper-2);
   --secondary-foreground: var(--ink);
 
-  --muted: oklch(0.95 0.005 80);
-  --muted-foreground: oklch(0.48 0.005 80);
+  --muted: oklch(0.96 0.005 80);
+  --muted-foreground: oklch(0.5 0.005 270);
 
-  --accent: var(--paper-2);
+  --accent: oklch(0.95 0.02 270);
   --accent-foreground: var(--ink);
 
-  --brand: var(--ink);
-  --brand-foreground: var(--paper);
+  /* Indigo brand — restrained, premium */
+  --brand: oklch(0.52 0.21 268);           /* #4f46e5-ish indigo */
+  --brand-foreground: oklch(1 0 0);
+  --brand-soft: oklch(0.94 0.04 268);
+  --brand-glow: oklch(0.65 0.22 268 / 0.35);
 
   --destructive: oklch(0.58 0.21 27);
   --destructive-foreground: oklch(1 0 0);
@@ -87,15 +92,21 @@
   --warning: oklch(0.78 0.15 78);
   --warning-foreground: var(--ink);
 
-  --border: oklch(0.89 0.006 80);
-  --input: oklch(0.89 0.006 80);
-  --ring: var(--ink);
+  --border: oklch(0.91 0.005 270);
+  --input: oklch(0.91 0.005 270);
+  --ring: var(--brand);
 
-  --sidebar: oklch(0.985 0.004 85);
-  --sidebar-foreground: oklch(0.32 0.005 80);
-  --sidebar-accent: var(--paper-2);
+  --sidebar: oklch(0.99 0.005 85);
+  --sidebar-foreground: oklch(0.32 0.005 270);
+  --sidebar-accent: oklch(0.95 0.015 268);
   --sidebar-accent-foreground: var(--ink);
-  --sidebar-border: oklch(0.9 0.006 80);
+  --sidebar-border: oklch(0.92 0.005 270);
+
+  /* Premium shadow system */
+  --shadow-soft: 0 1px 2px rgba(15, 15, 25, 0.04), 0 4px 12px -4px rgba(15, 15, 25, 0.05);
+  --shadow-card: 0 1px 2px rgba(15, 15, 25, 0.04), 0 12px 30px -12px rgba(15, 15, 25, 0.10);
+  --shadow-float: 0 4px 8px rgba(15, 15, 25, 0.04), 0 24px 60px -20px rgba(15, 15, 25, 0.18);
+  --shadow-glow: 0 20px 60px -20px var(--brand-glow);
 }
 
 .dark {
@@ -111,9 +122,9 @@
   --secondary-foreground: oklch(0.96 0.003 85);
   --muted: oklch(0.24 0 0);
   --muted-foreground: oklch(0.72 0.005 85);
-  --accent: oklch(0.24 0 0);
+  --accent: oklch(0.26 0.03 268);
   --accent-foreground: oklch(0.96 0.003 85);
-  --brand: oklch(0.96 0.003 85);
+  --brand: oklch(0.68 0.18 268);
   --brand-foreground: oklch(0.14 0 0);
   --border: oklch(1 0 0 / 12%);
   --input: oklch(1 0 0 / 14%);
@@ -127,7 +138,7 @@
 
 @layer base {
   * { border-color: var(--color-border); }
-  html, body { font-family: var(--font-sans); }
+  html, body { font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
@@ -135,6 +146,46 @@
   }
   h1, h2, h3, h4, .font-display {
     font-family: var(--font-display);
-    letter-spacing: -0.02em;
+    letter-spacing: -0.022em;
   }
+  .font-serif, .serif {
+    font-family: var(--font-serif);
+    letter-spacing: -0.01em;
+  }
+  .tabular { font-variant-numeric: tabular-nums; }
 }
+
+/* Floating cards */
+@utility shadow-soft { box-shadow: var(--shadow-soft); }
+@utility shadow-card { box-shadow: var(--shadow-card); }
+@utility shadow-float { box-shadow: var(--shadow-float); }
+@utility shadow-glow { box-shadow: var(--shadow-glow); }
+
+/* Subtle floating animation for hero cards */
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+@keyframes float-y-lg {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50% { transform: translateY(-10px) rotate(-1deg); }
+}
+@keyframes float-y-sm {
+  0%, 100% { transform: translateY(0) rotate(2deg); }
+  50% { transform: translateY(-5px) rotate(2deg); }
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 currentColor; }
+  50% { opacity: 0.6; box-shadow: 0 0 0 6px transparent; }
+}
+@keyframes drift {
+  0%, 100% { transform: translate(0, 0); }
+  33% { transform: translate(20px, -20px); }
+  66% { transform: translate(-15px, 15px); }
+}
+
+@utility float-y { animation: float-y 6s ease-in-out infinite; }
+@utility float-y-lg { animation: float-y-lg 7s ease-in-out infinite; }
+@utility float-y-sm { animation: float-y-sm 5s ease-in-out infinite; }
+@utility pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
+@utility drift-slow { animation: drift 18s ease-in-out infinite; }
