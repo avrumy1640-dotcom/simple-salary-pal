@@ -175,9 +175,9 @@ function Landing() {
           <Feature icon={<Wallet className="h-6 w-6 text-orange-500" />} bg="bg-orange-50" title="Run payroll" desc="Auto-calculated gross, taxes, deductions, and net pay. Approve in one click." />
           <Feature icon={<Briefcase className="h-6 w-6 text-[var(--brand)]" />} bg="bg-[var(--brand-soft)]" title="1099 contractors" desc="Pay independent contractors. We generate year-end 1099-NEC forms automatically." />
           <Feature icon={<ShieldCheck className="h-6 w-6 text-emerald-600" />} bg="bg-emerald-50" title="Tax filing" desc="941, 940, W-2/W-3, 1099-NEC. Quarterly and year-end, handled fully for you." />
-          <Feature icon={<Clock className="h-6 w-6 text-amber-600" />} bg="bg-amber-50" title="Time &amp; PTO" desc="Track hours, overtime, and time off. Flows straight into payroll." />
+          <Feature icon={<Clock className="h-6 w-6 text-amber-600" />} bg="bg-amber-50" title="Time & PTO" desc="Track hours, overtime, and time off. Flows straight into payroll." />
           <Feature icon={<CalendarDays className="h-6 w-6 text-rose-500" />} bg="bg-rose-50" title="Direct deposit" desc="ACH batches ready for your bank. Pay stubs delivered to every employee." />
-          <Feature icon={<FileBadge className="h-6 w-6 text-violet-600" />} bg="bg-violet-50" title="HR &amp; onboarding" desc="Documents, signed W-4/I-9/W-9, onboarding checklists — stored and tracked." />
+          <Feature icon={<FileBadge className="h-6 w-6 text-violet-600" />} bg="bg-violet-50" title="HR & onboarding" desc="Documents, signed W-4/I-9/W-9, onboarding checklists — stored and tracked." />
         </div>
       </section>
 
@@ -241,7 +241,7 @@ function Feature({ icon, bg, title, desc }: { icon: React.ReactNode; bg: string;
         {icon}
       </div>
       <h4 className="text-lg font-semibold tracking-tight">{title}</h4>
-      <p className="mt-2 text-sm leading-relaxed text-muted-foreground" dangerouslySetInnerHTML={{ __html: desc }} />
+      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{desc}</p>
     </div>
   );
 }
