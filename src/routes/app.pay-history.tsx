@@ -120,6 +120,33 @@ function PayHistoryPage() {
     a.click(); URL.revokeObjectURL(url);
   }
 
+  async function downloadRun(r: Run) {
+    const { data } = await supabase.from("payroll_items").select("*").eq("run_id", r.id).order("employee_name");
+    const items = (data ?? []) as Item[];
+    const rows = [
+      ["Employee", "Reg hrs", "OT hrs", "Gross", "Federal", "SS", "Medicare", "State", "Net"],
+      ...items.map((it) => [
+        it.employee_name,
+        String(it.regular_hours ?? 0),
+        String(it.overtime_hours ?? 0),
+        it.gross_pay.toFixed(2),
+        it.federal_tax.toFixed(2),
+        it.social_security.toFixed(2),
+        it.medicare.toFixed(2),
+        it.state_tax.toFixed(2),
+        it.net_pay.toFixed(2),
+      ]),
+      [],
+      ["TOTAL", "", "", (r.gross_total ?? 0).toFixed(2), "", "", "", "", r.net_total.toFixed(2)],
+    ];
+    const csv = rows.map((row) => row.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = `payroll-${r.pay_date}.csv`;
+    a.click(); URL.revokeObjectURL(url);
+  }
+
   return (
     <div className="p-6 md:p-8 space-y-6 animate-in fade-in duration-300">
       <header className="flex flex-wrap items-start justify-between gap-4">
