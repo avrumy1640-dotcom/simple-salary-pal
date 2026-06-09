@@ -15,6 +15,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppTimeRouteImport } from './routes/app.time'
 import { Route as AppReportsRouteImport } from './routes/app.reports'
 import { Route as AppPayrollRouteImport } from './routes/app.payroll'
+import { Route as AppGettingStartedRouteImport } from './routes/app.getting-started'
 import { Route as AppEmployeesRouteImport } from './routes/app.employees'
 import { Route as AppDashboardRouteImport } from './routes/app.dashboard'
 
@@ -48,6 +49,11 @@ const AppPayrollRoute = AppPayrollRouteImport.update({
   path: '/payroll',
   getParentRoute: () => AppRoute,
 } as any)
+const AppGettingStartedRoute = AppGettingStartedRouteImport.update({
+  id: '/getting-started',
+  path: '/getting-started',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppEmployeesRoute = AppEmployeesRouteImport.update({
   id: '/employees',
   path: '/employees',
@@ -65,6 +71,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/employees': typeof AppEmployeesRoute
+  '/app/getting-started': typeof AppGettingStartedRoute
   '/app/payroll': typeof AppPayrollRoute
   '/app/reports': typeof AppReportsRoute
   '/app/time': typeof AppTimeRoute
@@ -75,6 +82,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/employees': typeof AppEmployeesRoute
+  '/app/getting-started': typeof AppGettingStartedRoute
   '/app/payroll': typeof AppPayrollRoute
   '/app/reports': typeof AppReportsRoute
   '/app/time': typeof AppTimeRoute
@@ -86,6 +94,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/employees': typeof AppEmployeesRoute
+  '/app/getting-started': typeof AppGettingStartedRoute
   '/app/payroll': typeof AppPayrollRoute
   '/app/reports': typeof AppReportsRoute
   '/app/time': typeof AppTimeRoute
@@ -98,6 +107,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/app/dashboard'
     | '/app/employees'
+    | '/app/getting-started'
     | '/app/payroll'
     | '/app/reports'
     | '/app/time'
@@ -108,6 +118,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/app/dashboard'
     | '/app/employees'
+    | '/app/getting-started'
     | '/app/payroll'
     | '/app/reports'
     | '/app/time'
@@ -118,6 +129,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/app/dashboard'
     | '/app/employees'
+    | '/app/getting-started'
     | '/app/payroll'
     | '/app/reports'
     | '/app/time'
@@ -173,6 +185,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPayrollRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/getting-started': {
+      id: '/app/getting-started'
+      path: '/getting-started'
+      fullPath: '/app/getting-started'
+      preLoaderRoute: typeof AppGettingStartedRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/employees': {
       id: '/app/employees'
       path: '/employees'
@@ -193,6 +212,7 @@ declare module '@tanstack/react-router' {
 interface AppRouteChildren {
   AppDashboardRoute: typeof AppDashboardRoute
   AppEmployeesRoute: typeof AppEmployeesRoute
+  AppGettingStartedRoute: typeof AppGettingStartedRoute
   AppPayrollRoute: typeof AppPayrollRoute
   AppReportsRoute: typeof AppReportsRoute
   AppTimeRoute: typeof AppTimeRoute
@@ -201,6 +221,7 @@ interface AppRouteChildren {
 const AppRouteChildren: AppRouteChildren = {
   AppDashboardRoute: AppDashboardRoute,
   AppEmployeesRoute: AppEmployeesRoute,
+  AppGettingStartedRoute: AppGettingStartedRoute,
   AppPayrollRoute: AppPayrollRoute,
   AppReportsRoute: AppReportsRoute,
   AppTimeRoute: AppTimeRoute,
@@ -216,3 +237,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
