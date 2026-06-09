@@ -3,6 +3,7 @@ import {
   ArrowUpRight, ArrowRight, CheckCircle2, Users, Clock, Briefcase,
   ShieldCheck, Wallet, CalendarDays, FileBadge, Sparkles,
 } from "lucide-react";
+import { ScrollReveal, StaggerChildren, StaggerItem } from "@/components/motion/ScrollReveal";
 
 export const Route = createFileRoute("/")({
   head: () => ({
