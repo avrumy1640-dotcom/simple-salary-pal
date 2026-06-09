@@ -135,7 +135,7 @@ function AuthPage() {
             </div>
             <Button
               type="submit"
-              className="mt-2 w-full bg-primary font-bold text-white hover:-translate-y-0.5 hover:shadow-glow transition-all"
+              className="mt-2 w-full bg-primary font-bold text-primary-foreground hover:-translate-y-0.5 hover:shadow-glow transition-all"
               disabled={loading}
             >
               {loading ? "Please wait…" : mode === "signin" ? "Sign in" : "Create account"}
