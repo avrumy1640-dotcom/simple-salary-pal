@@ -19,7 +19,7 @@ const navGroups = [
       { to: "/app/time", label: "Time & attendance", icon: Clock },
       { to: "/app/tracking", label: "Location tracking", icon: MapPin },
       { to: "/app/paystubs", label: "Pay stubs & ACH", icon: Receipt },
-      { to: "/app/pay-history", label: "Pay history", icon: History },
+      { to: "/app/pay-history", label: "Pay history", icon: HistoryIcon },
     ],
   },
   {
