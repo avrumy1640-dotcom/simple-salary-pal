@@ -62,19 +62,24 @@ function AuthPage() {
   }
 
   return (
-    <div className="grid min-h-screen place-items-center bg-background px-4">
-      <div className="w-full max-w-md">
-        <Link to="/" className="mb-8 flex items-center justify-center gap-2">
-          <div className="grid h-9 w-9 place-items-center rounded-lg bg-primary text-primary-foreground font-bold">P</div>
-          <span className="text-xl font-semibold tracking-tight">Paylo</span>
+    <div className="relative grid min-h-screen place-items-center overflow-hidden bg-background px-4 py-10">
+      <div aria-hidden className="absolute inset-x-0 top-0 h-80 bg-[radial-gradient(ellipse_at_top,oklch(0.82_0.08_238_/_0.55),transparent_62%)]" />
+      <div aria-hidden className="absolute inset-0 grid-bg opacity-60" />
+      <div className="relative z-10 w-full max-w-md">
+        <Link to="/" className="mb-8 flex items-center justify-center gap-3">
+          <div className="grid h-11 w-11 place-items-center rounded-2xl gradient-brand text-primary-foreground font-extrabold shadow-glow">P</div>
+          <span className="font-display text-2xl font-extrabold text-gradient">Paylo</span>
         </Link>
-        <div className="rounded-2xl border bg-card p-6 shadow-sm">
-          <h1 className="text-xl font-semibold">{mode === "signin" ? "Welcome back" : "Create your account"}</h1>
+        <div className="rounded-[2rem] border bg-card/92 p-6 shadow-float backdrop-blur-xl md:p-7">
+          <div className="mb-5 inline-flex rounded-full bg-accent px-3 py-1 text-xs font-extrabold text-accent-foreground">
+            Secure HR + payroll access
+          </div>
+          <h1 className="font-display text-3xl font-extrabold">{mode === "signin" ? "Welcome back" : "Create your account"}</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {mode === "signin" ? "Sign in to run payroll." : "Start running payroll in minutes."}
           </p>
 
-          <Button variant="outline" type="button" className="mt-5 w-full" onClick={handleGoogle}>
+          <Button variant="outline" type="button" className="mt-6 w-full" onClick={handleGoogle}>
             Continue with Google
           </Button>
 
@@ -82,7 +87,7 @@ function AuthPage() {
             <div className="h-px flex-1 bg-border" /> OR <div className="h-px flex-1 bg-border" />
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-3">
+          <form onSubmit={handleSubmit} className="space-y-4">
             {mode === "signup" && (
               <>
                 <div>
@@ -103,7 +108,7 @@ function AuthPage() {
               <Label htmlFor="password">Password</Label>
               <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
             </div>
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button type="submit" className="mt-2 w-full" disabled={loading}>
               {loading ? "Please wait…" : mode === "signin" ? "Sign in" : "Create account"}
             </Button>
           </form>
