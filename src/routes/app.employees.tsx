@@ -116,13 +116,26 @@ function EmployeesPage() {
     refresh();
   }
 
-  async function remove(id: string) {
-    if (!confirm("Remove this employee?")) return;
-    const { error } = await supabase.from("employees").delete().eq("id", id);
+  async function performDelete() {
+    if (!confirmDelete) return;
+    const { error } = await supabase.from("employees").delete().eq("id", confirmDelete.id);
     if (error) { toast.error(error.message); return; }
-    toast.success("Removed");
+    toast.success(`${confirmDelete.full_name} removed`);
+    setConfirmDelete(null);
+    setDetail(null);
     refresh();
   }
+
+  const filtered = items.filter((e) => {
+    if (statusFilter !== "all" && e.status !== statusFilter) return false;
+    if (!query) return true;
+    const q = query.toLowerCase();
+    return (
+      e.full_name.toLowerCase().includes(q) ||
+      (e.email ?? "").toLowerCase().includes(q) ||
+      (e.job_title ?? "").toLowerCase().includes(q)
+    );
+  });
 
   return (
     <div className="space-y-6">
