@@ -163,6 +163,7 @@ export function AppShell() {
         {open && <div className="fixed inset-0 z-30 bg-[#07142A]/40 backdrop-blur-sm md:hidden" onClick={() => setOpen(false)} />}
 
         <main className="flex-1 min-w-0">
+          <TopBar companyName={companyName} userEmail={userEmail} />
           <div key={path} className="page-in mx-auto max-w-7xl px-4 py-5 sm:p-6 md:p-8 lg:p-10">
             <Outlet />
           </div>
