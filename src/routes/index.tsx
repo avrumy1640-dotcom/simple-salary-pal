@@ -176,7 +176,7 @@ function Landing() {
       </section>
 
       {/* FINAL CTA */}
-      <section id="how" className="mx-auto max-w-4xl px-5 pb-20 md:px-8">
+      <section id="how" className="mx-auto max-w-7xl px-5 pb-20 md:px-8">
         <div className="relative overflow-hidden rounded-[40px] surface-hero p-10 text-primary-foreground shadow-float md:p-16">
           <div aria-hidden className="absolute inset-0 grid-bg opacity-20" />
 
