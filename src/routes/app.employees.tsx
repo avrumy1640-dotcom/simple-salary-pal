@@ -337,19 +337,24 @@ function EmployeesPage() {
         ) : filtered.length === 0 ? (
           <div className="p-10 text-center text-sm text-muted-foreground">No matches.</div>
         ) : (
-          <ul className="divide-y">
+          <ul className="divide-y divide-primary/10">
             {filtered.map((e) => (
-              <li key={e.id} className="group flex flex-wrap items-center gap-3 px-5 py-4 hover:bg-muted/30 transition cursor-pointer" onClick={() => setDetail(e)}>
-                <div className="grid h-10 w-10 place-items-center rounded-full bg-accent text-sm font-medium text-accent-foreground">
+              <li
+                key={e.id}
+                className="group relative flex flex-wrap items-center gap-3 px-5 py-5 hover:bg-primary/[0.04] transition cursor-pointer border-l-2 border-transparent hover:border-primary hover:shadow-[inset_8px_0_24px_-16px_rgba(61,255,255,0.6)]"
+                onClick={() => setDetail(e)}
+              >
+                <div className="grid h-11 w-11 place-items-center rounded-full bg-primary/10 border border-primary/30 text-sm font-bold text-primary">
                   {e.full_name.split(" ").map((p) => p[0]).slice(0, 2).join("").toUpperCase()}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <p className="truncate font-medium">{e.full_name}</p>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <p className="truncate font-semibold text-white">{e.full_name}</p>
+                    <span className="rounded-full border border-primary/40 px-2 py-0.5 text-[10px] font-bold text-primary">W-2</span>
                     {e.status === "inactive" && <Badge variant="secondary">Inactive</Badge>}
-                    {e.direct_deposit_enabled && <span className="rounded-full bg-accent px-2 py-0.5 text-[10px] font-medium text-foreground">Direct deposit</span>}
+                    {e.direct_deposit_enabled && <span className="rounded-full border border-white/25 px-2 py-0.5 text-[10px] font-bold text-white/80">Direct deposit</span>}
                   </div>
-                  <p className="truncate text-sm text-muted-foreground">
+                  <p className="truncate text-sm text-white/60 mt-0.5">
                     {e.job_title || "—"} · {e.pay_type === "hourly" ? `${fmtUSD(e.pay_rate)}/hr` : `${fmtUSD(e.pay_rate)}/yr`}
                   </p>
                 </div>
