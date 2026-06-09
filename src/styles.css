@@ -61,8 +61,8 @@
   --popover: #FFFFFF;
   --popover-foreground: #07142A;
 
-  --primary: #2563EB;
-  --primary-foreground: #FFFFFF;
+  --primary: #C2F5FF;
+  --primary-foreground: #07142A;
   --cyan: #C2F5FF;
 
   --secondary: #ECFAFF;
@@ -194,7 +194,7 @@
 @utility gradient-gold { background-image: var(--gradient-gold); }
 
 @utility text-gradient {
-  background: linear-gradient(135deg, #07142A 0%, #2563EB 50%, #C2F5FF 100%);
+  background: linear-gradient(135deg, #07142A 0%, #C2F5FF 50%, #C2F5FF 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
