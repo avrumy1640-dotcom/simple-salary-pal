@@ -1,17 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Button } from "@/components/ui/button";
 import {
-  ArrowRight, ArrowUpRight, CheckCircle2, Clock, Users, FileText, Wallet,
-  ShieldCheck, Banknote, Briefcase, Sparkles, TrendingUp, Calendar,
+  ArrowUpRight, ArrowRight, CheckCircle2, Users, Clock, Briefcase,
+  ShieldCheck, Wallet, CalendarDays, FileBadge, Sparkles,
 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Paylo — Payroll, HR & Tax Filing for Small Business" },
-      { name: "description", content: "Run payroll in minutes. W-2 + 1099. Federal & state tax filing. Time tracking. Direct deposit." },
-      { property: "og:title", content: "Paylo — Payroll, HR & Tax Filing" },
-      { property: "og:description", content: "Run payroll, file taxes, pay W-2 and 1099. One simple workflow." },
+      { title: "Paylo — Payroll, 1099 & Tax Filing for Modern Teams" },
+      { name: "description", content: "Run payroll, file taxes, and pay W-2 employees and 1099 contractors. All in one quiet workflow." },
+      { property: "og:title", content: "Paylo — Payroll, simplified." },
+      { property: "og:description", content: "Run payroll, file taxes, and pay your whole team in minutes." },
       { property: "og:type", content: "website" },
     ],
   }),
@@ -20,225 +19,229 @@ export const Route = createFileRoute("/")({
 
 function Landing() {
   return (
-    <div className="relative min-h-screen bg-background text-foreground">
-      {/* AMBIENT BACKGROUND */}
+    <div className="relative min-h-screen overflow-hidden bg-background text-foreground antialiased">
+      {/* Ambient gradient blobs */}
       <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute -top-40 -right-20 h-[480px] w-[480px] rounded-full bg-[#f5d8c4] opacity-60 blur-3xl" />
-        <div className="absolute top-[30%] -left-32 h-[440px] w-[440px] rounded-full bg-[#d9e8d4] opacity-50 blur-3xl" />
-        <div className="absolute bottom-0 right-1/3 h-[360px] w-[360px] rounded-full bg-[#e6d9f0] opacity-50 blur-3xl" />
+        <div className="absolute -top-32 -right-20 h-[520px] w-[520px] rounded-full bg-[oklch(0.9_0.08_268)] opacity-50 blur-3xl drift-slow" />
+        <div className="absolute top-1/3 -left-32 h-[460px] w-[460px] rounded-full bg-[#fbe6cf] opacity-50 blur-3xl drift-slow" />
+        <div className="absolute bottom-0 right-1/4 h-[380px] w-[380px] rounded-full bg-[#dceadd] opacity-45 blur-3xl drift-slow" />
       </div>
 
       {/* NAV */}
-      <header className="sticky top-0 z-30 border-b border-border/40 bg-background/70 backdrop-blur-xl">
+      <header className="sticky top-0 z-30 backdrop-blur-xl bg-background/60">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 md:px-8">
           <Link to="/" className="flex items-center gap-2">
-            <div className="grid h-8 w-8 place-items-center rounded-xl bg-foreground text-background font-bold shadow-[0_8px_20px_-8px_rgba(0,0,0,0.4)]">P</div>
-            <span className="text-xl font-bold tracking-tight">paylo</span>
+            <div className="grid h-8 w-8 place-items-center rounded-full bg-foreground text-background font-bold text-sm shadow-soft">P</div>
+            <span className="text-xl font-semibold tracking-tight">paylo</span>
           </Link>
-          <nav className="hidden items-center gap-8 text-sm font-medium text-foreground/70 md:flex">
-            <a className="hover:text-foreground" href="#features">Product</a>
-            <a className="hover:text-foreground" href="#pricing">Pricing</a>
-            <a className="hover:text-foreground" href="#why">Why Paylo</a>
-            <a className="hover:text-foreground" href="#features">Contact</a>
+          <nav className="hidden items-center gap-8 text-sm font-medium text-foreground/60 md:flex">
+            <a className="transition-colors hover:text-foreground" href="#platform">Product</a>
+            <a className="transition-colors hover:text-foreground" href="#how">How it works</a>
+            <Link to="/auth" className="transition-colors hover:text-foreground">Sign in</Link>
           </nav>
-          <div className="flex items-center gap-2">
-            <Link to="/auth" className="hidden sm:inline-flex">
-              <button className="text-sm font-medium text-foreground/70 hover:text-foreground px-3 py-2">Sign in</button>
-            </Link>
-            <Link to="/auth">
-              <button className="inline-flex items-center gap-1.5 rounded-full bg-foreground px-5 py-2.5 text-sm font-semibold text-background hover:bg-foreground/90 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.4)] transition-all">
-                Get started <ArrowUpRight className="h-3.5 w-3.5" />
-              </button>
-            </Link>
-          </div>
+          <Link
+            to="/auth"
+            className="inline-flex items-center gap-1.5 rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background transition-all hover:scale-[1.02] shadow-soft"
+          >
+            Get started <ArrowUpRight className="h-3.5 w-3.5" />
+          </Link>
         </div>
       </header>
 
       {/* HERO */}
-      <section className="relative">
-        <div className="mx-auto max-w-6xl px-5 pt-14 pb-10 md:pt-24 md:pb-16">
-          <div className="mx-auto max-w-4xl text-center animate-fade-in">
-            <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/70 px-3.5 py-1.5 text-xs font-medium text-foreground/80 shadow-sm backdrop-blur">
-              <Sparkles className="h-3.5 w-3.5" /> New: 1099 contractor payments + e-file
+      <section className="mx-auto max-w-7xl px-5 pt-16 pb-12 text-center md:px-8 md:pt-24">
+        <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/70 px-3.5 py-1.5 shadow-soft backdrop-blur">
+          <span className="grid h-4 w-4 place-items-center"><span className="h-1.5 w-1.5 rounded-full bg-[var(--brand)] pulse-dot" /></span>
+          <span className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">New · 1099 contractor payments + e-file</span>
+        </div>
+
+        <h1 className="mx-auto mt-7 max-w-3xl font-serif text-[44px] leading-[1.04] tracking-tight md:text-7xl md:leading-[1.02]">
+          Payroll, <em className="font-serif italic text-[var(--brand)]">simplified</em>.<br />
+          Taxes, <em className="font-serif italic">handled</em>.
+        </h1>
+
+        <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg">
+          Run payroll, file taxes, and pay both W-2 employees and 1099 contractors — all in one quiet workflow.
+        </p>
+
+        <div className="mt-9 flex flex-col items-center gap-4">
+          <Link
+            to="/auth"
+            className="group inline-flex items-center gap-2.5 rounded-full bg-foreground px-9 py-4 text-base font-semibold text-background shadow-float transition-all hover:scale-[1.02] active:scale-[0.98]"
+          >
+            Start free trial
+            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+          </Link>
+          <a href="#how" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+            See how it works
+          </a>
+        </div>
+
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[13px] font-medium text-muted-foreground">
+          {["No credit card", "Setup in 10 min", "Cancel anytime"].map((t) => (
+            <span key={t} className="flex items-center gap-1.5">
+              <CheckCircle2 className="h-4 w-4 text-[var(--brand)]" /> {t}
+            </span>
+          ))}
+        </div>
+      </section>
+
+      {/* FLOATING DASHBOARD MOCKUP */}
+      <section className="px-5 pb-24 md:px-8">
+        <div className="relative mx-auto max-w-md">
+          {/* Glow halo */}
+          <div aria-hidden className="pointer-events-none absolute -inset-8 -z-10 rounded-[60px] bg-[var(--brand-soft)] opacity-60 blur-2xl" />
+
+          {/* Main card */}
+          <div className="relative z-10 rounded-[36px] border border-border/50 bg-card shadow-float overflow-hidden float-y">
+            <div className="flex items-center gap-1.5 px-7 pt-6 pb-2">
+              <div className="h-2.5 w-2.5 rounded-full bg-red-400/40" />
+              <div className="h-2.5 w-2.5 rounded-full bg-amber-400/40" />
+              <div className="h-2.5 w-2.5 rounded-full bg-emerald-400/40" />
+              <span className="ml-2 text-[10px] font-medium tracking-wide text-muted-foreground/60">PAYLO.APP/DASHBOARD</span>
             </div>
-            <h1 className="text-[44px] font-bold leading-[0.95] tracking-[-0.04em] md:text-[88px]">
-              Payroll, <span className="italic font-medium" style={{ fontFamily: "'Instrument Serif', serif" }}>simplified</span>.
-              <br />
-              Taxes, <span className="italic font-medium" style={{ fontFamily: "'Instrument Serif', serif" }}>handled</span>.
-            </h1>
-            <p className="mx-auto mt-7 max-w-xl text-lg text-foreground/65 md:text-xl">
-              Run payroll, file taxes, and pay both W-2 employees and 1099 contractors —
-              all in one place.
-            </p>
-            <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <Link to="/auth">
-                <Button size="lg" className="rounded-full bg-foreground px-8 py-6 text-base text-background hover:bg-foreground/90 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.4)]">
-                  Start free trial <ArrowRight className="ml-1.5 h-4 w-4" />
-                </Button>
-              </Link>
-              <a href="#features">
-                <Button size="lg" variant="ghost" className="rounded-full px-8 py-6 text-base">See how it works</Button>
-              </a>
-            </div>
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-5 text-xs text-foreground/55">
-              <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5" /> No credit card</span>
-              <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5" /> Setup in 10 min</span>
-              <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5" /> Cancel anytime</span>
+
+            <div className="space-y-5 px-7 pb-7 pt-3">
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">Good morning, Sarah</p>
+                  <h3 className="mt-0.5 text-2xl font-semibold tracking-tight">Acme Coffee Co.</h3>
+                </div>
+                <div className="flex items-center gap-1.5 rounded-full bg-foreground px-3 py-1.5 text-[10px] font-bold text-background">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]" />
+                  All systems normal
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <MockStat icon={<Users className="h-4 w-4" />} value="14" label="Employees" />
+                <div className="rounded-3xl bg-foreground p-4 text-background shadow-card">
+                  <div className="mb-3 grid h-8 w-8 place-items-center rounded-xl bg-white/10 text-white/60">
+                    <Wallet className="h-4 w-4" />
+                  </div>
+                  <div className="text-xl font-semibold tabular">$48,210</div>
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-white/50">Next payroll</div>
+                </div>
+              </div>
+
+              <div className="rounded-3xl border border-border/60 bg-secondary/60 p-5 shadow-inner">
+                <div className="mb-3 flex items-end justify-between">
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">This pay period</p>
+                    <div className="mt-0.5 text-3xl font-semibold tracking-tight tabular">$62,480</div>
+                  </div>
+                  <span className="rounded-lg bg-emerald-100 px-2 py-0.5 text-[11px] font-bold text-emerald-700">+8.2%</span>
+                </div>
+                <div className="flex h-2.5 w-full overflow-hidden rounded-full bg-border/60">
+                  <div className="h-full bg-foreground" style={{ width: "65%" }} />
+                  <div className="h-full bg-foreground/40" style={{ width: "20%" }} />
+                  <div className="h-full bg-foreground/20" style={{ width: "15%" }} />
+                </div>
+                <div className="mt-3 flex flex-wrap gap-4 text-[9px] font-bold uppercase tracking-wider text-muted-foreground">
+                  <span className="flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-foreground" /> Net pay</span>
+                  <span className="flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-foreground/40" /> Federal</span>
+                  <span className="flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-foreground/20" /> FICA</span>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* DASHBOARD MOCKUP */}
-          <div className="relative mx-auto mt-16 max-w-4xl md:mt-24 animate-fade-in">
-            <div className="rounded-[28px] border border-border/60 bg-card p-2 shadow-[0_50px_120px_-30px_rgba(0,0,0,0.4)] md:p-3 transition-transform duration-500 hover:-translate-y-1">
-              <div className="overflow-hidden rounded-[20px] border border-border/40 bg-secondary/30">
-                <div className="flex items-center justify-between border-b border-border/40 bg-card px-4 py-3">
-                  <div className="flex gap-1.5">
-                    <div className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
-                    <div className="h-2.5 w-2.5 rounded-full bg-[#ffbd2e]" />
-                    <div className="h-2.5 w-2.5 rounded-full bg-[#28ca42]" />
-                  </div>
-                  <div className="text-xs font-medium text-foreground/60">paylo.app/dashboard</div>
-                  <div className="w-12" />
-                </div>
-                <div className="space-y-4 p-5 md:p-7">
-                  <div className="flex items-end justify-between">
-                    <div>
-                      <div className="text-xs text-foreground/55">Good morning, Sarah</div>
-                      <div className="mt-1 text-2xl font-bold tracking-tight md:text-3xl">Acme Coffee Co.</div>
-                    </div>
-                    <div className="rounded-full bg-foreground px-3 py-1 text-[11px] font-semibold text-background">All systems normal</div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-                    <StatCard icon={Users} value="14" label="Employees" />
-                    <StatCard icon={Clock} value="12/14" label="Clocked in" />
-                    <StatCard icon={Calendar} value="3" label="PTO requests" />
-                    <StatCard icon={Wallet} value="$48,210" label="Next payroll" dark />
-                  </div>
-                  <div className="rounded-2xl border border-border/50 bg-card p-5 shadow-sm">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="text-[11px] uppercase tracking-wider text-foreground/55">This pay period</div>
-                        <div className="mt-1 text-3xl font-bold tracking-tight">$62,480</div>
-                      </div>
-                      <div className="rounded-full bg-[#d9e8d4] px-2.5 py-1 text-xs font-semibold text-[#2d5a3d]">+8.2%</div>
-                    </div>
-                    <div className="mt-4 flex h-2 overflow-hidden rounded-full bg-muted">
-                      <div className="w-[60%] bg-foreground" />
-                      <div className="w-[20%] bg-[#e85d3a]" />
-                      <div className="w-[20%] bg-[#d9b06d]" />
-                    </div>
-                    <div className="mt-2 flex flex-wrap gap-4 text-[11px] text-foreground/60">
-                      <span>● Net pay</span><span>● Federal taxes</span><span>● State + FICA</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            {/* floating accent cards */}
-            <div className="absolute -left-2 -top-6 hidden w-44 rounded-2xl bg-[#1a1a1a] p-3 text-background shadow-[0_30px_60px_-20px_rgba(0,0,0,0.5)] md:block md:-left-12">
-              <div className="flex items-center gap-2">
-                <div className="grid h-7 w-7 place-items-center rounded-lg bg-[#e85d3a]"><Banknote className="h-3.5 w-3.5" /></div>
-                <div className="text-[10px] uppercase tracking-wider opacity-70">Next payroll</div>
-              </div>
-              <div className="mt-2 text-xl font-bold">$48,210</div>
-              <div className="text-[10px] opacity-70">Paid Friday</div>
-            </div>
-            <div className="absolute -right-2 top-24 hidden w-44 rounded-2xl bg-[#d9e8d4] p-3 shadow-[0_30px_60px_-20px_rgba(0,0,0,0.3)] md:block md:-right-12">
-              <div className="flex items-center gap-2">
-                <div className="grid h-7 w-7 place-items-center rounded-lg bg-foreground text-background"><TrendingUp className="h-3.5 w-3.5" /></div>
-                <div className="text-[10px] uppercase tracking-wider text-foreground/70">Filed Q3</div>
-              </div>
-              <div className="mt-2 text-xl font-bold text-foreground">Form 941</div>
-              <div className="text-[10px] text-foreground/70">$12,840 fed w/h</div>
-            </div>
+          {/* Floating accent cards */}
+          <div className="absolute -right-4 top-24 z-20 w-32 rounded-3xl bg-[var(--brand)] p-4 text-white shadow-glow float-y-sm">
+            <div className="text-[10px] font-medium opacity-70">Approvals</div>
+            <div className="text-2xl font-bold tabular">98%</div>
+          </div>
+          <div className="absolute -left-6 bottom-16 z-0 w-36 rounded-3xl bg-card p-4 shadow-card float-y-lg">
+            <div className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Filed</div>
+            <div className="mt-1 text-xl font-bold tabular">Q3 941</div>
+            <div className="mt-2 h-1.5 w-3/4 rounded-full bg-emerald-300" />
           </div>
         </div>
       </section>
 
-      {/* FEATURES */}
-      <section id="features" className="relative">
-        <div className="mx-auto max-w-6xl px-5 py-20 md:px-8 md:py-28">
-          <div className="max-w-2xl">
-            <div className="inline-flex rounded-full border border-border/60 bg-card px-3 py-1 text-xs font-semibold">PLATFORM</div>
-            <h2 className="mt-5 text-4xl font-bold tracking-tight md:text-6xl">
-              Everything to pay your team,{" "}
-              <span className="italic font-medium" style={{ fontFamily: "'Instrument Serif', serif" }}>compliantly</span>.
-            </h2>
-            <p className="mt-5 text-lg text-foreground/65">
-              W-2 payroll, 1099 contractors, federal &amp; state tax filing,
-              direct deposit, time tracking, PTO, benefits — all in one tidy workflow.
-            </p>
-          </div>
+      {/* PLATFORM */}
+      <section id="platform" className="mx-auto max-w-2xl px-5 pb-24 md:px-8">
+        <div className="text-center">
+          <span className="inline-block rounded-full bg-[var(--brand-soft)] px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-[var(--brand)]">Platform</span>
+          <h2 className="mt-4 font-serif text-4xl tracking-tight md:text-5xl">
+            Everything to pay your team, <em className="font-serif italic">compliantly</em>.
+          </h2>
+          <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-muted-foreground md:text-base">
+            W-2 payroll, 1099 contractors, federal &amp; state tax filing, direct deposit, time tracking, PTO, benefits — all in one tidy workflow.
+          </p>
+        </div>
 
-          <div className="mt-12 grid gap-4 md:grid-cols-3">
-            {features.map((f) => (
-              <div key={f.title} className="group rounded-3xl border border-border/60 bg-card p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl">
-                <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl" style={{ backgroundColor: f.tint }}>
-                  <f.icon className="h-5 w-5 text-foreground" />
-                </div>
-                <h3 className="mt-5 text-lg font-semibold tracking-tight">{f.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-foreground/65">{f.desc}</p>
-              </div>
-            ))}
-          </div>
+        <div className="mt-12 space-y-4">
+          <Feature icon={<Wallet className="h-6 w-6 text-orange-500" />} bg="bg-orange-50" title="Run payroll" desc="Auto-calculated gross, taxes, deductions, and net pay. Approve in one click." />
+          <Feature icon={<Briefcase className="h-6 w-6 text-[var(--brand)]" />} bg="bg-[var(--brand-soft)]" title="1099 contractors" desc="Pay independent contractors. We generate year-end 1099-NEC forms automatically." />
+          <Feature icon={<ShieldCheck className="h-6 w-6 text-emerald-600" />} bg="bg-emerald-50" title="Tax filing" desc="941, 940, W-2/W-3, 1099-NEC. Quarterly and year-end, handled fully for you." />
+          <Feature icon={<Clock className="h-6 w-6 text-amber-600" />} bg="bg-amber-50" title="Time &amp; PTO" desc="Track hours, overtime, and time off. Flows straight into payroll." />
+          <Feature icon={<CalendarDays className="h-6 w-6 text-rose-500" />} bg="bg-rose-50" title="Direct deposit" desc="ACH batches ready for your bank. Pay stubs delivered to every employee." />
+          <Feature icon={<FileBadge className="h-6 w-6 text-violet-600" />} bg="bg-violet-50" title="HR &amp; onboarding" desc="Documents, signed W-4/I-9/W-9, onboarding checklists — stored and tracked." />
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="relative px-5 pb-20 md:px-8">
-        <div className="relative mx-auto max-w-5xl overflow-hidden rounded-[32px] bg-foreground p-10 text-background md:p-16">
-          <div className="relative z-10">
-            <h2 className="max-w-2xl text-4xl font-bold tracking-tight md:text-6xl">
-              Pay your team in{" "}
-              <span className="italic font-medium" style={{ fontFamily: "'Instrument Serif', serif" }}>minutes</span>, not days.
+      {/* FINAL CTA */}
+      <section id="how" className="mx-auto max-w-4xl px-5 pb-20 md:px-8">
+        <div className="relative overflow-hidden rounded-[40px] bg-[#0c0c12] p-10 text-white md:p-16">
+          <div aria-hidden className="absolute -right-24 -top-24 h-96 w-96 rounded-full bg-[var(--brand)]/30 blur-3xl" />
+          <div aria-hidden className="absolute -bottom-24 -left-24 h-80 w-80 rounded-full bg-orange-500/15 blur-3xl" />
+
+          <div className="relative z-10 text-center">
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-white/60">
+              <Sparkles className="h-3 w-3" /> Free first payroll
+            </div>
+            <h2 className="mx-auto mt-6 max-w-2xl font-serif text-4xl leading-tight md:text-5xl">
+              Pay your team in <em className="font-serif italic text-white/90">minutes</em>, not days.
             </h2>
-            <p className="mt-5 max-w-md text-base opacity-75 md:text-lg">
+            <p className="mx-auto mt-5 max-w-lg text-base leading-relaxed text-white/60">
               Switch from spreadsheets in an afternoon. We'll import your team and run your first payroll free.
             </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link to="/auth">
-                <Button size="lg" className="rounded-full bg-background px-8 py-6 text-base text-foreground hover:bg-background/90">
-                  Start free trial <ArrowRight className="ml-1.5 h-4 w-4" />
-                </Button>
+            <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+              <Link to="/auth" className="inline-flex items-center gap-2 rounded-full bg-white px-8 py-4 text-base font-bold text-black shadow-2xl transition-colors hover:bg-white/90">
+                Start free trial <ArrowRight className="h-4 w-4" />
               </Link>
-              <Link to="/auth">
-                <Button size="lg" variant="ghost" className="rounded-full px-8 py-6 text-base text-background hover:bg-background/10">Sign in</Button>
+              <Link to="/auth" className="rounded-full px-8 py-4 text-base font-semibold text-white/70 transition-colors hover:text-white">
+                Sign in
               </Link>
             </div>
           </div>
-          <div aria-hidden className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-[#e85d3a] opacity-30 blur-3xl" />
-          <div aria-hidden className="pointer-events-none absolute -bottom-20 -left-20 h-72 w-72 rounded-full bg-[#e6d9f0] opacity-20 blur-3xl" />
         </div>
       </section>
 
-      <footer className="border-t border-border/40">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-5 py-8 text-sm text-foreground/60 md:flex-row md:px-8">
-          <div className="flex items-center gap-2">
-            <div className="grid h-6 w-6 place-items-center rounded-lg bg-foreground text-[10px] font-bold text-background">P</div>
-            <span className="font-semibold text-foreground">paylo</span>
+      <footer className="border-t border-border/60 py-10">
+        <div className="mx-auto flex max-w-7xl flex-col items-center gap-3 px-5 md:px-8">
+          <div className="flex items-center gap-2 opacity-60">
+            <div className="grid h-6 w-6 place-items-center rounded-full bg-foreground text-[10px] font-bold text-background">P</div>
+            <span className="text-sm font-semibold tracking-tight">paylo</span>
           </div>
-          <span>© {new Date().getFullYear()} Paylo · Payroll for small business</span>
+          <p className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground">
+            © {new Date().getFullYear()} Paylo · Payroll for small business
+          </p>
         </div>
       </footer>
     </div>
   );
 }
 
-function StatCard({ icon: Icon, value, label, dark }: { icon: React.ComponentType<{ className?: string }>; value: string; label: string; dark?: boolean }) {
+function MockStat({ icon, value, label }: { icon: React.ReactNode; value: string; label: string }) {
   return (
-    <div className={`rounded-2xl border p-4 shadow-sm transition-transform hover:-translate-y-0.5 ${dark ? "bg-foreground text-background border-foreground" : "bg-card border-border/50"}`}>
-      <Icon className={`h-4 w-4 ${dark ? "opacity-80" : "text-foreground/60"}`} />
-      <div className="mt-2 text-xl font-bold">{value}</div>
-      <div className={`text-[11px] ${dark ? "opacity-70" : "text-foreground/60"}`}>{label}</div>
+    <div className="rounded-3xl border border-border/60 bg-card p-4 shadow-soft">
+      <div className="mb-3 grid h-8 w-8 place-items-center rounded-xl bg-secondary text-muted-foreground">{icon}</div>
+      <div className="text-2xl font-semibold tabular">{value}</div>
+      <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{label}</div>
     </div>
   );
 }
 
-const features = [
-  { icon: Wallet, title: "Run payroll", desc: "Auto-calculated gross, taxes, deductions, and net pay. Approve in one click.", tint: "#f5d8c4" },
-  { icon: Briefcase, title: "1099 contractors", desc: "Pay independent contractors. We generate year-end 1099-NEC forms.", tint: "#e6d9f0" },
-  { icon: ShieldCheck, title: "Tax filing", desc: "941, 940, W-2/W-3, 1099-NEC. Quarterly and year-end, handled for you.", tint: "#d9e8d4" },
-  { icon: Banknote, title: "Direct deposit", desc: "ACH batch export ready for your bank. Stubs delivered to every employee.", tint: "#f5d8c4" },
-  { icon: Clock, title: "Time & PTO", desc: "Track hours, overtime, and time off. Flows straight into payroll.", tint: "#d9e8d4" },
-  { icon: FileText, title: "Reports", desc: "Payroll register, GL summary, contractor totals. CSV-ready.", tint: "#e6d9f0" },
-];
+function Feature({ icon, bg, title, desc }: { icon: React.ReactNode; bg: string; title: string; desc: string }) {
+  return (
+    <div className="group rounded-[28px] border border-border/60 bg-card p-7 transition-all duration-500 hover:-translate-y-0.5 hover:shadow-card">
+      <div className={`mb-5 grid h-12 w-12 place-items-center rounded-2xl ${bg} transition-transform group-hover:scale-110`}>
+        {icon}
+      </div>
+      <h4 className="text-lg font-semibold tracking-tight">{title}</h4>
+      <p className="mt-2 text-sm leading-relaxed text-muted-foreground" dangerouslySetInnerHTML={{ __html: desc }} />
+    </div>
+  );
+}
