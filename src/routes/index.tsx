@@ -66,7 +66,7 @@ function Landing() {
       {/* HERO */}
       <section className="relative">
         <div className="mx-auto max-w-6xl px-5 pt-16 pb-12 md:pt-28 md:pb-16">
-          <motion.div {...fadeUp} className="mx-auto max-w-4xl text-center">
+          <div {...fadeUp} className="mx-auto max-w-4xl text-center">
             <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/70 px-3.5 py-1.5 text-xs font-medium text-foreground/80 shadow-sm backdrop-blur">
               <Sparkles className="h-3.5 w-3.5" /> New: 1099 contractor payments + e-file
             </div>
@@ -96,10 +96,10 @@ function Landing() {
               <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5" /> Setup in 10 min</span>
               <span className="hidden sm:flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5" /> Cancel anytime</span>
             </div>
-          </motion.div>
+          </div>
 
           {/* FLOATING DASHBOARD MOCKUP */}
-          <motion.div
+          <div
             initial={{ opacity: 0, y: 60, rotateX: 8 }}
             animate={{ opacity: 1, y: 0, rotateX: 0 }}
             transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] as const, delay: 0.15 }}
@@ -107,7 +107,7 @@ function Landing() {
             className="relative mt-16 md:mt-24"
           >
             {/* Floating accent cards */}
-            <motion.div
+            <div
               animate={{ y: [0, -10, 0] }}
               transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
               className="absolute -left-2 -top-8 z-20 w-44 rounded-2xl border border-border/50 bg-[#1a1a1a] p-4 text-background shadow-[0_30px_60px_-20px_rgba(0,0,0,0.5)] md:-left-12 md:w-56"
@@ -118,9 +118,9 @@ function Landing() {
               </div>
               <div className="mt-3 text-2xl font-bold tracking-tight">$48,210</div>
               <div className="mt-1 text-[11px] opacity-70">Paid Friday · 14 employees</div>
-            </motion.div>
+            </div>
 
-            <motion.div
+            <div
               animate={{ y: [0, 12, 0] }}
               transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
               className="absolute -right-2 top-20 z-20 w-44 rounded-2xl border border-border/50 bg-[#d9e8d4] p-4 shadow-[0_30px_60px_-20px_rgba(0,0,0,0.3)] md:-right-12 md:w-56"
@@ -131,9 +131,9 @@ function Landing() {
               </div>
               <div className="mt-3 text-2xl font-bold tracking-tight">Form 941</div>
               <div className="mt-1 text-[11px] text-foreground/70">$12,840 federal w/h</div>
-            </motion.div>
+            </div>
 
-            <motion.div
+            <div
               animate={{ y: [0, -8, 0] }}
               transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
               className="absolute -bottom-6 left-1/2 z-20 w-44 -translate-x-1/2 rounded-2xl border border-border/50 bg-[#e6d9f0] p-4 shadow-[0_30px_60px_-20px_rgba(0,0,0,0.3)] md:w-60"
@@ -144,7 +144,7 @@ function Landing() {
               </div>
               <div className="mt-3 text-2xl font-bold tracking-tight">7 active</div>
               <div className="mt-1 text-[11px] text-foreground/70">$28,400 YTD paid</div>
-            </motion.div>
+            </div>
 
             {/* Main dashboard card */}
             <div className="relative z-10 mx-auto max-w-4xl rounded-[28px] border border-border/60 bg-card p-2 shadow-[0_50px_120px_-30px_rgba(0,0,0,0.4)] md:p-3">
@@ -214,14 +214,14 @@ function Landing() {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* FEATURES */}
       <section id="features" className="relative">
         <div className="mx-auto max-w-6xl px-5 py-24 md:px-8 md:py-32">
-          <motion.div {...fadeUp} className="max-w-2xl">
+          <div {...fadeUp} className="max-w-2xl">
             <div className="inline-flex rounded-full border border-border/60 bg-card px-3 py-1 text-xs font-semibold">PLATFORM</div>
             <h2 className="mt-5 text-4xl font-bold tracking-tight md:text-6xl">
               Everything to pay <br className="hidden md:block" />your team, <span className="italic font-medium" style={{ fontFamily: "'Instrument Serif', serif" }}>compliantly</span>.
@@ -230,7 +230,7 @@ function Landing() {
               W-2 payroll, 1099 contractors, federal &amp; state tax filing,
               direct deposit, time tracking, PTO, benefits — all in one tidy workflow.
             </p>
-          </motion.div>
+          </div>
 
           <div className="mt-14 grid gap-4 md:grid-cols-3">
             {[
@@ -241,7 +241,7 @@ function Landing() {
               { icon: Clock, title: "Time & PTO", desc: "Track hours, overtime, and time off. Flows straight into payroll.", tint: "#d9e8d4" },
               { icon: FileText, title: "Reports", desc: "Payroll register, GL summary, contractor totals. CSV-ready.", tint: "#e6d9f0" },
             ].map((f, i) => (
-              <motion.div
+              <div
                 key={f.title}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -254,7 +254,7 @@ function Landing() {
                 </div>
                 <h3 className="mt-5 text-lg font-semibold tracking-tight">{f.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-foreground/65">{f.desc}</p>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
@@ -262,7 +262,7 @@ function Landing() {
 
       {/* CTA */}
       <section className="relative px-5 pb-24 md:px-8">
-        <motion.div
+        <div
           {...fadeUp}
           className="mx-auto max-w-5xl overflow-hidden rounded-[32px] bg-foreground p-10 text-background md:p-16"
         >
@@ -288,7 +288,7 @@ function Landing() {
           </div>
           <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-[#e85d3a] opacity-30 blur-3xl" />
           <div className="pointer-events-none absolute -bottom-20 -left-20 h-72 w-72 rounded-full bg-[#e6d9f0] opacity-20 blur-3xl" />
-        </motion.div>
+        </div>
       </section>
 
       <footer className="border-t border-border/40">
