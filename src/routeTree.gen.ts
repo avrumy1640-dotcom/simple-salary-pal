@@ -13,6 +13,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppTimeRouteImport } from './routes/app.time'
+import { Route as AppTaxesRouteImport } from './routes/app.taxes'
 import { Route as AppSettingsRouteImport } from './routes/app.settings'
 import { Route as AppReportsRouteImport } from './routes/app.reports'
 import { Route as AppPtoRouteImport } from './routes/app.pto'
@@ -40,6 +41,11 @@ const IndexRoute = IndexRouteImport.update({
 const AppTimeRoute = AppTimeRouteImport.update({
   id: '/time',
   path: '/time',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTaxesRoute = AppTaxesRouteImport.update({
+  id: '/taxes',
+  path: '/taxes',
   getParentRoute: () => AppRoute,
 } as any)
 const AppSettingsRoute = AppSettingsRouteImport.update({
@@ -95,6 +101,7 @@ export interface FileRoutesByFullPath {
   '/app/pto': typeof AppPtoRoute
   '/app/reports': typeof AppReportsRoute
   '/app/settings': typeof AppSettingsRoute
+  '/app/taxes': typeof AppTaxesRoute
   '/app/time': typeof AppTimeRoute
 }
 export interface FileRoutesByTo {
@@ -109,6 +116,7 @@ export interface FileRoutesByTo {
   '/app/pto': typeof AppPtoRoute
   '/app/reports': typeof AppReportsRoute
   '/app/settings': typeof AppSettingsRoute
+  '/app/taxes': typeof AppTaxesRoute
   '/app/time': typeof AppTimeRoute
 }
 export interface FileRoutesById {
@@ -124,6 +132,7 @@ export interface FileRoutesById {
   '/app/pto': typeof AppPtoRoute
   '/app/reports': typeof AppReportsRoute
   '/app/settings': typeof AppSettingsRoute
+  '/app/taxes': typeof AppTaxesRoute
   '/app/time': typeof AppTimeRoute
 }
 export interface FileRouteTypes {
@@ -140,6 +149,7 @@ export interface FileRouteTypes {
     | '/app/pto'
     | '/app/reports'
     | '/app/settings'
+    | '/app/taxes'
     | '/app/time'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -154,6 +164,7 @@ export interface FileRouteTypes {
     | '/app/pto'
     | '/app/reports'
     | '/app/settings'
+    | '/app/taxes'
     | '/app/time'
   id:
     | '__root__'
@@ -168,6 +179,7 @@ export interface FileRouteTypes {
     | '/app/pto'
     | '/app/reports'
     | '/app/settings'
+    | '/app/taxes'
     | '/app/time'
   fileRoutesById: FileRoutesById
 }
@@ -205,6 +217,13 @@ declare module '@tanstack/react-router' {
       path: '/time'
       fullPath: '/app/time'
       preLoaderRoute: typeof AppTimeRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/taxes': {
+      id: '/app/taxes'
+      path: '/taxes'
+      fullPath: '/app/taxes'
+      preLoaderRoute: typeof AppTaxesRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/settings': {
@@ -275,6 +294,7 @@ interface AppRouteChildren {
   AppPtoRoute: typeof AppPtoRoute
   AppReportsRoute: typeof AppReportsRoute
   AppSettingsRoute: typeof AppSettingsRoute
+  AppTaxesRoute: typeof AppTaxesRoute
   AppTimeRoute: typeof AppTimeRoute
 }
 
@@ -287,6 +307,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppPtoRoute: AppPtoRoute,
   AppReportsRoute: AppReportsRoute,
   AppSettingsRoute: AppSettingsRoute,
+  AppTaxesRoute: AppTaxesRoute,
   AppTimeRoute: AppTimeRoute,
 }
 
