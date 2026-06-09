@@ -97,7 +97,9 @@ function OnboardingPage() {
       );
       if (match?.status === "signed" && t.status !== "completed") {
         updates.push(
-          supabase.from("onboarding_tasks").update({ status: "completed", completed_at: new Date().toISOString() }).eq("id", t.id)
+          (async () => {
+            await supabase.from("onboarding_tasks").update({ status: "completed", completed_at: new Date().toISOString() }).eq("id", t.id);
+          })()
         );
       }
     }
