@@ -73,11 +73,11 @@ export function AppShell() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="flex items-center justify-between border-b bg-sidebar px-4 py-3 md:hidden">
+    <div className="min-h-screen">
+      <div className="flex items-center justify-between border-b border-white/10 surface-glass px-4 py-3 md:hidden">
         <div className="flex items-center gap-2">
-          <div className="grid h-7 w-7 place-items-center rounded-full bg-foreground text-background text-sm font-bold">P</div>
-          <span className="text-sm font-semibold">{companyName}</span>
+          <div className="grid h-8 w-8 place-items-center rounded-lg gradient-brand text-primary-foreground text-sm font-bold ring-glow">P</div>
+          <span className="text-sm font-semibold tracking-tight">{companyName}</span>
         </div>
         <Button variant="ghost" size="icon" onClick={() => setOpen(!open)}>
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -86,14 +86,14 @@ export function AppShell() {
 
       <div className="flex">
         <aside className={cn(
-          "fixed inset-y-0 left-0 z-40 w-72 transform border-r bg-sidebar transition-transform md:relative md:translate-x-0 flex flex-col",
+          "fixed inset-y-0 left-0 z-40 w-72 transform surface-glass border-r border-white/10 transition-transform md:relative md:translate-x-0 flex flex-col",
           open ? "translate-x-0" : "-translate-x-full"
         )}>
-          <div className="hidden items-center gap-2 border-b px-5 py-4 md:flex">
-            <div className="grid h-9 w-9 place-items-center rounded-full bg-foreground text-background font-bold">P</div>
+          <div className="hidden items-center gap-3 border-b border-white/10 px-5 py-5 md:flex">
+            <div className="grid h-10 w-10 place-items-center rounded-xl gradient-brand text-primary-foreground font-bold ring-glow">P</div>
             <div className="flex flex-col min-w-0">
-              <span className="text-sm font-semibold leading-tight">Paylo</span>
-              <span className="text-xs text-muted-foreground leading-tight truncate">{companyName}</span>
+              <span className="text-sm font-bold leading-tight tracking-tight text-gradient">PAYLO</span>
+              <span className="text-[11px] text-muted-foreground leading-tight truncate uppercase tracking-widest">{companyName}</span>
             </div>
           </div>
 
@@ -101,20 +101,20 @@ export function AppShell() {
             to="/app/getting-started"
             onClick={() => setOpen(false)}
             className={cn(
-              "mx-3 mt-3 flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors",
+              "mx-3 mt-4 flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all",
               path === "/app/getting-started"
-                ? "bg-foreground text-background"
-                : "bg-accent text-foreground hover:opacity-90"
+                ? "gradient-brand text-primary-foreground ring-glow"
+                : "border border-white/10 bg-white/5 text-foreground hover:bg-white/10"
             )}
           >
             <Sparkles className="h-4 w-4" /> Getting started
           </Link>
 
-          <nav className="flex-1 overflow-y-auto p-3 space-y-5 mt-2">
+          <nav className="flex-1 overflow-y-auto p-3 space-y-6 mt-3">
             {navGroups.map((g) => (
               <div key={g.label}>
-                <div className="px-3 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{g.label}</div>
-                <div className="space-y-1">
+                <div className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">{g.label}</div>
+                <div className="space-y-0.5">
                   {g.items.map((n) => {
                     const active = path === n.to || (n.to !== "/app/dashboard" && path.startsWith(n.to));
                     return (
@@ -123,13 +123,14 @@ export function AppShell() {
                         to={n.to}
                         onClick={() => setOpen(false)}
                         className={cn(
-                          "flex items-center gap-3 rounded-full px-3 py-2 text-sm transition-colors",
+                          "group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all",
                           active
-                            ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
-                            : "text-sidebar-foreground hover:bg-sidebar-accent/60"
+                            ? "bg-white/10 text-foreground font-semibold shadow-soft"
+                            : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
                         )}
                       >
-                        <n.icon className="h-4 w-4" />
+                        {active && <span className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-r gradient-brand" />}
+                        <n.icon className={cn("h-4 w-4 transition-colors", active ? "text-primary" : "")} />
                         {n.label}
                       </Link>
                     );
@@ -139,8 +140,8 @@ export function AppShell() {
             ))}
           </nav>
 
-          <div className="border-t p-3">
-            <Button variant="ghost" className="w-full justify-start gap-2 rounded-full" onClick={signOut}>
+          <div className="border-t border-white/10 p-3">
+            <Button variant="ghost" className="w-full justify-start gap-2 rounded-lg hover:bg-white/5" onClick={signOut}>
               <LogOut className="h-4 w-4" /> Sign out
             </Button>
           </div>
