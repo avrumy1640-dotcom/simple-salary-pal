@@ -147,10 +147,10 @@ function SetupStep({ done, label }: { done: boolean; label: string }) {
 
 function QuickCard({ to, title, desc }: { to: string; title: string; desc: string }) {
   return (
-    <Link to={to} className="group rounded-3xl border bg-card p-5 shadow-card transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-float">
+    <Link to={to} className="group rounded-2xl border bg-card p-4 shadow-card transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-float sm:rounded-3xl sm:p-5">
       <h3 className="font-display font-bold">{title}</h3>
       <p className="mt-1 text-sm text-muted-foreground">{desc}</p>
-      <div className="mt-5 inline-flex items-center gap-1 text-sm font-bold text-primary">
+      <div className="mt-4 inline-flex items-center gap-1 text-sm font-bold text-primary sm:mt-5">
         Open <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
       </div>
     </Link>
