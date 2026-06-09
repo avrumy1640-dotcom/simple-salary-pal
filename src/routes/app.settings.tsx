@@ -204,6 +204,28 @@ function SettingsPage() {
               <Button variant="outline" disabled>Enable 2FA (coming soon)</Button>
             </div>
           </Section>
+
+          {/* Danger Zone */}
+          <div className="rounded-2xl border-2 border-destructive/40 bg-destructive/5 p-6 space-y-4">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="h-5 w-5 text-destructive" />
+              <h2 className="text-base font-bold text-destructive">Danger zone</h2>
+            </div>
+            <p className="text-sm text-white/70">Permanent, destructive actions. These cannot be undone.</p>
+            <div className="rounded-xl border border-destructive/30 bg-card/40 p-4 flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <div className="font-semibold text-white">Delete account</div>
+                <div className="text-xs text-white/60">Permanently removes your company, employees, and payroll history.</div>
+              </div>
+              <Button
+                variant="outline"
+                className="border-destructive/60 text-destructive hover:bg-destructive/10"
+                onClick={() => toast.error("Contact support to delete your account.")}
+              >
+                Delete account
+              </Button>
+            </div>
+          </div>
         </TabsContent>
       </Tabs>
     </div>
