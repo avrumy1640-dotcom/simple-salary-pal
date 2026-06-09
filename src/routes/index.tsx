@@ -156,9 +156,9 @@ function Landing() {
       {/* PLATFORM */}
       <section id="platform" className="mx-auto max-w-2xl px-5 pb-24 md:px-8">
         <div className="text-center">
-          <span className="inline-block rounded-full bg-[var(--brand-soft)] px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-[var(--brand)]">Platform</span>
-          <h2 className="mt-4 font-serif text-4xl tracking-tight md:text-5xl">
-            Everything to pay your team, <em className="font-serif italic">compliantly</em>.
+          <span className="inline-block rounded-full bg-accent px-3 py-1 text-[10px] font-extrabold uppercase text-accent-foreground">Platform</span>
+          <h2 className="mt-4 font-display text-4xl font-extrabold md:text-5xl">
+            Everything to pay your team compliantly.
           </h2>
           <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-muted-foreground md:text-base">
             W-2 payroll, 1099 contractors, federal &amp; state tax filing, direct deposit, time tracking, PTO, benefits — all in one tidy workflow.
@@ -177,25 +177,24 @@ function Landing() {
 
       {/* FINAL CTA */}
       <section id="how" className="mx-auto max-w-4xl px-5 pb-20 md:px-8">
-        <div className="relative overflow-hidden rounded-[40px] bg-[#0c0c12] p-10 text-white md:p-16">
-          <div aria-hidden className="absolute -right-24 -top-24 h-96 w-96 rounded-full bg-[var(--brand)]/30 blur-3xl" />
-          <div aria-hidden className="absolute -bottom-24 -left-24 h-80 w-80 rounded-full bg-orange-500/15 blur-3xl" />
+        <div className="relative overflow-hidden rounded-[40px] surface-hero p-10 text-primary-foreground shadow-float md:p-16">
+          <div aria-hidden className="absolute inset-0 grid-bg opacity-20" />
 
           <div className="relative z-10 text-center">
-            <div className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-white/60">
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-primary-foreground/14 bg-primary-foreground/10 px-3 py-1 text-[11px] font-bold uppercase text-primary-foreground/70">
               <Sparkles className="h-3 w-3" /> Free first payroll
             </div>
-            <h2 className="mx-auto mt-6 max-w-2xl font-serif text-4xl leading-tight md:text-5xl">
-              Pay your team in <em className="font-serif italic text-white/90">minutes</em>, not days.
+            <h2 className="mx-auto mt-6 max-w-2xl font-display text-4xl font-extrabold leading-tight md:text-5xl">
+              Pay your team in minutes, not days.
             </h2>
-            <p className="mx-auto mt-5 max-w-lg text-base leading-relaxed text-white/60">
+            <p className="mx-auto mt-5 max-w-lg text-base leading-relaxed text-primary-foreground/68">
               Switch from spreadsheets in an afternoon. We'll import your team and run your first payroll free.
             </p>
             <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-              <Link to="/auth" className="inline-flex items-center gap-2 rounded-full bg-white px-8 py-4 text-base font-bold text-black shadow-2xl transition-colors hover:bg-white/90">
+              <Link to="/auth" className="inline-flex items-center gap-2 rounded-2xl bg-primary-foreground px-8 py-4 text-base font-bold text-primary shadow-2xl transition-all hover:-translate-y-0.5 hover:bg-primary-foreground/90">
                 Start free trial <ArrowRight className="h-4 w-4" />
               </Link>
-              <Link to="/auth" className="rounded-full px-8 py-4 text-base font-semibold text-white/70 transition-colors hover:text-white">
+              <Link to="/auth" className="rounded-2xl px-8 py-4 text-base font-bold text-primary-foreground/70 transition-colors hover:text-primary-foreground">
                 Sign in
               </Link>
             </div>
