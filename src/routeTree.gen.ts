@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppTrackingRouteImport } from './routes/app.tracking'
 import { Route as AppTimeRouteImport } from './routes/app.time'
 import { Route as AppTaxesRouteImport } from './routes/app.taxes'
 import { Route as AppTaxFilingRouteImport } from './routes/app.tax-filing'
@@ -43,6 +44,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AppTrackingRoute = AppTrackingRouteImport.update({
+  id: '/tracking',
+  path: '/tracking',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppTimeRoute = AppTimeRouteImport.update({
   id: '/time',
@@ -145,6 +151,7 @@ export interface FileRoutesByFullPath {
   '/app/tax-filing': typeof AppTaxFilingRoute
   '/app/taxes': typeof AppTaxesRoute
   '/app/time': typeof AppTimeRoute
+  '/app/tracking': typeof AppTrackingRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -166,6 +173,7 @@ export interface FileRoutesByTo {
   '/app/tax-filing': typeof AppTaxFilingRoute
   '/app/taxes': typeof AppTaxesRoute
   '/app/time': typeof AppTimeRoute
+  '/app/tracking': typeof AppTrackingRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -188,6 +196,7 @@ export interface FileRoutesById {
   '/app/tax-filing': typeof AppTaxFilingRoute
   '/app/taxes': typeof AppTaxesRoute
   '/app/time': typeof AppTimeRoute
+  '/app/tracking': typeof AppTrackingRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -211,6 +220,7 @@ export interface FileRouteTypes {
     | '/app/tax-filing'
     | '/app/taxes'
     | '/app/time'
+    | '/app/tracking'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -232,6 +242,7 @@ export interface FileRouteTypes {
     | '/app/tax-filing'
     | '/app/taxes'
     | '/app/time'
+    | '/app/tracking'
   id:
     | '__root__'
     | '/'
@@ -253,6 +264,7 @@ export interface FileRouteTypes {
     | '/app/tax-filing'
     | '/app/taxes'
     | '/app/time'
+    | '/app/tracking'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -283,6 +295,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/app/tracking': {
+      id: '/app/tracking'
+      path: '/tracking'
+      fullPath: '/app/tracking'
+      preLoaderRoute: typeof AppTrackingRouteImport
+      parentRoute: typeof AppRoute
     }
     '/app/time': {
       id: '/app/time'
@@ -416,6 +435,7 @@ interface AppRouteChildren {
   AppTaxFilingRoute: typeof AppTaxFilingRoute
   AppTaxesRoute: typeof AppTaxesRoute
   AppTimeRoute: typeof AppTimeRoute
+  AppTrackingRoute: typeof AppTrackingRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
@@ -435,6 +455,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppTaxFilingRoute: AppTaxFilingRoute,
   AppTaxesRoute: AppTaxesRoute,
   AppTimeRoute: AppTimeRoute,
+  AppTrackingRoute: AppTrackingRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
@@ -447,13 +468,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

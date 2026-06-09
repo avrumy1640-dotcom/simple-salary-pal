@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import {
   LayoutDashboard, Users, Clock, Wallet, FileText, LogOut, Menu, X,
   HeartHandshake, CalendarDays, Settings as SettingsIcon, FileBadge, Sparkles,
-  Briefcase, Receipt, Landmark, FolderOpen, ClipboardCheck,
+  Briefcase, Receipt, Landmark, FolderOpen, ClipboardCheck, MapPin,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -16,6 +16,7 @@ const navGroups = [
       { to: "/app/dashboard", label: "Dashboard", icon: LayoutDashboard },
       { to: "/app/payroll", label: "Run payroll", icon: Wallet },
       { to: "/app/time", label: "Time & attendance", icon: Clock },
+      { to: "/app/tracking", label: "Location tracking", icon: MapPin },
       { to: "/app/paystubs", label: "Pay stubs & ACH", icon: Receipt },
     ],
   },
