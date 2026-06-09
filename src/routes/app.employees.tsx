@@ -477,6 +477,9 @@ function SummaryChip({ label, value, muted }: { label: string; value: number; mu
       <div className={`mt-1 font-display text-3xl font-extrabold tabular ${muted ? "text-white/80" : "text-primary"}`}>{value}</div>
     </div>
   );
+}
+
+
 
 function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
   return (
