@@ -9,6 +9,7 @@ import {
   History as HistoryIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { TopBar } from "@/components/TopBar";
 
 const navGroups = [
   {
