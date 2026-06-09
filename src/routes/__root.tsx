@@ -79,7 +79,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { title: "Paystream — Payroll & HR" },
       { name: "description", content: "Modern payroll, contractor payments, and tax filing." },
-      { name: "theme-color", content: "#0B0B0B" },
+      { name: "theme-color", content: "#F7F9FC" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "default" },
       { name: "apple-mobile-web-app-title", content: "Paystream" },

@@ -69,15 +69,15 @@ export function AppShell() {
   }
 
   if (checking) {
-    return <div className="grid min-h-screen place-items-center text-sm text-muted-foreground">Loading…</div>;
+    return <div className="grid min-h-screen place-items-center text-sm font-medium text-muted-foreground">Loading…</div>;
   }
 
   return (
-    <div className="min-h-screen">
-      <div className="flex items-center justify-between border-b border-white/10 surface-glass px-4 py-3 md:hidden">
+    <div className="min-h-screen text-foreground">
+      <div className="sticky top-0 z-50 flex items-center justify-between border-b bg-background/85 px-4 py-3 backdrop-blur-2xl md:hidden">
         <div className="flex items-center gap-2">
-          <div className="grid h-8 w-8 place-items-center rounded-lg gradient-brand text-primary-foreground text-sm font-bold ring-glow">P</div>
-          <span className="text-sm font-semibold tracking-tight">{companyName}</span>
+          <div className="grid h-9 w-9 place-items-center rounded-xl gradient-brand text-sm font-bold text-primary-foreground shadow-glow">P</div>
+          <span className="text-sm font-bold">{companyName}</span>
         </div>
         <Button variant="ghost" size="icon" onClick={() => setOpen(!open)}>
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -86,14 +86,14 @@ export function AppShell() {
 
       <div className="flex">
         <aside className={cn(
-          "fixed inset-y-0 left-0 z-40 w-72 transform surface-glass border-r border-white/10 transition-transform md:relative md:translate-x-0 flex flex-col",
+          "fixed inset-y-0 left-0 z-40 flex w-72 transform flex-col border-r bg-sidebar/90 shadow-float backdrop-blur-2xl transition-transform md:sticky md:top-0 md:h-screen md:translate-x-0 md:shadow-none",
           open ? "translate-x-0" : "-translate-x-full"
         )}>
-          <div className="hidden items-center gap-3 border-b border-white/10 px-5 py-5 md:flex">
-            <div className="grid h-10 w-10 place-items-center rounded-xl gradient-brand text-primary-foreground font-bold ring-glow">P</div>
+          <div className="hidden items-center gap-3 border-b px-5 py-5 md:flex">
+            <div className="grid h-11 w-11 place-items-center rounded-2xl gradient-brand font-bold text-primary-foreground shadow-glow">P</div>
             <div className="flex flex-col min-w-0">
-              <span className="text-sm font-bold leading-tight tracking-tight text-gradient">PAYLO</span>
-              <span className="text-[11px] text-muted-foreground leading-tight truncate uppercase tracking-widest">{companyName}</span>
+              <span className="text-base font-extrabold leading-tight text-gradient">Paylo</span>
+              <span className="truncate text-xs font-medium leading-tight text-muted-foreground">{companyName}</span>
             </div>
           </div>
 
@@ -101,20 +101,20 @@ export function AppShell() {
             to="/app/getting-started"
             onClick={() => setOpen(false)}
             className={cn(
-              "mx-3 mt-4 flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all",
+              "mx-3 mt-4 flex items-center gap-2 rounded-2xl px-4 py-3 text-sm font-bold transition-all",
               path === "/app/getting-started"
-                ? "gradient-brand text-primary-foreground ring-glow"
-                : "border border-white/10 bg-white/5 text-foreground hover:bg-white/10"
+                ? "gradient-brand text-primary-foreground shadow-glow"
+                : "border bg-card text-foreground shadow-soft hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-glow"
             )}
           >
             <Sparkles className="h-4 w-4" /> Getting started
           </Link>
 
-          <nav className="flex-1 overflow-y-auto p-3 space-y-6 mt-3">
+          <nav className="mt-4 flex-1 space-y-7 overflow-y-auto px-3 pb-3">
             {navGroups.map((g) => (
               <div key={g.label}>
-                <div className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">{g.label}</div>
-                <div className="space-y-0.5">
+                <div className="px-3 pb-2 text-[11px] font-extrabold uppercase text-muted-foreground">{g.label}</div>
+                <div className="space-y-1">
                   {g.items.map((n) => {
                     const active = path === n.to || (n.to !== "/app/dashboard" && path.startsWith(n.to));
                     return (
@@ -123,14 +123,14 @@ export function AppShell() {
                         to={n.to}
                         onClick={() => setOpen(false)}
                         className={cn(
-                          "group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all",
+                          "group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-all",
                           active
-                            ? "bg-white/10 text-foreground font-semibold shadow-soft"
-                            : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
+                            ? "bg-accent text-accent-foreground shadow-soft"
+                            : "text-muted-foreground hover:bg-card hover:text-foreground hover:shadow-soft"
                         )}
                       >
-                        {active && <span className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-r gradient-brand" />}
-                        <n.icon className={cn("h-4 w-4 transition-colors", active ? "text-primary" : "")} />
+                        {active && <span className="absolute left-0 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-full gradient-brand" />}
+                        <n.icon className={cn("h-4 w-4 transition-colors", active ? "text-primary" : "text-muted-foreground")} />
                         {n.label}
                       </Link>
                     );
@@ -140,17 +140,17 @@ export function AppShell() {
             ))}
           </nav>
 
-          <div className="border-t border-white/10 p-3">
-            <Button variant="ghost" className="w-full justify-start gap-2 rounded-lg hover:bg-white/5" onClick={signOut}>
+          <div className="border-t p-3">
+            <Button variant="ghost" className="w-full justify-start gap-2 rounded-xl font-semibold" onClick={signOut}>
               <LogOut className="h-4 w-4" /> Sign out
             </Button>
           </div>
         </aside>
 
-        {open && <div className="fixed inset-0 z-30 bg-black/30 md:hidden" onClick={() => setOpen(false)} />}
+        {open && <div className="fixed inset-0 z-30 bg-foreground/20 backdrop-blur-sm md:hidden" onClick={() => setOpen(false)} />}
 
         <main className="flex-1 min-w-0">
-          <div className="mx-auto max-w-6xl p-4 md:p-8">
+          <div className="mx-auto max-w-7xl p-4 md:p-8 lg:p-10">
             <Outlet />
           </div>
         </main>
