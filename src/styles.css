@@ -6,8 +6,9 @@
 
 @theme inline {
   --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Space Grotesk", "DM Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-serif: "Space Grotesk", "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Playfair Display", "DM Sans", ui-serif, Georgia, serif;
+  --font-script: "Dancing Script", cursive;
+  --font-serif: "Playfair Display", ui-serif, Georgia, serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -28,6 +29,8 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-gold: var(--gold);
+  --color-gold-foreground: var(--gold-foreground);
   --color-brand: var(--brand);
   --color-brand-foreground: var(--brand-foreground);
   --color-cyan: var(--cyan);
@@ -47,85 +50,89 @@
   --color-sidebar-border: var(--sidebar-border);
 }
 
-/* 2030 NAVY TRUST — Apple-clean HR command center, light premium surfaces */
+/* MIDNIGHT FINTECH — deep navy base, cobalt primary, gold highlights */
 :root {
-  --radius: 0.875rem;
+  --radius: 1rem;
 
-  --background: oklch(0.975 0.012 252);
-  --foreground: oklch(0.19 0.045 258);
-  --card: oklch(1 0 0);
-  --card-foreground: var(--foreground);
-  --popover: oklch(1 0 0);
-  --popover-foreground: var(--foreground);
+  --background: #0A0F2C;
+  --foreground: #FFFFFF;
+  --card: rgba(255, 255, 255, 0.05);
+  --card-foreground: #FFFFFF;
+  --popover: #0F1638;
+  --popover-foreground: #FFFFFF;
 
-  --primary: oklch(0.48 0.16 253);
-  --primary-foreground: oklch(0.99 0.004 252);
-  --cyan: oklch(0.7 0.13 220);
+  --primary: #2563EB;
+  --primary-foreground: #FFFFFF;
+  --cyan: #60A5FA;
 
-  --secondary: oklch(0.94 0.018 252);
-  --secondary-foreground: var(--foreground);
-  --muted: oklch(0.94 0.014 252);
-  --muted-foreground: oklch(0.48 0.035 255);
-  --accent: oklch(0.91 0.04 247);
-  --accent-foreground: oklch(0.25 0.08 255);
+  --secondary: rgba(255, 255, 255, 0.06);
+  --secondary-foreground: #FFFFFF;
+  --muted: rgba(255, 255, 255, 0.05);
+  --muted-foreground: rgba(255, 255, 255, 0.62);
+  --accent: rgba(37, 99, 235, 0.16);
+  --accent-foreground: #FFFFFF;
 
-  --brand: oklch(0.42 0.14 253);
-  --brand-foreground: oklch(0.99 0.004 252);
-  --brand-glow: oklch(0.62 0.14 235 / 0.2);
+  --gold: #F5C518;
+  --gold-foreground: #0A0F2C;
 
-  --destructive: oklch(0.58 0.2 25);
-  --destructive-foreground: oklch(0.99 0.004 252);
-  --success: oklch(0.58 0.15 158);
-  --success-foreground: oklch(0.99 0.004 252);
-  --warning: oklch(0.74 0.16 78);
-  --warning-foreground: oklch(0.2 0.04 258);
+  --brand: #2563EB;
+  --brand-foreground: #FFFFFF;
+  --brand-glow: rgba(37, 99, 235, 0.45);
 
-  --border: oklch(0.86 0.018 252);
-  --input: oklch(0.84 0.018 252);
-  --ring: oklch(0.54 0.15 248);
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+  --success: #22C55E;
+  --success-foreground: #0A0F2C;
+  --warning: #F5C518;
+  --warning-foreground: #0A0F2C;
 
-  --sidebar: oklch(0.99 0.004 252 / 0.82);
-  --sidebar-foreground: oklch(0.35 0.04 258);
-  --sidebar-accent: oklch(0.91 0.04 247);
-  --sidebar-accent-foreground: oklch(0.24 0.08 255);
-  --sidebar-border: oklch(0.86 0.018 252);
+  --border: rgba(255, 255, 255, 0.10);
+  --input: rgba(255, 255, 255, 0.14);
+  --ring: #2563EB;
 
-  --gradient-brand: linear-gradient(135deg, oklch(0.38 0.13 258), oklch(0.55 0.16 238));
-  --gradient-surface: linear-gradient(180deg, oklch(1 0 0) 0%, oklch(0.965 0.012 252) 100%);
-  --gradient-hero: linear-gradient(135deg, oklch(0.22 0.06 258) 0%, oklch(0.33 0.11 252) 48%, oklch(0.58 0.13 230) 100%);
+  --sidebar: rgba(10, 15, 44, 0.92);
+  --sidebar-foreground: rgba(255, 255, 255, 0.85);
+  --sidebar-accent: rgba(37, 99, 235, 0.18);
+  --sidebar-accent-foreground: #FFFFFF;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
 
-  --shadow-soft: 0 1px 2px oklch(0.2 0.04 258 / 0.08), 0 10px 28px -18px oklch(0.22 0.06 258 / 0.22);
-  --shadow-card: 0 1px 0 oklch(1 0 0 / 0.8) inset, 0 22px 55px -34px oklch(0.22 0.06 258 / 0.32);
-  --shadow-float: 0 30px 80px -42px oklch(0.2 0.05 258 / 0.46);
-  --shadow-glow: 0 0 0 1px oklch(0.54 0.15 248 / 0.16), 0 22px 70px -34px var(--brand-glow);
+  --gradient-brand: linear-gradient(135deg, #2563EB, #60A5FA);
+  --gradient-gold: linear-gradient(135deg, #F5C518, #FFD862);
+  --gradient-hero: radial-gradient(ellipse at top left, rgba(37,99,235,0.35), transparent 55%),
+                   radial-gradient(ellipse at bottom right, rgba(245,197,24,0.18), transparent 55%),
+                   linear-gradient(135deg, #0A0F2C 0%, #131A45 100%);
+
+  --shadow-soft: 0 1px 2px rgba(0,0,0,0.4), 0 12px 32px -20px rgba(0,0,0,0.6);
+  --shadow-card: 0 1px 0 rgba(255,255,255,0.04) inset, 0 24px 60px -32px rgba(0,0,0,0.7);
+  --shadow-float: 0 30px 90px -40px rgba(0,0,0,0.8);
+  --shadow-glow: 0 0 0 1px rgba(37,99,235,0.35), 0 24px 70px -28px var(--brand-glow);
+  --shadow-gold: 0 0 0 1px rgba(245,197,24,0.45), 0 16px 50px -22px rgba(245,197,24,0.5);
 }
 
-.dark { color-scheme: light; }
+.dark { color-scheme: dark; }
 
 @layer base {
   * { border-color: var(--color-border); }
   html, body {
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
-    color-scheme: light;
+    color-scheme: dark;
   }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
     background-image:
-      linear-gradient(180deg, oklch(1 0 0 / 0.88), oklch(0.975 0.012 252 / 0.96)),
-      linear-gradient(90deg, oklch(0.88 0.018 252 / 0.42) 1px, transparent 1px),
-      linear-gradient(180deg, oklch(0.88 0.018 252 / 0.36) 1px, transparent 1px);
-    background-size: auto, 48px 48px, 48px 48px;
+      radial-gradient(ellipse 70% 50% at 50% -10%, rgba(37,99,235,0.20), transparent 60%),
+      radial-gradient(ellipse 50% 40% at 100% 100%, rgba(245,197,24,0.08), transparent 60%),
+      linear-gradient(180deg, #0A0F2C 0%, #0B1133 100%);
     background-attachment: fixed;
     min-height: 100vh;
   }
   h1, h2, h3, h4 {
     font-family: var(--font-display);
-    letter-spacing: 0;
+    letter-spacing: -0.01em;
     font-weight: 700;
   }
-  [class*="tracking-"] { letter-spacing: 0; }
   .tabular { font-variant-numeric: tabular-nums; }
 }
 
@@ -133,25 +140,19 @@
 @utility shadow-card { box-shadow: var(--shadow-card); }
 @utility shadow-float { box-shadow: var(--shadow-float); }
 @utility shadow-glow { box-shadow: var(--shadow-glow); }
+@utility shadow-gold { box-shadow: var(--shadow-gold); }
 
 @utility surface-glass {
   background:
-    linear-gradient(180deg, oklch(1 0 0 / 0.86), oklch(1 0 0 / 0.66)),
-    oklch(1 0 0 / 0.72);
+    linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
   backdrop-filter: blur(22px) saturate(160%);
   -webkit-backdrop-filter: blur(22px) saturate(160%);
-  border: 1px solid oklch(0.86 0.018 252 / 0.82);
-}
-
-@utility surface-elevated {
-  background: var(--gradient-surface);
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-card);
+  border: 1px solid rgba(255,255,255,0.08);
 }
 
 @utility surface-panel {
-  background: linear-gradient(180deg, oklch(1 0 0), oklch(0.985 0.006 252));
-  border: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255,255,255,0.08);
   box-shadow: var(--shadow-card);
 }
 
@@ -160,41 +161,83 @@
   box-shadow: var(--shadow-float);
 }
 
-@utility gradient-brand {
-  background-image: var(--gradient-brand);
-}
+@utility gradient-brand { background-image: var(--gradient-brand); }
+@utility gradient-gold { background-image: var(--gradient-gold); }
 
 @utility text-gradient {
-  background: linear-gradient(135deg, oklch(0.2 0.05 258), oklch(0.52 0.15 242));
+  background: linear-gradient(135deg, #FFFFFF, #93C5FD);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
-@utility ring-glow {
-  box-shadow: 0 0 0 1px oklch(0.54 0.15 248 / 0.22), 0 16px 44px -28px oklch(0.54 0.15 248 / 0.5);
+@utility text-gold {
+  color: #F5C518;
 }
 
 @utility grid-bg {
   background-image:
-    linear-gradient(oklch(0.78 0.022 252 / 0.26) 1px, transparent 1px),
-    linear-gradient(90deg, oklch(0.78 0.022 252 / 0.26) 1px, transparent 1px);
+    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
   background-size: 32px 32px;
+}
+
+@utility hover-gold {
+  transition: all 0.25s ease;
+}
+@utility hover-gold:hover {
+  border-color: rgba(245,197,24,0.55);
+  box-shadow: var(--shadow-gold);
 }
 
 @keyframes float-y { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
 @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:.55} }
 @keyframes shimmer { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
 @keyframes drift { 0%,100%{transform:translate(0,0)} 50%{transform:translate(20px,-20px)} }
+@keyframes orb-1 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(40px,-30px) scale(1.1)} }
+@keyframes orb-2 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(-30px,40px) scale(1.08)} }
 
 @utility float-y { animation: float-y 6s ease-in-out infinite; }
 @utility pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
-@utility drift-slow { animation: drift 18s ease-in-out infinite; }
-@utility shimmer-text {
-  background: linear-gradient(90deg, oklch(0.32 0.06 252) 0%, oklch(0.58 0.16 238) 50%, oklch(0.32 0.06 252) 100%);
+@utility orb-1 { animation: orb-1 14s ease-in-out infinite; }
+@utility orb-2 { animation: orb-2 18s ease-in-out infinite; }
+
+/* Typewriter script for landing/login */
+.script-typer {
+  font-family: var(--font-script);
+  font-weight: 600;
+  color: #F5C518;
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  border-right: 2px solid rgba(245,197,24,0.7);
+  width: 0;
+  animation: type 4s steps(14, end) infinite, blink 0.9s step-end infinite;
+}
+@keyframes type {
+  0% { width: 0 }
+  40% { width: 8.5ch }
+  60% { width: 8.5ch }
+  90% { width: 0 }
+  100% { width: 0 }
+}
+@keyframes blink {
+  0%, 100% { border-color: rgba(245,197,24,0.7) }
+  50% { border-color: transparent }
+}
+
+/* Skeleton shimmer */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: rgba(255,255,255,0.05);
+  border-radius: 12px;
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+  animation: shimmer 1.6s linear infinite;
   background-size: 200% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: shimmer 3s linear infinite;
 }
