@@ -210,8 +210,11 @@ export type Database = {
           created_at: string
           email: string | null
           full_name: string
+          geocoded_address: string | null
           hourly_rate: number | null
           id: string
+          latitude: number | null
+          longitude: number | null
           notes: string | null
           owner_id: string
           payment_method: string | null
@@ -233,8 +236,11 @@ export type Database = {
           created_at?: string
           email?: string | null
           full_name: string
+          geocoded_address?: string | null
           hourly_rate?: number | null
           id?: string
+          latitude?: number | null
+          longitude?: number | null
           notes?: string | null
           owner_id: string
           payment_method?: string | null
@@ -256,8 +262,11 @@ export type Database = {
           created_at?: string
           email?: string | null
           full_name?: string
+          geocoded_address?: string | null
           hourly_rate?: number | null
           id?: string
+          latitude?: number | null
+          longitude?: number | null
           notes?: string | null
           owner_id?: string
           payment_method?: string | null
@@ -340,8 +349,11 @@ export type Database = {
           federal_allowances: number
           filing_status: string | null
           full_name: string
+          geocoded_address: string | null
           id: string
           job_title: string | null
+          latitude: number | null
+          longitude: number | null
           owner_id: string
           pay_rate: number
           pay_type: string
@@ -373,8 +385,11 @@ export type Database = {
           federal_allowances?: number
           filing_status?: string | null
           full_name: string
+          geocoded_address?: string | null
           id?: string
           job_title?: string | null
+          latitude?: number | null
+          longitude?: number | null
           owner_id: string
           pay_rate?: number
           pay_type?: string
@@ -406,8 +421,11 @@ export type Database = {
           federal_allowances?: number
           filing_status?: string | null
           full_name?: string
+          geocoded_address?: string | null
           id?: string
           job_title?: string | null
+          latitude?: number | null
+          longitude?: number | null
           owner_id?: string
           pay_rate?: number
           pay_type?: string
@@ -423,6 +441,131 @@ export type Database = {
         }
         Relationships: []
       }
+      field_visits: {
+        Row: {
+          address: string | null
+          contractor_id: string | null
+          created_at: string
+          duration_minutes: number | null
+          employee_id: string | null
+          ended_at: string | null
+          id: string
+          latitude: number | null
+          longitude: number | null
+          notes: string | null
+          started_at: string | null
+          status: string
+          updated_at: string
+          user_id: string
+          visit_label: string | null
+        }
+        Insert: {
+          address?: string | null
+          contractor_id?: string | null
+          created_at?: string
+          duration_minutes?: number | null
+          employee_id?: string | null
+          ended_at?: string | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          notes?: string | null
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+          visit_label?: string | null
+        }
+        Update: {
+          address?: string | null
+          contractor_id?: string | null
+          created_at?: string
+          duration_minutes?: number | null
+          employee_id?: string | null
+          ended_at?: string | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          notes?: string | null
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+          visit_label?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "field_visits_contractor_id_fkey"
+            columns: ["contractor_id"]
+            isOneToOne: false
+            referencedRelation: "contractors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "field_visits_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hr_document_signatures: {
+        Row: {
+          created_at: string
+          document_id: string
+          event_at: string
+          id: string
+          note: string | null
+          signature_data: string | null
+          signature_ip: string | null
+          signature_user_agent: string | null
+          signed_by_email: string | null
+          signed_by_name: string | null
+          signed_by_user_id: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          document_id: string
+          event_at?: string
+          id?: string
+          note?: string | null
+          signature_data?: string | null
+          signature_ip?: string | null
+          signature_user_agent?: string | null
+          signed_by_email?: string | null
+          signed_by_name?: string | null
+          signed_by_user_id?: string | null
+          status: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          document_id?: string
+          event_at?: string
+          id?: string
+          note?: string | null
+          signature_data?: string | null
+          signature_ip?: string | null
+          signature_user_agent?: string | null
+          signed_by_email?: string | null
+          signed_by_name?: string | null
+          signed_by_user_id?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hr_document_signatures_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "hr_documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       hr_documents: {
         Row: {
           category: string
@@ -435,6 +578,12 @@ export type Database = {
           mime_type: string | null
           notes: string | null
           owner_id: string
+          signature_ip: string | null
+          signature_requested_at: string | null
+          signature_status: string
+          signed_by_email: string | null
+          signed_by_name: string | null
+          signed_by_user_id: string | null
           storage_path: string | null
           title: string
           updated_at: string
@@ -451,6 +600,12 @@ export type Database = {
           mime_type?: string | null
           notes?: string | null
           owner_id: string
+          signature_ip?: string | null
+          signature_requested_at?: string | null
+          signature_status?: string
+          signed_by_email?: string | null
+          signed_by_name?: string | null
+          signed_by_user_id?: string | null
           storage_path?: string | null
           title: string
           updated_at?: string
@@ -467,6 +622,12 @@ export type Database = {
           mime_type?: string | null
           notes?: string | null
           owner_id?: string
+          signature_ip?: string | null
+          signature_requested_at?: string | null
+          signature_status?: string
+          signed_by_email?: string | null
+          signed_by_name?: string | null
+          signed_by_user_id?: string | null
           storage_path?: string | null
           title?: string
           updated_at?: string
@@ -793,6 +954,59 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "pto_entries_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      time_clock_punches: {
+        Row: {
+          accuracy_m: number | null
+          address: string | null
+          created_at: string
+          employee_id: string | null
+          id: string
+          inside_geofence: boolean | null
+          latitude: number | null
+          longitude: number | null
+          notes: string | null
+          punch_type: string
+          punched_at: string
+          user_id: string
+        }
+        Insert: {
+          accuracy_m?: number | null
+          address?: string | null
+          created_at?: string
+          employee_id?: string | null
+          id?: string
+          inside_geofence?: boolean | null
+          latitude?: number | null
+          longitude?: number | null
+          notes?: string | null
+          punch_type: string
+          punched_at?: string
+          user_id: string
+        }
+        Update: {
+          accuracy_m?: number | null
+          address?: string | null
+          created_at?: string
+          employee_id?: string | null
+          id?: string
+          inside_geofence?: boolean | null
+          latitude?: number | null
+          longitude?: number | null
+          notes?: string | null
+          punch_type?: string
+          punched_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "time_clock_punches_employee_id_fkey"
             columns: ["employee_id"]
             isOneToOne: false
             referencedRelation: "employees"
