@@ -240,7 +240,7 @@ function DocumentsPage() {
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button className="gap-2 rounded-full bg-[#2563EB] text-white hover:opacity-90"><Upload className="h-4 w-4" /> Upload</Button>
+            <Button className="gap-2 rounded-full bg-primary text-white hover:opacity-90"><Upload className="h-4 w-4" /> Upload</Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader><DialogTitle>Upload HR document</DialogTitle></DialogHeader>

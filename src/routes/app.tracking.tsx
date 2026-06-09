@@ -245,7 +245,7 @@ function VisitsPanel({ contractors, employees, visits, onChange }: { contractors
         <div className="text-sm font-semibold">Field visits</div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button className="gap-2 rounded-full bg-[#2563EB] text-white hover:opacity-90"><Plus className="h-4 w-4" /> Schedule visit</Button>
+            <Button className="gap-2 rounded-full bg-primary text-white hover:opacity-90"><Plus className="h-4 w-4" /> Schedule visit</Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader><DialogTitle>Schedule a field visit</DialogTitle></DialogHeader>

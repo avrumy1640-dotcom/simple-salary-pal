@@ -128,7 +128,7 @@ export function TopBar({ companyName, userEmail }: { companyName: string; userEm
               <button className="relative grid h-10 w-10 place-items-center rounded-full border border-[#C2F5FF]/80 bg-white/70 text-[#07142A] transition hover:shadow-soft">
                 <Bell className="h-4 w-4" />
                 {unread > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 grid h-5 min-w-[20px] place-items-center rounded-full bg-[#2563EB] px-1 text-[10px] font-bold text-white">
+                  <span className="absolute -top-0.5 -right-0.5 grid h-5 min-w-[20px] place-items-center rounded-full bg-primary px-1 text-[10px] font-bold text-white">
                     {unread}
                   </span>
                 )}

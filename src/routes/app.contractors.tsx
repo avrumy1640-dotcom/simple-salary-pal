@@ -187,7 +187,7 @@ function ContractorsPage() {
 
           <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) setEditing(null); }}>
             <DialogTrigger asChild>
-              <Button className="rounded-full gap-1.5 bg-[#2563EB] text-background hover:bg-foreground/90"><Plus className="h-4 w-4" /> Add contractor</Button>
+              <Button className="rounded-full gap-1.5 bg-primary text-background hover:bg-foreground/90"><Plus className="h-4 w-4" /> Add contractor</Button>
             </DialogTrigger>
             <DialogContent className="max-w-2xl">
               <DialogHeader><DialogTitle>{editing ? "Edit contractor" : "Add a contractor"}</DialogTitle></DialogHeader>
@@ -271,7 +271,7 @@ function ContractorsPage() {
                       <td className="px-3 py-3 text-xs uppercase">{c.payment_method}</td>
                       <td className="px-3 py-3 font-medium">
                         {fmtUSD(ytd)}
-                        {ytd >= 600 && <span className="ml-2 rounded-full bg-[#2563EB] px-2 py-0.5 text-[10px] font-semibold text-background">1099 required</span>}
+                        {ytd >= 600 && <span className="ml-2 rounded-full bg-primary px-2 py-0.5 text-[10px] font-semibold text-background">1099 required</span>}
                       </td>
                       <td className="px-5 py-3 text-right">
                         <div className="inline-flex gap-1">

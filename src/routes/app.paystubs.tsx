@@ -129,7 +129,7 @@ function PayStubsPage() {
         <div className="rounded-2xl border bg-card">
           <div className="flex items-center justify-between border-b px-5 py-3">
             <div className="text-sm font-medium">Employee pay stubs</div>
-            <Button size="sm" onClick={downloadAchBatch} className="rounded-full gap-1.5 bg-[#2563EB] text-background hover:bg-foreground/90">
+            <Button size="sm" onClick={downloadAchBatch} className="rounded-full gap-1.5 bg-primary text-background hover:bg-foreground/90">
               <Banknote className="h-3.5 w-3.5" /> Export ACH batch
             </Button>
           </div>
