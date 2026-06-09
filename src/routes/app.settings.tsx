@@ -115,12 +115,12 @@ function SettingsPage() {
       </header>
 
       <Tabs defaultValue="company" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 h-auto">
-          <TabsTrigger value="company" className="gap-1.5"><Building2 className="h-3.5 w-3.5" /> Company</TabsTrigger>
-          <TabsTrigger value="schedule" className="gap-1.5"><Calendar className="h-3.5 w-3.5" /> Schedule</TabsTrigger>
-          <TabsTrigger value="notifications" className="gap-1.5"><Bell className="h-3.5 w-3.5" /> Notifications</TabsTrigger>
-          <TabsTrigger value="branding" className="gap-1.5"><Palette className="h-3.5 w-3.5" /> Branding</TabsTrigger>
-          <TabsTrigger value="security" className="gap-1.5"><ShieldCheck className="h-3.5 w-3.5" /> Security</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 h-auto gap-1 p-1.5 bg-card/40 border border-primary/15">
+          <TabsTrigger value="company" className="gap-2 py-3 text-sm font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"><Building2 className="h-4 w-4" /> Company</TabsTrigger>
+          <TabsTrigger value="schedule" className="gap-2 py-3 text-sm font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"><Calendar className="h-4 w-4" /> Schedule</TabsTrigger>
+          <TabsTrigger value="notifications" className="gap-2 py-3 text-sm font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"><Bell className="h-4 w-4" /> Notifications</TabsTrigger>
+          <TabsTrigger value="branding" className="gap-2 py-3 text-sm font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"><Palette className="h-4 w-4" /> Branding</TabsTrigger>
+          <TabsTrigger value="security" className="gap-2 py-3 text-sm font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"><ShieldCheck className="h-4 w-4" /> Security</TabsTrigger>
         </TabsList>
 
         <TabsContent value="company" className="space-y-4 mt-6">
@@ -204,6 +204,28 @@ function SettingsPage() {
               <Button variant="outline" disabled>Enable 2FA (coming soon)</Button>
             </div>
           </Section>
+
+          {/* Danger Zone */}
+          <div className="rounded-2xl border-2 border-destructive/40 bg-destructive/5 p-6 space-y-4">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="h-5 w-5 text-destructive" />
+              <h2 className="text-base font-bold text-destructive">Danger zone</h2>
+            </div>
+            <p className="text-sm text-white/70">Permanent, destructive actions. These cannot be undone.</p>
+            <div className="rounded-xl border border-destructive/30 bg-card/40 p-4 flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <div className="font-semibold text-white">Delete account</div>
+                <div className="text-xs text-white/60">Permanently removes your company, employees, and payroll history.</div>
+              </div>
+              <Button
+                variant="outline"
+                className="border-destructive/60 text-destructive hover:bg-destructive/10"
+                onClick={() => toast.error("Contact support to delete your account.")}
+              >
+                Delete account
+              </Button>
+            </div>
+          </div>
         </TabsContent>
       </Tabs>
     </div>

@@ -120,6 +120,33 @@ function PayHistoryPage() {
     a.click(); URL.revokeObjectURL(url);
   }
 
+  async function downloadRun(r: Run) {
+    const { data } = await supabase.from("payroll_items").select("*").eq("run_id", r.id).order("employee_name");
+    const items = (data ?? []) as Item[];
+    const rows = [
+      ["Employee", "Reg hrs", "OT hrs", "Gross", "Federal", "SS", "Medicare", "State", "Net"],
+      ...items.map((it) => [
+        it.employee_name,
+        String(it.regular_hours ?? 0),
+        String(it.overtime_hours ?? 0),
+        it.gross_pay.toFixed(2),
+        it.federal_tax.toFixed(2),
+        it.social_security.toFixed(2),
+        it.medicare.toFixed(2),
+        it.state_tax.toFixed(2),
+        it.net_pay.toFixed(2),
+      ]),
+      [],
+      ["TOTAL", "", "", (r.gross_total ?? 0).toFixed(2), "", "", "", "", r.net_total.toFixed(2)],
+    ];
+    const csv = rows.map((row) => row.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = `payroll-${r.pay_date}.csv`;
+    a.click(); URL.revokeObjectURL(url);
+  }
+
   return (
     <div className="p-6 md:p-8 space-y-6 animate-in fade-in duration-300">
       <header className="flex flex-wrap items-start justify-between gap-4">
@@ -188,29 +215,41 @@ function PayHistoryPage() {
               <div className="text-right">Gross</div><div className="text-right">Taxes</div><div className="text-right">Net</div><div />
             </div>
             {filtered.map((r) => (
-              <button
+              <div
                 key={r.id}
-                onClick={() => setSelected(r)}
-                className="w-full text-left grid grid-cols-2 md:grid-cols-[1.2fr_1.4fr_0.8fr_1fr_1fr_1fr_auto] gap-x-4 gap-y-1 px-5 py-4 hover:bg-muted/40 transition group"
+                className="group grid grid-cols-2 md:grid-cols-[1.2fr_1.4fr_0.8fr_1fr_1fr_1fr_auto] gap-x-4 gap-y-1 px-5 py-5 hover:bg-primary/[0.04] transition border-l-2 border-transparent hover:border-primary"
               >
-                <div className="font-semibold">{fmtDate(r.pay_date)}</div>
-                <div className="text-sm text-muted-foreground">
+                <button onClick={() => setSelected(r)} className="text-left font-semibold text-white">{fmtDate(r.pay_date)}</button>
+                <div className="text-sm text-white/60">
                   {fmtDate(r.period_start)} – {fmtDate(r.period_end)}
                 </div>
                 <div>
-                  <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${
+                  <span className={`inline-flex px-2.5 py-1 rounded-full text-[11px] font-bold ${
                     r.status === "approved" || r.status === "completed"
-                      ? "bg-emerald-100 text-emerald-700"
+                      ? "bg-primary/15 text-primary border border-primary/40"
                       : r.status === "draft"
-                      ? "bg-amber-100 text-amber-700"
-                      : "bg-muted text-muted-foreground"
+                      ? "border border-white/30 text-white/80"
+                      : "bg-destructive/15 text-destructive"
                   }`}>{r.status}</span>
                 </div>
-                <div className="text-right tabular-nums">{fmtUSD(r.gross_total ?? 0)}</div>
-                <div className="text-right tabular-nums text-muted-foreground">{fmtUSD(r.tax_total ?? 0)}</div>
-                <div className="text-right tabular-nums font-semibold">{fmtUSD(r.net_total)}</div>
-                <ChevronRight className="hidden md:block h-5 w-5 text-muted-foreground self-center group-hover:translate-x-1 transition" />
-              </button>
+                <div className="text-right tabular-nums text-white/85">{fmtUSD(r.gross_total ?? 0)}</div>
+                <div className="text-right tabular-nums text-white/60">{fmtUSD(r.tax_total ?? 0)}</div>
+                <div className="text-right tabular-nums font-bold text-white">{fmtUSD(r.net_total)}</div>
+                <div className="flex items-center gap-1 self-center">
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    title="Download CSV"
+                    onClick={(e) => { e.stopPropagation(); downloadRun(r); }}
+                    className="h-9 w-9 text-primary hover:bg-primary/10"
+                  >
+                    <Download className="h-4 w-4" />
+                  </Button>
+                  <button onClick={() => setSelected(r)} className="hidden md:block">
+                    <ChevronRight className="h-5 w-5 text-white/40 group-hover:text-primary group-hover:translate-x-1 transition" />
+                  </button>
+                </div>
+              </div>
             ))}
           </div>
         )}

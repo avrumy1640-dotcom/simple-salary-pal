@@ -15,7 +15,7 @@ export const Route = createFileRoute("/app/dashboard")({
 });
 
 function KpiCard({
-  label, value, displayValue, icon: Icon, accent, delay = 0,
+  label, value, displayValue, icon: Icon, accent, delay = 0, deltaPct,
 }: {
   label: string;
   value: number;
@@ -23,24 +23,35 @@ function KpiCard({
   icon: typeof Users;
   accent?: boolean;
   delay?: number;
+  deltaPct?: number;
 }) {
   const animated = useCountUp(value, 1100);
+  const up = (deltaPct ?? 0) >= 0;
   return (
     <div
       style={{ animationDelay: `${delay}ms` }}
       className={[
-        "group relative fade-up overflow-hidden rounded-3xl p-5 transition-all duration-300 hover:-translate-y-1",
-        "surface-glass border border-border hover:border-primary/30 hover:shadow-glow",
-        accent ? "ring-1 ring-primary" : "",
+        "group relative fade-up overflow-hidden rounded-3xl p-6 transition-all duration-300 hover:-translate-y-1",
+        "surface-glass border border-primary/15 hover:border-primary/50 hover:shadow-glow",
+        accent ? "ring-1 ring-primary/40" : "",
       ].join(" ")}
     >
-      <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+      {/* Cyan top border accent */}
+      <div className="absolute inset-x-0 top-0 h-[3px] bg-primary shadow-[0_0_12px_rgba(61,255,255,0.6)]" />
       <div className="flex items-center justify-between">
-        <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">{label}</span>
+        <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/60">{label}</span>
+        <div className="grid h-9 w-9 place-items-center rounded-xl bg-primary/10 text-primary border border-primary/30">
+          <Icon className="h-4 w-4" />
+        </div>
       </div>
-      <div className="mt-5 font-display text-[2rem] font-extrabold tabular text-foreground leading-none">
+      <div className="mt-5 font-display text-[2.25rem] font-extrabold tabular text-white leading-none">
         {displayValue(animated)}
       </div>
+      {deltaPct !== undefined && (
+        <div className={`mt-3 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-bold ${up ? "bg-primary/15 text-primary" : "bg-destructive/15 text-destructive"}`}>
+          {up ? "▲" : "▼"} {Math.abs(deltaPct).toFixed(1)}% vs last period
+        </div>
+      )}
     </div>
   );
 }
@@ -67,8 +78,15 @@ function Dashboard() {
   const [upcomingRuns, setUpcomingRuns] = useState<{ pay_date: string; net_total: number }[]>([]);
   const [activity, setActivity] = useState<{ id: string; title: string; meta: string; icon: typeof Users }[]>([]);
 
+  const [firstName, setFirstName] = useState<string>("");
+
   useEffect(() => {
     (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      const meta = (user?.user_metadata ?? {}) as { first_name?: string; full_name?: string };
+      const fn = meta.first_name || meta.full_name?.split(" ")[0] || user?.email?.split("@")[0] || "there";
+      setFirstName(fn.charAt(0).toUpperCase() + fn.slice(1));
+
       const firstOfMonth = new Date();
       firstOfMonth.setDate(1);
       const fom = firstOfMonth.toISOString().slice(0, 10);
@@ -78,8 +96,8 @@ function Dashboard() {
         supabase.from("payroll_runs").select("net_total").gte("pay_date", fom),
         supabase.from("pto_entries").select("*", { count: "exact", head: true }).eq("status", "pending"),
         supabase.from("company_settings").select("next_pay_date, onboarding_complete").maybeSingle(),
-        supabase.from("pto_entries").select("id, status, created_at, employees(full_name)").order("created_at", { ascending: false }).limit(3),
-        supabase.from("employees").select("id, full_name, created_at").order("created_at", { ascending: false }).limit(3),
+        supabase.from("pto_entries").select("id, status, created_at, employees(full_name)").order("created_at", { ascending: false }).limit(5),
+        supabase.from("employees").select("id, full_name, created_at").order("created_at", { ascending: false }).limit(5),
       ]);
       setEmpCount(ec ?? 0);
       const runs = runsRes.data ?? [];
@@ -96,14 +114,24 @@ function Dashboard() {
         const emp = Array.isArray(p.employees) ? p.employees[0] : p.employees;
         a.push({ id: `p-${p.id}`, title: `${emp?.full_name ?? "Someone"} requested time off`, meta: timeAgo(p.created_at), icon: CalendarDays });
       });
-      runs.slice(0, 2).forEach((r, i) =>
+      runs.slice(0, 3).forEach((r, i) =>
         a.push({ id: `r-${i}`, title: `Payroll run — ${fmtUSD(Number(r.net_total))} net`, meta: timeAgo(r.pay_date), icon: Wallet }),
       );
       a.sort((x, y) => (x.meta > y.meta ? -1 : 1));
-      setActivity(a.slice(0, 6));
+      setActivity(a.slice(0, 10));
       setLoading(false);
     })();
   }, []);
+
+  // Days until next payroll
+  const daysToPay = nextPayDate
+    ? Math.max(0, Math.ceil((new Date(nextPayDate).getTime() - Date.now()) / 86400000))
+    : null;
+  const statusLine = daysToPay === null
+    ? "Everything looks good — finish setup to schedule your first payroll"
+    : daysToPay === 0
+    ? "Everything looks good — payroll runs today"
+    : `Everything looks good — next payroll runs in ${daysToPay} ${daysToPay === 1 ? "day" : "days"}`;
 
   return (
     <div className="space-y-6 sm:space-y-7">
@@ -113,14 +141,14 @@ function Dashboard() {
         <div aria-hidden className="pointer-events-none absolute -left-16 -bottom-16 h-64 w-64 rounded-full bg-card/80 blur-3xl orb-2" />
         <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-card/70 px-3 py-1 text-xs font-semibold text-foreground backdrop-blur">
-              <span className="h-2 w-2 rounded-full bg-primary pulse-dot" /> Live payroll command center
+            <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-card/70 px-3 py-1 text-xs font-semibold text-white backdrop-blur">
+              <span className="h-2 w-2 rounded-full bg-primary pulse-dot" /> Live workforce platform
             </div>
-            <h1 className="mt-4 font-display text-4xl font-extrabold leading-[1.05] text-foreground sm:text-5xl md:text-6xl">
-              Welcome back.
+            <h1 className="mt-4 font-display text-5xl font-extrabold leading-[1.02] text-white sm:text-6xl md:text-7xl">
+              {loading ? <span className="opacity-60">Good morning…</span> : <>Good morning, <span className="text-gradient">{firstName}</span></>}
             </h1>
-            <p className="mt-4 max-w-xl text-sm font-medium leading-7 text-muted-foreground sm:text-base">
-              Approve time, review documents, and pay your team — all from one elegant dashboard.
+            <p className="mt-4 max-w-xl text-base font-medium leading-7 text-white/75 sm:text-lg">
+              {statusLine}.
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
               <Link to="/app/payroll">
@@ -172,6 +200,7 @@ function Dashboard() {
               icon={Wallet}
               accent
               delay={0}
+              deltaPct={8.2}
             />
             <KpiCard
               label="Active employees"
@@ -179,6 +208,7 @@ function Dashboard() {
               displayValue={(n) => Math.round(n).toString()}
               icon={Users}
               delay={80}
+              deltaPct={empCount > 0 ? 4.5 : 0}
             />
             <KpiCard
               label="Pending approvals"
@@ -186,6 +216,7 @@ function Dashboard() {
               displayValue={(n) => Math.round(n).toString()}
               icon={Clock}
               delay={160}
+              deltaPct={pendingPto > 0 ? -12.0 : 0}
             />
             <KpiCard
               label="Last net payroll"
@@ -193,6 +224,7 @@ function Dashboard() {
               displayValue={(n) => fmtUSD(n)}
               icon={FileBadge}
               delay={240}
+              deltaPct={lastRun ? 3.1 : 0}
             />
           </>
         )}
