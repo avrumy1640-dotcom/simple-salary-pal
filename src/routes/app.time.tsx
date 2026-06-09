@@ -29,7 +29,7 @@ interface Pto {
   start_date: string;
   end_date: string;
   hours: number;
-  type: string;
+  pto_type: string;
   status: string;
   notes: string | null;
   employees?: { full_name: string };
@@ -340,7 +340,7 @@ function TimePage() {
                     <div className="min-w-0 flex-1">
                       <div className="font-medium flex items-center gap-2">
                         {p.employees?.full_name ?? "Employee"}
-                        <Badge variant="outline" className="capitalize text-xs">{p.type}</Badge>
+                        <Badge variant="outline" className="capitalize text-xs">{p.pto_type}</Badge>
                       </div>
                       <div className="text-sm text-muted-foreground">
                         {new Date(p.start_date).toLocaleDateString()} – {new Date(p.end_date).toLocaleDateString()} · {p.hours}h
@@ -375,7 +375,7 @@ function TimePage() {
                     <div className="min-w-0 flex-1">
                       <div className="font-medium truncate">{p.employees?.full_name}</div>
                       <div className="text-xs text-muted-foreground">
-                        {p.type} · {new Date(p.start_date).toLocaleDateString()} – {new Date(p.end_date).toLocaleDateString()} · {p.hours}h
+                        {p.pto_type} · {new Date(p.start_date).toLocaleDateString()} – {new Date(p.end_date).toLocaleDateString()} · {p.hours}h
                       </div>
                     </div>
                   </div>
