@@ -14,6 +14,87 @@ export type Database = {
   }
   public: {
     Tables: {
+      bank_connections: {
+        Row: {
+          account_id: string | null
+          account_mask: string | null
+          account_name: string | null
+          account_subtype: string | null
+          account_type: string | null
+          contractor_id: string | null
+          created_at: string
+          employee_id: string | null
+          id: string
+          institution_name: string | null
+          is_company: boolean
+          linked_at: string
+          owner_id: string
+          plaid_access_token: string | null
+          plaid_item_id: string | null
+          provider: string
+          routing_number_last4: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          account_id?: string | null
+          account_mask?: string | null
+          account_name?: string | null
+          account_subtype?: string | null
+          account_type?: string | null
+          contractor_id?: string | null
+          created_at?: string
+          employee_id?: string | null
+          id?: string
+          institution_name?: string | null
+          is_company?: boolean
+          linked_at?: string
+          owner_id: string
+          plaid_access_token?: string | null
+          plaid_item_id?: string | null
+          provider?: string
+          routing_number_last4?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          account_id?: string | null
+          account_mask?: string | null
+          account_name?: string | null
+          account_subtype?: string | null
+          account_type?: string | null
+          contractor_id?: string | null
+          created_at?: string
+          employee_id?: string | null
+          id?: string
+          institution_name?: string | null
+          is_company?: boolean
+          linked_at?: string
+          owner_id?: string
+          plaid_access_token?: string | null
+          plaid_item_id?: string | null
+          provider?: string
+          routing_number_last4?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bank_connections_contractor_id_fkey"
+            columns: ["contractor_id"]
+            isOneToOne: false
+            referencedRelation: "contractors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bank_connections_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_settings: {
         Row: {
           business_address: string | null
@@ -341,6 +422,204 @@ export type Database = {
           zip?: string | null
         }
         Relationships: []
+      }
+      hr_documents: {
+        Row: {
+          category: string
+          contractor_id: string | null
+          created_at: string
+          employee_id: string | null
+          file_name: string | null
+          file_size: number | null
+          id: string
+          mime_type: string | null
+          notes: string | null
+          owner_id: string
+          storage_path: string | null
+          title: string
+          updated_at: string
+          uploaded_at: string
+        }
+        Insert: {
+          category?: string
+          contractor_id?: string | null
+          created_at?: string
+          employee_id?: string | null
+          file_name?: string | null
+          file_size?: number | null
+          id?: string
+          mime_type?: string | null
+          notes?: string | null
+          owner_id: string
+          storage_path?: string | null
+          title: string
+          updated_at?: string
+          uploaded_at?: string
+        }
+        Update: {
+          category?: string
+          contractor_id?: string | null
+          created_at?: string
+          employee_id?: string | null
+          file_name?: string | null
+          file_size?: number | null
+          id?: string
+          mime_type?: string | null
+          notes?: string | null
+          owner_id?: string
+          storage_path?: string | null
+          title?: string
+          updated_at?: string
+          uploaded_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hr_documents_contractor_id_fkey"
+            columns: ["contractor_id"]
+            isOneToOne: false
+            referencedRelation: "contractors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hr_documents_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hr_forms: {
+        Row: {
+          contractor_id: string | null
+          created_at: string
+          data: Json
+          employee_id: string | null
+          form_type: string
+          id: string
+          owner_id: string
+          pdf_storage_path: string | null
+          signed_at: string | null
+          signed_ip: string | null
+          signed_name: string | null
+          status: string
+          tax_year: number | null
+          updated_at: string
+        }
+        Insert: {
+          contractor_id?: string | null
+          created_at?: string
+          data?: Json
+          employee_id?: string | null
+          form_type: string
+          id?: string
+          owner_id: string
+          pdf_storage_path?: string | null
+          signed_at?: string | null
+          signed_ip?: string | null
+          signed_name?: string | null
+          status?: string
+          tax_year?: number | null
+          updated_at?: string
+        }
+        Update: {
+          contractor_id?: string | null
+          created_at?: string
+          data?: Json
+          employee_id?: string | null
+          form_type?: string
+          id?: string
+          owner_id?: string
+          pdf_storage_path?: string | null
+          signed_at?: string | null
+          signed_ip?: string | null
+          signed_name?: string | null
+          status?: string
+          tax_year?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hr_forms_contractor_id_fkey"
+            columns: ["contractor_id"]
+            isOneToOne: false
+            referencedRelation: "contractors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hr_forms_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      onboarding_tasks: {
+        Row: {
+          category: string
+          completed_at: string | null
+          contractor_id: string | null
+          created_at: string
+          description: string | null
+          due_date: string | null
+          employee_id: string | null
+          id: string
+          owner_id: string
+          required: boolean
+          sort_order: number
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          completed_at?: string | null
+          contractor_id?: string | null
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          employee_id?: string | null
+          id?: string
+          owner_id: string
+          required?: boolean
+          sort_order?: number
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          completed_at?: string | null
+          contractor_id?: string | null
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          employee_id?: string | null
+          id?: string
+          owner_id?: string
+          required?: boolean
+          sort_order?: number
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "onboarding_tasks_contractor_id_fkey"
+            columns: ["contractor_id"]
+            isOneToOne: false
+            referencedRelation: "contractors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "onboarding_tasks_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       payroll_items: {
         Row: {
