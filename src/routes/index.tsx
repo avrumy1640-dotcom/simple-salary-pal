@@ -50,7 +50,7 @@ function Landing() {
           <span className="text-[11px] font-extrabold uppercase text-muted-foreground">New · HR documents, tracking, payroll</span>
         </div>
 
-        <h1 className="mx-auto mt-7 max-w-4xl font-display text-[46px] font-extrabold leading-[1.04] md:text-7xl md:leading-[1.02]">
+        <h1 className="mx-auto mt-7 max-w-4xl font-display text-4xl font-extrabold leading-tight sm:text-5xl md:text-7xl md:leading-[1.02]">
           Payroll and HR that feels built for <span className="text-gradient">2030</span>.
         </h1>
 
@@ -82,7 +82,7 @@ function Landing() {
 
       {/* FLOATING DASHBOARD MOCKUP */}
       <section className="px-5 pb-24 md:px-8">
-        <div className="relative mx-auto max-w-md">
+        <div className="relative mx-auto max-w-md px-2 sm:px-0">
           {/* Glow halo */}
           <div aria-hidden className="pointer-events-none absolute -inset-8 -z-10 rounded-[60px] bg-[var(--brand-soft)] opacity-60 blur-2xl" />
 
@@ -141,11 +141,11 @@ function Landing() {
           </div>
 
           {/* Floating accent cards */}
-          <div className="absolute -right-4 top-24 z-20 w-32 rounded-3xl gradient-brand p-4 text-primary-foreground shadow-glow float-y-sm">
+          <div className="absolute right-0 top-24 z-20 w-32 rounded-3xl gradient-brand p-4 text-primary-foreground shadow-glow float-y-sm sm:-right-4">
             <div className="text-[10px] font-medium opacity-70">Approvals</div>
             <div className="text-2xl font-bold tabular">98%</div>
           </div>
-          <div className="absolute -left-6 bottom-16 z-0 w-36 rounded-3xl bg-card p-4 shadow-card float-y-lg">
+          <div className="absolute -left-2 bottom-16 z-0 w-36 rounded-3xl bg-card p-4 shadow-card float-y-lg sm:-left-6">
             <div className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Filed</div>
             <div className="mt-1 text-xl font-bold tabular">Q3 941</div>
             <div className="mt-2 h-1.5 w-3/4 rounded-full bg-emerald-300" />
