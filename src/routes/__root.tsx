@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { ParallaxBackground } from "../components/ParallaxBackground";
+import { PageTransition } from "../components/motion/PageTransition";
 
 function NotFoundComponent() {
   return (
@@ -78,17 +79,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
-      { title: "Paystream — Payroll & HR" },
+      { title: "Paylo — Payroll & HR" },
       { name: "description", content: "Modern payroll, contractor payments, and tax filing." },
-      { name: "theme-color", content: "#FFFFFF" },
+      { name: "theme-color", content: "#0A0F2C" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "default" },
-      { name: "apple-mobile-web-app-title", content: "Paystream" },
-      { property: "og:title", content: "Paystream — Payroll & HR" },
+      { name: "apple-mobile-web-app-title", content: "Paylo" },
+      { property: "og:title", content: "Paylo — Payroll & HR" },
       { property: "og:description", content: "Modern payroll, contractor payments, and tax filing." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:title", content: "Paystream — Payroll & HR" },
+      { name: "twitter:title", content: "Paylo — Payroll & HR" },
       { name: "twitter:description", content: "Modern payroll, contractor payments, and tax filing." },
       { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/d8bdaebf-4069-4b51-ab72-2fc0b917587f/id-preview-4a5b83d0--a7d6eb42-bcfe-4344-89da-39de5497b1e2.lovable.app-1781036274314.png" },
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/d8bdaebf-4069-4b51-ab72-2fc0b917587f/id-preview-4a5b83d0--a7d6eb42-bcfe-4344-89da-39de5497b1e2.lovable.app-1781036274314.png" },
@@ -131,7 +132,9 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <ParallaxBackground />
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <PageTransition>
+        <Outlet />
+      </PageTransition>
     </QueryClientProvider>
   );
 }

@@ -207,7 +207,7 @@ function SelfServicePage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <div className="text-xs font-semibold uppercase tracking-wider text-[#4A6079]">Preview as employee</div>
+          <div className="text-xs font-semibold uppercase tracking-wider text-slate-400">Preview as employee</div>
           <h1 className="text-2xl font-semibold tracking-tight">Employee self-service portal</h1>
           <p className="text-sm text-muted-foreground">See exactly what each employee sees: pay stubs, time off, and personal info.</p>
         </div>
@@ -224,7 +224,7 @@ function SelfServicePage() {
         <>
           <div className="rounded-2xl border bg-card p-6">
             <div className="flex flex-wrap items-center gap-5">
-              <div className="grid h-16 w-16 place-items-center rounded-full gradient-brand text-xl font-bold text-[#07142A]">
+              <div className="grid h-16 w-16 place-items-center rounded-full gradient-brand text-xl font-bold text-white">
                 {active.full_name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
               </div>
               <div className="flex-1 min-w-0">

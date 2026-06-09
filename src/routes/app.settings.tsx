@@ -46,7 +46,7 @@ function SettingsPage() {
     ptoRequests: true,
     failedPayments: true,
   });
-  const [brandColor, setBrandColor] = useState("#07142A");
+  const [brandColor, setBrandColor] = useState("#0A0F2C");
   const [signInEmail, setSignInEmail] = useState("");
 
   useEffect(() => {

@@ -348,7 +348,7 @@ function EmployeesPage() {
             <>
               <SheetHeader>
                 <div className="flex items-center gap-4">
-                  <div className="grid h-14 w-14 place-items-center rounded-full gradient-brand text-lg font-bold text-[#07142A] shadow-glow">
+                  <div className="grid h-14 w-14 place-items-center rounded-full gradient-brand text-lg font-bold text-white shadow-glow">
                     {detail.full_name.split(" ").map((p) => p[0]).slice(0, 2).join("").toUpperCase()}
                   </div>
                   <div className="min-w-0">

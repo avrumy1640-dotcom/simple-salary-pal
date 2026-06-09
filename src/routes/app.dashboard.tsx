@@ -30,15 +30,15 @@ function KpiCard({
       style={{ animationDelay: `${delay}ms` }}
       className={[
         "group relative fade-up overflow-hidden rounded-3xl p-5 transition-all duration-300 hover:-translate-y-1",
-        "surface-glass border border-[#C2F5FF]/60 hover:border-[#07142A]/30 hover:shadow-glow",
-        accent ? "ring-1 ring-[#C2F5FF]" : "",
+        "surface-glass border border-[#F5C518]/40/60 hover:border-white/20/30 hover:shadow-glow",
+        accent ? "ring-1 ring-[#F5C518]" : "",
       ].join(" ")}
     >
-      <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#C2F5FF] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+      <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#F5C518] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
       <div className="flex items-center justify-between">
-        <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#4A6079]">{label}</span>
+        <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-400">{label}</span>
       </div>
-      <div className="mt-5 font-display text-[2rem] font-extrabold tabular text-[#07142A] leading-none">
+      <div className="mt-5 font-display text-[2rem] font-extrabold tabular text-white leading-none">
         {displayValue(animated)}
       </div>
     </div>
@@ -109,17 +109,17 @@ function Dashboard() {
     <div className="space-y-6 sm:space-y-7">
       {/* Hero */}
       <div className="relative overflow-hidden rounded-[2rem] surface-hero p-6 sm:p-8 md:p-10">
-        <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[#C2F5FF]/70 blur-3xl orb-1" />
-        <div aria-hidden className="pointer-events-none absolute -left-16 -bottom-16 h-64 w-64 rounded-full bg-[#E8FAFF]/80 blur-3xl orb-2" />
+        <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[#F5C518]/70 blur-3xl orb-1" />
+        <div aria-hidden className="pointer-events-none absolute -left-16 -bottom-16 h-64 w-64 rounded-full bg-[#111827]/80 blur-3xl orb-2" />
         <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-[#C2F5FF] bg-white/70 px-3 py-1 text-xs font-semibold text-[#07142A] backdrop-blur">
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#F5C518]/40 bg-white/70 px-3 py-1 text-xs font-semibold text-white backdrop-blur">
               <span className="h-2 w-2 rounded-full bg-primary pulse-dot" /> Live payroll command center
             </div>
-            <h1 className="mt-4 font-display text-4xl font-extrabold leading-[1.05] text-[#07142A] sm:text-5xl md:text-6xl">
+            <h1 className="mt-4 font-display text-4xl font-extrabold leading-[1.05] text-white sm:text-5xl md:text-6xl">
               Welcome back.
             </h1>
-            <p className="mt-4 max-w-xl text-sm font-medium leading-7 text-[#4A6079] sm:text-base">
+            <p className="mt-4 max-w-xl text-sm font-medium leading-7 text-slate-400 sm:text-base">
               Approve time, review documents, and pay your team — all from one elegant dashboard.
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
@@ -129,23 +129,23 @@ function Dashboard() {
                 </Button>
               </Link>
               <Link to="/app/employees">
-                <Button variant="outline" className="gap-2 border-[#07142A]/15 bg-white text-[#07142A] hover:bg-[#ECFAFF]">
+                <Button variant="outline" className="gap-2 border-white/20/15 bg-white text-white hover:bg-[#111827]">
                   <UserPlus className="h-4 w-4" /> Add employee
                 </Button>
               </Link>
               <Link to="/app/reports">
-                <Button variant="outline" className="gap-2 border-[#07142A]/15 bg-white text-[#07142A] hover:bg-[#ECFAFF]">
+                <Button variant="outline" className="gap-2 border-white/20/15 bg-white text-white hover:bg-[#111827]">
                   <BarChart3 className="h-4 w-4" /> View reports
                 </Button>
               </Link>
             </div>
           </div>
-          <div className="grid gap-3 rounded-3xl border border-[#C2F5FF] bg-white/85 p-5 backdrop-blur-xl shadow-card lg:min-w-[260px]">
-            <div className="text-[11px] font-bold uppercase tracking-wider text-[#4A6079]">Next pay date</div>
+          <div className="grid gap-3 rounded-3xl border border-[#F5C518]/40 bg-white/85 p-5 backdrop-blur-xl shadow-card lg:min-w-[260px]">
+            <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Next pay date</div>
             {loading ? (
               <div className="skeleton h-7 w-28" />
             ) : (
-              <div className="font-display text-2xl font-extrabold text-[#07142A]">
+              <div className="font-display text-2xl font-extrabold text-white">
                 {nextPayDate ? new Date(nextPayDate).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" }) : "Ready when you are"}
               </div>
             )}
@@ -203,38 +203,38 @@ function Dashboard() {
         <div className="rounded-3xl surface-glass p-5 lg:col-span-2">
           <div className="flex items-center justify-between">
             <div>
-              <div className="font-display text-lg font-bold text-[#07142A]">Payroll timeline</div>
-              <div className="text-xs font-medium text-[#4A6079]">Recent and upcoming pay runs</div>
+              <div className="font-display text-lg font-bold text-white">Payroll timeline</div>
+              <div className="text-xs font-medium text-slate-400">Recent and upcoming pay runs</div>
             </div>
-            <Link to="/app/paystubs" className="text-xs font-bold text-[#07142A] hover:underline">View all</Link>
+            <Link to="/app/paystubs" className="text-xs font-bold text-white hover:underline">View all</Link>
           </div>
           {loading ? (
             <div className="mt-5 skeleton h-24 w-full" />
           ) : upcomingRuns.length === 0 ? (
-            <div className="mt-6 rounded-2xl border border-dashed border-[#C2F5FF] bg-[#F2FBFF] p-6 text-center">
-              <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-white text-[#07142A] shadow-soft"><Wallet className="h-5 w-5" /></div>
-              <div className="mt-3 font-display text-base font-bold text-[#07142A]">No payroll runs yet</div>
-              <div className="mt-1 text-sm text-[#4A6079]">Run your first payroll in under 2 minutes.</div>
+            <div className="mt-6 rounded-2xl border border-dashed border-[#F5C518]/40 bg-[#0A0F2C] p-6 text-center">
+              <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-white text-white shadow-soft"><Wallet className="h-5 w-5" /></div>
+              <div className="mt-3 font-display text-base font-bold text-white">No payroll runs yet</div>
+              <div className="mt-1 text-sm text-slate-400">Run your first payroll in under 2 minutes.</div>
               <Link to="/app/payroll" className="mt-3 inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-xs font-bold text-white hover:shadow-glow">
                 Run payroll <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </div>
           ) : (
             <div className="relative mt-6 pl-2">
-              <div className="absolute left-3 top-2 bottom-2 w-px bg-gradient-to-b from-[#C2F5FF] via-[#C2F5FF] to-transparent" />
+              <div className="absolute left-3 top-2 bottom-2 w-px bg-gradient-to-b from-[#F5C518] via-[#F5C518] to-transparent" />
               <div className="space-y-4">
                 {upcomingRuns.map((r, i) => (
                   <div key={i} className="relative pl-8" style={{ animationDelay: `${i * 60}ms` }}>
-                    <div className="absolute left-0 top-1.5 grid h-6 w-6 place-items-center rounded-full bg-white ring-2 ring-[#C2F5FF]">
-                      <div className="h-2 w-2 rounded-full bg-[#07142A]" />
+                    <div className="absolute left-0 top-1.5 grid h-6 w-6 place-items-center rounded-full bg-white ring-2 ring-[#F5C518]">
+                      <div className="h-2 w-2 rounded-full bg-[#0A0F2C]" />
                     </div>
                     <div className="flex flex-wrap items-baseline justify-between gap-2">
-                      <div className="font-display text-base font-bold text-[#07142A]">
+                      <div className="font-display text-base font-bold text-white">
                         {new Date(r.pay_date).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
                       </div>
-                      <div className="text-sm font-bold text-[#07142A] tabular">{fmtUSD(Number(r.net_total))} net</div>
+                      <div className="text-sm font-bold text-white tabular">{fmtUSD(Number(r.net_total))} net</div>
                     </div>
-                    <div className="text-xs font-medium text-[#4A6079]">Direct deposit</div>
+                    <div className="text-xs font-medium text-slate-400">Direct deposit</div>
                   </div>
                 ))}
               </div>
@@ -244,8 +244,8 @@ function Dashboard() {
 
         <div className="rounded-3xl surface-glass p-5">
           <div className="flex items-center justify-between">
-            <div className="font-display text-lg font-bold text-[#07142A]">Recent activity</div>
-            <Bell className="h-4 w-4 text-[#4A6079]" />
+            <div className="font-display text-lg font-bold text-white">Recent activity</div>
+            <Bell className="h-4 w-4 text-slate-400" />
           </div>
           {loading ? (
             <div className="mt-5 space-y-3">
@@ -255,9 +255,9 @@ function Dashboard() {
             </div>
           ) : activity.length === 0 ? (
             <div className="mt-6 text-center">
-              <div className="mx-auto grid h-10 w-10 place-items-center rounded-2xl bg-[#ECFAFF] text-[#07142A]"><Sparkles className="h-4 w-4" /></div>
-              <div className="mt-3 text-sm font-semibold text-[#07142A]">All quiet here</div>
-              <div className="text-xs text-[#4A6079]">Activity will appear as your team uses Paylo.</div>
+              <div className="mx-auto grid h-10 w-10 place-items-center rounded-2xl bg-[#111827] text-white"><Sparkles className="h-4 w-4" /></div>
+              <div className="mt-3 text-sm font-semibold text-white">All quiet here</div>
+              <div className="text-xs text-slate-400">Activity will appear as your team uses Paylo.</div>
             </div>
           ) : (
             <ul className="mt-4 space-y-3">
@@ -265,14 +265,14 @@ function Dashboard() {
                 <li
                   key={a.id}
                   style={{ animationDelay: `${i * 60}ms` }}
-                  className="fade-up flex items-start gap-3 rounded-2xl border border-[#C2F5FF]/50 bg-white/70 p-3 transition-all hover:border-[#07142A]/20 hover:-translate-y-0.5"
+                  className="fade-up flex items-start gap-3 rounded-2xl border border-[#F5C518]/40/50 bg-white/70 p-3 transition-all hover:border-white/20/20 hover:-translate-y-0.5"
                 >
-                  <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[#C2F5FF]/60 text-[#07142A]">
+                  <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[#F5C518]/60 text-white">
                     <a.icon className="h-4 w-4" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="truncate text-sm font-semibold text-[#07142A]">{a.title}</div>
-                    <div className="text-xs text-[#4A6079]">{a.meta}</div>
+                    <div className="truncate text-sm font-semibold text-white">{a.title}</div>
+                    <div className="text-xs text-slate-400">{a.meta}</div>
                   </div>
                 </li>
               ))}
@@ -300,9 +300,9 @@ function QuickCard({ to, title, desc, icon: Icon }: { to: string; title: string;
       to={to}
       className="group rounded-3xl surface-glass p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-glow"
     >
-      <h3 className="mt-4 font-display text-lg font-bold text-[#07142A]">{title}</h3>
-      <p className="mt-1 text-sm text-[#4A6079]">{desc}</p>
-      <div className="mt-4 inline-flex items-center gap-1.5 text-sm font-bold text-[#07142A]">
+      <h3 className="mt-4 font-display text-lg font-bold text-white">{title}</h3>
+      <p className="mt-1 text-sm text-slate-400">{desc}</p>
+      <div className="mt-4 inline-flex items-center gap-1.5 text-sm font-bold text-white">
         Open <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
       </div>
     </Link>

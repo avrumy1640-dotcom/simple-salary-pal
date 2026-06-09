@@ -52,7 +52,11 @@ function Landing() {
           <span className="text-[11px] font-extrabold uppercase text-muted-foreground">New · HR documents, tracking, payroll</span>
         </div>
 
-        <h1 className="mx-auto mt-7 max-w-4xl font-display text-4xl font-extrabold leading-tight sm:text-5xl md:text-7xl md:leading-[1.02]">
+        <div className="mt-8 mb-2 h-16 sm:h-20 md:h-24 flex items-center justify-center">
+          <span className="script-typer text-4xl sm:text-5xl md:text-6xl">Good Payroll Starts Here</span>
+        </div>
+
+        <h1 className="mx-auto mt-4 max-w-4xl font-display text-4xl font-extrabold leading-tight sm:text-5xl md:text-7xl md:leading-[1.02]">
           Payroll and HR that feels built for <span className="text-gradient">2030</span>.
         </h1>
 
