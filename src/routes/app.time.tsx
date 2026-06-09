@@ -110,7 +110,7 @@ function TimePage() {
       .select("*, employees(full_name)")
       .order("created_at", { ascending: false })
       .limit(50);
-    setPto((p ?? []) as Pto[]);
+    setPto((p ?? []) as unknown as Pto[]);
     setLoading(false);
   }
   useEffect(() => { load(); /* eslint-disable-next-line */ }, [weekStart]);
