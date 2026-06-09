@@ -3,8 +3,8 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
-  Users, Wallet, Clock, ArrowRight, Sparkles, CalendarDays, CheckCircle2,
-  Circle, PlayCircle, UserPlus, BarChart3, Bell, FileBadge, FileText,
+  Users, Wallet, Clock, ArrowRight, Sparkles, CalendarDays,
+  PlayCircle, UserPlus, BarChart3, Bell, FileBadge, FileText,
 } from "lucide-react";
 import { fmtUSD } from "@/lib/payroll";
 import { useCountUp } from "@/hooks/useCountUp";
@@ -66,7 +66,6 @@ function Dashboard() {
   const [nextPayDate, setNextPayDate] = useState<string | null>(null);
   const [upcomingRuns, setUpcomingRuns] = useState<{ pay_date: string; net_total: number }[]>([]);
   const [activity, setActivity] = useState<{ id: string; title: string; meta: string; icon: typeof Users }[]>([]);
-  const [setupSteps, setSetupSteps] = useState({ company: false, employees: false, payroll: false });
 
   useEffect(() => {
     (async () => {
@@ -89,11 +88,6 @@ function Dashboard() {
       setPendingPto(ptoRes.count ?? 0);
       setNextPayDate(csRes.data?.next_pay_date ?? null);
       setUpcomingRuns(runs.slice(0, 5).reverse() as typeof upcomingRuns);
-      setSetupSteps({
-        company: !!csRes.data?.onboarding_complete,
-        employees: (ec ?? 0) > 0,
-        payroll: runs.length > 0,
-      });
       const a: typeof activity = [];
       (recentEmps.data ?? []).forEach((e) =>
         a.push({ id: `e-${e.id}`, title: `${e.full_name} joined the team`, meta: timeAgo(e.created_at), icon: UserPlus }),
@@ -110,8 +104,6 @@ function Dashboard() {
       setLoading(false);
     })();
   }, []);
-
-  const allSetup = setupSteps.company && setupSteps.employees && setupSteps.payroll;
 
   return (
     <div className="space-y-6 sm:space-y-7">
@@ -166,25 +158,6 @@ function Dashboard() {
         </div>
       </div>
 
-      {/* Setup checklist */}
-      {!loading && !allSetup && (
-        <Link to="/app/getting-started" className="block rounded-3xl surface-glass p-5 transition-all hover:-translate-y-0.5 hover:shadow-glow">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center">
-            <div className="flex items-center gap-3 md:contents">
-              <div className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-[#C2F5FF] text-[#07142A] shadow-glow"><Sparkles className="h-5 w-5" /></div>
-              <div className="flex-1">
-                <div className="font-display text-lg font-bold text-[#07142A]">Finish setting up your payroll</div>
-                <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1.5 text-sm">
-                  <SetupStep done={setupSteps.company} label="Company info" />
-                  <SetupStep done={setupSteps.employees} label="Add employees" />
-                  <SetupStep done={setupSteps.payroll} label="First payroll" />
-                </div>
-              </div>
-            </div>
-            <ArrowRight className="hidden h-5 w-5 text-[#4A6079] md:block" />
-          </div>
-        </Link>
-      )}
 
       {/* KPI cards */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
@@ -318,15 +291,6 @@ function Dashboard() {
         <QuickCard to="/app/reports" title="Reports & exports" desc="CSV-ready for accounting." icon={FileText} />
       </div>
     </div>
-  );
-}
-
-function SetupStep({ done, label }: { done: boolean; label: string }) {
-  return (
-    <span className="inline-flex items-center gap-1.5 text-xs">
-      {done ? <CheckCircle2 className="h-4 w-4 text-[#16A34A]" /> : <Circle className="h-4 w-4 text-[#4A6079]/45" />}
-      <span className={done ? "text-[#4A6079] line-through" : "font-semibold text-[#07142A]"}>{label}</span>
-    </span>
   );
 }
 
