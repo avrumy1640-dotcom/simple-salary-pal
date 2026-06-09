@@ -302,7 +302,7 @@ function StepPeriod({ periodStart, setPeriodStart, periodEnd, setPeriodEnd, payD
   );
 }
 
-function StepEmployees({ rows, setRows, loading, onBack, onContinue }: {
+function StepEmployees({ rows, setRows, loading, onBack, onContinue}: {
   rows: Row[]; setRows: (r: Row[]) => void; loading: boolean; onBack: () => void; onContinue: () => void;
 }) {
   function toggle(id: string) {
@@ -368,7 +368,7 @@ function StepEmployees({ rows, setRows, loading, onBack, onContinue }: {
   );
 }
 
-function StepHours({ rows, setRows, onBack, onContinue }: { rows: Row[]; setRows: (r: Row[]) => void; onBack: () => void; onContinue: () => void }) {
+function StepHours({ rows, setRows, onBack, onContinue}: { rows: Row[]; setRows: (r: Row[]) => void; onBack: () => void; onContinue: () => void }) {
   const active = rows.filter((r) => r.selected);
   function update(id: string, field: "regularHours" | "overtimeHours", v: number) {
     setRows(rows.map((r) => r.emp.id === id ? { ...r, [field]: isNaN(v) ? 0 : v } : r));
@@ -541,7 +541,7 @@ function NavRow({ onBack, onContinue, disabled }: { onBack: () => void; onContin
         <ChevronLeft className="h-4 w-4" /> Back
       </Button>
       <Button className="gap-2 bg-[#07142A] text-white font-bold hover:-translate-y-0.5 hover:shadow-glow" onClick={onContinue} disabled={disabled}>
-        Continue <ChevronRight className="h-4 w-4" />
+        Continue<ChevronRight className="h-4 w-4" />
       </Button>
     </div>
   );
