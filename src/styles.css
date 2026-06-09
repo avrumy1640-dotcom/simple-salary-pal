@@ -184,10 +184,10 @@
 
 @utility hover-gold {
   transition: all 0.25s ease;
-}
-@utility hover-gold:hover {
-  border-color: rgba(245,197,24,0.55);
-  box-shadow: var(--shadow-gold);
+  &:hover {
+    border-color: rgba(245,197,24,0.55);
+    box-shadow: var(--shadow-gold);
+  }
 }
 
 @keyframes float-y { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
