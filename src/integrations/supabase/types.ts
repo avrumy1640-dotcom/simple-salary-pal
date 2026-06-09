@@ -14,51 +14,206 @@ export type Database = {
   }
   public: {
     Tables: {
+      company_settings: {
+        Row: {
+          business_address: string | null
+          business_city: string | null
+          business_state: string | null
+          business_zip: string | null
+          created_at: string
+          ein: string | null
+          id: string
+          legal_name: string | null
+          next_pay_date: string | null
+          onboarding_complete: boolean
+          owner_id: string
+          pay_frequency: string
+          state_tax_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          business_address?: string | null
+          business_city?: string | null
+          business_state?: string | null
+          business_zip?: string | null
+          created_at?: string
+          ein?: string | null
+          id?: string
+          legal_name?: string | null
+          next_pay_date?: string | null
+          onboarding_complete?: boolean
+          owner_id: string
+          pay_frequency?: string
+          state_tax_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          business_address?: string | null
+          business_city?: string | null
+          business_state?: string | null
+          business_zip?: string | null
+          created_at?: string
+          ein?: string | null
+          id?: string
+          legal_name?: string | null
+          next_pay_date?: string | null
+          onboarding_complete?: boolean
+          owner_id?: string
+          pay_frequency?: string
+          state_tax_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      deductions: {
+        Row: {
+          active: boolean
+          amount: number
+          amount_type: string
+          category: string
+          created_at: string
+          employee_id: string
+          id: string
+          name: string
+          owner_id: string
+          pre_tax: boolean
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          amount?: number
+          amount_type?: string
+          category?: string
+          created_at?: string
+          employee_id: string
+          id?: string
+          name: string
+          owner_id: string
+          pre_tax?: boolean
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          amount?: number
+          amount_type?: string
+          category?: string
+          created_at?: string
+          employee_id?: string
+          id?: string
+          name?: string
+          owner_id?: string
+          pre_tax?: boolean
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deductions_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       employees: {
         Row: {
+          address_line1: string | null
+          address_line2: string | null
+          bank_account_last4: string | null
+          bank_account_type: string | null
+          bank_routing_last4: string | null
+          city: string | null
           created_at: string
+          date_of_birth: string | null
+          dependents: number
+          direct_deposit_enabled: boolean
           email: string | null
+          emergency_contact_name: string | null
+          emergency_contact_phone: string | null
+          extra_withholding: number
           federal_allowances: number
+          filing_status: string | null
           full_name: string
           id: string
           job_title: string | null
           owner_id: string
           pay_rate: number
           pay_type: string
+          phone: string | null
+          pto_accrual_per_period: number
+          pto_balance_hours: number
+          ssn_last4: string | null
           start_date: string | null
           state: string | null
           status: string
           updated_at: string
+          zip: string | null
         }
         Insert: {
+          address_line1?: string | null
+          address_line2?: string | null
+          bank_account_last4?: string | null
+          bank_account_type?: string | null
+          bank_routing_last4?: string | null
+          city?: string | null
           created_at?: string
+          date_of_birth?: string | null
+          dependents?: number
+          direct_deposit_enabled?: boolean
           email?: string | null
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          extra_withholding?: number
           federal_allowances?: number
+          filing_status?: string | null
           full_name: string
           id?: string
           job_title?: string | null
           owner_id: string
           pay_rate?: number
           pay_type?: string
+          phone?: string | null
+          pto_accrual_per_period?: number
+          pto_balance_hours?: number
+          ssn_last4?: string | null
           start_date?: string | null
           state?: string | null
           status?: string
           updated_at?: string
+          zip?: string | null
         }
         Update: {
+          address_line1?: string | null
+          address_line2?: string | null
+          bank_account_last4?: string | null
+          bank_account_type?: string | null
+          bank_routing_last4?: string | null
+          city?: string | null
           created_at?: string
+          date_of_birth?: string | null
+          dependents?: number
+          direct_deposit_enabled?: boolean
           email?: string | null
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          extra_withholding?: number
           federal_allowances?: number
+          filing_status?: string | null
           full_name?: string
           id?: string
           job_title?: string | null
           owner_id?: string
           pay_rate?: number
           pay_type?: string
+          phone?: string | null
+          pto_accrual_per_period?: number
+          pto_balance_hours?: number
+          ssn_last4?: string | null
           start_date?: string | null
           state?: string | null
           status?: string
           updated_at?: string
+          zip?: string | null
         }
         Relationships: []
       }
@@ -190,6 +345,56 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      pto_entries: {
+        Row: {
+          created_at: string
+          employee_id: string
+          end_date: string
+          hours: number
+          id: string
+          notes: string | null
+          owner_id: string
+          pto_type: string
+          start_date: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          employee_id: string
+          end_date: string
+          hours?: number
+          id?: string
+          notes?: string | null
+          owner_id: string
+          pto_type?: string
+          start_date: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          employee_id?: string
+          end_date?: string
+          hours?: number
+          id?: string
+          notes?: string | null
+          owner_id?: string
+          pto_type?: string
+          start_date?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pto_entries_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       time_entries: {
         Row: {
