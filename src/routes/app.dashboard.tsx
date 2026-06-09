@@ -128,8 +128,7 @@ function Dashboard() {
               <span className="h-2 w-2 rounded-full bg-[#07142A] pulse-dot" /> Live payroll command center
             </div>
             <h1 className="mt-4 font-display text-4xl font-extrabold leading-[1.05] text-[#07142A] sm:text-5xl md:text-6xl">
-              Welcome back.<br />
-              <span className="script-typer text-[1.2em] leading-none">Run payroll</span>
+              Welcome back.
             </h1>
             <p className="mt-4 max-w-xl text-sm font-medium leading-7 text-[#4A6079] sm:text-base">
               Approve time, review documents, and pay your team — all from one elegant dashboard.
