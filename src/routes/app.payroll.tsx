@@ -338,7 +338,7 @@ function StepEmployees({ rows, setRows, loading, onBack, onContinue}: {
           </Link>
         </div>
       ) : (
-        <ul className="mt-5 divide-y divide-[#F5C518]/40 overflow-hidden rounded-2xl border border-primary/60 bg-white">
+        <ul className="mt-5 divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card">
           {rows.map((r) => (
             <li key={r.emp.id}>
               <button
@@ -391,7 +391,7 @@ function StepHours({ rows, setRows, onBack, onContinue}: { rows: Row[]; setRows:
               <th className="px-4 py-3 text-right">Overtime hrs</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#F5C518]/40">
+          <tbody className="divide-y divide-border">
             {active.map((r) => (
               <tr key={r.emp.id} className="text-foreground">
                 <td className="px-4 py-3 font-semibold">{r.emp.full_name}</td>
@@ -460,7 +460,7 @@ function StepApprove({ calc, totals, periodStart, periodEnd, payDate, submitting
               <th className="px-4 py-3 text-right">Net</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#F5C518]/40 text-foreground">
+          <tbody className="divide-y divide-border text-foreground">
             {calc.map(({ row, pay }) => (
               <tr key={row.emp.id}>
                 <td className="px-4 py-3 font-semibold">{row.emp.full_name}</td>
@@ -550,7 +550,7 @@ function NavRow({ onBack, onContinue, disabled }: { onBack: () => void; onContin
 function Confetti() {
   // Lightweight CSS confetti — no deps
   const pieces = Array.from({ length: 28 });
-  const colors = ["background", "#F5C518", "#111827", "#FFFFFF"];
+  const colors = ["primary", "blue-400", "slate-300", "foreground"];
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
       {pieces.map((_, i) => {
