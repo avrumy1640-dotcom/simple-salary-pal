@@ -198,22 +198,20 @@ function Landing() {
           <div aria-hidden className="absolute inset-0 grid-bg opacity-20" />
 
           <div className="relative z-10 text-center">
-            <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-[11px] font-bold uppercase text-primary/80">
-              <Sparkles className="h-3 w-3" /> Free first payroll
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[11px] font-bold uppercase text-primary">
+              <Sparkles className="h-3 w-3" /> From zero to first payroll in 10 minutes
             </div>
-            <h2 className="mx-auto mt-6 max-w-2xl font-display text-4xl font-extrabold leading-tight md:text-5xl">
-              Pay your team in minutes, not days.
+            <h2 className="mx-auto mt-6 max-w-2xl font-display text-4xl font-extrabold leading-tight md:text-5xl text-white">
+              Your team deserves a company that gets payroll right
             </h2>
-            <p className="mx-auto mt-5 max-w-lg text-base leading-relaxed text-muted-foreground">
-              Switch from spreadsheets in an afternoon. We'll import your team and run your first payroll free.
+            <p className="mx-auto mt-5 max-w-lg text-base leading-relaxed text-white/75">
+              Join hundreds of operators who stopped dreading payday and started owning it.
             </p>
-            <div className="mt-10 flex flex-col items-center gap-4">
-              <Link to="/auth" className="inline-flex items-center gap-2 rounded-2xl bg-primary px-8 py-4 text-base font-bold text-primary-foreground shadow-2xl transition-all hover:-translate-y-0.5 hover:bg-primary/90">
-                Start free trial <ArrowRight className="h-4 w-4" />
+            <div className="mt-10 flex flex-col items-center gap-3">
+              <Link to="/auth" className="inline-flex items-center gap-2 rounded-2xl bg-primary px-8 py-4 text-base font-bold text-primary-foreground shadow-glow transition-all hover:-translate-y-0.5 glow-pulse">
+                Get started free — no card needed <ArrowRight className="h-4 w-4" />
               </Link>
-              <Link to="/auth" className="rounded-2xl px-8 py-4 text-base font-bold text-muted-foreground transition-colors hover:text-foreground">
-                Sign in
-              </Link>
+              <p className="text-xs font-medium text-white/55">14-day free trial. Cancel anytime. Your first payroll is on us.</p>
             </div>
           </div>
         </ScrollReveal>
