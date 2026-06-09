@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Upload, FileText, Trash2, Download, CheckCircle2, Circle, Search } from "lucide-react";
+import { Upload, FileText, Trash2, Download, CheckCircle2, Search, History, PenLine, XCircle, Eye } from "lucide-react";
 
 export const Route = createFileRoute("/app/documents")({
   head: () => ({ meta: [{ title: "HR documents — Paylo" }] }),
@@ -20,6 +20,13 @@ interface Doc {
   file_name: string | null; file_size: number | null; mime_type: string | null;
   notes: string | null; employee_id: string | null; contractor_id: string | null;
   uploaded_at: string;
+  signed_by_name: string | null; signed_by_email: string | null;
+  signature_status: string; signature_requested_at: string | null; signature_ip: string | null;
+}
+interface SigEvent {
+  id: string; document_id: string; status: string;
+  signed_by_name: string | null; signed_by_email: string | null;
+  signature_ip: string | null; note: string | null; event_at: string;
 }
 
 const CATEGORIES = [
@@ -33,6 +40,15 @@ const CATEGORIES = [
   { value: "other", label: "Other" },
 ];
 
+const STATUS_STYLES: Record<string, string> = {
+  unsigned: "bg-muted text-muted-foreground",
+  requested: "bg-amber-100 text-amber-900",
+  viewed: "bg-sky-100 text-sky-900",
+  signed: "bg-emerald-100 text-emerald-900",
+  declined: "bg-rose-100 text-rose-900",
+  voided: "bg-zinc-200 text-zinc-700",
+};
+
 function bytes(n: number | null) {
   if (!n) return "—";
   if (n < 1024) return `${n} B`;
@@ -43,30 +59,28 @@ function bytes(n: number | null) {
 function DocumentsPage() {
   const [people, setPeople] = useState<Person[]>([]);
   const [docs, setDocs] = useState<Doc[]>([]);
-  const [signedIds, setSignedIds] = useState<Set<string>>(new Set());
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<string>("all");
   const fileRef = useRef<HTMLInputElement>(null);
   const [form, setForm] = useState({ person: "", title: "", category: "other", notes: "" });
+  const [signOpen, setSignOpen] = useState<Doc | null>(null);
+  const [historyOpen, setHistoryOpen] = useState<Doc | null>(null);
+  const [history, setHistory] = useState<SigEvent[]>([]);
+  const [signForm, setSignForm] = useState({ name: "", email: "", note: "" });
 
   async function refresh() {
-    const [{ data: emps }, { data: cons }, { data: d }, { data: forms }] = await Promise.all([
+    const [{ data: emps }, { data: cons }, { data: d }] = await Promise.all([
       supabase.from("employees").select("id, full_name").order("full_name"),
       supabase.from("contractors").select("id, full_name").order("full_name"),
       supabase.from("hr_documents").select("*").order("uploaded_at", { ascending: false }),
-      supabase.from("hr_forms").select("id, status").eq("status", "signed"),
     ]);
-    const list: Person[] = [
+    setPeople([
       ...((emps ?? []) as any[]).map((e) => ({ id: e.id, full_name: e.full_name, kind: "employee" as const })),
       ...((cons ?? []) as any[]).map((c) => ({ id: c.id, full_name: c.full_name, kind: "contractor" as const })),
-    ];
-    setPeople(list);
+    ]);
     setDocs((d ?? []) as Doc[]);
-    // Documents marked as signed are tracked via a 'signed:' prefix in notes
-    const signed = new Set<string>(((d ?? []) as Doc[]).filter((x) => x.notes?.startsWith("[signed]")).map((x) => x.id));
-    setSignedIds(signed);
   }
   useEffect(() => { refresh(); }, []);
 
@@ -79,8 +93,7 @@ function DocumentsPage() {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) { toast.error("Please sign in again"); return; }
-      const personId = form.person || null;
-      const person = people.find((p) => p.id === personId);
+      const person = people.find((p) => p.id === form.person);
       const cleanName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
       const path = `${user.id}/${form.category}/${Date.now()}_${cleanName}`;
       const { error: upErr } = await supabase.storage.from("hr-documents").upload(path, file, {
@@ -107,15 +120,20 @@ function DocumentsPage() {
       refresh();
     } catch (e: any) {
       toast.error(e.message || "Upload failed");
-    } finally {
-      setBusy(false);
-    }
+    } finally { setBusy(false); }
   }
 
   async function download(d: Doc) {
     if (!d.storage_path) { toast.error("No file attached"); return; }
     const { data, error } = await supabase.storage.from("hr-documents").createSignedUrl(d.storage_path, 60);
     if (error || !data) { toast.error(error?.message || "Could not get link"); return; }
+    // Log a 'viewed' event
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      await supabase.from("hr_document_signatures").insert({
+        document_id: d.id, user_id: user.id, status: "viewed", note: "Document downloaded",
+      });
+    }
     window.open(data.signedUrl, "_blank");
   }
 
@@ -127,15 +145,78 @@ function DocumentsPage() {
     refresh();
   }
 
-  async function toggleSigned(d: Doc) {
-    const isSigned = signedIds.has(d.id);
-    const newNotes = isSigned
-      ? (d.notes ?? "").replace(/^\[signed\][^\n]*\n?/, "").trim() || null
-      : `[signed] ${new Date().toISOString()}${d.notes ? "\n" + d.notes : ""}`;
-    const { error } = await supabase.from("hr_documents").update({ notes: newNotes }).eq("id", d.id);
-    if (error) { toast.error(error.message); return; }
-    toast.success(isSigned ? "Marked unsigned" : "Marked signed");
+  async function requestSignature(d: Doc) {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const now = new Date().toISOString();
+    await supabase.from("hr_documents").update({
+      signature_status: "requested",
+      signature_requested_at: now,
+    }).eq("id", d.id);
+    await supabase.from("hr_document_signatures").insert({
+      document_id: d.id, user_id: user.id, status: "requested", note: "Signature requested",
+    });
+    toast.success("Signature requested");
     refresh();
+  }
+
+  async function submitSignature() {
+    if (!signOpen) return;
+    if (!signForm.name.trim()) { toast.error("Signer name is required"); return; }
+    setBusy(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      // Best-effort IP capture
+      let ip: string | null = null;
+      try {
+        const r = await fetch("https://api.ipify.org?format=json");
+        if (r.ok) ip = (await r.json()).ip ?? null;
+      } catch {}
+      const now = new Date().toISOString();
+      const { error: upErr } = await supabase.from("hr_documents").update({
+        signature_status: "signed",
+        signed_by_name: signForm.name.trim(),
+        signed_by_email: signForm.email.trim() || null,
+        signed_by_user_id: user.id,
+        signature_ip: ip,
+      }).eq("id", signOpen.id);
+      if (upErr) throw upErr;
+      const { error: hErr } = await supabase.from("hr_document_signatures").insert({
+        document_id: signOpen.id, user_id: user.id, status: "signed",
+        signed_by_name: signForm.name.trim(), signed_by_email: signForm.email.trim() || null,
+        signed_by_user_id: user.id,
+        signature_ip: ip,
+        signature_user_agent: typeof navigator !== "undefined" ? navigator.userAgent.slice(0, 200) : null,
+        note: signForm.note.trim() || null,
+      });
+      if (hErr) throw hErr;
+      toast.success(`Signed at ${new Date(now).toLocaleString()}`);
+      setSignOpen(null);
+      setSignForm({ name: "", email: "", note: "" });
+      refresh();
+    } catch (e: any) { toast.error(e.message); } finally { setBusy(false); }
+  }
+
+  async function voidSignature(d: Doc) {
+    if (!confirm(`Void signature on "${d.title}"?`)) return;
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    await supabase.from("hr_documents").update({
+      signature_status: "voided", signed_by_name: null, signed_by_email: null, signed_by_user_id: null,
+    }).eq("id", d.id);
+    await supabase.from("hr_document_signatures").insert({
+      document_id: d.id, user_id: user.id, status: "voided", note: "Signature voided",
+    });
+    toast.success("Signature voided");
+    refresh();
+  }
+
+  async function openHistory(d: Doc) {
+    setHistoryOpen(d);
+    const { data } = await supabase.from("hr_document_signatures")
+      .select("*").eq("document_id", d.id).order("event_at", { ascending: false });
+    setHistory((data ?? []) as SigEvent[]);
   }
 
   const filtered = docs.filter((d) => {
@@ -143,7 +224,7 @@ function DocumentsPage() {
     if (query) {
       const q = query.toLowerCase();
       const personName = people.find((p) => p.id === (d.employee_id || d.contractor_id))?.full_name ?? "";
-      if (!d.title.toLowerCase().includes(q) && !personName.toLowerCase().includes(q)) return false;
+      if (!d.title.toLowerCase().includes(q) && !personName.toLowerCase().includes(q) && !(d.signed_by_name ?? "").toLowerCase().includes(q)) return false;
     }
     return true;
   });
@@ -154,7 +235,7 @@ function DocumentsPage() {
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">HR documents</h1>
           <p className="text-sm text-muted-foreground max-w-xl">
-            Upload offer letters, I-9s, W-4s, W-9s, IDs, and signed acknowledgments. Files are stored privately and only accessible to your company.
+            Request signatures, capture signer name, email, IP, and timestamp, and keep a full audit history for every document.
           </p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
@@ -166,7 +247,7 @@ function DocumentsPage() {
             <div className="space-y-3">
               <div>
                 <Label>Title</Label>
-                <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="e.g. Signed offer letter — Jamie Chen" />
+                <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="e.g. Offer letter — Jamie Chen" />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
@@ -208,7 +289,7 @@ function DocumentsPage() {
       <div className="flex flex-wrap gap-2">
         <div className="relative flex-1 min-w-[200px]">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search by title or person" className="pl-9" />
+          <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search title, person, or signer" className="pl-9" />
         </div>
         <Select value={filter} onValueChange={setFilter}>
           <SelectTrigger className="w-[200px]"><SelectValue /></SelectTrigger>
@@ -229,35 +310,88 @@ function DocumentsPage() {
           <ul className="divide-y">
             {filtered.map((d) => {
               const person = people.find((p) => p.id === (d.employee_id || d.contractor_id));
-              const isSigned = signedIds.has(d.id);
               const cat = CATEGORIES.find((c) => c.value === d.category);
+              const status = d.signature_status ?? "unsigned";
+              const isSigned = status === "signed";
               return (
-                <li key={d.id} className="flex items-center gap-4 px-5 py-4">
-                  <div className="grid h-10 w-10 place-items-center rounded-lg bg-accent text-foreground flex-shrink-0">
+                <li key={d.id} className="flex flex-wrap items-center gap-4 px-5 py-4">
+                  <div className="grid h-10 w-10 place-items-center rounded-lg bg-accent flex-shrink-0">
                     <FileText className="h-5 w-5" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="font-medium truncate">{d.title}</span>
                       <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] text-muted-foreground">{cat?.label ?? d.category}</span>
-                      {isSigned && <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-semibold text-emerald-800"><CheckCircle2 className="h-3 w-3" /> Signed</span>}
+                      <span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold capitalize ${STATUS_STYLES[status] ?? STATUS_STYLES.unsigned}`}>{status}</span>
                     </div>
                     <div className="text-xs text-muted-foreground truncate">
                       {person ? `${person.full_name} · ` : ""}{d.file_name ?? "—"} · {bytes(d.file_size)} · {new Date(d.uploaded_at).toLocaleDateString()}
                     </div>
+                    {isSigned && d.signed_by_name && (
+                      <div className="mt-1 text-xs text-emerald-800">
+                        <CheckCircle2 className="inline h-3 w-3" /> Signed by <b>{d.signed_by_name}</b>
+                        {d.signed_by_email ? ` (${d.signed_by_email})` : ""} {d.signature_ip ? `· IP ${d.signature_ip}` : ""}
+                      </div>
+                    )}
                   </div>
-                  <Button variant="ghost" size="sm" className="gap-1.5" onClick={() => toggleSigned(d)}>
-                    {isSigned ? <Circle className="h-4 w-4" /> : <CheckCircle2 className="h-4 w-4" />}
-                    {isSigned ? "Unsign" : "Mark signed"}
-                  </Button>
-                  <Button variant="ghost" size="icon" onClick={() => download(d)} title="Download"><Download className="h-4 w-4" /></Button>
-                  <Button variant="ghost" size="icon" onClick={() => remove(d)} title="Delete"><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                  <div className="flex flex-wrap gap-1">
+                    {!isSigned && status !== "requested" && (
+                      <Button variant="ghost" size="sm" className="gap-1.5" onClick={() => requestSignature(d)}><Eye className="h-4 w-4" />Request</Button>
+                    )}
+                    {!isSigned && (
+                      <Button variant="ghost" size="sm" className="gap-1.5" onClick={() => setSignOpen(d)}><PenLine className="h-4 w-4" />Sign</Button>
+                    )}
+                    {isSigned && (
+                      <Button variant="ghost" size="sm" className="gap-1.5 text-rose-700" onClick={() => voidSignature(d)}><XCircle className="h-4 w-4" />Void</Button>
+                    )}
+                    <Button variant="ghost" size="sm" className="gap-1.5" onClick={() => openHistory(d)}><History className="h-4 w-4" />History</Button>
+                    <Button variant="ghost" size="icon" onClick={() => download(d)} title="Download"><Download className="h-4 w-4" /></Button>
+                    <Button variant="ghost" size="icon" onClick={() => remove(d)} title="Delete"><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                  </div>
                 </li>
               );
             })}
           </ul>
         </div>
       )}
+
+      {/* Sign dialog */}
+      <Dialog open={!!signOpen} onOpenChange={(o) => !o && setSignOpen(null)}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Sign document</DialogTitle></DialogHeader>
+          <div className="space-y-3">
+            <p className="text-sm text-muted-foreground">By typing your name below you electronically sign <b>{signOpen?.title}</b>. We record name, email, IP, browser, and the exact timestamp.</p>
+            <div><Label>Full legal name</Label><Input value={signForm.name} onChange={(e) => setSignForm({ ...signForm, name: e.target.value })} placeholder="Jamie Chen" /></div>
+            <div><Label>Email</Label><Input type="email" value={signForm.email} onChange={(e) => setSignForm({ ...signForm, email: e.target.value })} placeholder="jamie@company.com" /></div>
+            <div><Label>Note (optional)</Label><Input value={signForm.note} onChange={(e) => setSignForm({ ...signForm, note: e.target.value })} /></div>
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setSignOpen(null)} disabled={busy}>Cancel</Button>
+            <Button onClick={submitSignature} disabled={busy} className="gap-2"><PenLine className="h-4 w-4" />{busy ? "Signing…" : "I agree & sign"}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* History dialog */}
+      <Dialog open={!!historyOpen} onOpenChange={(o) => !o && setHistoryOpen(null)}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader><DialogTitle>Signature history</DialogTitle></DialogHeader>
+          <div className="space-y-2 max-h-[60vh] overflow-y-auto">
+            {history.length === 0 && <p className="text-sm text-muted-foreground">No events yet.</p>}
+            {history.map((h) => (
+              <div key={h.id} className="rounded-xl border p-3 text-sm">
+                <div className="flex items-center justify-between">
+                  <span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold capitalize ${STATUS_STYLES[h.status] ?? STATUS_STYLES.unsigned}`}>{h.status}</span>
+                  <span className="text-xs text-muted-foreground">{new Date(h.event_at).toLocaleString()}</span>
+                </div>
+                {h.signed_by_name && <div className="mt-1">{h.signed_by_name} {h.signed_by_email ? `· ${h.signed_by_email}` : ""}</div>}
+                {h.signature_ip && <div className="text-xs text-muted-foreground">IP {h.signature_ip}</div>}
+                {h.note && <div className="text-xs text-muted-foreground mt-1">{h.note}</div>}
+              </div>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
