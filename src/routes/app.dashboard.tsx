@@ -12,7 +12,7 @@ export const Route = createFileRoute("/app/dashboard")({
 
 function Stat({ label, value, icon: Icon, accent }: { label: string; value: string; icon: typeof Users; accent?: boolean }) {
   return (
-    <div className={`rounded-2xl border p-5 ${accent ? "bg-gradient-to-br from-[oklch(0.62_0.22_260)] to-[oklch(0.55_0.22_260)] text-white border-transparent" : "bg-card"}`}>
+    <div className={`rounded-2xl border p-5 ${accent ? "bg-foreground text-background border-transparent" : "bg-card"}`}>
       <div className="flex items-center justify-between">
         <span className={`text-xs font-medium uppercase tracking-wider ${accent ? "text-white/80" : "text-muted-foreground"}`}>{label}</span>
         <Icon className={`h-4 w-4 ${accent ? "text-white/80" : "text-muted-foreground"}`} />

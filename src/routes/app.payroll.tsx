@@ -230,7 +230,7 @@ function PayrollPage() {
 
 function Tile({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
   return (
-    <div className={`rounded-2xl border p-4 ${accent ? "bg-gradient-to-br from-[oklch(0.62_0.22_260)] to-[oklch(0.55_0.22_260)] text-white border-transparent" : "bg-card"}`}>
+    <div className={`rounded-2xl border p-4 ${accent ? "bg-foreground text-background border-transparent" : "bg-card"}`}>
       <div className={`text-xs font-medium uppercase tracking-wider ${accent ? "text-white/80" : "text-muted-foreground"}`}>{label}</div>
       <div className="mt-2 text-2xl font-bold">{value}</div>
     </div>
