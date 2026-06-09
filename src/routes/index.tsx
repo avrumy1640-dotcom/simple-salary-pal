@@ -235,7 +235,7 @@ function Feature({ icon, bg, title, desc }: { icon: React.ReactNode; bg: string;
       <div className={`mb-5 grid h-12 w-12 place-items-center rounded-2xl ${bg} transition-transform group-hover:scale-110`}>
         {icon}
       </div>
-      <h4 className="text-lg font-semibold tracking-tight">{title}</h4>
+      <h3 className="text-lg font-semibold tracking-tight">{title}</h3>
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{desc}</p>
     </div>
   );
