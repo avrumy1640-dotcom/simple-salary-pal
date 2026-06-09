@@ -137,16 +137,26 @@ function EmployeesPage() {
     );
   });
 
+  const totalActive = items.filter((e) => e.status === "active").length;
+  const totalInactive = items.filter((e) => e.status === "inactive").length;
+  const totalDD = items.filter((e) => e.direct_deposit_enabled).length;
+  const totalSalary = items.filter((e) => e.pay_type === "salary").length;
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Employees</h1>
-          <p className="text-sm text-muted-foreground">Manage your team — contact, tax setup, and direct deposit.</p>
+          <h1 className="font-display text-4xl font-extrabold tracking-tight text-white flex items-center gap-3">
+            Employees
+            <span className="inline-flex items-center rounded-full bg-primary/15 border border-primary/40 px-3 py-1 text-base font-bold text-primary tabular">
+              {items.length}
+            </span>
+          </h1>
+          <p className="mt-1 text-sm text-white/65">Manage your team — contact, tax setup, and direct deposit.</p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button onClick={openNew} className="gap-2 rounded-full bg-primary text-primary-foreground hover:opacity-90"><Plus className="h-4 w-4" /> Add employee</Button>
+            <Button onClick={openNew} size="lg" className="gap-2 rounded-2xl bg-primary text-primary-foreground hover:shadow-glow font-bold"><Plus className="h-4 w-4" /> Add employee</Button>
           </DialogTrigger>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
