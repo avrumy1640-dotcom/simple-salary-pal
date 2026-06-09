@@ -204,31 +204,54 @@ function PayrollWizard() {
         </div>
       </div>
 
-      {/* Step content */}
-      <div key={step} className={direction === 1 ? "slide-in-right" : "slide-in-left"}>
-        {step === 0 && (
-          <StepPeriod
-            periodStart={periodStart} setPeriodStart={setPeriodStart}
-            periodEnd={periodEnd} setPeriodEnd={setPeriodEnd}
-            payDate={payDate} setPayDate={setPayDate}
-            onContinue={async () => { await loadPreview(); next(); }}
-            loading={loading}
-          />
-        )}
-        {step === 1 && (
-          <StepEmployees rows={rows} setRows={setRows} loading={loading} onBack={back} onContinue={next} />
-        )}
-        {step === 2 && (
-          <StepHours rows={rows} setRows={setRows} onBack={back} onContinue={next} />
-        )}
-        {step === 3 && (
-          <StepApprove
-            calc={calc} totals={totals} periodStart={periodStart} periodEnd={periodEnd} payDate={payDate}
-            submitting={submitting} onBack={back} onApprove={approveAndRun}
-          />
-        )}
-        {step === 4 && (
-          <StepConfirm netTotal={totals.net} runId={runId} payDate={payDate} count={calc.length} />
+      {/* Step content + running totals sidebar */}
+      <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+        <div key={step} className={direction === 1 ? "slide-in-right" : "slide-in-left"}>
+          {step === 0 && (
+            <StepPeriod
+              periodStart={periodStart} setPeriodStart={setPeriodStart}
+              periodEnd={periodEnd} setPeriodEnd={setPeriodEnd}
+              payDate={payDate} setPayDate={setPayDate}
+              onContinue={async () => { await loadPreview(); next(); }}
+              loading={loading}
+            />
+          )}
+          {step === 1 && (
+            <StepEmployees rows={rows} setRows={setRows} loading={loading} onBack={back} onContinue={next} />
+          )}
+          {step === 2 && (
+            <StepHours rows={rows} setRows={setRows} onBack={back} onContinue={next} />
+          )}
+          {step === 3 && (
+            <StepApprove
+              calc={calc} totals={totals} periodStart={periodStart} periodEnd={periodEnd} payDate={payDate}
+              submitting={submitting} onBack={back} onApprove={approveAndRun}
+            />
+          )}
+          {step === 4 && (
+            <StepConfirm netTotal={totals.net} runId={runId} payDate={payDate} count={calc.length} />
+          )}
+        </div>
+
+        {/* Running totals sidebar */}
+        {step < 4 && (
+          <aside className="lg:sticky lg:top-24 h-fit rounded-3xl surface-glass p-5 border border-primary/25">
+            <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/55">Running totals</div>
+            <div className="mt-1 text-xs text-white/60">Updates as you move through steps</div>
+            <div className="mt-5 space-y-4">
+              <TotalsRow label="Employees" value={String(calc.length)} />
+              <TotalsRow label="Gross" value={fmtUSD(totals.gross)} />
+              <TotalsRow label="Est. taxes" value={fmtUSD(totals.tax)} muted />
+              <TotalsRow label="Deductions" value={fmtUSD(totals.deductions)} muted />
+              <div className="border-t border-primary/20 pt-4">
+                <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-primary">Net take-home</div>
+                <div className="mt-1 font-display text-3xl font-extrabold tabular text-primary">{fmtUSD(totals.net)}</div>
+              </div>
+              <div className="rounded-2xl border border-primary/20 bg-primary/5 p-3 text-xs text-white/70">
+                Pay date <span className="font-bold text-white">{new Date(payDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
+              </div>
+            </div>
+          </aside>
         )}
       </div>
 
