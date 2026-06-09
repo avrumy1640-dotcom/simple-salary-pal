@@ -82,7 +82,7 @@ function Dashboard() {
         supabase.from("payroll_runs").select("net_total").gte("pay_date", fom),
         supabase.from("pto_entries").select("*", { count: "exact", head: true }).eq("status", "pending"),
         supabase.from("company_settings").select("next_pay_date, onboarding_complete").maybeSingle(),
-        supabase.from("pto_entries").select("id, employee_name, status, created_at").order("created_at", { ascending: false }).limit(3),
+        supabase.from("pto_entries").select("id, status, created_at, employees(full_name)").order("created_at", { ascending: false }).limit(3),
         supabase.from("employees").select("id, full_name, created_at").order("created_at", { ascending: false }).limit(3),
       ]);
       setEmpCount(ec ?? 0);
@@ -101,9 +101,10 @@ function Dashboard() {
       (recentEmps.data ?? []).forEach((e) =>
         a.push({ id: `e-${e.id}`, title: `${e.full_name} joined the team`, meta: timeAgo(e.created_at), icon: UserPlus }),
       );
-      (recentPto.data ?? []).forEach((p) =>
-        a.push({ id: `p-${p.id}`, title: `${p.employee_name} requested time off`, meta: timeAgo(p.created_at), icon: CalendarDays }),
-      );
+      (recentPto.data ?? []).forEach((p: { id: string; created_at: string; employees: { full_name: string } | { full_name: string }[] | null }) => {
+        const emp = Array.isArray(p.employees) ? p.employees[0] : p.employees;
+        a.push({ id: `p-${p.id}`, title: `${emp?.full_name ?? "Someone"} requested time off`, meta: timeAgo(p.created_at), icon: CalendarDays });
+      });
       runs.slice(0, 2).forEach((r, i) =>
         a.push({ id: `r-${i}`, title: `Payroll run — ${fmtUSD(Number(r.net_total))} net`, meta: timeAgo(r.pay_date), icon: Wallet }),
       );
