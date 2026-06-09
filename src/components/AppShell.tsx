@@ -1,12 +1,12 @@
 import { Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
   LayoutDashboard, Users, Clock, Wallet, FileText, LogOut, Menu, X,
   HeartHandshake, CalendarDays, Settings as SettingsIcon, FileBadge, Sparkles,
   Briefcase, Receipt, Landmark, FolderOpen, ClipboardCheck, MapPin,
-  History as HistoryIcon, UserCircle2,
+  History as HistoryIcon, UserCircle2, ChevronLeft, ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TopBar } from "@/components/TopBar";
