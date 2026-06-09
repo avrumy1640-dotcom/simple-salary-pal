@@ -188,29 +188,41 @@ function PayHistoryPage() {
               <div className="text-right">Gross</div><div className="text-right">Taxes</div><div className="text-right">Net</div><div />
             </div>
             {filtered.map((r) => (
-              <button
+              <div
                 key={r.id}
-                onClick={() => setSelected(r)}
-                className="w-full text-left grid grid-cols-2 md:grid-cols-[1.2fr_1.4fr_0.8fr_1fr_1fr_1fr_auto] gap-x-4 gap-y-1 px-5 py-4 hover:bg-muted/40 transition group"
+                className="group grid grid-cols-2 md:grid-cols-[1.2fr_1.4fr_0.8fr_1fr_1fr_1fr_auto] gap-x-4 gap-y-1 px-5 py-5 hover:bg-primary/[0.04] transition border-l-2 border-transparent hover:border-primary"
               >
-                <div className="font-semibold">{fmtDate(r.pay_date)}</div>
-                <div className="text-sm text-muted-foreground">
+                <button onClick={() => setSelected(r)} className="text-left font-semibold text-white">{fmtDate(r.pay_date)}</button>
+                <div className="text-sm text-white/60">
                   {fmtDate(r.period_start)} – {fmtDate(r.period_end)}
                 </div>
                 <div>
-                  <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${
+                  <span className={`inline-flex px-2.5 py-1 rounded-full text-[11px] font-bold ${
                     r.status === "approved" || r.status === "completed"
-                      ? "bg-emerald-100 text-emerald-700"
+                      ? "bg-primary/15 text-primary border border-primary/40"
                       : r.status === "draft"
-                      ? "bg-amber-100 text-amber-700"
-                      : "bg-muted text-muted-foreground"
+                      ? "border border-white/30 text-white/80"
+                      : "bg-destructive/15 text-destructive"
                   }`}>{r.status}</span>
                 </div>
-                <div className="text-right tabular-nums">{fmtUSD(r.gross_total ?? 0)}</div>
-                <div className="text-right tabular-nums text-muted-foreground">{fmtUSD(r.tax_total ?? 0)}</div>
-                <div className="text-right tabular-nums font-semibold">{fmtUSD(r.net_total)}</div>
-                <ChevronRight className="hidden md:block h-5 w-5 text-muted-foreground self-center group-hover:translate-x-1 transition" />
-              </button>
+                <div className="text-right tabular-nums text-white/85">{fmtUSD(r.gross_total ?? 0)}</div>
+                <div className="text-right tabular-nums text-white/60">{fmtUSD(r.tax_total ?? 0)}</div>
+                <div className="text-right tabular-nums font-bold text-white">{fmtUSD(r.net_total)}</div>
+                <div className="flex items-center gap-1 self-center">
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    title="Download CSV"
+                    onClick={(e) => { e.stopPropagation(); downloadRun(r); }}
+                    className="h-9 w-9 text-primary hover:bg-primary/10"
+                  >
+                    <Download className="h-4 w-4" />
+                  </Button>
+                  <button onClick={() => setSelected(r)} className="hidden md:block">
+                    <ChevronRight className="h-5 w-5 text-white/40 group-hover:text-primary group-hover:translate-x-1 transition" />
+                  </button>
+                </div>
+              </div>
             ))}
           </div>
         )}
