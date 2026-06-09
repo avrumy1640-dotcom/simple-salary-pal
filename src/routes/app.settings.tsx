@@ -198,9 +198,9 @@ function SettingsPage() {
 
         <TabsContent value="security" className="space-y-4 mt-6">
           <Section title="Account security" hint="Manage how you sign in to Paylo.">
-            <Field label="Sign-in email"><Input disabled value="" placeholder="Loaded from your account" /></Field>
+            <Field label="Sign-in email"><Input disabled value={signInEmail} placeholder="Loaded from your account" /></Field>
             <div className="flex flex-wrap gap-3">
-              <Button variant="outline" onClick={() => toast.info("Check your inbox to confirm a password change.")}>Change password</Button>
+              <Button variant="outline" onClick={sendPasswordReset}>Send password reset email</Button>
               <Button variant="outline" disabled>Enable 2FA (coming soon)</Button>
             </div>
           </Section>
