@@ -50,9 +50,9 @@
   --color-sidebar-border: var(--sidebar-border);
 }
 
-/* AURORA ICE — pure white base with #C2F5FF cyan-ice accents, 3D depth */
+/* AURORA ICE — sharpened: tighter radii, crisper edges, precise shadows */
 :root {
-  --radius: 1rem;
+  --radius: 0.5rem;
 
   --background: #FFFFFF;
   --foreground: #07142A;
