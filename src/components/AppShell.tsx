@@ -150,7 +150,7 @@ export function AppShell() {
         {open && <div className="fixed inset-0 z-30 bg-foreground/20 backdrop-blur-sm md:hidden" onClick={() => setOpen(false)} />}
 
         <main className="flex-1 min-w-0">
-          <div className="mx-auto max-w-7xl p-4 md:p-8 lg:p-10">
+          <div className="mx-auto max-w-7xl px-3 py-4 sm:p-6 md:p-8 lg:p-10">
             <Outlet />
           </div>
         </main>
