@@ -47,9 +47,12 @@ function SettingsPage() {
     failedPayments: true,
   });
   const [brandColor, setBrandColor] = useState("#07142A");
+  const [signInEmail, setSignInEmail] = useState("");
 
   useEffect(() => {
     (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setSignInEmail(user?.email ?? "");
       const { data } = await supabase.from("company_settings").select("*").maybeSingle();
       if (data) {
         setForm({
@@ -69,15 +72,32 @@ function SettingsPage() {
 
   async function save() {
     setSaving(true);
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) { setSaving(false); return; }
-    const payload = { ...form, owner_id: user.id, onboarding_complete: !!form.legal_name && !!form.ein, next_pay_date: form.next_pay_date || null };
-    const { error } = await supabase.from("company_settings").upsert(payload, { onConflict: "owner_id" });
-    setSaving(false);
-    if (error) { toast.error(error.message); return; }
-    localStorage.setItem("paylo_notif", JSON.stringify(notif));
-    localStorage.setItem("paylo_brand", brandColor);
-    toast.success("Settings saved");
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error("You're signed out — please sign back in to save.");
+        return;
+      }
+      const payload = { ...form, owner_id: user.id, onboarding_complete: !!form.legal_name && !!form.ein, next_pay_date: form.next_pay_date || null };
+      const { error } = await supabase.from("company_settings").upsert(payload, { onConflict: "owner_id" });
+      if (error) { toast.error(error.message); return; }
+      localStorage.setItem("paylo_notif", JSON.stringify(notif));
+      localStorage.setItem("paylo_brand", brandColor);
+      toast.success("Settings saved");
+    } catch (e: any) {
+      toast.error(e?.message ?? "Could not save settings");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function sendPasswordReset() {
+    if (!signInEmail) { toast.error("No sign-in email on file."); return; }
+    const { error } = await supabase.auth.resetPasswordForEmail(signInEmail, {
+      redirectTo: `${window.location.origin}/auth`,
+    });
+    if (error) toast.error(error.message);
+    else toast.success(`Password reset link sent to ${signInEmail}`);
   }
 
   if (loading) return <div className="text-sm text-muted-foreground">Loading…</div>;
@@ -178,9 +198,9 @@ function SettingsPage() {
 
         <TabsContent value="security" className="space-y-4 mt-6">
           <Section title="Account security" hint="Manage how you sign in to Paylo.">
-            <Field label="Sign-in email"><Input disabled value="" placeholder="Loaded from your account" /></Field>
+            <Field label="Sign-in email"><Input disabled value={signInEmail} placeholder="Loaded from your account" /></Field>
             <div className="flex flex-wrap gap-3">
-              <Button variant="outline" onClick={() => toast.info("Check your inbox to confirm a password change.")}>Change password</Button>
+              <Button variant="outline" onClick={sendPasswordReset}>Send password reset email</Button>
               <Button variant="outline" disabled>Enable 2FA (coming soon)</Button>
             </div>
           </Section>
