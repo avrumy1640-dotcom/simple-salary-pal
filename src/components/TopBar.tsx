@@ -113,10 +113,10 @@ export function TopBar({ companyName, userEmail }: { companyName: string; userEm
 
   return (
     <>
-      <div className="hidden md:flex sticky top-0 z-30 items-center gap-3 border-b border-[#F5C518]/40/60 bg-white/80 backdrop-blur-2xl px-6 py-3">
+      <div className="hidden md:flex sticky top-0 z-30 items-center gap-3 border-b border-primary/20 bg-white/80 backdrop-blur-2xl px-6 py-3">
         <button
           onClick={() => setSearchOpen(true)}
-          className="group flex flex-1 max-w-xl items-center gap-2.5 rounded-full border border-[#F5C518]/40/80 bg-white/70 px-4 py-2 text-sm text-slate-400 transition hover:border-white/20/30 hover:shadow-soft"
+          className="group flex flex-1 max-w-xl items-center gap-2.5 rounded-full border border-primary/20 bg-white/70 px-4 py-2 text-sm text-slate-400 transition hover:border-white/20/30 hover:shadow-soft"
         >
           <Search className="h-4 w-4" />
           <span className="flex-1 text-left">Search pages, employees, payrolls…</span>
@@ -125,7 +125,7 @@ export function TopBar({ companyName, userEmail }: { companyName: string; userEm
         <div className="ml-auto flex items-center gap-2">
           <Popover>
             <PopoverTrigger asChild>
-              <button className="relative grid h-10 w-10 place-items-center rounded-full border border-[#F5C518]/40/80 bg-white/70 text-white transition hover:shadow-soft">
+              <button className="relative grid h-10 w-10 place-items-center rounded-full border border-primary/20 bg-white/70 text-foreground transition hover:shadow-soft">
                 <Bell className="h-4 w-4" />
                 {unread > 0 && (
                   <span className="absolute -top-0.5 -right-0.5 grid h-5 min-w-[20px] place-items-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground">
@@ -162,11 +162,11 @@ export function TopBar({ companyName, userEmail }: { companyName: string; userEm
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-2 rounded-full border border-[#F5C518]/40/80 bg-white/70 py-1 pl-1 pr-3 transition hover:shadow-soft">
-                <span className="grid h-8 w-8 place-items-center rounded-full gradient-brand text-xs font-bold text-white">
+              <button className="flex items-center gap-2 rounded-full border border-primary/20 bg-white/70 py-1 pl-1 pr-3 transition hover:shadow-soft">
+                <span className="grid h-8 w-8 place-items-center rounded-full gradient-brand text-xs font-bold text-foreground">
                   {initials}
                 </span>
-                <span className="hidden lg:inline text-sm font-medium text-white max-w-[140px] truncate">{companyName}</span>
+                <span className="hidden lg:inline text-sm font-medium text-foreground max-w-[140px] truncate">{companyName}</span>
                 <ChevronDown className="h-3.5 w-3.5 text-slate-400" />
               </button>
             </DropdownMenuTrigger>

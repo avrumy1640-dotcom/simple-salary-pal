@@ -46,7 +46,7 @@ function SettingsPage() {
     ptoRequests: true,
     failedPayments: true,
   });
-  const [brandColor, setBrandColor] = useState("#0A0F2C");
+  const [brandColor, setBrandColor] = useState("background");
   const [signInEmail, setSignInEmail] = useState("");
 
   useEffect(() => {
@@ -109,7 +109,7 @@ function SettingsPage() {
           <h1 className="text-3xl font-bold tracking-tight">Company settings</h1>
           <p className="text-muted-foreground mt-1">Configure how Paylo runs payroll for your business.</p>
         </div>
-        <Button onClick={save} disabled={saving} className="gap-2 rounded-full bg-primary px-6 text-white hover:opacity-90">
+        <Button onClick={save} disabled={saving} className="gap-2 rounded-full bg-primary px-6 text-foreground hover:opacity-90">
           <Save className="h-4 w-4" /> {saving ? "Saving…" : "Save changes"}
         </Button>
       </header>

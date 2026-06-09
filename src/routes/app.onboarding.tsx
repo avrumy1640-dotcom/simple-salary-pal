@@ -184,7 +184,7 @@ function OnboardingPage() {
               </SelectContent>
             </Select>
             {person && personTasks.length === 0 && (
-              <Button onClick={seedDefaults} disabled={busy} className="gap-2 rounded-full bg-primary text-white">
+              <Button onClick={seedDefaults} disabled={busy} className="gap-2 rounded-full bg-primary text-primary-foreground">
                 <Sparkles className="h-4 w-4" /> Use default checklist
               </Button>
             )}

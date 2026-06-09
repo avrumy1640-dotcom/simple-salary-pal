@@ -144,7 +144,7 @@ function TrackingPage() {
                 </Select>
               </div>
               <div className="flex items-end">
-                <Button onClick={() => punch("in")} disabled={busy} className="gap-2 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white"><LogIn className="h-4 w-4" /> Clock in</Button>
+                <Button onClick={() => punch("in")} disabled={busy} className="gap-2 rounded-full bg-emerald-600 hover:bg-emerald-700 text-foreground"><LogIn className="h-4 w-4" /> Clock in</Button>
               </div>
               <div className="flex items-end">
                 <Button onClick={() => punch("out")} disabled={busy} variant="outline" className="gap-2 rounded-full"><LogOutIcon className="h-4 w-4" /> Clock out</Button>
@@ -245,7 +245,7 @@ function VisitsPanel({ contractors, employees, visits, onChange }: { contractors
         <div className="text-sm font-semibold">Field visits</div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button className="gap-2 rounded-full bg-primary text-white hover:opacity-90"><Plus className="h-4 w-4" /> Schedule visit</Button>
+            <Button className="gap-2 rounded-full bg-primary text-primary-foreground hover:opacity-90"><Plus className="h-4 w-4" /> Schedule visit</Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader><DialogTitle>Schedule a field visit</DialogTitle></DialogHeader>

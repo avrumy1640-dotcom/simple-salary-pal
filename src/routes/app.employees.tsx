@@ -146,7 +146,7 @@ function EmployeesPage() {
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button onClick={openNew} className="gap-2 rounded-full bg-primary text-white hover:opacity-90"><Plus className="h-4 w-4" /> Add employee</Button>
+            <Button onClick={openNew} className="gap-2 rounded-full bg-primary text-primary-foreground hover:opacity-90"><Plus className="h-4 w-4" /> Add employee</Button>
           </DialogTrigger>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
@@ -277,7 +277,7 @@ function EmployeesPage() {
 
             <DialogFooter>
               <Button variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
-              <Button onClick={save} className="rounded-full bg-primary text-white hover:opacity-90">{editing ? "Save changes" : "Add employee"}</Button>
+              <Button onClick={save} className="rounded-full bg-primary text-primary-foreground hover:opacity-90">{editing ? "Save changes" : "Add employee"}</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -312,7 +312,7 @@ function EmployeesPage() {
         ) : items.length === 0 ? (
           <div className="p-10 text-center">
             <p className="text-sm text-muted-foreground">No employees yet.</p>
-            <Button onClick={openNew} className="mt-4 gap-2 rounded-full bg-primary text-white hover:opacity-90"><Plus className="h-4 w-4" /> Add your first employee</Button>
+            <Button onClick={openNew} className="mt-4 gap-2 rounded-full bg-primary text-primary-foreground hover:opacity-90"><Plus className="h-4 w-4" /> Add your first employee</Button>
           </div>
         ) : filtered.length === 0 ? (
           <div className="p-10 text-center text-sm text-muted-foreground">No matches.</div>
@@ -348,7 +348,7 @@ function EmployeesPage() {
             <>
               <SheetHeader>
                 <div className="flex items-center gap-4">
-                  <div className="grid h-14 w-14 place-items-center rounded-full gradient-brand text-lg font-bold text-white shadow-glow">
+                  <div className="grid h-14 w-14 place-items-center rounded-full gradient-brand text-lg font-bold text-primary-foreground shadow-glow">
                     {detail.full_name.split(" ").map((p) => p[0]).slice(0, 2).join("").toUpperCase()}
                   </div>
                   <div className="min-w-0">
