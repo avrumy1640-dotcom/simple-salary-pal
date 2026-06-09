@@ -14,13 +14,16 @@ import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppTimeRouteImport } from './routes/app.time'
 import { Route as AppTaxesRouteImport } from './routes/app.taxes'
+import { Route as AppTaxFilingRouteImport } from './routes/app.tax-filing'
 import { Route as AppSettingsRouteImport } from './routes/app.settings'
 import { Route as AppReportsRouteImport } from './routes/app.reports'
 import { Route as AppPtoRouteImport } from './routes/app.pto'
+import { Route as AppPaystubsRouteImport } from './routes/app.paystubs'
 import { Route as AppPayrollRouteImport } from './routes/app.payroll'
 import { Route as AppGettingStartedRouteImport } from './routes/app.getting-started'
 import { Route as AppEmployeesRouteImport } from './routes/app.employees'
 import { Route as AppDashboardRouteImport } from './routes/app.dashboard'
+import { Route as AppContractorsRouteImport } from './routes/app.contractors'
 import { Route as AppBenefitsRouteImport } from './routes/app.benefits'
 
 const AuthRoute = AuthRouteImport.update({
@@ -48,6 +51,11 @@ const AppTaxesRoute = AppTaxesRouteImport.update({
   path: '/taxes',
   getParentRoute: () => AppRoute,
 } as any)
+const AppTaxFilingRoute = AppTaxFilingRouteImport.update({
+  id: '/tax-filing',
+  path: '/tax-filing',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppSettingsRoute = AppSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -61,6 +69,11 @@ const AppReportsRoute = AppReportsRouteImport.update({
 const AppPtoRoute = AppPtoRouteImport.update({
   id: '/pto',
   path: '/pto',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPaystubsRoute = AppPaystubsRouteImport.update({
+  id: '/paystubs',
+  path: '/paystubs',
   getParentRoute: () => AppRoute,
 } as any)
 const AppPayrollRoute = AppPayrollRouteImport.update({
@@ -83,6 +96,11 @@ const AppDashboardRoute = AppDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AppRoute,
 } as any)
+const AppContractorsRoute = AppContractorsRouteImport.update({
+  id: '/contractors',
+  path: '/contractors',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppBenefitsRoute = AppBenefitsRouteImport.update({
   id: '/benefits',
   path: '/benefits',
@@ -94,13 +112,16 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
   '/app/benefits': typeof AppBenefitsRoute
+  '/app/contractors': typeof AppContractorsRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/employees': typeof AppEmployeesRoute
   '/app/getting-started': typeof AppGettingStartedRoute
   '/app/payroll': typeof AppPayrollRoute
+  '/app/paystubs': typeof AppPaystubsRoute
   '/app/pto': typeof AppPtoRoute
   '/app/reports': typeof AppReportsRoute
   '/app/settings': typeof AppSettingsRoute
+  '/app/tax-filing': typeof AppTaxFilingRoute
   '/app/taxes': typeof AppTaxesRoute
   '/app/time': typeof AppTimeRoute
 }
@@ -109,13 +130,16 @@ export interface FileRoutesByTo {
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
   '/app/benefits': typeof AppBenefitsRoute
+  '/app/contractors': typeof AppContractorsRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/employees': typeof AppEmployeesRoute
   '/app/getting-started': typeof AppGettingStartedRoute
   '/app/payroll': typeof AppPayrollRoute
+  '/app/paystubs': typeof AppPaystubsRoute
   '/app/pto': typeof AppPtoRoute
   '/app/reports': typeof AppReportsRoute
   '/app/settings': typeof AppSettingsRoute
+  '/app/tax-filing': typeof AppTaxFilingRoute
   '/app/taxes': typeof AppTaxesRoute
   '/app/time': typeof AppTimeRoute
 }
@@ -125,13 +149,16 @@ export interface FileRoutesById {
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
   '/app/benefits': typeof AppBenefitsRoute
+  '/app/contractors': typeof AppContractorsRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/employees': typeof AppEmployeesRoute
   '/app/getting-started': typeof AppGettingStartedRoute
   '/app/payroll': typeof AppPayrollRoute
+  '/app/paystubs': typeof AppPaystubsRoute
   '/app/pto': typeof AppPtoRoute
   '/app/reports': typeof AppReportsRoute
   '/app/settings': typeof AppSettingsRoute
+  '/app/tax-filing': typeof AppTaxFilingRoute
   '/app/taxes': typeof AppTaxesRoute
   '/app/time': typeof AppTimeRoute
 }
@@ -142,13 +169,16 @@ export interface FileRouteTypes {
     | '/app'
     | '/auth'
     | '/app/benefits'
+    | '/app/contractors'
     | '/app/dashboard'
     | '/app/employees'
     | '/app/getting-started'
     | '/app/payroll'
+    | '/app/paystubs'
     | '/app/pto'
     | '/app/reports'
     | '/app/settings'
+    | '/app/tax-filing'
     | '/app/taxes'
     | '/app/time'
   fileRoutesByTo: FileRoutesByTo
@@ -157,13 +187,16 @@ export interface FileRouteTypes {
     | '/app'
     | '/auth'
     | '/app/benefits'
+    | '/app/contractors'
     | '/app/dashboard'
     | '/app/employees'
     | '/app/getting-started'
     | '/app/payroll'
+    | '/app/paystubs'
     | '/app/pto'
     | '/app/reports'
     | '/app/settings'
+    | '/app/tax-filing'
     | '/app/taxes'
     | '/app/time'
   id:
@@ -172,13 +205,16 @@ export interface FileRouteTypes {
     | '/app'
     | '/auth'
     | '/app/benefits'
+    | '/app/contractors'
     | '/app/dashboard'
     | '/app/employees'
     | '/app/getting-started'
     | '/app/payroll'
+    | '/app/paystubs'
     | '/app/pto'
     | '/app/reports'
     | '/app/settings'
+    | '/app/tax-filing'
     | '/app/taxes'
     | '/app/time'
   fileRoutesById: FileRoutesById
@@ -226,6 +262,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppTaxesRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/tax-filing': {
+      id: '/app/tax-filing'
+      path: '/tax-filing'
+      fullPath: '/app/tax-filing'
+      preLoaderRoute: typeof AppTaxFilingRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/settings': {
       id: '/app/settings'
       path: '/settings'
@@ -245,6 +288,13 @@ declare module '@tanstack/react-router' {
       path: '/pto'
       fullPath: '/app/pto'
       preLoaderRoute: typeof AppPtoRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/paystubs': {
+      id: '/app/paystubs'
+      path: '/paystubs'
+      fullPath: '/app/paystubs'
+      preLoaderRoute: typeof AppPaystubsRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/payroll': {
@@ -275,6 +325,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDashboardRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/contractors': {
+      id: '/app/contractors'
+      path: '/contractors'
+      fullPath: '/app/contractors'
+      preLoaderRoute: typeof AppContractorsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/benefits': {
       id: '/app/benefits'
       path: '/benefits'
@@ -287,26 +344,32 @@ declare module '@tanstack/react-router' {
 
 interface AppRouteChildren {
   AppBenefitsRoute: typeof AppBenefitsRoute
+  AppContractorsRoute: typeof AppContractorsRoute
   AppDashboardRoute: typeof AppDashboardRoute
   AppEmployeesRoute: typeof AppEmployeesRoute
   AppGettingStartedRoute: typeof AppGettingStartedRoute
   AppPayrollRoute: typeof AppPayrollRoute
+  AppPaystubsRoute: typeof AppPaystubsRoute
   AppPtoRoute: typeof AppPtoRoute
   AppReportsRoute: typeof AppReportsRoute
   AppSettingsRoute: typeof AppSettingsRoute
+  AppTaxFilingRoute: typeof AppTaxFilingRoute
   AppTaxesRoute: typeof AppTaxesRoute
   AppTimeRoute: typeof AppTimeRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppBenefitsRoute: AppBenefitsRoute,
+  AppContractorsRoute: AppContractorsRoute,
   AppDashboardRoute: AppDashboardRoute,
   AppEmployeesRoute: AppEmployeesRoute,
   AppGettingStartedRoute: AppGettingStartedRoute,
   AppPayrollRoute: AppPayrollRoute,
+  AppPaystubsRoute: AppPaystubsRoute,
   AppPtoRoute: AppPtoRoute,
   AppReportsRoute: AppReportsRoute,
   AppSettingsRoute: AppSettingsRoute,
+  AppTaxFilingRoute: AppTaxFilingRoute,
   AppTaxesRoute: AppTaxesRoute,
   AppTimeRoute: AppTimeRoute,
 }
@@ -321,3 +384,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
