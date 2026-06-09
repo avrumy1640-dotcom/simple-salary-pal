@@ -66,7 +66,6 @@ function Dashboard() {
   const [nextPayDate, setNextPayDate] = useState<string | null>(null);
   const [upcomingRuns, setUpcomingRuns] = useState<{ pay_date: string; net_total: number }[]>([]);
   const [activity, setActivity] = useState<{ id: string; title: string; meta: string; icon: typeof Users }[]>([]);
-  const [setupSteps, setSetupSteps] = useState({ company: false, employees: false, payroll: false });
 
   useEffect(() => {
     (async () => {
