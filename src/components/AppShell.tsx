@@ -32,6 +32,7 @@ const navGroups = [
     label: "Compliance",
     items: [
       { to: "/app/taxes", label: "Taxes & forms", icon: FileBadge },
+      { to: "/app/form-1099", label: "1099-NEC preview", icon: FileBadge },
       { to: "/app/tax-filing", label: "Tax filing", icon: Landmark },
       { to: "/app/reports", label: "Reports", icon: FileText },
       { to: "/app/settings", label: "Company settings", icon: SettingsIcon },
