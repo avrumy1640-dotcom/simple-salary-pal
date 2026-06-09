@@ -313,3 +313,147 @@ html { scroll-behavior: smooth; }
   animation: shimmer 1.6s linear infinite;
   background-size: 200% 100%;
 }
+
+/* ============================================================
+   Scroll-driven 3D parallax background
+   --scroll-y / --scroll-p are set from JS in <ParallaxBackground />
+   ============================================================ */
+:root { --scroll-y: 0; --scroll-p: 0; }
+
+.parallax-bg {
+  perspective: 1400px;
+  perspective-origin: 50% 0%;
+}
+.parallax-bg .parallax-plane {
+  position: absolute;
+  inset: -10% -10% -20% -10%;
+  background-image:
+    linear-gradient(rgba(7,20,42,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(7,20,42,0.06) 1px, transparent 1px);
+  background-size: 56px 56px;
+  transform-origin: 50% 0%;
+  transform:
+    rotateX(58deg)
+    translateY(calc(var(--scroll-y, 0) * -0.18px))
+    translateZ(0);
+  mask-image: radial-gradient(ellipse at 50% 30%, #000 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse at 50% 30%, #000 30%, transparent 75%);
+  opacity: 0.55;
+  will-change: transform;
+}
+.parallax-bg .parallax-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  will-change: transform;
+}
+.parallax-bg .parallax-orb-1 {
+  top: -10%; left: -8%;
+  width: 520px; height: 520px;
+  background: radial-gradient(circle, #C2F5FF 0%, rgba(194,245,255,0) 70%);
+  transform: translate3d(
+    calc(var(--scroll-y, 0) * 0.05px),
+    calc(var(--scroll-y, 0) * -0.25px),
+    0
+  ) scale(calc(1 + var(--scroll-p, 0) * 0.15));
+}
+.parallax-bg .parallax-orb-2 {
+  top: 20%; right: -10%;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, #E8FAFF 0%, rgba(232,250,255,0) 70%);
+  transform: translate3d(
+    calc(var(--scroll-y, 0) * -0.08px),
+    calc(var(--scroll-y, 0) * 0.18px),
+    0
+  ) scale(calc(1 + var(--scroll-p, 0) * 0.1));
+}
+.parallax-bg .parallax-orb-3 {
+  bottom: -15%; left: 30%;
+  width: 700px; height: 700px;
+  background: radial-gradient(circle, #C2F5FF 0%, rgba(194,245,255,0) 65%);
+  opacity: 0.6;
+  transform: translate3d(
+    calc(var(--scroll-y, 0) * 0.12px),
+    calc(var(--scroll-y, 0) * -0.32px),
+    0
+  );
+}
+.parallax-bg .parallax-glow {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 40% at 50% 0%, rgba(194,245,255,0.5), transparent 60%),
+    radial-gradient(ellipse 50% 35% at 100% 100%, rgba(232,250,255,0.4), transparent 60%);
+  opacity: calc(1 - var(--scroll-p, 0) * 0.4);
+  transition: opacity 0.4s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .parallax-bg .parallax-plane,
+  .parallax-bg .parallax-orb { transform: none !important; }
+}
+
+/* ============================================================
+   Perspective transitions for Radix popovers, dropdowns,
+   menus, selects, dialogs, hover-cards, sheets, tooltips.
+   Radix sets data-state="open" | "closed" on the content element.
+   ============================================================ */
+@keyframes radix-pop-open {
+  0% {
+    opacity: 0;
+    transform: perspective(900px) rotateX(-10deg) translateY(-8px) scale(0.94);
+    filter: blur(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(900px) rotateX(0deg) translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+@keyframes radix-pop-close {
+  0% {
+    opacity: 1;
+    transform: perspective(900px) rotateX(0deg) translateY(0) scale(1);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    transform: perspective(900px) rotateX(-8deg) translateY(-6px) scale(0.96);
+    filter: blur(4px);
+  }
+}
+
+[data-radix-popper-content-wrapper] {
+  transform-style: preserve-3d;
+}
+
+[role="menu"][data-state="open"],
+[role="listbox"][data-state="open"],
+[role="dialog"][data-state="open"],
+[role="tooltip"][data-state="delayed-open"],
+[data-radix-popper-content-wrapper] > [data-state="open"],
+[data-radix-hover-card-content][data-state="open"],
+[data-radix-popover-content][data-state="open"],
+[data-radix-select-content][data-state="open"],
+[data-radix-dropdown-menu-content][data-state="open"],
+[data-radix-menu-content][data-state="open"],
+[data-radix-context-menu-content][data-state="open"],
+[data-radix-navigation-menu-viewport][data-state="open"] {
+  animation: radix-pop-open 280ms cubic-bezier(0.22, 1, 0.36, 1) both !important;
+  transform-origin: var(--radix-popper-transform-origin, top center);
+}
+
+[role="menu"][data-state="closed"],
+[role="listbox"][data-state="closed"],
+[role="dialog"][data-state="closed"],
+[data-radix-popper-content-wrapper] > [data-state="closed"],
+[data-radix-hover-card-content][data-state="closed"],
+[data-radix-popover-content][data-state="closed"],
+[data-radix-select-content][data-state="closed"],
+[data-radix-dropdown-menu-content][data-state="closed"],
+[data-radix-menu-content][data-state="closed"],
+[data-radix-context-menu-content][data-state="closed"],
+[data-radix-navigation-menu-viewport][data-state="closed"] {
+  animation: radix-pop-close 220ms cubic-bezier(0.55, 0, 0.7, 0.2) both !important;
+  transform-origin: var(--radix-popper-transform-origin, top center);
+}
