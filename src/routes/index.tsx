@@ -3,6 +3,7 @@ import {
   ArrowUpRight, ArrowRight, CheckCircle2, Users, Clock, Briefcase,
   ShieldCheck, Wallet, CalendarDays, FileBadge, Sparkles,
 } from "lucide-react";
+import { ScrollReveal, StaggerChildren, StaggerItem } from "@/components/motion/ScrollReveal";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -161,7 +162,7 @@ function Landing() {
 
       {/* PLATFORM */}
       <section id="platform" className="mx-auto max-w-7xl px-5 pb-24 md:px-8">
-        <div className="mx-auto max-w-2xl text-center">
+        <ScrollReveal className="mx-auto max-w-2xl text-center">
           <span className="inline-block rounded-full bg-accent px-3 py-1 text-[10px] font-extrabold uppercase text-accent-foreground">Platform</span>
           <h2 className="mt-4 font-display text-4xl font-extrabold md:text-5xl">
             Everything to pay your team compliantly.
@@ -169,21 +170,27 @@ function Landing() {
           <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-muted-foreground md:text-base">
             W-2 payroll, 1099 contractors, federal &amp; state tax filing, direct deposit, time tracking, PTO, benefits — all in one tidy workflow.
           </p>
-        </div>
+        </ScrollReveal>
 
-        <div className="mt-12 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          <Feature icon={<Wallet className="h-6 w-6 text-orange-500" />} bg="bg-orange-50" title="Run payroll" desc="Auto-calculated gross, taxes, deductions, and net pay. Approve in one click." />
-          <Feature icon={<Briefcase className="h-6 w-6 text-[var(--brand)]" />} bg="bg-[var(--brand-soft)]" title="1099 contractors" desc="Pay independent contractors. We generate year-end 1099-NEC forms automatically." />
-          <Feature icon={<ShieldCheck className="h-6 w-6 text-emerald-600" />} bg="bg-emerald-50" title="Tax filing" desc="941, 940, W-2/W-3, 1099-NEC. Quarterly and year-end, handled fully for you." />
-          <Feature icon={<Clock className="h-6 w-6 text-amber-600" />} bg="bg-amber-50" title="Time & PTO" desc="Track hours, overtime, and time off. Flows straight into payroll." />
-          <Feature icon={<CalendarDays className="h-6 w-6 text-rose-500" />} bg="bg-rose-50" title="Direct deposit" desc="ACH batches ready for your bank. Pay stubs delivered to every employee." />
-          <Feature icon={<FileBadge className="h-6 w-6 text-violet-600" />} bg="bg-violet-50" title="HR & onboarding" desc="Documents, signed W-4/I-9/W-9, onboarding checklists — stored and tracked." />
-        </div>
+        <StaggerChildren className="mt-12 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {[
+            { icon: <Wallet className="h-6 w-6 text-orange-500" />, bg: "bg-orange-50", title: "Run payroll", desc: "Auto-calculated gross, taxes, deductions, and net pay. Approve in one click." },
+            { icon: <Briefcase className="h-6 w-6 text-[var(--brand)]" />, bg: "bg-[var(--brand-soft)]", title: "1099 contractors", desc: "Pay independent contractors. We generate year-end 1099-NEC forms automatically." },
+            { icon: <ShieldCheck className="h-6 w-6 text-emerald-600" />, bg: "bg-emerald-50", title: "Tax filing", desc: "941, 940, W-2/W-3, 1099-NEC. Quarterly and year-end, handled fully for you." },
+            { icon: <Clock className="h-6 w-6 text-amber-600" />, bg: "bg-amber-50", title: "Time & PTO", desc: "Track hours, overtime, and time off. Flows straight into payroll." },
+            { icon: <CalendarDays className="h-6 w-6 text-rose-500" />, bg: "bg-rose-50", title: "Direct deposit", desc: "ACH batches ready for your bank. Pay stubs delivered to every employee." },
+            { icon: <FileBadge className="h-6 w-6 text-violet-600" />, bg: "bg-violet-50", title: "HR & onboarding", desc: "Documents, signed W-4/I-9/W-9, onboarding checklists — stored and tracked." },
+          ].map((f) => (
+            <StaggerItem key={f.title}>
+              <Feature {...f} />
+            </StaggerItem>
+          ))}
+        </StaggerChildren>
       </section>
 
       {/* FINAL CTA */}
       <section id="how" className="mx-auto max-w-7xl px-5 pb-20 md:px-8">
-        <div className="relative overflow-hidden rounded-[40px] surface-hero p-10 text-primary-foreground shadow-float md:p-16">
+        <ScrollReveal className="relative overflow-hidden rounded-[40px] surface-hero p-10 text-primary-foreground shadow-float md:p-16">
           <div aria-hidden className="absolute inset-0 grid-bg opacity-20" />
 
           <div className="relative z-10 text-center">
@@ -205,7 +212,7 @@ function Landing() {
               </Link>
             </div>
           </div>
-        </div>
+        </ScrollReveal>
       </section>
 
       <footer className="border-t border-border/60 py-10">
