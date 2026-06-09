@@ -13,14 +13,25 @@ import { TopBar } from "@/components/TopBar";
 
 const navGroups = [
   {
-    label: "Run your payroll",
+    label: "Overview",
     items: [
       { to: "/app/dashboard", label: "Dashboard", icon: LayoutDashboard },
+    ],
+  },
+  {
+    label: "Payroll",
+    items: [
       { to: "/app/payroll", label: "Run payroll", icon: Wallet },
-      { to: "/app/time", label: "Time & attendance", icon: Clock },
-      { to: "/app/tracking", label: "Location tracking", icon: MapPin },
-      { to: "/app/paystubs", label: "Pay stubs & ACH", icon: Receipt },
       { to: "/app/pay-history", label: "Pay history", icon: HistoryIcon },
+      { to: "/app/paystubs", label: "Pay stubs & ACH", icon: Receipt },
+    ],
+  },
+  {
+    label: "Time",
+    items: [
+      { to: "/app/time", label: "Time & attendance", icon: Clock },
+      { to: "/app/pto", label: "Time off (PTO)", icon: CalendarDays },
+      { to: "/app/tracking", label: "Location tracking", icon: MapPin },
     ],
   },
   {
@@ -29,10 +40,9 @@ const navGroups = [
       { to: "/app/employees", label: "Employees (W-2)", icon: Users },
       { to: "/app/contractors", label: "Contractors (1099)", icon: Briefcase },
       { to: "/app/onboarding", label: "Onboarding checklist", icon: ClipboardCheck },
-      { to: "/app/documents", label: "HR documents", icon: FolderOpen },
-      { to: "/app/pto", label: "Time off (PTO)", icon: CalendarDays },
-      { to: "/app/benefits", label: "Benefits & deductions", icon: HeartHandshake },
       { to: "/app/self-service", label: "Self-service portal", icon: UserCircle2 },
+      { to: "/app/benefits", label: "Benefits & deductions", icon: HeartHandshake },
+      { to: "/app/documents", label: "HR documents", icon: FolderOpen },
     ],
   },
   {
@@ -42,6 +52,11 @@ const navGroups = [
       { to: "/app/form-1099", label: "1099-NEC preview", icon: FileBadge },
       { to: "/app/tax-filing", label: "Tax filing", icon: Landmark },
       { to: "/app/reports", label: "Reports", icon: FileText },
+    ],
+  },
+  {
+    label: "Settings",
+    items: [
       { to: "/app/settings", label: "Company settings", icon: SettingsIcon },
     ],
   },
