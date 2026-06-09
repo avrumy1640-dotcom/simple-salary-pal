@@ -88,11 +88,6 @@ function Dashboard() {
       setPendingPto(ptoRes.count ?? 0);
       setNextPayDate(csRes.data?.next_pay_date ?? null);
       setUpcomingRuns(runs.slice(0, 5).reverse() as typeof upcomingRuns);
-      setSetupSteps({
-        company: !!csRes.data?.onboarding_complete,
-        employees: (ec ?? 0) > 0,
-        payroll: runs.length > 0,
-      });
       const a: typeof activity = [];
       (recentEmps.data ?? []).forEach((e) =>
         a.push({ id: `e-${e.id}`, title: `${e.full_name} joined the team`, meta: timeAgo(e.created_at), icon: UserPlus }),
@@ -109,8 +104,6 @@ function Dashboard() {
       setLoading(false);
     })();
   }, []);
-
-  const allSetup = setupSteps.company && setupSteps.employees && setupSteps.payroll;
 
   return (
     <div className="space-y-6 sm:space-y-7">
@@ -298,15 +291,6 @@ function Dashboard() {
         <QuickCard to="/app/reports" title="Reports & exports" desc="CSV-ready for accounting." icon={FileText} />
       </div>
     </div>
-  );
-}
-
-function SetupStep({ done, label }: { done: boolean; label: string }) {
-  return (
-    <span className="inline-flex items-center gap-1.5 text-xs">
-      {done ? <CheckCircle2 className="h-4 w-4 text-[#16A34A]" /> : <Circle className="h-4 w-4 text-[#4A6079]/45" />}
-      <span className={done ? "text-[#4A6079] line-through" : "font-semibold text-[#07142A]"}>{label}</span>
-    </span>
   );
 }
 
