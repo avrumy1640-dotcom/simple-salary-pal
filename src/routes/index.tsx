@@ -32,7 +32,7 @@ function Landing() {
             <div className="grid h-9 w-9 place-items-center rounded-2xl gradient-brand text-sm font-extrabold text-primary-foreground shadow-glow">P</div>
             <span className="font-display text-xl font-extrabold text-gradient">Paylo</span>
           </Link>
-          <nav className="hidden items-center gap-8 text-sm font-medium text-foreground/60 md:flex">
+          <nav className="hidden items-center gap-8 text-sm font-medium text-muted-foreground md:flex">
             <a className="transition-colors hover:text-foreground" href="#platform">Product</a>
             <a className="transition-colors hover:text-foreground" href="#how">How it works</a>
             <Link to="/auth" className="transition-colors hover:text-foreground">Sign in</Link>
@@ -81,7 +81,7 @@ function Landing() {
         <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[13px] font-bold text-muted-foreground">
           {["No credit card", "Setup in 10 min", "Cancel anytime"].map((t) => (
             <span key={t} className="flex items-center gap-1.5">
-              <CheckCircle2 className="h-4 w-4 text-[var(--brand)]" /> {t}
+              <CheckCircle2 className="h-4 w-4 text-primary" /> {t}
             </span>
           ))}
         </div>
@@ -91,7 +91,7 @@ function Landing() {
       <section className="mx-auto max-w-7xl px-5 pb-24 md:px-8">
         <div className="relative mx-auto max-w-md px-2 sm:px-0">
           {/* Glow halo */}
-          <div aria-hidden className="pointer-events-none absolute -inset-8 -z-10 rounded-[60px] bg-[var(--brand-soft)] opacity-60 blur-2xl" />
+          <div aria-hidden className="pointer-events-none absolute -inset-8 -z-10 rounded-[60px] bg-primary/10 opacity-60 blur-2xl" />
 
           {/* Main card */}
           <div className="relative z-10 overflow-hidden rounded-[36px] border bg-card shadow-float float-y">
@@ -106,7 +106,7 @@ function Landing() {
               <div className="flex items-start justify-between">
                 <div>
                   <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">Good morning, Sarah</p>
-                  <p className="mt-0.5 text-2xl font-semibold tracking-tight">Acme Coffee Co.</p>
+                  <p className="mt-0.5 text-2xl font-semibold tracking-tight text-foreground">Acme Coffee Co.</p>
                 </div>
                 <div className="flex items-center gap-1.5 rounded-full bg-accent px-3 py-1.5 text-[10px] font-bold text-accent-foreground">
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]" />
@@ -116,12 +116,12 @@ function Landing() {
 
               <div className="grid grid-cols-2 gap-3">
                 <MockStat icon={<Users className="h-4 w-4" />} value="14" label="Employees" />
-                <div className="rounded-3xl surface-hero p-4 text-primary-foreground shadow-card">
-                  <div className="mb-3 grid h-8 w-8 place-items-center rounded-xl bg-primary-foreground/12 text-primary-foreground/70">
+                <div className="rounded-3xl surface-hero p-4 text-foreground shadow-card">
+                  <div className="mb-3 grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary/70">
                     <Wallet className="h-4 w-4" />
                   </div>
                   <div className="text-xl font-semibold tabular">$48,210</div>
-                  <div className="text-[10px] font-bold uppercase text-primary-foreground/60">Next payroll</div>
+                  <div className="text-[10px] font-bold uppercase text-muted-foreground">Next payroll</div>
                 </div>
               </div>
 
@@ -129,7 +129,7 @@ function Landing() {
                 <div className="mb-3 flex items-end justify-between">
                   <div>
                     <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">This pay period</p>
-                    <div className="mt-0.5 text-3xl font-semibold tracking-tight tabular">$62,480</div>
+                    <div className="mt-0.5 text-3xl font-semibold tracking-tight tabular text-foreground">$62,480</div>
                   </div>
                   <span className="rounded-lg bg-emerald-100 px-2 py-0.5 text-[11px] font-bold text-emerald-700">+8.2%</span>
                 </div>
@@ -175,7 +175,7 @@ function Landing() {
         <StaggerChildren className="mt-12 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {[
             { icon: <Wallet className="h-6 w-6 text-orange-500" />, bg: "bg-orange-50", title: "Run payroll", desc: "Auto-calculated gross, taxes, deductions, and net pay. Approve in one click." },
-            { icon: <Briefcase className="h-6 w-6 text-[var(--brand)]" />, bg: "bg-[var(--brand-soft)]", title: "1099 contractors", desc: "Pay independent contractors. We generate year-end 1099-NEC forms automatically." },
+            { icon: <Briefcase className="h-6 w-6 text-primary" />, bg: "bg-blue-50", title: "1099 contractors", desc: "Pay independent contractors. We generate year-end 1099-NEC forms automatically." },
             { icon: <ShieldCheck className="h-6 w-6 text-emerald-600" />, bg: "bg-emerald-50", title: "Tax filing", desc: "941, 940, W-2/W-3, 1099-NEC. Quarterly and year-end, handled fully for you." },
             { icon: <Clock className="h-6 w-6 text-amber-600" />, bg: "bg-amber-50", title: "Time & PTO", desc: "Track hours, overtime, and time off. Flows straight into payroll." },
             { icon: <CalendarDays className="h-6 w-6 text-rose-500" />, bg: "bg-rose-50", title: "Direct deposit", desc: "ACH batches ready for your bank. Pay stubs delivered to every employee." },
@@ -190,24 +190,24 @@ function Landing() {
 
       {/* FINAL CTA */}
       <section id="how" className="mx-auto max-w-7xl px-5 pb-20 md:px-8">
-        <ScrollReveal className="relative overflow-hidden rounded-[40px] surface-hero p-10 text-primary-foreground shadow-float md:p-16">
+        <ScrollReveal className="relative overflow-hidden rounded-[40px] surface-hero p-10 text-foreground shadow-float md:p-16">
           <div aria-hidden className="absolute inset-0 grid-bg opacity-20" />
 
           <div className="relative z-10 text-center">
-            <div className="inline-flex items-center gap-1.5 rounded-full border border-primary-foreground/14 bg-primary-foreground/10 px-3 py-1 text-[11px] font-bold uppercase text-primary-foreground/70">
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-[11px] font-bold uppercase text-primary/80">
               <Sparkles className="h-3 w-3" /> Free first payroll
             </div>
             <h2 className="mx-auto mt-6 max-w-2xl font-display text-4xl font-extrabold leading-tight md:text-5xl">
               Pay your team in minutes, not days.
             </h2>
-            <p className="mx-auto mt-5 max-w-lg text-base leading-relaxed text-primary-foreground/68">
+            <p className="mx-auto mt-5 max-w-lg text-base leading-relaxed text-muted-foreground">
               Switch from spreadsheets in an afternoon. We'll import your team and run your first payroll free.
             </p>
             <div className="mt-10 flex flex-col items-center gap-4">
-              <Link to="/auth" className="inline-flex items-center gap-2 rounded-2xl bg-primary-foreground px-8 py-4 text-base font-bold text-primary shadow-2xl transition-all hover:-translate-y-0.5 hover:bg-primary-foreground/90">
+              <Link to="/auth" className="inline-flex items-center gap-2 rounded-2xl bg-primary px-8 py-4 text-base font-bold text-primary-foreground shadow-2xl transition-all hover:-translate-y-0.5 hover:bg-primary/90">
                 Start free trial <ArrowRight className="h-4 w-4" />
               </Link>
-              <Link to="/auth" className="rounded-2xl px-8 py-4 text-base font-bold text-primary-foreground/70 transition-colors hover:text-primary-foreground">
+              <Link to="/auth" className="rounded-2xl px-8 py-4 text-base font-bold text-muted-foreground transition-colors hover:text-foreground">
                 Sign in
               </Link>
             </div>
@@ -218,7 +218,7 @@ function Landing() {
       <footer className="border-t border-border/60 py-10">
         <div className="mx-auto flex max-w-7xl flex-col items-center gap-3 px-5 md:px-8">
           <div className="flex items-center gap-2 opacity-60">
-            <div className="grid h-6 w-6 place-items-center rounded-full bg-primary text-[10px] font-bold text-background">P</div>
+            <div className="grid h-6 w-6 place-items-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">P</div>
             <span className="text-sm font-semibold tracking-tight">paylo</span>
           </div>
           <p className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground">
@@ -234,7 +234,7 @@ function MockStat({ icon, value, label }: { icon: React.ReactNode; value: string
   return (
     <div className="rounded-3xl border border-border/60 bg-card p-4 shadow-soft">
       <div className="mb-3 grid h-8 w-8 place-items-center rounded-xl bg-secondary text-muted-foreground">{icon}</div>
-      <div className="text-2xl font-semibold tabular">{value}</div>
+      <div className="text-2xl font-semibold tabular text-foreground">{value}</div>
       <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{label}</div>
     </div>
   );
@@ -246,7 +246,7 @@ function Feature({ icon, bg, title, desc }: { icon: React.ReactNode; bg: string;
       <div className={`mb-5 grid h-12 w-12 place-items-center rounded-2xl ${bg} transition-transform group-hover:scale-110`}>
         {icon}
       </div>
-      <h3 className="text-lg font-semibold tracking-tight">{title}</h3>
+      <h3 className="text-lg font-semibold tracking-tight text-foreground">{title}</h3>
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{desc}</p>
     </div>
   );

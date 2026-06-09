@@ -112,7 +112,7 @@ function GettingStartedPage() {
           <h3 className="font-semibold">Need help with a calculation?</h3>
           <p className="text-sm text-muted-foreground">Every payroll preview shows you exactly how each number is calculated — taxes, deductions, net pay — line by line.</p>
         </div>
-        <Link to="/app/payroll" className="rounded-full bg-primary px-4 py-2 text-sm font-medium text-white hover:opacity-90">Open payroll</Link>
+        <Link to="/app/payroll" className="rounded-full bg-primary px-4 py-2 text-sm font-medium text-foreground hover:opacity-90">Open payroll</Link>
       </div>
     </div>
   );

@@ -224,7 +224,7 @@ function SelfServicePage() {
         <>
           <div className="rounded-2xl border bg-card p-6">
             <div className="flex flex-wrap items-center gap-5">
-              <div className="grid h-16 w-16 place-items-center rounded-full gradient-brand text-xl font-bold text-white">
+              <div className="grid h-16 w-16 place-items-center rounded-full gradient-brand text-xl font-bold text-foreground">
                 {active.full_name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
               </div>
               <div className="flex-1 min-w-0">

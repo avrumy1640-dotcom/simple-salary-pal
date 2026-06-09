@@ -94,7 +94,7 @@ function BenefitsPage() {
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button className="gap-2 rounded-full bg-primary text-white hover:opacity-90"><Plus className="h-4 w-4" /> Add deduction</Button>
+            <Button className="gap-2 rounded-full bg-primary text-primary-foreground hover:opacity-90"><Plus className="h-4 w-4" /> Add deduction</Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader><DialogTitle>Add a deduction</DialogTitle></DialogHeader>
