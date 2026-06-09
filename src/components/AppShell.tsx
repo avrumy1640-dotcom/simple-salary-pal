@@ -9,6 +9,7 @@ import {
   History as HistoryIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { TopBar } from "@/components/TopBar";
 
 const navGroups = [
   {
@@ -50,11 +51,13 @@ export function AppShell() {
   const path = useRouterState({ select: (s) => s.location.pathname });
   const [checking, setChecking] = useState(true);
   const [companyName, setCompanyName] = useState<string>("");
+  const [userEmail, setUserEmail] = useState<string>("");
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
       if (!data.session) { navigate({ to: "/auth" }); return; }
+      setUserEmail(data.session.user.email ?? "");
       const { data: prof } = await supabase.from("profiles").select("company_name").eq("id", data.session.user.id).maybeSingle();
       setCompanyName(prof?.company_name || "Your company");
       setChecking(false);
@@ -160,6 +163,7 @@ export function AppShell() {
         {open && <div className="fixed inset-0 z-30 bg-[#07142A]/40 backdrop-blur-sm md:hidden" onClick={() => setOpen(false)} />}
 
         <main className="flex-1 min-w-0">
+          <TopBar companyName={companyName} userEmail={userEmail} />
           <div key={path} className="page-in mx-auto max-w-7xl px-4 py-5 sm:p-6 md:p-8 lg:p-10">
             <Outlet />
           </div>

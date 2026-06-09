@@ -9,8 +9,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Info, Building2, Banknote, FileText as FileIcon, Phone } from "lucide-react";
+import { Plus, Pencil, Trash2, Info, Building2, Banknote, FileText as FileIcon, Phone, Mail, MapPin, Calendar, DollarSign, Search } from "lucide-react";
 import { fmtUSD } from "@/lib/payroll";
 
 export const Route = createFileRoute("/app/employees")({
@@ -64,6 +69,10 @@ function EmployeesPage() {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Employee | null>(null);
   const [form, setForm] = useState<FormState>(empty);
+  const [detail, setDetail] = useState<Employee | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<Employee | null>(null);
+  const [query, setQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
 
   async function refresh() {
     setLoading(true);
@@ -107,13 +116,26 @@ function EmployeesPage() {
     refresh();
   }
 
-  async function remove(id: string) {
-    if (!confirm("Remove this employee?")) return;
-    const { error } = await supabase.from("employees").delete().eq("id", id);
+  async function performDelete() {
+    if (!confirmDelete) return;
+    const { error } = await supabase.from("employees").delete().eq("id", confirmDelete.id);
     if (error) { toast.error(error.message); return; }
-    toast.success("Removed");
+    toast.success(`${confirmDelete.full_name} removed`);
+    setConfirmDelete(null);
+    setDetail(null);
     refresh();
   }
+
+  const filtered = items.filter((e) => {
+    if (statusFilter !== "all" && e.status !== statusFilter) return false;
+    if (!query) return true;
+    const q = query.toLowerCase();
+    return (
+      e.full_name.toLowerCase().includes(q) ||
+      (e.email ?? "").toLowerCase().includes(q) ||
+      (e.job_title ?? "").toLowerCase().includes(q)
+    );
+  });
 
   return (
     <div className="space-y-6">
@@ -261,6 +283,29 @@ function EmployeesPage() {
         </Dialog>
       </div>
 
+      {/* Filters */}
+      {!loading && items.length > 0 && (
+        <div className="flex flex-wrap items-center gap-3 surface-glass p-3 rounded-xl">
+          <div className="relative flex-1 min-w-[220px]">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input placeholder="Search by name, email, or title…" value={query} onChange={(e) => setQuery(e.target.value)} className="pl-9" />
+          </div>
+          <div className="flex gap-2">
+            {(["all", "active", "inactive"] as const).map((s) => (
+              <button
+                key={s}
+                onClick={() => setStatusFilter(s)}
+                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition capitalize ${
+                  statusFilter === s
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "bg-muted/50 text-muted-foreground hover:bg-muted"
+                }`}
+              >{s}</button>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="rounded-2xl border bg-card">
         {loading ? (
           <div className="p-6 text-sm text-muted-foreground">Loading…</div>
@@ -269,10 +314,12 @@ function EmployeesPage() {
             <p className="text-sm text-muted-foreground">No employees yet.</p>
             <Button onClick={openNew} className="mt-4 gap-2 rounded-full bg-foreground text-white hover:opacity-90"><Plus className="h-4 w-4" /> Add your first employee</Button>
           </div>
+        ) : filtered.length === 0 ? (
+          <div className="p-10 text-center text-sm text-muted-foreground">No matches.</div>
         ) : (
           <ul className="divide-y">
-            {items.map((e) => (
-              <li key={e.id} className="flex flex-wrap items-center gap-3 px-5 py-4">
+            {filtered.map((e) => (
+              <li key={e.id} className="group flex flex-wrap items-center gap-3 px-5 py-4 hover:bg-muted/30 transition cursor-pointer" onClick={() => setDetail(e)}>
                 <div className="grid h-10 w-10 place-items-center rounded-full bg-accent text-sm font-medium text-accent-foreground">
                   {e.full_name.split(" ").map((p) => p[0]).slice(0, 2).join("").toUpperCase()}
                 </div>
@@ -286,13 +333,119 @@ function EmployeesPage() {
                     {e.job_title || "—"} · {e.pay_type === "hourly" ? `${fmtUSD(e.pay_rate)}/hr` : `${fmtUSD(e.pay_rate)}/yr`}
                   </p>
                 </div>
-                <Button variant="ghost" size="icon" onClick={() => openEdit(e)}><Pencil className="h-4 w-4" /></Button>
-                <Button variant="ghost" size="icon" onClick={() => remove(e.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                <Button variant="ghost" size="icon" onClick={(ev) => { ev.stopPropagation(); openEdit(e); }}><Pencil className="h-4 w-4" /></Button>
+                <Button variant="ghost" size="icon" onClick={(ev) => { ev.stopPropagation(); setConfirmDelete(e); }}><Trash2 className="h-4 w-4 text-destructive" /></Button>
               </li>
             ))}
           </ul>
         )}
       </div>
+
+      {/* Detail slide-out */}
+      <Sheet open={!!detail} onOpenChange={(o) => !o && setDetail(null)}>
+        <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
+          {detail && (
+            <>
+              <SheetHeader>
+                <div className="flex items-center gap-4">
+                  <div className="grid h-14 w-14 place-items-center rounded-full gradient-brand text-lg font-bold text-[#07142A] shadow-glow">
+                    {detail.full_name.split(" ").map((p) => p[0]).slice(0, 2).join("").toUpperCase()}
+                  </div>
+                  <div className="min-w-0">
+                    <SheetTitle className="text-xl">{detail.full_name}</SheetTitle>
+                    <SheetDescription>{detail.job_title || "Employee"}</SheetDescription>
+                    <div className="flex gap-2 mt-1">
+                      {detail.status === "active"
+                        ? <Badge variant="default" className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">Active</Badge>
+                        : <Badge variant="secondary">Inactive</Badge>}
+                      {detail.direct_deposit_enabled && <Badge variant="outline" className="text-xs">Direct deposit</Badge>}
+                    </div>
+                  </div>
+                </div>
+              </SheetHeader>
+
+              <div className="mt-6 space-y-5">
+                <DetailGroup title="Compensation">
+                  <DetailRow icon={DollarSign} label="Pay" value={detail.pay_type === "hourly" ? `${fmtUSD(detail.pay_rate)}/hour` : `${fmtUSD(detail.pay_rate)}/year`} />
+                  <DetailRow icon={Calendar} label="Start date" value={detail.start_date ? new Date(detail.start_date).toLocaleDateString() : "—"} />
+                  <DetailRow icon={Calendar} label="PTO balance" value={`${detail.pto_balance_hours ?? 0} hours`} />
+                </DetailGroup>
+
+                <DetailGroup title="Contact">
+                  <DetailRow icon={Mail} label="Email" value={detail.email || "—"} />
+                  <DetailRow icon={Phone} label="Phone" value={detail.phone || "—"} />
+                  <DetailRow icon={MapPin} label="Address" value={[detail.address_line1, detail.city, detail.state, detail.zip].filter(Boolean).join(", ") || "—"} />
+                </DetailGroup>
+
+                <DetailGroup title="Tax setup (W-4)">
+                  <DetailRow label="Filing status" value={detail.filing_status || "—"} />
+                  <DetailRow label="Dependents" value={String(detail.dependents ?? 0)} />
+                  <DetailRow label="Extra withholding" value={fmtUSD(detail.extra_withholding ?? 0)} />
+                  <DetailRow label="SSN" value={detail.ssn_last4 ? `•••-••-${detail.ssn_last4}` : "—"} />
+                </DetailGroup>
+
+                <DetailGroup title="Direct deposit">
+                  <DetailRow label="Enabled" value={detail.direct_deposit_enabled ? "Yes" : "No — paper check"} />
+                  <DetailRow label="Account type" value={detail.bank_account_type || "—"} />
+                  <DetailRow label="Routing" value={detail.bank_routing_last4 ? `••••${detail.bank_routing_last4}` : "—"} />
+                  <DetailRow label="Account" value={detail.bank_account_last4 ? `••••${detail.bank_account_last4}` : "—"} />
+                </DetailGroup>
+
+                <DetailGroup title="Emergency contact">
+                  <DetailRow label="Name" value={detail.emergency_contact_name || "—"} />
+                  <DetailRow label="Phone" value={detail.emergency_contact_phone || "—"} />
+                </DetailGroup>
+
+                <div className="flex gap-2 pt-2">
+                  <Button onClick={() => { setDetail(null); openEdit(detail); }} className="flex-1 gap-2"><Pencil className="h-4 w-4" /> Edit</Button>
+                  <Button variant="outline" onClick={() => setConfirmDelete(detail)} className="gap-2 text-destructive hover:text-destructive">
+                    <Trash2 className="h-4 w-4" /> Remove
+                  </Button>
+                </div>
+              </div>
+            </>
+          )}
+        </SheetContent>
+      </Sheet>
+
+      {/* Delete confirmation */}
+      <AlertDialog open={!!confirmDelete} onOpenChange={(o) => !o && setConfirmDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remove {confirmDelete?.full_name}?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will delete the employee from your team. Their past payroll history is preserved, but they won't appear on future payroll runs. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={performDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Yes, remove</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
+  );
+}
+
+function DetailGroup({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">{title}</h3>
+      <div className="rounded-xl border border-border/50 divide-y divide-border/40 bg-background/30">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function DetailRow({ icon: Icon, label, value }: { icon?: any; label: string; value: string }) {
+  return (
+    <div className="flex items-center justify-between gap-3 px-3 py-2.5 text-sm">
+      <div className="flex items-center gap-2 text-muted-foreground">
+        {Icon && <Icon className="h-3.5 w-3.5" />}
+        {label}
+      </div>
+      <div className="font-medium text-right truncate max-w-[60%]">{value}</div>
     </div>
   );
 }
