@@ -50,11 +50,13 @@ export function AppShell() {
   const path = useRouterState({ select: (s) => s.location.pathname });
   const [checking, setChecking] = useState(true);
   const [companyName, setCompanyName] = useState<string>("");
+  const [userEmail, setUserEmail] = useState<string>("");
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
       if (!data.session) { navigate({ to: "/auth" }); return; }
+      setUserEmail(data.session.user.email ?? "");
       const { data: prof } = await supabase.from("profiles").select("company_name").eq("id", data.session.user.id).maybeSingle();
       setCompanyName(prof?.company_name || "Your company");
       setChecking(false);
