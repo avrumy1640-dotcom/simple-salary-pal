@@ -32,7 +32,7 @@ const navGroups = [
       { to: "/app/documents", label: "HR documents", icon: FolderOpen },
       { to: "/app/pto", label: "Time off (PTO)", icon: CalendarDays },
       { to: "/app/benefits", label: "Benefits & deductions", icon: HeartHandshake },
-    ],
+      { to: "/app/self-service", label: "Self-service portal", icon: UserCircle2 },
   },
   {
     label: "Compliance",
