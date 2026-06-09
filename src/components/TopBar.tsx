@@ -120,9 +120,6 @@ export function TopBar({ companyName, userEmail }: { companyName: string; userEm
         >
           <Search className="h-4 w-4" />
           <span className="flex-1 text-left">Search pages, employees, payrolls…</span>
-          <kbd className="hidden lg:inline-flex items-center gap-1 rounded-md border border-[#C2F5FF] bg-[#ECFAFF] px-1.5 py-0.5 text-[10px] font-semibold text-[#4A6079]">
-            ⌘K
-          </kbd>
         </button>
 
         <div className="ml-auto flex items-center gap-2">
