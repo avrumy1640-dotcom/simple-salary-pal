@@ -3,8 +3,8 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
-  Users, Wallet, Clock, ArrowRight, Sparkles, CalendarDays, CheckCircle2,
-  Circle, PlayCircle, UserPlus, BarChart3, Bell, FileBadge, FileText,
+  Users, Wallet, Clock, ArrowRight, Sparkles, CalendarDays,
+  PlayCircle, UserPlus, BarChart3, Bell, FileBadge, FileText,
 } from "lucide-react";
 import { fmtUSD } from "@/lib/payroll";
 import { useCountUp } from "@/hooks/useCountUp";
