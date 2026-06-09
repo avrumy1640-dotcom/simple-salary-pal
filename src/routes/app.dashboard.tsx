@@ -110,10 +110,10 @@ function Dashboard() {
       {/* Hero */}
       <div className="relative overflow-hidden rounded-[2rem] surface-hero p-6 sm:p-8 md:p-10">
         <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-primary/20 blur-3xl orb-1" />
-        <div aria-hidden className="pointer-events-none absolute -left-16 -bottom-16 h-64 w-64 rounded-full bg-slate-200/80 blur-3xl orb-2" />
+        <div aria-hidden className="pointer-events-none absolute -left-16 -bottom-16 h-64 w-64 rounded-full bg-card/80 blur-3xl orb-2" />
         <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-white/70 px-3 py-1 text-xs font-semibold text-foreground backdrop-blur">
+            <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-card/70 px-3 py-1 text-xs font-semibold text-foreground backdrop-blur">
               <span className="h-2 w-2 rounded-full bg-primary pulse-dot" /> Live payroll command center
             </div>
             <h1 className="mt-4 font-display text-4xl font-extrabold leading-[1.05] text-foreground sm:text-5xl md:text-6xl">
@@ -225,7 +225,7 @@ function Dashboard() {
               <div className="space-y-4">
                 {upcomingRuns.map((r, i) => (
                   <div key={i} className="relative pl-8" style={{ animationDelay: `${i * 60}ms` }}>
-                    <div className="absolute left-0 top-1.5 grid h-6 w-6 place-items-center rounded-full bg-white ring-2 ring-primary">
+                    <div className="absolute left-0 top-1.5 grid h-6 w-6 place-items-center rounded-full bg-card ring-2 ring-primary">
                       <div className="h-2 w-2 rounded-full bg-background" />
                     </div>
                     <div className="flex flex-wrap items-baseline justify-between gap-2">

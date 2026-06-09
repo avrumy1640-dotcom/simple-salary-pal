@@ -289,7 +289,7 @@ function TimePage() {
                     const overOT = rowTotal > 40;
                     return (
                       <tr key={emp.id} className="border-t border-border/40">
-                        <td className="px-4 py-2 sticky left-0 bg-white/95 backdrop-blur z-10">
+                        <td className="px-4 py-2 sticky left-0 bg-card/95 backdrop-blur z-10">
                           <div className="font-medium truncate">{emp.full_name}</div>
                           <div className="text-xs text-muted-foreground capitalize">{emp.pay_type}</div>
                         </td>

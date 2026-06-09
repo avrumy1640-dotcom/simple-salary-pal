@@ -76,7 +76,7 @@ function AuthPage() {
     <div className="relative grid min-h-screen place-items-center overflow-hidden px-4 py-10">
       {/* Drifting gradient orbs */}
       <div aria-hidden className="pointer-events-none absolute -left-32 top-10 h-[28rem] w-[28rem] rounded-full bg-primary/10 blur-3xl orb-1" />
-      <div aria-hidden className="pointer-events-none absolute -right-24 bottom-10 h-[28rem] w-[28rem] rounded-full bg-slate-200/80 blur-3xl orb-2" />
+      <div aria-hidden className="pointer-events-none absolute -right-24 bottom-10 h-[28rem] w-[28rem] rounded-full bg-card/80 blur-3xl orb-2" />
       <div aria-hidden className="pointer-events-none absolute inset-0 grid-bg opacity-30" />
 
       <div className="relative z-10 w-full max-w-md">
@@ -102,7 +102,7 @@ function AuthPage() {
           <Button
             variant="outline"
             type="button"
-            className="mt-6 w-full border-border bg-white text-foreground hover:bg-muted hover:border-primary/30 hover:shadow-glow transition-all"
+            className="mt-6 w-full border-border bg-card text-foreground hover:bg-muted hover:border-primary/30 hover:shadow-glow transition-all"
             onClick={handleGoogle}
           >
             Continue with Google

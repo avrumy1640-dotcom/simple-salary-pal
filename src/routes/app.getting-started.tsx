@@ -48,14 +48,14 @@ function GettingStartedPage() {
   return (
     <div className="space-y-8">
       <div className="rounded-3xl border bg-gradient-to-br from-[oklch(0.96_0.04_258)] to-card p-6 md:p-8">
-        <div className="inline-flex rounded-full bg-white px-3 py-1 text-xs font-semibold text-foreground">WELCOME</div>
+        <div className="inline-flex rounded-full bg-card px-3 py-1 text-xs font-semibold text-foreground">WELCOME</div>
         <h1 className="mt-4 text-3xl font-bold tracking-tight md:text-4xl">Let's get your payroll running.</h1>
         <p className="mt-3 max-w-2xl text-muted-foreground">
           New to payroll? No problem. Follow these four steps and you'll be paying your team in minutes.
           We'll explain every field along the way — no jargon.
         </p>
         <div className="mt-6 flex items-center gap-3">
-          <div className="h-2 flex-1 overflow-hidden rounded-full bg-white">
+          <div className="h-2 flex-1 overflow-hidden rounded-full bg-card">
             <div className="h-full bg-primary transition-all" style={{ width: `${progress}%` }} />
           </div>
           <span className="text-sm font-medium text-muted-foreground">{completed} of {steps.length}</span>
