@@ -169,24 +169,24 @@
 @utility shadow-cobalt { box-shadow: var(--shadow-cobalt); }
 @utility shadow-3d { box-shadow: var(--shadow-3d); }
 
-/* Frosted glass card — dark mode */
+/* Frosted glass card — light mode */
 @utility surface-glass {
-  background: rgba(14, 19, 32, 0.65);
+  background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(22px) saturate(160%);
   -webkit-backdrop-filter: blur(22px) saturate(160%);
-  border: 1px solid rgba(61, 255, 255, 0.12);
+  border: 1px solid #E2E8F0;
 }
 
 @utility surface-panel {
-  background: #0E1320;
-  border: 1px solid rgba(61, 255, 255, 0.10);
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
   box-shadow: var(--shadow-card);
 }
 
 @utility surface-hero {
   background: var(--gradient-hero);
   box-shadow: var(--shadow-float);
-  border: 1px solid rgba(61, 255, 255, 0.14);
+  border: 1px solid #E2E8F0;
 }
 
 @utility gradient-brand { background-image: var(--gradient-brand); }
