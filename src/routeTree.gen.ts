@@ -22,6 +22,7 @@ import { Route as EmployeePaystubsRouteImport } from './routes/employee.paystubs
 import { Route as EmployeeHomeRouteImport } from './routes/employee.home'
 import { Route as EmployeeDocumentsRouteImport } from './routes/employee.documents'
 import { Route as EmployeeBenefitsRouteImport } from './routes/employee.benefits'
+import { Route as AppUsersRouteImport } from './routes/app.users'
 import { Route as AppTrackingRouteImport } from './routes/app.tracking'
 import { Route as AppTimeRouteImport } from './routes/app.time'
 import { Route as AppTaxesRouteImport } from './routes/app.taxes'
@@ -117,6 +118,11 @@ const EmployeeBenefitsRoute = EmployeeBenefitsRouteImport.update({
   id: '/benefits',
   path: '/benefits',
   getParentRoute: () => EmployeeRoute,
+} as any)
+const AppUsersRoute = AppUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppTrackingRoute = AppTrackingRouteImport.update({
   id: '/tracking',
@@ -306,6 +312,7 @@ export interface FileRoutesByFullPath {
   '/app/taxes': typeof AppTaxesRoute
   '/app/time': typeof AppTimeRoute
   '/app/tracking': typeof AppTrackingRoute
+  '/app/users': typeof AppUsersRoute
   '/employee/benefits': typeof EmployeeBenefitsRoute
   '/employee/documents': typeof EmployeeDocumentsRoute
   '/employee/home': typeof EmployeeHomeRoute
@@ -351,6 +358,7 @@ export interface FileRoutesByTo {
   '/app/taxes': typeof AppTaxesRoute
   '/app/time': typeof AppTimeRoute
   '/app/tracking': typeof AppTrackingRoute
+  '/app/users': typeof AppUsersRoute
   '/employee/benefits': typeof EmployeeBenefitsRoute
   '/employee/documents': typeof EmployeeDocumentsRoute
   '/employee/home': typeof EmployeeHomeRoute
@@ -397,6 +405,7 @@ export interface FileRoutesById {
   '/app/taxes': typeof AppTaxesRoute
   '/app/time': typeof AppTimeRoute
   '/app/tracking': typeof AppTrackingRoute
+  '/app/users': typeof AppUsersRoute
   '/employee/benefits': typeof EmployeeBenefitsRoute
   '/employee/documents': typeof EmployeeDocumentsRoute
   '/employee/home': typeof EmployeeHomeRoute
@@ -444,6 +453,7 @@ export interface FileRouteTypes {
     | '/app/taxes'
     | '/app/time'
     | '/app/tracking'
+    | '/app/users'
     | '/employee/benefits'
     | '/employee/documents'
     | '/employee/home'
@@ -489,6 +499,7 @@ export interface FileRouteTypes {
     | '/app/taxes'
     | '/app/time'
     | '/app/tracking'
+    | '/app/users'
     | '/employee/benefits'
     | '/employee/documents'
     | '/employee/home'
@@ -534,6 +545,7 @@ export interface FileRouteTypes {
     | '/app/taxes'
     | '/app/time'
     | '/app/tracking'
+    | '/app/users'
     | '/employee/benefits'
     | '/employee/documents'
     | '/employee/home'
@@ -644,6 +656,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/employee/benefits'
       preLoaderRoute: typeof EmployeeBenefitsRouteImport
       parentRoute: typeof EmployeeRoute
+    }
+    '/app/users': {
+      id: '/app/users'
+      path: '/users'
+      fullPath: '/app/users'
+      preLoaderRoute: typeof AppUsersRouteImport
+      parentRoute: typeof AppRoute
     }
     '/app/tracking': {
       id: '/app/tracking'
@@ -889,6 +908,7 @@ interface AppRouteChildren {
   AppTaxesRoute: typeof AppTaxesRoute
   AppTimeRoute: typeof AppTimeRoute
   AppTrackingRoute: typeof AppTrackingRoute
+  AppUsersRoute: typeof AppUsersRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
@@ -922,6 +942,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppTaxesRoute: AppTaxesRoute,
   AppTimeRoute: AppTimeRoute,
   AppTrackingRoute: AppTrackingRoute,
+  AppUsersRoute: AppUsersRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
@@ -961,3 +982,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
