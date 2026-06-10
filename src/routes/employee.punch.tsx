@@ -159,7 +159,7 @@ function PunchPage() {
         </div>
       )}
 
-      <div className="rounded-xl border border-border bg-card p-5 space-y-4">
+      <div className="rounded-2xl border border-border bg-card p-5 shadow-soft space-y-4">
         <div>
           <div className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Worksite</div>
           <Select value={chosenLoc} onValueChange={setChosenLoc}>
