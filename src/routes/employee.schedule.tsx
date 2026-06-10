@@ -90,8 +90,11 @@ function EmployeeSchedulePage() {
   }
 
   return (
-    <div className="space-y-6">
-      <PageHeader title="My schedule" description="Upcoming published shifts and swap requests." />
+    <div className="space-y-8 unit-in">
+      <div>
+        <h1 className="font-display text-[32px] sm:text-[40px] font-extrabold tracking-tight text-slate-900">My schedule</h1>
+        <p className="mt-2 text-base text-slate-600">Upcoming published shifts and swap requests.</p>
+      </div>
 
       <div className="rounded-xl border border-border bg-card">
         <div className="border-b border-border px-4 py-3 font-display text-sm font-semibold text-slate-900">
