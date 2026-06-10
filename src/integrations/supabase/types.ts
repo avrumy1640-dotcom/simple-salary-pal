@@ -3795,6 +3795,121 @@ export type Database = {
           },
         ]
       }
+      shift_swap_requests: {
+        Row: {
+          company_id: string
+          created_at: string
+          decided_at: string | null
+          decided_by: string | null
+          decision_notes: string | null
+          id: string
+          reason: string | null
+          request_type: string
+          requested_by_employee_id: string
+          shift_id: string
+          status: Database["public"]["Enums"]["swap_request_status"]
+          target_employee_id: string | null
+          target_shift_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          decision_notes?: string | null
+          id?: string
+          reason?: string | null
+          request_type: string
+          requested_by_employee_id: string
+          shift_id: string
+          status?: Database["public"]["Enums"]["swap_request_status"]
+          target_employee_id?: string | null
+          target_shift_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          decision_notes?: string | null
+          id?: string
+          reason?: string | null
+          request_type?: string
+          requested_by_employee_id?: string
+          shift_id?: string
+          status?: Database["public"]["Enums"]["swap_request_status"]
+          target_employee_id?: string | null
+          target_shift_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shift_swap_requests_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shift_swap_requests_requested_by_employee_id_fkey"
+            columns: ["requested_by_employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "shift_swap_requests_requested_by_employee_id_fkey"
+            columns: ["requested_by_employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shift_swap_requests_requested_by_employee_id_fkey"
+            columns: ["requested_by_employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "shift_swap_requests_shift_id_fkey"
+            columns: ["shift_id"]
+            isOneToOne: false
+            referencedRelation: "shifts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shift_swap_requests_target_employee_id_fkey"
+            columns: ["target_employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "shift_swap_requests_target_employee_id_fkey"
+            columns: ["target_employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shift_swap_requests_target_employee_id_fkey"
+            columns: ["target_employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "shift_swap_requests_target_shift_id_fkey"
+            columns: ["target_shift_id"]
+            isOneToOne: false
+            referencedRelation: "shifts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shifts: {
         Row: {
           company_id: string
@@ -3804,9 +3919,13 @@ export type Database = {
           id: string
           location: string | null
           notes: string | null
+          published_at: string | null
+          published_by: string | null
           role: string | null
           start_at: string
+          status: Database["public"]["Enums"]["shift_status"]
           updated_at: string
+          work_location_id: string | null
         }
         Insert: {
           company_id: string
@@ -3816,9 +3935,13 @@ export type Database = {
           id?: string
           location?: string | null
           notes?: string | null
+          published_at?: string | null
+          published_by?: string | null
           role?: string | null
           start_at: string
+          status?: Database["public"]["Enums"]["shift_status"]
           updated_at?: string
+          work_location_id?: string | null
         }
         Update: {
           company_id?: string
@@ -3828,9 +3951,13 @@ export type Database = {
           id?: string
           location?: string | null
           notes?: string | null
+          published_at?: string | null
+          published_by?: string | null
           role?: string | null
           start_at?: string
+          status?: Database["public"]["Enums"]["shift_status"]
           updated_at?: string
+          work_location_id?: string | null
         }
         Relationships: [
           {
@@ -3860,6 +3987,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "w2_annual_summary"
             referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "shifts_work_location_fk"
+            columns: ["work_location_id"]
+            isOneToOne: false
+            referencedRelation: "work_locations"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -3937,6 +4071,8 @@ export type Database = {
           correction_reason: string | null
           created_at: string
           employee_id: string | null
+          geofence_ok: boolean | null
+          geofence_required: boolean
           id: string
           inside_geofence: boolean | null
           latitude: number | null
@@ -3944,7 +4080,9 @@ export type Database = {
           notes: string | null
           punch_type: string
           punched_at: string
+          shift_id: string | null
           user_id: string
+          work_location_id: string | null
         }
         Insert: {
           accuracy_m?: number | null
@@ -3956,6 +4094,8 @@ export type Database = {
           correction_reason?: string | null
           created_at?: string
           employee_id?: string | null
+          geofence_ok?: boolean | null
+          geofence_required?: boolean
           id?: string
           inside_geofence?: boolean | null
           latitude?: number | null
@@ -3963,7 +4103,9 @@ export type Database = {
           notes?: string | null
           punch_type: string
           punched_at?: string
+          shift_id?: string | null
           user_id: string
+          work_location_id?: string | null
         }
         Update: {
           accuracy_m?: number | null
@@ -3975,6 +4117,8 @@ export type Database = {
           correction_reason?: string | null
           created_at?: string
           employee_id?: string | null
+          geofence_ok?: boolean | null
+          geofence_required?: boolean
           id?: string
           inside_geofence?: boolean | null
           latitude?: number | null
@@ -3982,7 +4126,9 @@ export type Database = {
           notes?: string | null
           punch_type?: string
           punched_at?: string
+          shift_id?: string | null
           user_id?: string
+          work_location_id?: string | null
         }
         Relationships: [
           {
@@ -4019,6 +4165,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "w2_annual_summary"
             referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "time_clock_punches_shift_id_fkey"
+            columns: ["shift_id"]
+            isOneToOne: false
+            referencedRelation: "shifts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "time_clock_punches_work_location_id_fkey"
+            columns: ["work_location_id"]
+            isOneToOne: false
+            referencedRelation: "work_locations"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -4217,6 +4377,56 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "user_roles_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      work_locations: {
+        Row: {
+          address: string | null
+          company_id: string
+          created_at: string
+          geofence_radius_m: number
+          geofence_required: boolean
+          id: string
+          is_active: boolean
+          latitude: number | null
+          longitude: number | null
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          company_id: string
+          created_at?: string
+          geofence_radius_m?: number
+          geofence_required?: boolean
+          id?: string
+          is_active?: boolean
+          latitude?: number | null
+          longitude?: number | null
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          company_id?: string
+          created_at?: string
+          geofence_radius_m?: number
+          geofence_required?: boolean
+          id?: string
+          is_active?: boolean
+          latitude?: number | null
+          longitude?: number | null
+          name?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "work_locations_company_id_fkey"
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
@@ -4470,9 +4680,17 @@ export type Database = {
         }
         Returns: boolean
       }
+      haversine_m: {
+        Args: { lat1: number; lat2: number; lon1: number; lon2: number }
+        Returns: number
+      }
       is_company_member: {
         Args: { _company_id: string; _user_id: string }
         Returns: boolean
+      }
+      publish_shifts: {
+        Args: { _company_id: string; _end: string; _start: string }
+        Returns: number
       }
     }
     Enums: {
@@ -4594,6 +4812,8 @@ export type Database = {
         | "in_progress"
         | "submitted"
         | "acknowledged"
+      shift_status: "draft" | "published" | "cancelled"
+      swap_request_status: "pending" | "approved" | "denied" | "cancelled"
       timesheet_status:
         | "open"
         | "submitted"
@@ -4858,6 +5078,8 @@ export const Constants = {
         "submitted",
         "acknowledged",
       ],
+      shift_status: ["draft", "published", "cancelled"],
+      swap_request_status: ["pending", "approved", "denied", "cancelled"],
       timesheet_status: ["open", "submitted", "approved", "rejected", "locked"],
     },
   },
