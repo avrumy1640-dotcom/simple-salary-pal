@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, isRedirect, redirect } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
 import { getAdminAccess } from "@/lib/access.functions";
 
@@ -9,12 +9,12 @@ export const Route = createFileRoute("/app")({
     try {
       const res = await getAdminAccess();
       if (!res.hasAccess) {
-        throw redirect({ to: "/employee/home" });
+        throw redirect({ to: "/help/access-denied" });
       }
     } catch (e: any) {
       // Unauthenticated → send to login. Auth middleware throws an
       // Unauthorized Response which we map to a redirect here.
-      if (e && typeof e === "object" && "to" in e) throw e; // pass through redirects
+      if (isRedirect(e)) throw e; // pass through redirects
       throw redirect({ to: "/auth" });
     }
   },

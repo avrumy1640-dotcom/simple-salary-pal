@@ -17,6 +17,7 @@ import { Route as EmployeeRouteImport } from './routes/employee'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as HelpAccessDeniedRouteImport } from './routes/help.access-denied'
 import { Route as EmployeeTimeRouteImport } from './routes/employee.time'
 import { Route as EmployeeScheduleRouteImport } from './routes/employee.schedule'
 import { Route as EmployeePunchRouteImport } from './routes/employee.punch'
@@ -102,6 +103,11 @@ const AppRoute = AppRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HelpAccessDeniedRoute = HelpAccessDeniedRouteImport.update({
+  id: '/help/access-denied',
+  path: '/help/access-denied',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EmployeeTimeRoute = EmployeeTimeRouteImport.update({
@@ -387,6 +393,7 @@ export interface FileRoutesByFullPath {
   '/employee/punch': typeof EmployeePunchRoute
   '/employee/schedule': typeof EmployeeScheduleRoute
   '/employee/time': typeof EmployeeTimeRoute
+  '/help/access-denied': typeof HelpAccessDeniedRoute
   '/app/employees/$id': typeof AppEmployeesIdRoute
   '/app/payroll/run': typeof AppPayrollRunRoute
   '/app/payroll/': typeof AppPayrollIndexRoute
@@ -442,6 +449,7 @@ export interface FileRoutesByTo {
   '/employee/punch': typeof EmployeePunchRoute
   '/employee/schedule': typeof EmployeeScheduleRoute
   '/employee/time': typeof EmployeeTimeRoute
+  '/help/access-denied': typeof HelpAccessDeniedRoute
   '/app/employees/$id': typeof AppEmployeesIdRoute
   '/app/payroll/run': typeof AppPayrollRunRoute
   '/app/payroll': typeof AppPayrollIndexRoute
@@ -499,6 +507,7 @@ export interface FileRoutesById {
   '/employee/punch': typeof EmployeePunchRoute
   '/employee/schedule': typeof EmployeeScheduleRoute
   '/employee/time': typeof EmployeeTimeRoute
+  '/help/access-denied': typeof HelpAccessDeniedRoute
   '/app/employees/$id': typeof AppEmployeesIdRoute
   '/app/payroll/run': typeof AppPayrollRunRoute
   '/app/payroll/': typeof AppPayrollIndexRoute
@@ -557,6 +566,7 @@ export interface FileRouteTypes {
     | '/employee/punch'
     | '/employee/schedule'
     | '/employee/time'
+    | '/help/access-denied'
     | '/app/employees/$id'
     | '/app/payroll/run'
     | '/app/payroll/'
@@ -612,6 +622,7 @@ export interface FileRouteTypes {
     | '/employee/punch'
     | '/employee/schedule'
     | '/employee/time'
+    | '/help/access-denied'
     | '/app/employees/$id'
     | '/app/payroll/run'
     | '/app/payroll'
@@ -668,6 +679,7 @@ export interface FileRouteTypes {
     | '/employee/punch'
     | '/employee/schedule'
     | '/employee/time'
+    | '/help/access-denied'
     | '/app/employees/$id'
     | '/app/payroll/run'
     | '/app/payroll/'
@@ -682,6 +694,7 @@ export interface RootRouteChildren {
   PricingRoute: typeof PricingRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  HelpAccessDeniedRoute: typeof HelpAccessDeniedRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -740,6 +753,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/help/access-denied': {
+      id: '/help/access-denied'
+      path: '/help/access-denied'
+      fullPath: '/help/access-denied'
+      preLoaderRoute: typeof HelpAccessDeniedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/employee/time': {
@@ -1206,17 +1226,8 @@ const rootRouteChildren: RootRouteChildren = {
   PricingRoute: PricingRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  HelpAccessDeniedRoute: HelpAccessDeniedRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

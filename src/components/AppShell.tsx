@@ -288,6 +288,18 @@ export function AppShell() {
               <HelpCircle className="h-[18px] w-[18px] shrink-0 text-slate-400" />
               {!collapsed && <span>Help Center</span>}
             </Link>
+            <Link
+              to="/help/access-denied"
+              onClick={() => setOpen(false)}
+              title={collapsed ? "Access help" : undefined}
+              className={cn(
+                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-[14px] font-medium text-slate-600 hover:bg-slate-50 hover:text-foreground transition",
+                collapsed && "justify-center px-2",
+              )}
+            >
+              <ShieldCheck className="h-[18px] w-[18px] shrink-0 text-slate-400" />
+              {!collapsed && <span>Access help</span>}
+            </Link>
 
             {!collapsed && (
               <div className="mt-2 flex items-center gap-3 rounded-lg bg-surface px-3 py-2">

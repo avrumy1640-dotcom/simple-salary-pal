@@ -258,6 +258,9 @@ function AuthPage() {
           >
             {mode === "signin" ? "New here? Create an account" : "Already have an account? Sign in"}
           </button>
+          <Link to="/help/access-denied" className="mt-3 block text-center text-xs font-semibold text-muted-foreground hover:text-foreground hover:underline">
+            Seeing access denied?
+          </Link>
         </div>
 
       </div>
