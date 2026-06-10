@@ -150,16 +150,12 @@
   html, body {
     -webkit-font-smoothing: antialiased;
     color-scheme: light;
+    font-size: 15px;
   }
   input, button, textarea, select { font-family: inherit; color: inherit; }
   body {
     background-color: #FFFFFF;
-    color: #334155;
-    background-image:
-      radial-gradient(ellipse 60% 40% at 15% 0%, rgba(61,255,255,0.10) 0%, transparent 60%),
-      radial-gradient(ellipse 50% 35% at 100% 100%, rgba(61,255,255,0.06) 0%, transparent 60%),
-      linear-gradient(180deg, #FFFFFF 0%, #FFFFFF 100%);
-    background-attachment: fixed;
+    color: #1E293B;
     min-height: 100vh;
   }
   h1, h2, h3, h4 {
@@ -171,6 +167,7 @@
   h1 { letter-spacing: -0.03em; font-weight: 800; }
   .tabular { font-variant-numeric: tabular-nums; }
 }
+
 
 @utility shadow-soft { box-shadow: var(--shadow-soft); }
 @utility shadow-card { box-shadow: var(--shadow-card); }
