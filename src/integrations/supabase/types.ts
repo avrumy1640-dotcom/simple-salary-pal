@@ -311,6 +311,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "bank_connections_contractor_id_fkey"
+            columns: ["contractor_id"]
+            isOneToOne: false
+            referencedRelation: "form_1099_annual_summary"
+            referencedColumns: ["contractor_id"]
+          },
+          {
             foreignKeyName: "bank_connections_employee_id_fkey"
             columns: ["employee_id"]
             isOneToOne: false
@@ -323,6 +330,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "employees"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bank_connections_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
           },
         ]
       }
@@ -413,6 +427,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "benefit_election_events_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
+          },
+          {
             foreignKeyName: "benefit_election_events_enrollment_id_fkey"
             columns: ["enrollment_id"]
             isOneToOne: false
@@ -501,6 +522,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "employees"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "benefit_enrollments_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
           },
           {
             foreignKeyName: "benefit_enrollments_plan_id_fkey"
@@ -975,6 +1003,13 @@ export type Database = {
             referencedRelation: "employees"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "compliance_alerts_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
+          },
         ]
       }
       compliance_records: {
@@ -1039,6 +1074,13 @@ export type Database = {
             referencedRelation: "employees"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "compliance_records_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
+          },
         ]
       }
       contractor_payments: {
@@ -1101,6 +1143,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "contractors"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contractor_payments_contractor_id_fkey"
+            columns: ["contractor_id"]
+            isOneToOne: false
+            referencedRelation: "form_1099_annual_summary"
+            referencedColumns: ["contractor_id"]
           },
         ]
       }
@@ -1266,6 +1315,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "employees"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deductions_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
           },
           {
             foreignKeyName: "deductions_enrollment_id_fkey"
@@ -1451,6 +1507,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "employees_manager_id_fkey"
+            columns: ["manager_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
+          },
+          {
             foreignKeyName: "employees_pto_policy_id_fkey"
             columns: ["pto_policy_id"]
             isOneToOne: false
@@ -1581,6 +1644,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "field_visits_contractor_id_fkey"
+            columns: ["contractor_id"]
+            isOneToOne: false
+            referencedRelation: "form_1099_annual_summary"
+            referencedColumns: ["contractor_id"]
+          },
+          {
             foreignKeyName: "field_visits_employee_id_fkey"
             columns: ["employee_id"]
             isOneToOne: false
@@ -1593,6 +1663,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "employees"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "field_visits_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
           },
         ]
       }
@@ -1679,6 +1756,121 @@ export type Database = {
             referencedRelation: "employees"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "garnishments_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
+          },
+        ]
+      }
+      gl_journal_entries: {
+        Row: {
+          company_id: string
+          created_at: string
+          created_by: string | null
+          id: string
+          memo: string | null
+          posting_date: string
+          run_id: string | null
+          status: string
+          total_credit: number
+          total_debit: number
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          memo?: string | null
+          posting_date: string
+          run_id?: string | null
+          status?: string
+          total_credit?: number
+          total_debit?: number
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          memo?: string | null
+          posting_date?: string
+          run_id?: string | null
+          status?: string
+          total_credit?: number
+          total_debit?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gl_journal_entries_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "gl_journal_entries_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "payroll_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gl_journal_lines: {
+        Row: {
+          account_code: string
+          account_name: string
+          company_id: string
+          created_at: string
+          credit: number
+          debit: number
+          id: string
+          journal_id: string
+          memo: string | null
+          sort_order: number
+        }
+        Insert: {
+          account_code: string
+          account_name: string
+          company_id: string
+          created_at?: string
+          credit?: number
+          debit?: number
+          id?: string
+          journal_id: string
+          memo?: string | null
+          sort_order?: number
+        }
+        Update: {
+          account_code?: string
+          account_name?: string
+          company_id?: string
+          created_at?: string
+          credit?: number
+          debit?: number
+          id?: string
+          journal_id?: string
+          memo?: string | null
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gl_journal_lines_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "gl_journal_lines_journal_id_fkey"
+            columns: ["journal_id"]
+            isOneToOne: false
+            referencedRelation: "gl_journal_entries"
+            referencedColumns: ["id"]
+          },
         ]
       }
       handbook_acknowledgments: {
@@ -1743,6 +1935,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "employees"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "handbook_acknowledgments_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
           },
         ]
       }
@@ -1904,6 +2103,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "hr_documents_contractor_id_fkey"
+            columns: ["contractor_id"]
+            isOneToOne: false
+            referencedRelation: "form_1099_annual_summary"
+            referencedColumns: ["contractor_id"]
+          },
+          {
             foreignKeyName: "hr_documents_employee_id_fkey"
             columns: ["employee_id"]
             isOneToOne: false
@@ -1916,6 +2122,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "employees"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hr_documents_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
           },
         ]
       }
@@ -1987,6 +2200,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "hr_forms_contractor_id_fkey"
+            columns: ["contractor_id"]
+            isOneToOne: false
+            referencedRelation: "form_1099_annual_summary"
+            referencedColumns: ["contractor_id"]
+          },
+          {
             foreignKeyName: "hr_forms_employee_id_fkey"
             columns: ["employee_id"]
             isOneToOne: false
@@ -1999,6 +2219,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "employees"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hr_forms_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
           },
         ]
       }
@@ -2243,6 +2470,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "onboarding_assignments_contractor_id_fkey"
+            columns: ["contractor_id"]
+            isOneToOne: false
+            referencedRelation: "form_1099_annual_summary"
+            referencedColumns: ["contractor_id"]
+          },
+          {
             foreignKeyName: "onboarding_assignments_employee_id_fkey"
             columns: ["employee_id"]
             isOneToOne: false
@@ -2255,6 +2489,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "employees"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "onboarding_assignments_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
           },
           {
             foreignKeyName: "onboarding_assignments_template_id_fkey"
@@ -2342,6 +2583,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "onboarding_tasks_contractor_id_fkey"
+            columns: ["contractor_id"]
+            isOneToOne: false
+            referencedRelation: "form_1099_annual_summary"
+            referencedColumns: ["contractor_id"]
+          },
+          {
             foreignKeyName: "onboarding_tasks_employee_id_fkey"
             columns: ["employee_id"]
             isOneToOne: false
@@ -2354,6 +2602,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "employees"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "onboarding_tasks_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
           },
           {
             foreignKeyName: "onboarding_tasks_template_id_fkey"
@@ -2808,6 +3063,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "payroll_items_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
+          },
+          {
             foreignKeyName: "payroll_items_run_id_fkey"
             columns: ["run_id"]
             isOneToOne: false
@@ -3008,6 +3270,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "performance_goals_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
+          },
+          {
             foreignKeyName: "performance_goals_parent_goal_id_fkey"
             columns: ["parent_goal_id"]
             isOneToOne: false
@@ -3068,6 +3337,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "employees"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "performance_notes_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
           },
         ]
       }
@@ -3210,6 +3486,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "employees"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "performance_reviews_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
           },
         ]
       }
@@ -3438,6 +3721,13 @@ export type Database = {
             referencedRelation: "employees"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "pto_entries_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
+          },
         ]
       }
       pto_ledger: {
@@ -3495,6 +3785,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "employees"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pto_ledger_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
           },
         ]
       }
@@ -3556,6 +3853,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "employees"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shifts_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
           },
         ]
       }
@@ -3709,6 +4013,13 @@ export type Database = {
             referencedRelation: "employees"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "time_clock_punches_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
+          },
         ]
       }
       time_entries: {
@@ -3775,6 +4086,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "employees"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "time_entries_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
           },
           {
             foreignKeyName: "time_entries_timesheet_id_fkey"
@@ -3861,6 +4179,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "employees"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timesheets_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
           },
         ]
       }
@@ -3975,6 +4300,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "bank_connections_contractor_id_fkey"
+            columns: ["contractor_id"]
+            isOneToOne: false
+            referencedRelation: "form_1099_annual_summary"
+            referencedColumns: ["contractor_id"]
+          },
+          {
             foreignKeyName: "bank_connections_employee_id_fkey"
             columns: ["employee_id"]
             isOneToOne: false
@@ -3987,6 +4319,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "employees"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bank_connections_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
           },
         ]
       }
@@ -4040,6 +4379,57 @@ export type Database = {
             referencedRelation: "employees"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "payroll_items_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
+          },
+        ]
+      }
+      form_1099_annual_summary: {
+        Row: {
+          company_id: string | null
+          contractor_id: string | null
+          contractor_name: string | null
+          payment_count: number | null
+          tax_id_last4: string | null
+          tax_year: number | null
+          total_paid: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contractors_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      w2_annual_summary: {
+        Row: {
+          company_id: string | null
+          employee_id: string | null
+          employee_name: string | null
+          federal_withheld: number | null
+          gross_wages: number | null
+          medicare_withheld: number | null
+          net_pay: number | null
+          social_security_withheld: number | null
+          ssn_last4: string | null
+          state_withheld: number | null
+          tax_year: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employees_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
         ]
       }
     }
@@ -4063,6 +4453,7 @@ export type Database = {
         Args: { _company_id: string }
         Returns: number
       }
+      generate_gl_for_run: { Args: { _run_id: string }; Returns: string }
       has_any_role: {
         Args: {
           _company_id: string
