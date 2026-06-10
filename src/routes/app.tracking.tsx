@@ -79,7 +79,7 @@ function TrackingPage() {
     setPunches((p ?? []) as Punch[]);
     setVisits((v ?? []) as Visit[]);
   }
-  useEffect(() => { refresh(); }, []);
+  useEffect(() => { if (currentId) refresh(); }, [currentId]);
 
   async function flushQueue() {
     const q = loadOffline();

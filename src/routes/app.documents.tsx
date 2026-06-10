@@ -85,7 +85,7 @@ function DocumentsPage() {
     ]);
     setDocs((d ?? []) as Doc[]);
   }
-  useEffect(() => { refresh(); }, []);
+  useEffect(() => { if (currentId) refresh(); }, [currentId]);
 
   async function upload() {
     const file = fileRef.current?.files?.[0];

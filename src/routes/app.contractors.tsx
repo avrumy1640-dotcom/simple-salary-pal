@@ -61,7 +61,7 @@ function ContractorsPage() {
     setContractors((c ?? []) as Contractor[]);
     setPayments((p ?? []) as Payment[]);
   }
-  useEffect(() => { load(); }, []);
+  useEffect(() => { if (currentId) load(); }, [currentId]);
 
   async function save(form: FormData) {
     const { data: { user } } = await supabase.auth.getUser();
