@@ -214,6 +214,7 @@ function DocumentsPage() {
     }).eq("id", d.id);
     await supabase.from("hr_document_signatures").insert({
       document_id: d.id, user_id: user.id, status: "voided", note: "Signature voided",
+      company_id: currentId!,
     });
     toast.success("Signature voided");
     refresh();
