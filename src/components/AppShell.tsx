@@ -26,10 +26,12 @@ const nav: NavItem[] = [
   { to: "/app/compliance", label: "Compliance", icon: ShieldCheck },
   { to: "/app/reports", label: "Reports", icon: BarChart3 },
   { to: "/app/analytics", label: "Analytics", icon: BarChart3 },
+  { to: "/app/tax-filing", label: "Tax filing", icon: FileText },
   { to: "/app/documents", label: "Documents", icon: FolderOpen },
   { to: "/app/announcements", label: "Announcements", icon: Megaphone },
   { to: "/app/ai-assistant", label: "AI Assistant", icon: Sparkles },
   { to: "/app/integrations", label: "Integrations", icon: Plug },
+  { to: "/app/audit", label: "Audit log", icon: ShieldCheck },
   { to: "/app/settings", label: "Settings", icon: SettingsIcon },
 ];
 
