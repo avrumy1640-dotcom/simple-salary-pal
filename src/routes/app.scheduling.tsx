@@ -23,8 +23,17 @@ interface Shift {
   id: string; employee_id: string | null;
   start_at: string; end_at: string;
   role: string | null; location: string | null; notes: string | null;
+  status: "draft" | "published" | "cancelled";
+  work_location_id: string | null;
 }
 interface Emp { id: string; full_name: string; job_title?: string | null; }
+interface WorkLocation { id: string; name: string; }
+interface Swap {
+  id: string; shift_id: string; request_type: "drop" | "swap"; reason: string | null;
+  status: "pending" | "approved" | "denied" | "cancelled";
+  requested_by_employee_id: string; target_employee_id: string | null;
+  created_at: string;
+}
 
 function startOfWeek(d: Date) { const x = new Date(d); x.setDate(x.getDate() - x.getDay()); x.setHours(0,0,0,0); return x; }
 function addDays(d: Date, n: number) { const x = new Date(d); x.setDate(x.getDate() + n); return x; }
