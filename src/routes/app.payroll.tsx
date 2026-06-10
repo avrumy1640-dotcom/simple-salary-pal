@@ -1,11 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { calcPay, fmtUSD } from "@/lib/payroll";
+import { calculatePayrollRun, approvePayrollRun } from "@/lib/payroll-workflow.functions";
 import {
   CheckCircle2, ChevronLeft, ChevronRight, PlayCircle, CalendarDays, Users,
   Clock, ClipboardCheck, Sparkles, AlertTriangle, Info,
@@ -127,31 +129,50 @@ function PayrollWizard() {
     if (step > 0) { setDirection(-1); setStep(step - 1); }
   }
 
+  const calculateFn = useServerFn(calculatePayrollRun);
+  const approveFn = useServerFn(approvePayrollRun);
+
   async function approveAndRun() {
     if (calc.length === 0) { toast.error("No employees selected"); return; }
+    if (!currentId) { toast.error("No active company selected"); return; }
     setSubmitting(true);
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) { setSubmitting(false); return; }
-    if (!currentId) { setSubmitting(false); toast.error("No active company selected"); return; }
-    const { data: run, error: e1 } = await supabase.from("payroll_runs").insert({
-      owner_id: user.id, company_id: currentId,
-      period_start: periodStart, period_end: periodEnd, pay_date: payDate,
-      gross_total: totals.gross, tax_total: totals.tax, net_total: totals.net, status: "approved",
-    }).select().single();
-    if (e1 || !run) { setSubmitting(false); toast.error(e1?.message || "Failed"); return; }
-    const items = calc.map((c) => ({
-      owner_id: user.id, company_id: currentId,
-      run_id: run.id, employee_id: c.row.emp.id, employee_name: c.row.emp.full_name,
-      regular_hours: c.pay.regularHours, overtime_hours: c.pay.overtimeHours,
-      gross_pay: c.pay.gross, federal_tax: c.pay.federalTax, social_security: c.pay.socialSecurity,
-      medicare: c.pay.medicare, state_tax: c.pay.stateTax, net_pay: c.pay.net,
-    }));
-    const { error: e2 } = await supabase.from("payroll_items").insert(items);
-    if (e2) { setSubmitting(false); toast.error(e2.message); return; }
-    setRunId(run.id);
-    setSubmitting(false);
-    toast.success(`Payroll approved — ${fmtUSD(totals.net)} net`);
-    setDirection(1); setStep(4);
+    try {
+      // Server-side authoritative computation. Client-side `calc` is preview only.
+      const result = await calculateFn({
+        data: {
+          company_id: currentId,
+          period_start: periodStart,
+          period_end: periodEnd,
+          pay_date: payDate,
+          pay_periods_per_year: 26,
+          rows: activeRows.map((r) => ({
+            employee_id: r.emp.id,
+            regular_hours: Number(r.regularHours) || 0,
+            overtime_hours: Number(r.overtimeHours) || 0,
+            double_overtime_hours: 0,
+            holiday_hours: 0,
+            pto_hours: 0,
+            sick_hours: 0,
+            bonuses: 0,
+            commissions: 0,
+            reimbursements: 0,
+          })),
+        },
+      });
+      await approveFn({ data: { run_id: result.run.id } });
+      setRunId(result.run.id);
+      const serverNet = result.totals.net;
+      toast.success(
+        `Payroll approved — ${fmtUSD(serverNet)} net${
+          !result.provider.productionReady ? " (calc engine: non-certified stub)" : ""
+        }`
+      );
+      setDirection(1); setStep(4);
+    } catch (err: any) {
+      toast.error(err?.message || "Failed to approve payroll");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
