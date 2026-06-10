@@ -596,16 +596,20 @@ export type Database = {
           city: string | null
           country: string | null
           created_at: string
+          daily_double_ot_threshold: number | null
+          daily_ot_threshold: number | null
           dba: string | null
           default_pay_frequency:
             | Database["public"]["Enums"]["pay_frequency"]
             | null
+          double_overtime_multiplier: number
           double_overtime_threshold_hours: number | null
           ein: string | null
           email: string | null
           holiday_pay_multiplier: number | null
           id: string
           legal_name: string
+          overtime_multiplier: number
           overtime_threshold_hours: number | null
           owner_id: string
           phone: string | null
@@ -614,6 +618,8 @@ export type Database = {
           state_unemployment_rate: number | null
           state_unemployment_wage_base: number | null
           updated_at: string
+          weekly_ot_threshold: number
+          workweek_start_dow: number
         }
         Insert: {
           address_line1?: string | null
@@ -621,16 +627,20 @@ export type Database = {
           city?: string | null
           country?: string | null
           created_at?: string
+          daily_double_ot_threshold?: number | null
+          daily_ot_threshold?: number | null
           dba?: string | null
           default_pay_frequency?:
             | Database["public"]["Enums"]["pay_frequency"]
             | null
+          double_overtime_multiplier?: number
           double_overtime_threshold_hours?: number | null
           ein?: string | null
           email?: string | null
           holiday_pay_multiplier?: number | null
           id?: string
           legal_name: string
+          overtime_multiplier?: number
           overtime_threshold_hours?: number | null
           owner_id: string
           phone?: string | null
@@ -639,6 +649,8 @@ export type Database = {
           state_unemployment_rate?: number | null
           state_unemployment_wage_base?: number | null
           updated_at?: string
+          weekly_ot_threshold?: number
+          workweek_start_dow?: number
         }
         Update: {
           address_line1?: string | null
@@ -646,16 +658,20 @@ export type Database = {
           city?: string | null
           country?: string | null
           created_at?: string
+          daily_double_ot_threshold?: number | null
+          daily_ot_threshold?: number | null
           dba?: string | null
           default_pay_frequency?:
             | Database["public"]["Enums"]["pay_frequency"]
             | null
+          double_overtime_multiplier?: number
           double_overtime_threshold_hours?: number | null
           ein?: string | null
           email?: string | null
           holiday_pay_multiplier?: number | null
           id?: string
           legal_name?: string
+          overtime_multiplier?: number
           overtime_threshold_hours?: number | null
           owner_id?: string
           phone?: string | null
@@ -664,6 +680,8 @@ export type Database = {
           state_unemployment_rate?: number | null
           state_unemployment_wage_base?: number | null
           updated_at?: string
+          weekly_ot_threshold?: number
+          workweek_start_dow?: number
         }
         Relationships: []
       }
@@ -3152,6 +3170,10 @@ export type Database = {
           accuracy_m: number | null
           address: string | null
           company_id: string
+          corrected_at: string | null
+          corrected_by: string | null
+          corrected_from_id: string | null
+          correction_reason: string | null
           created_at: string
           employee_id: string | null
           id: string
@@ -3167,6 +3189,10 @@ export type Database = {
           accuracy_m?: number | null
           address?: string | null
           company_id: string
+          corrected_at?: string | null
+          corrected_by?: string | null
+          corrected_from_id?: string | null
+          correction_reason?: string | null
           created_at?: string
           employee_id?: string | null
           id?: string
@@ -3182,6 +3208,10 @@ export type Database = {
           accuracy_m?: number | null
           address?: string | null
           company_id?: string
+          corrected_at?: string | null
+          corrected_by?: string | null
+          corrected_from_id?: string | null
+          correction_reason?: string | null
           created_at?: string
           employee_id?: string | null
           id?: string
@@ -3202,6 +3232,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "time_clock_punches_corrected_from_id_fkey"
+            columns: ["corrected_from_id"]
+            isOneToOne: false
+            referencedRelation: "time_clock_punches"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "time_clock_punches_employee_id_fkey"
             columns: ["employee_id"]
             isOneToOne: false
@@ -3214,34 +3251,43 @@ export type Database = {
         Row: {
           company_id: string
           created_at: string
+          double_overtime_hours: number
           employee_id: string
+          holiday_hours: number
           hours: number
           id: string
           notes: string | null
           overtime_hours: number
           owner_id: string
+          timesheet_id: string | null
           work_date: string
         }
         Insert: {
           company_id: string
           created_at?: string
+          double_overtime_hours?: number
           employee_id: string
+          holiday_hours?: number
           hours?: number
           id?: string
           notes?: string | null
           overtime_hours?: number
           owner_id: string
+          timesheet_id?: string | null
           work_date: string
         }
         Update: {
           company_id?: string
           created_at?: string
+          double_overtime_hours?: number
           employee_id?: string
+          holiday_hours?: number
           hours?: number
           id?: string
           notes?: string | null
           overtime_hours?: number
           owner_id?: string
+          timesheet_id?: string | null
           work_date?: string
         }
         Relationships: [
@@ -3257,6 +3303,13 @@ export type Database = {
             columns: ["employee_id"]
             isOneToOne: false
             referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "time_entries_timesheet_id_fkey"
+            columns: ["timesheet_id"]
+            isOneToOne: false
+            referencedRelation: "timesheets"
             referencedColumns: ["id"]
           },
         ]
