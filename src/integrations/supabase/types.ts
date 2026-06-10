@@ -14,6 +14,170 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_conversations: {
+        Row: {
+          company_id: string
+          created_at: string
+          id: string
+          pinned: boolean
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          id?: string
+          pinned?: boolean
+          title?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          id?: string
+          pinned?: boolean
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_conversations_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string
+          id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          role: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "ai_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      announcement_reads: {
+        Row: {
+          announcement_id: string
+          id: string
+          read_at: string
+          user_id: string
+        }
+        Insert: {
+          announcement_id: string
+          id?: string
+          read_at?: string
+          user_id: string
+        }
+        Update: {
+          announcement_id?: string
+          id?: string
+          read_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "announcement_reads_announcement_id_fkey"
+            columns: ["announcement_id"]
+            isOneToOne: false
+            referencedRelation: "announcements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      announcements: {
+        Row: {
+          audience: Database["public"]["Enums"]["announcement_audience"]
+          audience_filter: Json
+          author_id: string
+          body: string
+          company_id: string
+          created_at: string
+          expire_at: string | null
+          id: string
+          pinned: boolean
+          priority: Database["public"]["Enums"]["announcement_priority"]
+          publish_at: string | null
+          published_at: string | null
+          status: Database["public"]["Enums"]["announcement_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          audience?: Database["public"]["Enums"]["announcement_audience"]
+          audience_filter?: Json
+          author_id: string
+          body: string
+          company_id: string
+          created_at?: string
+          expire_at?: string | null
+          id?: string
+          pinned?: boolean
+          priority?: Database["public"]["Enums"]["announcement_priority"]
+          publish_at?: string | null
+          published_at?: string | null
+          status?: Database["public"]["Enums"]["announcement_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          audience?: Database["public"]["Enums"]["announcement_audience"]
+          audience_filter?: Json
+          author_id?: string
+          body?: string
+          company_id?: string
+          created_at?: string
+          expire_at?: string | null
+          id?: string
+          pinned?: boolean
+          priority?: Database["public"]["Enums"]["announcement_priority"]
+          publish_at?: string | null
+          published_at?: string | null
+          status?: Database["public"]["Enums"]["announcement_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "announcements_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_events: {
         Row: {
           action: Database["public"]["Enums"]["audit_action"]
@@ -446,6 +610,72 @@ export type Database = {
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      compliance_alerts: {
+        Row: {
+          alert_type: Database["public"]["Enums"]["compliance_alert_type"]
+          company_id: string
+          created_at: string
+          description: string | null
+          due_date: string | null
+          employee_id: string | null
+          id: string
+          metadata: Json
+          resolved_at: string | null
+          resolved_by: string | null
+          severity: Database["public"]["Enums"]["compliance_severity"]
+          status: Database["public"]["Enums"]["compliance_alert_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          alert_type: Database["public"]["Enums"]["compliance_alert_type"]
+          company_id: string
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          employee_id?: string | null
+          id?: string
+          metadata?: Json
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: Database["public"]["Enums"]["compliance_severity"]
+          status?: Database["public"]["Enums"]["compliance_alert_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          alert_type?: Database["public"]["Enums"]["compliance_alert_type"]
+          company_id?: string
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          employee_id?: string | null
+          id?: string
+          metadata?: Json
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: Database["public"]["Enums"]["compliance_severity"]
+          status?: Database["public"]["Enums"]["compliance_alert_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "compliance_alerts_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "compliance_alerts_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
             referencedColumns: ["id"]
           },
         ]
@@ -2892,6 +3122,9 @@ export type Database = {
       }
     }
     Enums: {
+      announcement_audience: "all" | "department" | "role" | "custom"
+      announcement_priority: "normal" | "important" | "urgent"
+      announcement_status: "draft" | "scheduled" | "published" | "archived"
       app_role:
         | "owner"
         | "admin"
@@ -2924,6 +3157,17 @@ export type Database = {
         | "hired"
         | "rejected"
         | "withdrawn"
+      compliance_alert_status: "open" | "in_progress" | "resolved" | "dismissed"
+      compliance_alert_type:
+        | "i9_missing"
+        | "w4_missing"
+        | "handbook_unsigned"
+        | "document_expiring"
+        | "certification_expiring"
+        | "tax_filing_due"
+        | "license_expiring"
+        | "training_overdue"
+        | "other"
       compliance_doc_type:
         | "i9"
         | "w4"
@@ -2932,6 +3176,7 @@ export type Database = {
         | "direct_deposit"
         | "handbook"
         | "other"
+      compliance_severity: "low" | "medium" | "high" | "critical"
       garnishment_type:
         | "child_support"
         | "tax_levy"
@@ -3096,6 +3341,9 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      announcement_audience: ["all", "department", "role", "custom"],
+      announcement_priority: ["normal", "important", "urgent"],
+      announcement_status: ["draft", "scheduled", "published", "archived"],
       app_role: [
         "owner",
         "admin",
@@ -3131,6 +3379,18 @@ export const Constants = {
         "rejected",
         "withdrawn",
       ],
+      compliance_alert_status: ["open", "in_progress", "resolved", "dismissed"],
+      compliance_alert_type: [
+        "i9_missing",
+        "w4_missing",
+        "handbook_unsigned",
+        "document_expiring",
+        "certification_expiring",
+        "tax_filing_due",
+        "license_expiring",
+        "training_overdue",
+        "other",
+      ],
       compliance_doc_type: [
         "i9",
         "w4",
@@ -3140,6 +3400,7 @@ export const Constants = {
         "handbook",
         "other",
       ],
+      compliance_severity: ["low", "medium", "high", "critical"],
       garnishment_type: [
         "child_support",
         "tax_levy",
