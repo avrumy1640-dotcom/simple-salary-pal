@@ -1,5 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { z } from "zod";
+
+const uuid = z.string().uuid();
 
 async function assertRole(supabase: any, userId: string, companyId: string, roles: string[]) {
   for (const r of roles) {
@@ -11,11 +14,15 @@ async function assertRole(supabase: any, userId: string, companyId: string, role
 
 export const assignOnboardingTemplate = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: {
-    company_id: string; template_id: string;
-    employee_id?: string | null; contractor_id?: string | null;
-    start_date?: string | null;
-  }) => d)
+  .inputValidator((d: unknown) =>
+    z.object({
+      company_id: uuid,
+      template_id: uuid,
+      employee_id: uuid.nullable().optional(),
+      contractor_id: uuid.nullable().optional(),
+      start_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional(),
+    }).parse(d),
+  )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     await assertRole(supabase, userId, data.company_id, ["owner","admin","hr_admin"]);
@@ -32,7 +39,7 @@ export const assignOnboardingTemplate = createServerFn({ method: "POST" })
 
 export const generateComplianceAlerts = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { company_id: string }) => d)
+  .inputValidator((d: unknown) => z.object({ company_id: uuid }).parse(d))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     await assertRole(supabase, userId, data.company_id, ["owner","admin","hr_admin","auditor"]);

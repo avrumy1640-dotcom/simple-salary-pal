@@ -1,20 +1,28 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { z } from "zod";
+
+const uuid = z.string().uuid();
+const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 
 const CONSENT_TEXT =
   "By electing this benefit, I authorize the corresponding pre/post-tax payroll deduction and agree this electronic action constitutes my legal signature under ESIGN/UETA.";
 
 export const electBenefit = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: {
-    company_id: string; plan_id: string; employee_id: string;
-    coverage_tier: "employee" | "employee_spouse" | "employee_children" | "family";
-    effective_date: string;
-    signed_name: string;
-    qualifying_event?: string | null;
-    user_agent?: string | null;
-    ip?: string | null;
-  }) => d)
+  .inputValidator((d: unknown) =>
+    z.object({
+      company_id: uuid,
+      plan_id: uuid,
+      employee_id: uuid,
+      coverage_tier: z.enum(["employee","employee_spouse","employee_children","family"]),
+      effective_date: isoDate,
+      signed_name: z.string().trim().min(1).max(200),
+      qualifying_event: z.string().max(200).nullable().optional(),
+      user_agent: z.string().max(500).nullable().optional(),
+      ip: z.string().max(64).nullable().optional(),
+    }).parse(d),
+  )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
 
@@ -100,7 +108,7 @@ export const electBenefit = createServerFn({ method: "POST" })
 
 export const approveEnrollment = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { enrollment_id: string }) => d)
+  .inputValidator((d: unknown) => z.object({ enrollment_id: uuid }).parse(d))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const { data: e } = await supabase.from("benefit_enrollments").select("*").eq("id", data.enrollment_id).maybeSingle();
@@ -125,7 +133,9 @@ export const approveEnrollment = createServerFn({ method: "POST" })
 
 export const terminateEnrollment = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { enrollment_id: string; end_date: string; reason?: string }) => d)
+  .inputValidator((d: unknown) =>
+    z.object({ enrollment_id: uuid, end_date: isoDate, reason: z.string().max(500).optional() }).parse(d),
+  )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const { data: e } = await supabase.from("benefit_enrollments").select("*").eq("id", data.enrollment_id).maybeSingle();

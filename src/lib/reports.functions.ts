@@ -1,5 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { z } from "zod";
+
+const uuid = z.string().uuid();
+const yearSchema = z.number().int().min(2000).max(2100);
 
 function csvEscape(v: any): string {
   if (v === null || v === undefined) return "";
@@ -23,7 +27,9 @@ async function assertReportRole(supabase: any, userId: string, companyId: string
 
 export const exportPayrollRegister = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { company_id: string; year?: number; quarter?: number }) => d)
+  .inputValidator((d: unknown) =>
+    z.object({ company_id: uuid, year: yearSchema.optional(), quarter: z.number().int().min(1).max(4).optional() }).parse(d),
+  )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     await assertReportRole(supabase, userId, data.company_id);
@@ -66,7 +72,7 @@ export const exportPayrollRegister = createServerFn({ method: "POST" })
 
 export const exportW2Summary = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { company_id: string; year: number }) => d)
+  .inputValidator((d: unknown) => z.object({ company_id: uuid, year: yearSchema }).parse(d))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     await assertReportRole(supabase, userId, data.company_id);
@@ -86,7 +92,7 @@ export const exportW2Summary = createServerFn({ method: "POST" })
 
 export const export1099Summary = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { company_id: string; year: number }) => d)
+  .inputValidator((d: unknown) => z.object({ company_id: uuid, year: yearSchema }).parse(d))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     await assertReportRole(supabase, userId, data.company_id);
@@ -104,7 +110,7 @@ export const export1099Summary = createServerFn({ method: "POST" })
 
 export const exportGlForRun = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { run_id: string }) => d)
+  .inputValidator((d: unknown) => z.object({ run_id: uuid }).parse(d))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const { data: run } = await supabase.from("payroll_runs").select("company_id, pay_date").eq("id", data.run_id).maybeSingle();
@@ -141,7 +147,9 @@ export const exportGlForRun = createServerFn({ method: "POST" })
 
 export const exportAuditLog = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { company_id: string; days?: number }) => d)
+  .inputValidator((d: unknown) =>
+    z.object({ company_id: uuid, days: z.number().int().min(1).max(3650).optional() }).parse(d),
+  )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     await assertReportRole(supabase, userId, data.company_id);

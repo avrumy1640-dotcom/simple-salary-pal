@@ -1,9 +1,16 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { z } from "zod";
 
 export const getAttendanceReport = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { companyId: string; weekStart: string; weeks?: number }) => d)
+  .inputValidator((d: unknown) =>
+    z.object({
+      companyId: z.string().uuid(),
+      weekStart: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+      weeks: z.number().int().min(1).max(26).optional(),
+    }).parse(d),
+  )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const { data: ok } = await supabase.rpc("has_any_role", {
