@@ -48,6 +48,31 @@ function ReportsPage() {
     try { const r = await fn(); downloadCsv(r.filename, r.csv); toast.success(`${label} downloaded`); }
     catch (e: any) { toast.error(e.message || `${label} failed`); }
   }
+  async function loadAttendance() {
+    if (!currentId) return;
+    setAttLoading(true);
+    try {
+      const weekStart = (() => {
+        const d = new Date(); d.setDate(d.getDate() - d.getDay() - 21); d.setHours(0,0,0,0);
+        return d.toISOString();
+      })();
+      const r = await attFn({ data: { companyId: currentId, weekStart, weeks: 4 } });
+      setAttendance(r.rows);
+    } catch (e: any) { toast.error(e.message); }
+    finally { setAttLoading(false); }
+  }
+  useEffect(() => { loadAttendance(); }, [currentId]);
+
+  function exportAttendance() {
+    if (!attendance.length) { toast.error("No attendance data"); return; }
+    const headers = ["Week of", "Employee", "Scheduled hours", "Scheduled shifts", "Actual hours", "Variance"];
+    const rows = attendance.map((r: any) => [
+      r.week_start, r.employee_name, r.scheduled_hours, r.scheduled_shifts, r.actual_hours, r.variance_hours,
+    ]);
+    const csv = [headers, ...rows].map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
+    downloadCsv(`attendance-${new Date().toISOString().slice(0,10)}.csv`, csv);
+  }
+
 
   useEffect(() => {
     (async () => {
