@@ -22,8 +22,8 @@ export const assignOnboardingTemplate = createServerFn({ method: "POST" })
     const { data: out, error } = await supabase.rpc("assign_onboarding_template", {
       _company_id: data.company_id,
       _template_id: data.template_id,
-      _employee_id: data.employee_id ?? null,
-      _contractor_id: data.contractor_id ?? null,
+      _employee_id: (data.employee_id ?? null) as any,
+      _contractor_id: (data.contractor_id ?? null) as any,
       _start_date: data.start_date ?? new Date().toISOString().slice(0, 10),
     });
     if (error) throw new Error(error.message);
