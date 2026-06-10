@@ -42,6 +42,7 @@ import { Route as AppCompaniesRouteImport } from './routes/app.companies'
 import { Route as AppBenefitsRouteImport } from './routes/app.benefits'
 import { Route as AppAuditRouteImport } from './routes/app.audit'
 import { Route as AppAnnouncementsRouteImport } from './routes/app.announcements'
+import { Route as AppAnalyticsRouteImport } from './routes/app.analytics'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -208,6 +209,11 @@ const AppAnnouncementsRoute = AppAnnouncementsRouteImport.update({
   path: '/announcements',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAnalyticsRoute = AppAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -215,6 +221,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/pricing': typeof PricingRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/app/analytics': typeof AppAnalyticsRoute
   '/app/announcements': typeof AppAnnouncementsRoute
   '/app/audit': typeof AppAuditRoute
   '/app/benefits': typeof AppBenefitsRoute
@@ -250,6 +257,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/pricing': typeof PricingRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/app/analytics': typeof AppAnalyticsRoute
   '/app/announcements': typeof AppAnnouncementsRoute
   '/app/audit': typeof AppAuditRoute
   '/app/benefits': typeof AppBenefitsRoute
@@ -286,6 +294,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/pricing': typeof PricingRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/app/analytics': typeof AppAnalyticsRoute
   '/app/announcements': typeof AppAnnouncementsRoute
   '/app/audit': typeof AppAuditRoute
   '/app/benefits': typeof AppBenefitsRoute
@@ -323,6 +332,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/pricing'
     | '/sitemap.xml'
+    | '/app/analytics'
     | '/app/announcements'
     | '/app/audit'
     | '/app/benefits'
@@ -358,6 +368,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/pricing'
     | '/sitemap.xml'
+    | '/app/analytics'
     | '/app/announcements'
     | '/app/audit'
     | '/app/benefits'
@@ -393,6 +404,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/pricing'
     | '/sitemap.xml'
+    | '/app/analytics'
     | '/app/announcements'
     | '/app/audit'
     | '/app/benefits'
@@ -664,10 +676,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAnnouncementsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/analytics': {
+      id: '/app/analytics'
+      path: '/analytics'
+      fullPath: '/app/analytics'
+      preLoaderRoute: typeof AppAnalyticsRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
+  AppAnalyticsRoute: typeof AppAnalyticsRoute
   AppAnnouncementsRoute: typeof AppAnnouncementsRoute
   AppAuditRoute: typeof AppAuditRoute
   AppBenefitsRoute: typeof AppBenefitsRoute
@@ -699,6 +719,7 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAnalyticsRoute: AppAnalyticsRoute,
   AppAnnouncementsRoute: AppAnnouncementsRoute,
   AppAuditRoute: AppAuditRoute,
   AppBenefitsRoute: AppBenefitsRoute,
