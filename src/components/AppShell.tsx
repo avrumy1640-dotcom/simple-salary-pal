@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import {
   LayoutDashboard, Users, Clock, Wallet, FileText, LogOut, Menu, X,
   CalendarDays, Settings as SettingsIcon, UserPlus, Target, ShieldCheck,
-  BarChart3, FolderOpen, Megaphone, Plug, HeartHandshake, ChevronLeft,
+  BarChart3, FolderOpen, Megaphone, HeartHandshake, ChevronLeft,
   ChevronRight, Building2, Bot, MapPin, Bell,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
