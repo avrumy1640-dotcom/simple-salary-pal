@@ -326,6 +326,108 @@ export type Database = {
           },
         ]
       }
+      benefit_election_events: {
+        Row: {
+          actor_user_id: string | null
+          company_id: string
+          consent_text: string | null
+          coverage_tier:
+            | Database["public"]["Enums"]["benefit_coverage_tier"]
+            | null
+          created_at: string
+          effective_date: string | null
+          employee_id: string
+          employee_monthly_cost: number | null
+          employer_monthly_cost: number | null
+          enrollment_id: string
+          event_type: string
+          id: string
+          plan_id: string | null
+          qualifying_event: string | null
+          signed_ip: string | null
+          signed_name: string | null
+          signed_user_agent: string | null
+        }
+        Insert: {
+          actor_user_id?: string | null
+          company_id: string
+          consent_text?: string | null
+          coverage_tier?:
+            | Database["public"]["Enums"]["benefit_coverage_tier"]
+            | null
+          created_at?: string
+          effective_date?: string | null
+          employee_id: string
+          employee_monthly_cost?: number | null
+          employer_monthly_cost?: number | null
+          enrollment_id: string
+          event_type: string
+          id?: string
+          plan_id?: string | null
+          qualifying_event?: string | null
+          signed_ip?: string | null
+          signed_name?: string | null
+          signed_user_agent?: string | null
+        }
+        Update: {
+          actor_user_id?: string | null
+          company_id?: string
+          consent_text?: string | null
+          coverage_tier?:
+            | Database["public"]["Enums"]["benefit_coverage_tier"]
+            | null
+          created_at?: string
+          effective_date?: string | null
+          employee_id?: string
+          employee_monthly_cost?: number | null
+          employer_monthly_cost?: number | null
+          enrollment_id?: string
+          event_type?: string
+          id?: string
+          plan_id?: string | null
+          qualifying_event?: string | null
+          signed_ip?: string | null
+          signed_name?: string | null
+          signed_user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "benefit_election_events_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "benefit_election_events_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "benefit_election_events_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "benefit_election_events_enrollment_id_fkey"
+            columns: ["enrollment_id"]
+            isOneToOne: false
+            referencedRelation: "benefit_enrollments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "benefit_election_events_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "benefit_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       benefit_enrollments: {
         Row: {
           beneficiary_name: string | null
@@ -1103,10 +1205,12 @@ export type Database = {
           company_id: string
           created_at: string
           employee_id: string
+          enrollment_id: string | null
           id: string
           name: string
           owner_id: string
           pre_tax: boolean
+          source: string
           updated_at: string
         }
         Insert: {
@@ -1117,10 +1221,12 @@ export type Database = {
           company_id: string
           created_at?: string
           employee_id: string
+          enrollment_id?: string | null
           id?: string
           name: string
           owner_id: string
           pre_tax?: boolean
+          source?: string
           updated_at?: string
         }
         Update: {
@@ -1131,10 +1237,12 @@ export type Database = {
           company_id?: string
           created_at?: string
           employee_id?: string
+          enrollment_id?: string | null
           id?: string
           name?: string
           owner_id?: string
           pre_tax?: boolean
+          source?: string
           updated_at?: string
         }
         Relationships: [
@@ -1157,6 +1265,13 @@ export type Database = {
             columns: ["employee_id"]
             isOneToOne: false
             referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deductions_enrollment_id_fkey"
+            columns: ["enrollment_id"]
+            isOneToOne: false
+            referencedRelation: "benefit_enrollments"
             referencedColumns: ["id"]
           },
         ]
@@ -1633,13 +1748,15 @@ export type Database = {
       }
       hr_document_signatures: {
         Row: {
-          company_id: string | null
+          company_id: string
+          consent_text: string | null
           created_at: string
           document_id: string
           event_at: string
           id: string
           note: string | null
           signature_data: string | null
+          signature_hash: string | null
           signature_ip: string | null
           signature_user_agent: string | null
           signed_by_email: string | null
@@ -1649,13 +1766,15 @@ export type Database = {
           user_id: string
         }
         Insert: {
-          company_id?: string | null
+          company_id: string
+          consent_text?: string | null
           created_at?: string
           document_id: string
           event_at?: string
           id?: string
           note?: string | null
           signature_data?: string | null
+          signature_hash?: string | null
           signature_ip?: string | null
           signature_user_agent?: string | null
           signed_by_email?: string | null
@@ -1665,13 +1784,15 @@ export type Database = {
           user_id: string
         }
         Update: {
-          company_id?: string | null
+          company_id?: string
+          consent_text?: string | null
           created_at?: string
           document_id?: string
           event_at?: string
           id?: string
           note?: string | null
           signature_data?: string | null
+          signature_hash?: string | null
           signature_ip?: string | null
           signature_user_agent?: string | null
           signed_by_email?: string | null
@@ -2066,8 +2187,87 @@ export type Database = {
           },
         ]
       }
+      onboarding_assignments: {
+        Row: {
+          assigned_by: string | null
+          company_id: string
+          completed_at: string | null
+          contractor_id: string | null
+          created_at: string
+          employee_id: string | null
+          id: string
+          start_date: string
+          status: string
+          template_id: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_by?: string | null
+          company_id: string
+          completed_at?: string | null
+          contractor_id?: string | null
+          created_at?: string
+          employee_id?: string | null
+          id?: string
+          start_date?: string
+          status?: string
+          template_id: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_by?: string | null
+          company_id?: string
+          completed_at?: string | null
+          contractor_id?: string | null
+          created_at?: string
+          employee_id?: string | null
+          id?: string
+          start_date?: string
+          status?: string
+          template_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "onboarding_assignments_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "onboarding_assignments_contractor_id_fkey"
+            columns: ["contractor_id"]
+            isOneToOne: false
+            referencedRelation: "contractors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "onboarding_assignments_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "onboarding_assignments_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "onboarding_assignments_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "onboarding_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       onboarding_tasks: {
         Row: {
+          assignee_user_id: string | null
           category: string
           company_id: string
           completed_at: string | null
@@ -2081,10 +2281,13 @@ export type Database = {
           required: boolean
           sort_order: number
           status: string
+          template_id: string | null
+          template_task_id: string | null
           title: string
           updated_at: string
         }
         Insert: {
+          assignee_user_id?: string | null
           category?: string
           company_id: string
           completed_at?: string | null
@@ -2098,10 +2301,13 @@ export type Database = {
           required?: boolean
           sort_order?: number
           status?: string
+          template_id?: string | null
+          template_task_id?: string | null
           title: string
           updated_at?: string
         }
         Update: {
+          assignee_user_id?: string | null
           category?: string
           company_id?: string
           completed_at?: string | null
@@ -2115,6 +2321,8 @@ export type Database = {
           required?: boolean
           sort_order?: number
           status?: string
+          template_id?: string | null
+          template_task_id?: string | null
           title?: string
           updated_at?: string
         }
@@ -2145,6 +2353,20 @@ export type Database = {
             columns: ["employee_id"]
             isOneToOne: false
             referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "onboarding_tasks_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "onboarding_templates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "onboarding_tasks_template_task_id_fkey"
+            columns: ["template_task_id"]
+            isOneToOne: false
+            referencedRelation: "onboarding_template_tasks"
             referencedColumns: ["id"]
           },
         ]
@@ -3822,7 +4044,25 @@ export type Database = {
       }
     }
     Functions: {
+      assign_onboarding_template: {
+        Args: {
+          _company_id: string
+          _contractor_id: string
+          _employee_id: string
+          _start_date?: string
+          _template_id: string
+        }
+        Returns: string
+      }
       current_employee_id: { Args: { _company_id: string }; Returns: string }
+      employee_can_self_enroll: {
+        Args: { _employee_id: string }
+        Returns: boolean
+      }
+      generate_compliance_alerts: {
+        Args: { _company_id: string }
+        Returns: number
+      }
       has_any_role: {
         Args: {
           _company_id: string
@@ -3909,6 +4149,8 @@ export type Database = {
         | "license_expiring"
         | "training_overdue"
         | "other"
+        | "i9_overdue"
+        | "direct_deposit_missing"
       compliance_doc_type:
         | "i9"
         | "w4"
@@ -4163,6 +4405,8 @@ export const Constants = {
         "license_expiring",
         "training_overdue",
         "other",
+        "i9_overdue",
+        "direct_deposit_missing",
       ],
       compliance_doc_type: [
         "i9",

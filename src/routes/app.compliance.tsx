@@ -86,55 +86,18 @@ function CompliancePage() {
   async function runScan() {
     if (!companyId) return;
     setScanning(true);
-    const active = employees.filter((e) => e.status === "active");
-    const newAlerts: Array<Omit<Alert, "id" | "created_at"> & { company_id: string }> = [];
-
-    // Existing alerts to avoid duplicates
-    const existing = new Set(
-      alerts
-        .filter((a) => a.status === "open" || a.status === "in_progress")
-        .map((a) => `${a.alert_type}:${a.employee_id ?? "-"}`)
-    );
-
-    for (const emp of active) {
-      const name = `${emp.full_name}`;
-      const key = (t: string) => `${t}:${emp.id}`;
-      if (!emp.ssn_last4 && !existing.has(key("i9_missing"))) {
-        newAlerts.push({
-          company_id: companyId,
-          alert_type: "i9_missing",
-          severity: "high",
-          status: "open",
-          title: `I-9 verification missing — ${name}`,
-          description: "Employment eligibility verification is incomplete.",
-          due_date: null,
-          employee_id: emp.id,
-        });
-      }
-      if (!emp.ssn_last4 && !existing.has(key("w4_missing"))) {
-        newAlerts.push({
-          company_id: companyId,
-          alert_type: "w4_missing",
-          severity: "medium",
-          status: "open",
-          title: `W-4 withholding form missing — ${name}`,
-          description: "Federal tax withholding form not on file.",
-          due_date: null,
-          employee_id: emp.id,
-        });
-      }
+    try {
+      const { generateComplianceAlerts } = await import("@/lib/hr.functions");
+      const res = await generateComplianceAlerts({ data: { company_id: companyId } });
+      toast.success(`Scan complete — ${res.alerts?.length ?? 0} open alerts`);
+    } catch (e: any) {
+      toast.error(e.message || "Scan failed");
+    } finally {
+      await load();
+      setScanning(false);
     }
-
-    if (newAlerts.length === 0) {
-      toast.success("Scan complete — no new issues found");
-    } else {
-      const { error } = await supabase.from("compliance_alerts").insert(newAlerts as any);
-      if (error) toast.error(error.message);
-      else toast.success(`${newAlerts.length} new alert(s) detected`);
-    }
-    await load();
-    setScanning(false);
   }
+
 
   async function setStatus(a: Alert, status: Alert["status"]) {
     const update: any = { status };

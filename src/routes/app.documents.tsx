@@ -136,6 +136,7 @@ function DocumentsPage() {
     if (user) {
       await supabase.from("hr_document_signatures").insert({
         document_id: d.id, user_id: user.id, status: "viewed", note: "Document downloaded",
+        company_id: currentId!,
       });
     }
     window.open(data.signedUrl, "_blank");
@@ -159,6 +160,7 @@ function DocumentsPage() {
     }).eq("id", d.id);
     await supabase.from("hr_document_signatures").insert({
       document_id: d.id, user_id: user.id, status: "requested", note: "Signature requested",
+      company_id: currentId!,
     });
     toast.success("Signature requested");
     refresh();
@@ -188,6 +190,7 @@ function DocumentsPage() {
       if (upErr) throw upErr;
       const { error: hErr } = await supabase.from("hr_document_signatures").insert({
         document_id: signOpen.id, user_id: user.id, status: "signed",
+        company_id: currentId!,
         signed_by_name: signForm.name.trim(), signed_by_email: signForm.email.trim() || null,
         signed_by_user_id: user.id,
         signature_ip: ip,
@@ -211,6 +214,7 @@ function DocumentsPage() {
     }).eq("id", d.id);
     await supabase.from("hr_document_signatures").insert({
       document_id: d.id, user_id: user.id, status: "voided", note: "Signature voided",
+      company_id: currentId!,
     });
     toast.success("Signature voided");
     refresh();
