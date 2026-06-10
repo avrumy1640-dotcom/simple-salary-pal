@@ -198,11 +198,18 @@ function SchedulingPage() {
                     <td key={dk} className="border-r border-border p-1.5 last:border-r-0 align-top">
                       <div className="space-y-1">
                         {cellShifts.map((s) => (
-                          <div key={s.id} className="group relative rounded-md border-l-2 border-primary bg-primary/5 px-2 py-1.5 text-[11px]">
-                            <div className="font-semibold text-slate-900">{fmtTime(s.start_at)} – {fmtTime(s.end_at)}</div>
+                          <div key={s.id} className={`group relative rounded-md border-l-2 px-2 py-1.5 text-[11px] ${
+                            s.status === "cancelled" ? "border-slate-300 bg-slate-50 line-through text-slate-400"
+                            : s.status === "published" ? "border-emerald-500 bg-emerald-50"
+                            : "border-primary bg-primary/5"
+                          }`}>
+                            <div className="flex items-center justify-between gap-1">
+                              <div className="font-semibold text-slate-900">{fmtTime(s.start_at)} – {fmtTime(s.end_at)}</div>
+                              {s.status === "draft" && <Badge variant="outline" className="h-4 px-1 text-[9px]">draft</Badge>}
+                            </div>
                             {s.role && <div className="text-slate-600">{s.role}</div>}
                             {s.location && <div className="text-slate-500">{s.location}</div>}
-                            <button onClick={() => deleteShift(s.id)} className="absolute right-1 top-1 hidden text-slate-400 hover:text-rose-600 group-hover:block"><Trash2 className="h-3 w-3" /></button>
+                            <button onClick={() => deleteShift(s.id, s.status)} className="absolute right-1 top-1 hidden text-slate-400 hover:text-rose-600 group-hover:block"><Trash2 className="h-3 w-3" /></button>
                           </div>
                         ))}
                         <button onClick={() => openFor(d, emp.id)} className="w-full rounded border border-dashed border-border py-1 text-[10px] text-slate-400 hover:bg-surface hover:text-slate-700">+ Add</button>
