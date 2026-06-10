@@ -71,8 +71,8 @@ function OnboardingPage() {
 
   async function loadTasks() {
     const [{ data: t }, { data: f }] = await Promise.all([
-      supabase.from("onboarding_tasks").select("*").order("sort_order"),
-      supabase.from("hr_forms").select("id, employee_id, contractor_id, form_type, status"),
+      supabase.from("onboarding_tasks").select("*").eq("company_id", currentId ?? "").order("sort_order"),
+      supabase.from("hr_forms").select("id, employee_id, contractor_id, form_type, status").eq("company_id", currentId ?? ""),
     ]);
     setTasks((t ?? []) as Task[]);
     setForms((f ?? []) as Form[]);
