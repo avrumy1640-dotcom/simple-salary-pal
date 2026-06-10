@@ -116,7 +116,7 @@ export function TopBar({ companyName, userEmail }: { companyName: string; userEm
       <div className="hidden md:flex sticky top-0 z-30 items-center gap-3 border-b border-primary/20 bg-card/80 backdrop-blur-2xl px-6 py-3">
         <button
           onClick={() => setSearchOpen(true)}
-          className="group flex flex-1 max-w-xl items-center gap-2.5 rounded-full border border-primary/20 bg-card/70 px-4 py-2 text-sm text-white/55 transition hover:border-white/20/30 hover:shadow-soft"
+          className="group flex flex-1 max-w-xl items-center gap-2.5 rounded-full border border-primary/20 bg-card/70 px-4 py-2 text-sm text-slate-500 transition hover:border-primary/40 hover:shadow-soft"
         >
           <Search className="h-4 w-4" />
           <span className="flex-1 text-left">Search pages, employees, payrolls…</span>
@@ -167,7 +167,7 @@ export function TopBar({ companyName, userEmail }: { companyName: string; userEm
                   {initials}
                 </span>
                 <span className="hidden lg:inline text-sm font-medium text-foreground max-w-[140px] truncate">{companyName}</span>
-                <ChevronDown className="h-3.5 w-3.5 text-white/55" />
+                <ChevronDown className="h-3.5 w-3.5 text-slate-500" />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
