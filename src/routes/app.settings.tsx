@@ -107,16 +107,16 @@ function SettingsPage() {
   if (loading) return <div className="text-sm text-muted-foreground">Loading…</div>;
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-300">
-      <header className="flex items-start justify-between gap-4">
+    <div className="space-y-6 unit-scope">
+      <section className="unit-in flex flex-wrap items-end justify-between gap-3 border-b unit-hairline pb-5">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Company settings</h1>
-          <p className="text-muted-foreground mt-1">Configure how Paylo runs payroll for your business.</p>
+          <h1 className="font-display text-3xl font-bold tracking-tight text-slate-900 sm:text-[40px]">Settings</h1>
+          <p className="mt-1 text-sm text-slate-500">Manage your company, team, and account preferences.</p>
         </div>
-        <Button onClick={save} disabled={saving} className="gap-2 rounded-full bg-primary px-6 text-foreground hover:opacity-90">
+        <Button onClick={save} disabled={saving} className="gap-2">
           <Save className="h-4 w-4" /> {saving ? "Saving…" : "Save changes"}
         </Button>
-      </header>
+      </section>
 
       <Tabs defaultValue="company" className="w-full">
         <TabsList className="grid w-full grid-cols-2 md:grid-cols-6 h-auto gap-1 p-1.5 bg-card/40 border border-primary/15">

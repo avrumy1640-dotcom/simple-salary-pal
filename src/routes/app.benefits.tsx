@@ -150,36 +150,72 @@ function BenefitsPage() {
     return map;
   }, [plans]);
 
-  return (
-    <div className="space-y-6">
-      <PageHeader
-        title="Benefits"
-        description="Health, retirement, and lifestyle benefits — manage plans, track enrollments, and forecast costs."
-        actions={
-          <>
-            <Dialog open={planOpen} onOpenChange={(o) => { setPlanOpen(o); if (!o) setEditingPlan(null); }}>
-              <DialogTrigger asChild>
-                <Button size="sm" variant="outline"><Plus className="mr-1 h-4 w-4" />New plan</Button>
-              </DialogTrigger>
-              <PlanDialog companyId={companyId} plan={editingPlan} onSaved={() => { setPlanOpen(false); setEditingPlan(null); load(); }} />
-            </Dialog>
-            <Dialog open={enrollOpen} onOpenChange={setEnrollOpen}>
-              <DialogTrigger asChild>
-                <Button size="sm" className="gradient-brand text-primary-foreground"><Plus className="mr-1 h-4 w-4" />Enroll employee</Button>
-              </DialogTrigger>
-              <EnrollDialog companyId={companyId} plans={plans.filter((p) => p.is_active)} employees={employees} onSaved={() => { setEnrollOpen(false); load(); }} />
-            </Dialog>
-          </>
-        }
-      />
+  // Cost breakdown by plan type for overview donut
+  const costByType = useMemo(() => {
+    const map = new Map<string, number>();
+    enrollments.filter((e) => e.status === "active").forEach((e) => {
+      const t = plans.find((p) => p.id === e.plan_id)?.plan_type ?? "other";
+      map.set(t, (map.get(t) ?? 0) + Number(e.employer_monthly_cost) + Number(e.employee_monthly_cost));
+    });
+    const palette = ["#06B6D4", "#8B5CF6", "#F59E0B", "#10B981", "#EF4444", "#3B82F6", "#EC4899"];
+    return Array.from(map.entries()).map(([type, value], i) => ({
+      label: PLAN_TYPE_LABELS[type] ?? type,
+      value,
+      color: palette[i % palette.length],
+    }));
+  }, [enrollments, plans]);
+  const totalMonthly = stats.monthlyEmployer + stats.monthlyEmployee;
 
-      {/* KPIs */}
-      <div className="grid gap-3 sm:grid-cols-4">
-        <Kpi label="Active plans" value={stats.plans} icon={HeartHandshake} tone="default" />
-        <Kpi label="Enrolled employees" value={`${stats.enrolled} / ${stats.employees}`} icon={Users} tone="default" />
-        <Kpi label="Employer cost / mo" value={fmt(stats.monthlyEmployer)} icon={DollarSign} tone="warning" />
-        <Kpi label="Employee cost / mo" value={fmt(stats.monthlyEmployee)} icon={TrendingUp} tone="success" />
-      </div>
+  return (
+    <div className="space-y-6 unit-scope">
+      {/* Hero header */}
+      <section className="unit-in flex flex-wrap items-end justify-between gap-3 border-b unit-hairline pb-5">
+        <div>
+          <h1 className="font-display text-3xl font-bold tracking-tight text-slate-900 sm:text-[40px]">Benefits</h1>
+          <p className="mt-1 text-sm text-slate-500">Manage plans, enrollments, and open enrollment windows.</p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" onClick={() => setTab("enrollments")}>View enrollment report</Button>
+          <Dialog open={planOpen} onOpenChange={(o) => { setPlanOpen(o); if (!o) setEditingPlan(null); }}>
+            <DialogTrigger asChild>
+              <Button className="gap-1.5"><Plus className="h-4 w-4" />Add benefit plan</Button>
+            </DialogTrigger>
+            <PlanDialog companyId={companyId} plan={editingPlan} onSaved={() => { setPlanOpen(false); setEditingPlan(null); load(); }} />
+          </Dialog>
+          <Dialog open={enrollOpen} onOpenChange={setEnrollOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="gap-1.5"><Plus className="h-4 w-4" />Enroll employee</Button>
+            </DialogTrigger>
+            <EnrollDialog companyId={companyId} plans={plans.filter((p) => p.is_active)} employees={employees} onSaved={() => { setEnrollOpen(false); load(); }} />
+          </Dialog>
+        </div>
+      </section>
+
+      {/* Overview card: donut + 2x2 stats */}
+      <section className="unit-in rounded-2xl border unit-hairline bg-white p-6 shadow-soft">
+        <div className="grid gap-8 md:grid-cols-[1fr,1fr] items-center">
+          <div className="flex items-center gap-6">
+            <BenefitsDonut slices={costByType} total={totalMonthly} />
+            <div className="space-y-1.5 text-sm min-w-0 flex-1">
+              {costByType.length === 0 ? (
+                <p className="text-slate-400">No active enrollments yet.</p>
+              ) : costByType.map((s) => (
+                <div key={s.label} className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full shrink-0" style={{ background: s.color }} />
+                  <span className="text-slate-700 truncate">{s.label}</span>
+                  <span className="ml-auto tabular-nums text-slate-500 text-xs">{fmt(s.value)}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <MiniStat label="Enrolled employees" value={`${stats.enrolled} / ${stats.employees}`} />
+            <MiniStat label="Monthly benefits cost" value={fmt(totalMonthly)} />
+            <MiniStat label="Open enrollment" value={<span className="text-success">Active</span>} />
+            <MiniStat label="Plans offered" value={String(stats.plans)} />
+          </div>
+        </div>
+      </section>
 
       {/* Tabs */}
       <div className="flex gap-1 rounded-lg border border-border bg-card p-1 w-fit">
@@ -320,7 +356,7 @@ function BenefitsPage() {
 
 function Kpi({ label, value, icon: Icon, tone }: { label: string; value: any; icon: any; tone: "success" | "warning" | "default" }) {
   return (
-    <div className="rounded-xl border border-border bg-card p-4">
+    <div className="rounded-xl border unit-hairline bg-white p-4">
       <div className="flex items-center justify-between">
         <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">{label}</span>
         <Icon className={cn("h-4 w-4",
@@ -329,6 +365,36 @@ function Kpi({ label, value, icon: Icon, tone }: { label: string; value: any; ic
           tone === "default" && "text-slate-400")} />
       </div>
       <div className="mt-2 font-display text-2xl font-extrabold text-slate-900">{value}</div>
+    </div>
+  );
+}
+
+function MiniStat({ label, value }: { label: string; value: any }) {
+  return (
+    <div className="rounded-xl border unit-hairline bg-white p-4">
+      <div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-slate-400">{label}</div>
+      <div className="mt-2 font-display text-xl font-bold text-slate-900 unit-num">{value}</div>
+    </div>
+  );
+}
+
+function BenefitsDonut({ slices, total }: { slices: { label: string; value: number; color: string }[]; total: number }) {
+  const sum = slices.reduce((s, x) => s + x.value, 0) || 1;
+  const R = 64; const C = 2 * Math.PI * R;
+  let acc = 0;
+  return (
+    <div className="relative h-[180px] w-[180px] shrink-0">
+      <svg viewBox="0 0 180 180" className="h-full w-full -rotate-90">
+        <circle cx="90" cy="90" r={R} fill="none" stroke="#F1F5F9" strokeWidth="20" />
+        {slices.map((s, i) => {
+          const len = (s.value / sum) * C; const dash = `${len} ${C - len}`; const offset = -acc; acc += len;
+          return <circle key={i} cx="90" cy="90" r={R} fill="none" stroke={s.color} strokeWidth="20" strokeDasharray={dash} strokeDashoffset={offset} />;
+        })}
+      </svg>
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <div className="text-[20px] font-bold tabular-nums text-slate-900">{fmt(total)}</div>
+        <div className="text-[10px] uppercase tracking-wider text-slate-400">Total / month</div>
+      </div>
     </div>
   );
 }

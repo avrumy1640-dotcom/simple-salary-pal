@@ -97,23 +97,40 @@ function TaxFilingPage() {
     a.click(); URL.revokeObjectURL(url);
   }
 
+  const totalLiability = q941.reduce((s, q) => s + q.fed + q.fica, 0);
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-end justify-between gap-3">
+    <div className="space-y-6 unit-scope">
+      <section className="unit-in flex flex-wrap items-end justify-between gap-3 border-b unit-hairline pb-5">
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight">Tax filing</h1>
-          <p className="text-sm text-muted-foreground">Federal payroll filings, deadlines, and year-end forms — all in one place.</p>
+          <h1 className="font-display text-3xl font-bold tracking-tight text-slate-900 sm:text-[40px]">Tax filing</h1>
+          <p className="mt-1 text-sm text-slate-500">Stay compliant with all federal and state tax obligations.</p>
         </div>
-        <Button onClick={downloadFilingPacket} className="rounded-full bg-primary text-background hover:bg-foreground/90 gap-1.5">
-          <Download className="h-4 w-4" /> Download filing packet
-        </Button>
-      </div>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" onClick={downloadFilingPacket} className="gap-1.5"><Download className="h-4 w-4" />Download all forms</Button>
+          <Button className="gap-1.5"><FileText className="h-4 w-4" />File now</Button>
+        </div>
+      </section>
 
-      <div className="grid gap-3 md:grid-cols-3">
-        <Stat label="W-2 employees" value={String(w2Count)} sub="File W-2 + W-3 by Jan 31" />
-        <Stat label="1099-NEC contractors" value={String(n1099Count)} sub={`${fmtUSD(n1099Total)} reportable`} />
-        <Stat label={`${year} fed w/h + FICA`} value={fmtUSD(q941.reduce((s, q) => s + q.fed + q.fica, 0))} sub="Across all 4 quarters" />
-      </div>
+      {/* Compliance hero */}
+      <section className="unit-in rounded-2xl border unit-hairline bg-white p-6 shadow-soft">
+        <div className="grid gap-6 md:grid-cols-[1.4fr,1fr] items-center">
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full bg-success/10 px-3 py-1 text-xs font-semibold text-success">
+              <CheckCircle2 className="h-3.5 w-3.5" /> Compliant
+            </div>
+            <h2 className="mt-3 font-display text-2xl font-bold text-slate-900">Tax Year {year}</h2>
+            <p className="mt-1 text-sm text-slate-500">All tax obligations are current. Great work.</p>
+            <div className="mt-5 grid grid-cols-3 gap-3">
+              <MiniStat label="W-2 employees" value={String(w2Count)} sub="Due Jan 31" />
+              <MiniStat label="1099-NEC" value={String(n1099Count)} sub={fmtUSD(n1099Total)} />
+              <MiniStat label="Fed liability" value={fmtUSD(totalLiability)} sub="YTD" />
+            </div>
+          </div>
+          <div className="flex items-center justify-center">
+            <FormStatusDonut filed={rows.filter(r => r.status === "filed").length} dueSoon={rows.filter(r => r.status === "due_soon").length} overdue={rows.filter(r => r.status === "overdue").length} upcoming={rows.filter(r => r.status === "upcoming").length} />
+          </div>
+        </div>
+      </section>
 
       <div className="rounded-2xl border bg-card">
         <div className="border-b px-5 py-3 text-sm font-medium flex items-center gap-2"><Calendar className="h-4 w-4" /> Filing calendar</div>
@@ -151,10 +168,55 @@ function TaxFilingPage() {
 
 function Stat({ label, value, sub }: { label: string; value: string; sub: string }) {
   return (
-    <div className="rounded-2xl border bg-card p-5">
-      <div className="text-xs uppercase tracking-wider text-muted-foreground">{label}</div>
-      <div className="mt-2 text-2xl font-semibold">{value}</div>
-      <div className="mt-1 text-xs text-muted-foreground">{sub}</div>
+    <div className="rounded-2xl border unit-hairline bg-white p-5">
+      <div className="text-xs uppercase tracking-wider text-slate-400 font-semibold">{label}</div>
+      <div className="mt-2 text-2xl font-bold text-slate-900 unit-num">{value}</div>
+      <div className="mt-1 text-xs text-slate-500">{sub}</div>
+    </div>
+  );
+}
+function MiniStat({ label, value, sub }: { label: string; value: string; sub?: string }) {
+  return (
+    <div className="rounded-xl border unit-hairline bg-surface p-3">
+      <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">{label}</div>
+      <div className="mt-1 font-display text-lg font-bold text-slate-900 unit-num">{value}</div>
+      {sub && <div className="text-[11px] text-slate-500">{sub}</div>}
+    </div>
+  );
+}
+function FormStatusDonut({ filed, dueSoon, overdue, upcoming }: { filed: number; dueSoon: number; overdue: number; upcoming: number }) {
+  const slices = [
+    { label: "Filed", value: filed, color: "#16A34A" },
+    { label: "Due soon", value: dueSoon, color: "#F59E0B" },
+    { label: "Overdue", value: overdue, color: "#DC2626" },
+    { label: "Upcoming", value: upcoming, color: "#94A3B8" },
+  ].filter(s => s.value > 0);
+  const total = slices.reduce((s, x) => s + x.value, 0) || 1;
+  const R = 60; const C = 2 * Math.PI * R; let acc = 0;
+  return (
+    <div className="flex items-center gap-5">
+      <div className="relative h-[170px] w-[170px]">
+        <svg viewBox="0 0 180 180" className="h-full w-full -rotate-90">
+          <circle cx="90" cy="90" r={R} fill="none" stroke="#F1F5F9" strokeWidth="20" />
+          {slices.map((s, i) => {
+            const len = (s.value / total) * C; const offset = -acc; acc += len;
+            return <circle key={i} cx="90" cy="90" r={R} fill="none" stroke={s.color} strokeWidth="20" strokeDasharray={`${len} ${C - len}`} strokeDashoffset={offset} />;
+          })}
+        </svg>
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <div className="text-2xl font-bold text-slate-900">{total}</div>
+          <div className="text-[10px] uppercase tracking-wider text-slate-400">Forms</div>
+        </div>
+      </div>
+      <div className="space-y-1 text-xs">
+        {slices.map(s => (
+          <div key={s.label} className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full" style={{ background: s.color }} />
+            <span className="text-slate-700">{s.label}</span>
+            <span className="ml-2 tabular-nums text-slate-500">{s.value}</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

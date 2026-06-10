@@ -131,20 +131,23 @@ function ReportsPage() {
   ];
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-300">
-      <header>
-        <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
-          <PieChart className="h-7 w-7 text-primary" />
-          Reports
-        </h1>
-        <p className="text-muted-foreground mt-1">Everything you need to understand your payroll at a glance.</p>
-      </header>
+    <div className="space-y-6 unit-scope">
+      <section className="unit-in flex flex-wrap items-end justify-between gap-3 border-b unit-hairline pb-5">
+        <div>
+          <h1 className="font-display text-3xl font-bold tracking-tight text-slate-900 sm:text-[40px]">Reports</h1>
+          <p className="mt-1 text-sm text-slate-500">Understand your business with clear data.</p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" className="gap-1.5"><Calendar className="h-4 w-4" />Schedule report</Button>
+          <Button className="gap-1.5"><PieChart className="h-4 w-4" />Custom report</Button>
+        </div>
+      </section>
 
-      {/* Year-to-date overview */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <KpiTile icon={DollarSign} label="Gross paid" value={fmtUSD(ytd.gross)} />
+      {/* Stats row */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 unit-in">
+        <KpiTile icon={DollarSign} label="Gross paid YTD" value={fmtUSD(ytd.gross)} />
         <KpiTile icon={TrendingUp} label="Taxes withheld" value={fmtUSD(ytd.tax)} />
-        <KpiTile icon={Users} label="Net to employees" value={fmtUSD(ytd.net)} highlight />
+        <KpiTile icon={Users} label="Net to team" value={fmtUSD(ytd.net)} highlight />
         <KpiTile icon={Users} label="Active employees" value={String(empCount)} />
       </div>
 
@@ -311,11 +314,11 @@ function ReportsPage() {
 
 function KpiTile({ icon: Icon, label, value, highlight }: { icon: any; label: string; value: string; highlight?: boolean }) {
   return (
-    <div className={`surface-glass rounded-xl p-4 ${highlight ? "ring-1 ring-primary/30" : ""}`}>
-      <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-muted-foreground">
+    <div className={`rounded-xl border unit-hairline bg-white p-4 shadow-soft ${highlight ? "ring-1 ring-primary/30" : ""}`}>
+      <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-slate-400">
         <Icon className="h-3.5 w-3.5" /> {label}
       </div>
-      <div className={`text-2xl font-bold mt-1 tabular-nums ${highlight ? "text-primary" : ""}`}>{value}</div>
+      <div className={`text-2xl font-bold mt-2 tabular-nums text-slate-900 unit-num ${highlight ? "text-primary" : ""}`}>{value}</div>
     </div>
   );
 }
