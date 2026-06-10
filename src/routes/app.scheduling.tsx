@@ -313,6 +313,14 @@ function NewShiftDialog({ open, onClose, companyId, employees, locations, preset
           <div><Label>End</Label><Input type="time" value={form.end} onChange={(e) => setForm({ ...form, end: e.target.value })} /></div>
           <div><Label>Role</Label><Input value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} placeholder="Server, Cashier…" /></div>
           <div><Label>Location</Label><Input value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} placeholder="Main store" /></div>
+          {locations.length > 0 && (
+            <div className="col-span-2"><Label>Geofenced worksite (optional)</Label>
+              <Select value={form.work_location_id} onValueChange={(v) => setForm({ ...form, work_location_id: v })}>
+                <SelectTrigger><SelectValue placeholder="None" /></SelectTrigger>
+                <SelectContent>{locations.map((l) => <SelectItem key={l.id} value={l.id}>{l.name}</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
+          )}
         </div>
         <DialogFooter><Button variant="outline" onClick={onClose}>Cancel</Button><Button onClick={submit} disabled={busy}>Create</Button></DialogFooter>
       </DialogContent>
