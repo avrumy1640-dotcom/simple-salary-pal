@@ -146,7 +146,7 @@ export function AppShell() {
             <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl gradient-brand font-bold text-primary-foreground shadow-glow">P</div>
             {!collapsed && (
               <div className="flex flex-col min-w-0">
-                <span className="font-display text-lg font-bold leading-tight tracking-tight text-white">Paylo</span>
+                <span className="font-display text-lg font-bold leading-tight tracking-tight text-slate-900">Paylo</span>
                 <span className="truncate text-xs font-medium leading-tight text-slate-500">{companyName}</span>
               </div>
             )}
