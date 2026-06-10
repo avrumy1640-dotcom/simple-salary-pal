@@ -329,6 +329,11 @@ function TimePage() {
           )}
         </TabsContent>
 
+        {/* APPROVALS TAB */}
+        <TabsContent value="approvals" className="space-y-4 mt-6">
+          <TimesheetApprovals />
+        </TabsContent>
+
         {/* PTO TAB */}
         <TabsContent value="pto" className="space-y-4 mt-6">
           <div className="surface-glass rounded-xl p-5">
