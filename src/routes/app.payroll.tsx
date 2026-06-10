@@ -528,6 +528,14 @@ function StepApprove({ calc, totals, periodStart, periodEnd, payDate, submitting
         <Info className="mt-0.5 h-4 w-4 shrink-0" />
         Once approved, this becomes a sealed payroll record. You can view it any time in Pay history.
       </div>
+      <div className="mt-3 flex items-start gap-2 rounded-2xl border border-amber-500/40 bg-amber-500/10 p-3 text-xs text-amber-200">
+        <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+        <span>
+          <strong>Non-certified calc engine:</strong> tax withholding uses built-in bracket math, not a licensed
+          tax engine. Approval seals the run for audit, but do not use these numbers for real money movement or
+          government filings until a certified provider (Symmetry, Check, Gusto) is connected.
+        </span>
+      </div>
 
       <div className="mt-6 space-y-3">
         <Button
