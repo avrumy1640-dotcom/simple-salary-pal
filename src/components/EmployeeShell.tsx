@@ -2,7 +2,7 @@ import { Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-route
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  Home, Wallet, CalendarDays, User, HeartHandshake, LogOut, ChevronDown,
+  Home, Wallet, CalendarDays, User, HeartHandshake, LogOut, ChevronDown, HelpCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { EmployeeNotificationBanner } from "@/components/EmployeeNotificationBanner";
@@ -130,6 +130,13 @@ export function EmployeeShell() {
                   className="flex items-center gap-2 px-4 py-2.5 text-sm text-slate-700 hover:bg-surface"
                 >
                   <User className="h-4 w-4" /> Profile
+                </Link>
+                <Link
+                  to="/help/access-denied"
+                  onClick={() => setMenuOpen(false)}
+                  className="flex items-center gap-2 px-4 py-2.5 text-sm text-slate-700 hover:bg-surface"
+                >
+                  <HelpCircle className="h-4 w-4" /> Access help
                 </Link>
                 <button
                   onClick={signOut}
