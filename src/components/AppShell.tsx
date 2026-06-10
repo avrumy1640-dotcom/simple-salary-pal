@@ -32,6 +32,7 @@ const nav: NavItem[] = [
   { to: "/app/tax-filing", label: "Tax filing", icon: FileText, roles: PAYROLL_ROLES },
   { to: "/app/documents", label: "Documents", icon: FolderOpen, roles: HR_ROLES },
   { to: "/app/announcements", label: "Announcements", icon: Megaphone, roles: HR_ROLES },
+  { to: "/app/notifications", label: "Notifications", icon: Bell, roles: [...MANAGER_ROLES] },
   { to: "/app/ai-assistant", label: "AI Assistant", icon: Sparkles, roles: ANY_ADMIN },
   { to: "/app/integrations", label: "Integrations", icon: Plug, roles: ADMIN_ROLES },
   { to: "/app/users", label: "Users & roles", icon: Users, roles: ADMIN_ROLES },
