@@ -108,7 +108,7 @@ function Page() {
         </Dialog>
       </div>
 
-      <div className="rounded-2xl border bg-card">
+      <div className="rounded-2xl border border-border bg-card shadow-soft">
         {items.length === 0 ? (
           <div className="p-6 text-sm text-muted-foreground">No requests yet.</div>
         ) : (
