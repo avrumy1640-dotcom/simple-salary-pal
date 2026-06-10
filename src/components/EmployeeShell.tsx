@@ -14,6 +14,8 @@ const nav = [
   { to: "/employee/pto", label: "Time off", icon: CalendarDays },
   { to: "/employee/schedule", label: "Schedule", icon: CalendarDays },
   { to: "/employee/time", label: "Time clock", icon: Clock },
+  { to: "/employee/punch", label: "Punch in/out", icon: MapPin },
+  { to: "/employee/notifications", label: "Notifications", icon: Bell },
   { to: "/employee/benefits", label: "Benefits", icon: HeartHandshake },
   { to: "/employee/documents", label: "Documents", icon: FolderOpen },
   { to: "/employee/profile", label: "My profile", icon: UserCircle2 },
