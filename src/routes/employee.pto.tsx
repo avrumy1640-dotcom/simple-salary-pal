@@ -66,11 +66,11 @@ function Page() {
   if (!employee) return <p className="text-sm text-muted-foreground">No employee record found.</p>;
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-end justify-between gap-4">
+    <div className="space-y-8 unit-in">
+      <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold">Time off</h1>
-          <p className="text-sm text-muted-foreground">
+          <h1 className="font-display text-[32px] sm:text-[40px] font-extrabold tracking-tight text-slate-900">Time off</h1>
+          <p className="mt-2 text-base text-slate-600">
             You have {Number(balance?.balance_hours ?? employee.pto_balance_hours ?? 0).toFixed(1)}h available
             {balance && <> · accrued {Number(balance.lifetime_accrued).toFixed(1)}h · used {Number(balance.lifetime_used).toFixed(1)}h</>}.
           </p>
