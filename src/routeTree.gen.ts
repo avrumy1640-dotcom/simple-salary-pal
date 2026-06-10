@@ -60,6 +60,7 @@ import { Route as AppAuditRouteImport } from './routes/app.audit'
 import { Route as AppAnnouncementsRouteImport } from './routes/app.announcements'
 import { Route as AppAnalyticsRouteImport } from './routes/app.analytics'
 import { Route as AppAiAssistantRouteImport } from './routes/app.ai-assistant'
+import { Route as AppEmployeesIdRouteImport } from './routes/app.employees.$id'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -316,6 +317,11 @@ const AppAiAssistantRoute = AppAiAssistantRouteImport.update({
   path: '/ai-assistant',
   getParentRoute: () => AppRoute,
 } as any)
+const AppEmployeesIdRoute = AppEmployeesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AppEmployeesRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -336,7 +342,7 @@ export interface FileRoutesByFullPath {
   '/app/contractors': typeof AppContractorsRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/documents': typeof AppDocumentsRoute
-  '/app/employees': typeof AppEmployeesRoute
+  '/app/employees': typeof AppEmployeesRouteWithChildren
   '/app/form-1099': typeof AppForm1099Route
   '/app/getting-started': typeof AppGettingStartedRoute
   '/app/integrations': typeof AppIntegrationsRoute
@@ -369,6 +375,7 @@ export interface FileRoutesByFullPath {
   '/employee/punch': typeof EmployeePunchRoute
   '/employee/schedule': typeof EmployeeScheduleRoute
   '/employee/time': typeof EmployeeTimeRoute
+  '/app/employees/$id': typeof AppEmployeesIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -389,7 +396,7 @@ export interface FileRoutesByTo {
   '/app/contractors': typeof AppContractorsRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/documents': typeof AppDocumentsRoute
-  '/app/employees': typeof AppEmployeesRoute
+  '/app/employees': typeof AppEmployeesRouteWithChildren
   '/app/form-1099': typeof AppForm1099Route
   '/app/getting-started': typeof AppGettingStartedRoute
   '/app/integrations': typeof AppIntegrationsRoute
@@ -422,6 +429,7 @@ export interface FileRoutesByTo {
   '/employee/punch': typeof EmployeePunchRoute
   '/employee/schedule': typeof EmployeeScheduleRoute
   '/employee/time': typeof EmployeeTimeRoute
+  '/app/employees/$id': typeof AppEmployeesIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -443,7 +451,7 @@ export interface FileRoutesById {
   '/app/contractors': typeof AppContractorsRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/documents': typeof AppDocumentsRoute
-  '/app/employees': typeof AppEmployeesRoute
+  '/app/employees': typeof AppEmployeesRouteWithChildren
   '/app/form-1099': typeof AppForm1099Route
   '/app/getting-started': typeof AppGettingStartedRoute
   '/app/integrations': typeof AppIntegrationsRoute
@@ -476,6 +484,7 @@ export interface FileRoutesById {
   '/employee/punch': typeof EmployeePunchRoute
   '/employee/schedule': typeof EmployeeScheduleRoute
   '/employee/time': typeof EmployeeTimeRoute
+  '/app/employees/$id': typeof AppEmployeesIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -531,6 +540,7 @@ export interface FileRouteTypes {
     | '/employee/punch'
     | '/employee/schedule'
     | '/employee/time'
+    | '/app/employees/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -584,6 +594,7 @@ export interface FileRouteTypes {
     | '/employee/punch'
     | '/employee/schedule'
     | '/employee/time'
+    | '/app/employees/$id'
   id:
     | '__root__'
     | '/'
@@ -637,6 +648,7 @@ export interface FileRouteTypes {
     | '/employee/punch'
     | '/employee/schedule'
     | '/employee/time'
+    | '/app/employees/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -1009,8 +1021,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAiAssistantRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/employees/$id': {
+      id: '/app/employees/$id'
+      path: '/$id'
+      fullPath: '/app/employees/$id'
+      preLoaderRoute: typeof AppEmployeesIdRouteImport
+      parentRoute: typeof AppEmployeesRoute
+    }
   }
 }
+
+interface AppEmployeesRouteChildren {
+  AppEmployeesIdRoute: typeof AppEmployeesIdRoute
+}
+
+const AppEmployeesRouteChildren: AppEmployeesRouteChildren = {
+  AppEmployeesIdRoute: AppEmployeesIdRoute,
+}
+
+const AppEmployeesRouteWithChildren = AppEmployeesRoute._addFileChildren(
+  AppEmployeesRouteChildren,
+)
 
 interface AppRouteChildren {
   AppAiAssistantRoute: typeof AppAiAssistantRoute
@@ -1023,7 +1054,7 @@ interface AppRouteChildren {
   AppContractorsRoute: typeof AppContractorsRoute
   AppDashboardRoute: typeof AppDashboardRoute
   AppDocumentsRoute: typeof AppDocumentsRoute
-  AppEmployeesRoute: typeof AppEmployeesRoute
+  AppEmployeesRoute: typeof AppEmployeesRouteWithChildren
   AppForm1099Route: typeof AppForm1099Route
   AppGettingStartedRoute: typeof AppGettingStartedRoute
   AppIntegrationsRoute: typeof AppIntegrationsRoute
@@ -1059,7 +1090,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppContractorsRoute: AppContractorsRoute,
   AppDashboardRoute: AppDashboardRoute,
   AppDocumentsRoute: AppDocumentsRoute,
-  AppEmployeesRoute: AppEmployeesRoute,
+  AppEmployeesRoute: AppEmployeesRouteWithChildren,
   AppForm1099Route: AppForm1099Route,
   AppGettingStartedRoute: AppGettingStartedRoute,
   AppIntegrationsRoute: AppIntegrationsRoute,
