@@ -45,17 +45,19 @@ function EmployeeNotifications() {
   const unread = items.filter(i => !i.read_at).length;
 
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title="Notifications"
-        description="Your inbox of schedule updates and approvals."
-        actions={unread > 0 ? (
+    <div className="space-y-8 unit-in">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 className="font-display text-[32px] sm:text-[40px] font-extrabold tracking-tight text-slate-900">Notifications</h1>
+          <p className="mt-2 text-base text-slate-600">Your inbox of schedule updates and approvals.{unread > 0 && <> · <span className="font-semibold text-slate-900">{unread} unread</span></>}</p>
+        </div>
+        {unread > 0 && (
           <Button size="sm" variant="outline" onClick={markAll}>
             <CheckCheck className="mr-1 h-4 w-4" /> Mark all read
           </Button>
-        ) : null}
-      />
-      <div className="rounded-xl border border-border bg-card">
+        )}
+      </div>
+      <div className="rounded-2xl border border-border bg-card shadow-soft">
         {loading ? (
           <div className="p-8 text-center text-sm text-slate-500">Loading…</div>
         ) : items.length === 0 ? (
