@@ -190,6 +190,7 @@ function DocumentsPage() {
       if (upErr) throw upErr;
       const { error: hErr } = await supabase.from("hr_document_signatures").insert({
         document_id: signOpen.id, user_id: user.id, status: "signed",
+        company_id: currentId!,
         signed_by_name: signForm.name.trim(), signed_by_email: signForm.email.trim() || null,
         signed_by_user_id: user.id,
         signature_ip: ip,
