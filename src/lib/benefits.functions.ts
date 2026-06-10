@@ -30,7 +30,7 @@ export const electBenefit = createServerFn({ method: "POST" })
     let isAdmin = false;
     if (!isSelf) {
       for (const r of ["owner","admin","hr_admin","benefits_admin"]) {
-        const { data: ok } = await supabase.rpc("has_role", { _user_id: userId, _company_id: data.company_id, _role: r });
+        const { data: ok } = await supabase.rpc("has_role", { _user_id: userId, _company_id: data.company_id, _role: r as any });
         if (ok) { isAdmin = true; break; }
       }
       if (!isAdmin) throw new Error("forbidden");
@@ -107,7 +107,7 @@ export const approveEnrollment = createServerFn({ method: "POST" })
     if (!e) throw new Error("not found");
     let ok = false;
     for (const r of ["owner","admin","hr_admin","benefits_admin"]) {
-      const { data: has } = await supabase.rpc("has_role", { _user_id: userId, _company_id: e.company_id, _role: r });
+      const { data: has } = await supabase.rpc("has_role", { _user_id: userId, _company_id: e.company_id, _role: r as any });
       if (has) { ok = true; break; }
     }
     if (!ok) throw new Error("forbidden");
@@ -132,7 +132,7 @@ export const terminateEnrollment = createServerFn({ method: "POST" })
     if (!e) throw new Error("not found");
     let ok = false;
     for (const r of ["owner","admin","hr_admin","benefits_admin"]) {
-      const { data: has } = await supabase.rpc("has_role", { _user_id: userId, _company_id: e.company_id, _role: r });
+      const { data: has } = await supabase.rpc("has_role", { _user_id: userId, _company_id: e.company_id, _role: r as any });
       if (has) { ok = true; break; }
     }
     if (!ok) throw new Error("forbidden");

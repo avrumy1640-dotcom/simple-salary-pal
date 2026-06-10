@@ -3,7 +3,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 async function assertRole(supabase: any, userId: string, companyId: string, roles: string[]) {
   for (const r of roles) {
-    const { data } = await supabase.rpc("has_role", { _user_id: userId, _company_id: companyId, _role: r });
+    const { data } = await supabase.rpc("has_role", { _user_id: userId, _company_id: companyId, _role: r as any });
     if (data === true) return;
   }
   throw new Error("forbidden");
