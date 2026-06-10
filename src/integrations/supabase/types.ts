@@ -319,6 +319,162 @@ export type Database = {
           },
         ]
       }
+      benefit_enrollments: {
+        Row: {
+          beneficiary_name: string | null
+          company_id: string
+          coverage_tier: Database["public"]["Enums"]["benefit_coverage_tier"]
+          created_at: string
+          dependent_count: number
+          effective_date: string
+          employee_id: string
+          employee_monthly_cost: number
+          employer_monthly_cost: number
+          end_date: string | null
+          id: string
+          notes: string | null
+          plan_id: string
+          status: Database["public"]["Enums"]["benefit_enrollment_status"]
+          updated_at: string
+        }
+        Insert: {
+          beneficiary_name?: string | null
+          company_id: string
+          coverage_tier?: Database["public"]["Enums"]["benefit_coverage_tier"]
+          created_at?: string
+          dependent_count?: number
+          effective_date?: string
+          employee_id: string
+          employee_monthly_cost?: number
+          employer_monthly_cost?: number
+          end_date?: string | null
+          id?: string
+          notes?: string | null
+          plan_id: string
+          status?: Database["public"]["Enums"]["benefit_enrollment_status"]
+          updated_at?: string
+        }
+        Update: {
+          beneficiary_name?: string | null
+          company_id?: string
+          coverage_tier?: Database["public"]["Enums"]["benefit_coverage_tier"]
+          created_at?: string
+          dependent_count?: number
+          effective_date?: string
+          employee_id?: string
+          employee_monthly_cost?: number
+          employer_monthly_cost?: number
+          end_date?: string | null
+          id?: string
+          notes?: string | null
+          plan_id?: string
+          status?: Database["public"]["Enums"]["benefit_enrollment_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "benefit_enrollments_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "benefit_enrollments_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "benefit_enrollments_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "benefit_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      benefit_plans: {
+        Row: {
+          carrier: string | null
+          company_id: string
+          created_at: string
+          deductible: number | null
+          description: string | null
+          effective_from: string | null
+          effective_to: string | null
+          employer_contribution_flat: number
+          employer_contribution_pct: number
+          id: string
+          is_active: boolean
+          metadata: Json
+          monthly_premium_employee: number
+          monthly_premium_employee_children: number
+          monthly_premium_employee_spouse: number
+          monthly_premium_family: number
+          name: string
+          network: string | null
+          out_of_pocket_max: number | null
+          plan_type: Database["public"]["Enums"]["benefit_plan_type"]
+          updated_at: string
+        }
+        Insert: {
+          carrier?: string | null
+          company_id: string
+          created_at?: string
+          deductible?: number | null
+          description?: string | null
+          effective_from?: string | null
+          effective_to?: string | null
+          employer_contribution_flat?: number
+          employer_contribution_pct?: number
+          id?: string
+          is_active?: boolean
+          metadata?: Json
+          monthly_premium_employee?: number
+          monthly_premium_employee_children?: number
+          monthly_premium_employee_spouse?: number
+          monthly_premium_family?: number
+          name: string
+          network?: string | null
+          out_of_pocket_max?: number | null
+          plan_type: Database["public"]["Enums"]["benefit_plan_type"]
+          updated_at?: string
+        }
+        Update: {
+          carrier?: string | null
+          company_id?: string
+          created_at?: string
+          deductible?: number | null
+          description?: string | null
+          effective_from?: string | null
+          effective_to?: string | null
+          employer_contribution_flat?: number
+          employer_contribution_pct?: number
+          id?: string
+          is_active?: boolean
+          metadata?: Json
+          monthly_premium_employee?: number
+          monthly_premium_employee_children?: number
+          monthly_premium_employee_spouse?: number
+          monthly_premium_family?: number
+          name?: string
+          network?: string | null
+          out_of_pocket_max?: number | null
+          plan_type?: Database["public"]["Enums"]["benefit_plan_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "benefit_plans_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       candidate_notes: {
         Row: {
           author_id: string
@@ -1941,6 +2097,50 @@ export type Database = {
           },
         ]
       }
+      open_enrollment_windows: {
+        Row: {
+          company_id: string
+          coverage_effective_date: string
+          created_at: string
+          ends_at: string
+          id: string
+          is_active: boolean
+          name: string
+          starts_at: string
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          coverage_effective_date: string
+          created_at?: string
+          ends_at: string
+          id?: string
+          is_active?: boolean
+          name: string
+          starts_at: string
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          coverage_effective_date?: string
+          created_at?: string
+          ends_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          starts_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "open_enrollment_windows_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pay_periods: {
         Row: {
           company_id: string
@@ -3148,6 +3348,24 @@ export type Database = {
         | "correct"
         | "login"
         | "export"
+      benefit_coverage_tier:
+        | "employee"
+        | "employee_spouse"
+        | "employee_children"
+        | "family"
+      benefit_enrollment_status: "pending" | "active" | "waived" | "terminated"
+      benefit_plan_type:
+        | "medical"
+        | "dental"
+        | "vision"
+        | "life"
+        | "disability"
+        | "retirement_401k"
+        | "hsa"
+        | "fsa"
+        | "commuter"
+        | "wellness"
+        | "other"
       candidate_stage:
         | "applied"
         | "screening"
@@ -3368,6 +3586,26 @@ export const Constants = {
         "correct",
         "login",
         "export",
+      ],
+      benefit_coverage_tier: [
+        "employee",
+        "employee_spouse",
+        "employee_children",
+        "family",
+      ],
+      benefit_enrollment_status: ["pending", "active", "waived", "terminated"],
+      benefit_plan_type: [
+        "medical",
+        "dental",
+        "vision",
+        "life",
+        "disability",
+        "retirement_401k",
+        "hsa",
+        "fsa",
+        "commuter",
+        "wellness",
+        "other",
       ],
       candidate_stage: [
         "applied",
