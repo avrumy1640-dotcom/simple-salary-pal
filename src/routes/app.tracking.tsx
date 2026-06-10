@@ -42,6 +42,17 @@ function getPosition(): Promise<GeolocationPosition> {
   });
 }
 
+const OFFLINE_KEY = "paylo_offline_punches";
+type OfflinePunch = { employee_id: string; punch_type: "in" | "out"; latitude: number; longitude: number; accuracy_m: number; punched_at: string };
+
+function loadOffline(): OfflinePunch[] {
+  if (typeof window === "undefined") return [];
+  try { return JSON.parse(localStorage.getItem(OFFLINE_KEY) || "[]"); } catch { return []; }
+}
+function saveOffline(arr: OfflinePunch[]) {
+  localStorage.setItem(OFFLINE_KEY, JSON.stringify(arr));
+}
+
 function TrackingPage() {
   const [tab, setTab] = useState("clock");
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -50,6 +61,8 @@ function TrackingPage() {
   const [visits, setVisits] = useState<Visit[]>([]);
   const [selectedEmp, setSelectedEmp] = useState<string>("");
   const [busy, setBusy] = useState(false);
+  const [online, setOnline] = useState(typeof navigator !== "undefined" ? navigator.onLine : true);
+  const [queued, setQueued] = useState<OfflinePunch[]>(loadOffline());
 
   async function refresh() {
     const [{ data: e }, { data: c }, { data: p }, { data: v }] = await Promise.all([
@@ -65,27 +78,69 @@ function TrackingPage() {
   }
   useEffect(() => { refresh(); }, []);
 
+  async function flushQueue() {
+    const q = loadOffline();
+    if (q.length === 0) return;
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const rows = q.map((p) => ({ ...p, user_id: user.id, inside_geofence: true }));
+    const { error } = await supabase.from("time_clock_punches").insert(rows);
+    if (!error) {
+      saveOffline([]);
+      setQueued([]);
+      toast.success(`Synced ${rows.length} offline punch${rows.length === 1 ? "" : "es"}`);
+      refresh();
+    }
+  }
+
+  useEffect(() => {
+    const onOnline = () => { setOnline(true); flushQueue(); };
+    const onOffline = () => setOnline(false);
+    window.addEventListener("online", onOnline);
+    window.addEventListener("offline", onOffline);
+    if (navigator.onLine && loadOffline().length > 0) flushQueue();
+    return () => { window.removeEventListener("online", onOnline); window.removeEventListener("offline", onOffline); };
+  }, []);
+
   async function punch(type: "in" | "out") {
     if (!selectedEmp) { toast.error("Select an employee"); return; }
     setBusy(true);
     try {
       const pos = await getPosition();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) { toast.error("Sign in again"); return; }
-      const { error } = await supabase.from("time_clock_punches").insert({
-        user_id: user.id,
+      const record: OfflinePunch = {
         employee_id: selectedEmp,
         punch_type: type,
         latitude: pos.coords.latitude,
         longitude: pos.coords.longitude,
         accuracy_m: pos.coords.accuracy,
+        punched_at: new Date().toISOString(),
+      };
+      if (!navigator.onLine) {
+        const next = [...loadOffline(), record];
+        saveOffline(next);
+        setQueued(next);
+        toast.success(`Saved offline — will sync when online (${next.length} queued)`);
+        return;
+      }
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { toast.error("Sign in again"); return; }
+      const { error } = await supabase.from("time_clock_punches").insert({
+        user_id: user.id,
+        ...record,
         inside_geofence: true,
       });
-      if (error) throw error;
+      if (error) {
+        const next = [...loadOffline(), record];
+        saveOffline(next);
+        setQueued(next);
+        toast.warning(`Network issue — queued offline (${next.length})`);
+        return;
+      }
       toast.success(`Clocked ${type} — GPS ${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`);
       refresh();
     } catch (e: any) { toast.error(e.message); } finally { setBusy(false); }
   }
+
 
   async function geocodeAll() {
     setBusy(true);
