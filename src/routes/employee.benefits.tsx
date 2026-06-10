@@ -98,16 +98,16 @@ function Page() {
   const enrolledPlanIds = new Set(items.filter(i => i.status === "active" || i.status === "pending").map(i => (i as any).benefit_plans?.name));
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 unit-in">
       <div>
-        <h1 className="text-2xl font-semibold">My benefits</h1>
-        <p className="text-sm text-muted-foreground">
+        <h1 className="font-display text-[32px] sm:text-[40px] font-extrabold tracking-tight text-slate-900">My benefits</h1>
+        <p className="mt-2 text-base text-slate-600">
           {windowOpen ? "Open enrollment is active — you can elect coverage." : "Open enrollment is closed. Contact HR for qualifying-life-event changes."}
         </p>
       </div>
 
-      <div className="rounded-2xl border bg-card">
-        <div className="flex items-center gap-2 border-b px-5 py-3 text-sm font-medium">
+      <div className="rounded-2xl border border-border bg-card shadow-soft">
+        <div className="flex items-center gap-2 border-b border-border px-5 py-3 text-sm font-semibold text-slate-700">
           <HeartHandshake className="h-4 w-4" /> {items.length} enrollment{items.length === 1 ? "" : "s"}
         </div>
         {items.length === 0 ? (
@@ -135,8 +135,8 @@ function Page() {
       </div>
 
       {windowOpen && (
-        <div className="rounded-2xl border bg-card">
-          <div className="border-b px-5 py-3 text-sm font-medium">Available plans</div>
+        <div className="rounded-2xl border border-border bg-card shadow-soft">
+          <div className="border-b border-border px-5 py-3 text-sm font-semibold text-slate-700">Available plans</div>
           {plans.length === 0 ? (
             <div className="p-6 text-sm text-muted-foreground">No active plans configured.</div>
           ) : (

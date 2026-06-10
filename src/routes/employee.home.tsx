@@ -14,7 +14,7 @@ function fmt(n: number) { return n.toLocaleString("en-US", { style: "currency", 
 
 function Tile({ icon: Icon, label, value }: { icon: any; label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-border bg-card p-6">
+    <div className="rounded-2xl border border-border bg-card p-6 shadow-soft">
       <div className="flex items-center gap-3">
         <div className="grid h-10 w-10 place-items-center rounded-xl bg-primary/15 text-slate-900">
           <Icon className="h-5 w-5" />
@@ -87,11 +87,11 @@ function EmployeeHome() {
     : "Not scheduled";
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 unit-in">
       {/* Header */}
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
+          <h1 className="font-display text-[32px] sm:text-[40px] font-extrabold tracking-tight text-slate-900">
             Hi {first}
           </h1>
           <p className="mt-2 text-base text-slate-600">Here's everything you need today.</p>
