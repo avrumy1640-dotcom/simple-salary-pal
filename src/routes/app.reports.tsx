@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useServerFn } from "@tanstack/react-start";
 import { exportW2Summary, export1099Summary, exportGlForRun, exportAuditLog, exportPayrollRegister } from "@/lib/reports.functions";
+import { getAttendanceReport } from "@/lib/attendance.functions";
 import { useCompany } from "@/hooks/useCompany";
 import { toast } from "sonner";
 import {
