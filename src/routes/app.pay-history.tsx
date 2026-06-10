@@ -126,7 +126,8 @@ function PayHistoryPage() {
   }
 
   async function downloadRun(r: Run) {
-    const { data } = await supabase.from("payroll_items").select("*").eq("run_id", r.id).order("employee_name");
+    if (!currentId) return;
+    const { data } = await supabase.from("payroll_items").select("*").eq("company_id", currentId).eq("run_id", r.id).order("employee_name");
     const items = (data ?? []) as Item[];
     const rows = [
       ["Employee", "Reg hrs", "OT hrs", "Gross", "Federal", "SS", "Medicare", "State", "Net"],
