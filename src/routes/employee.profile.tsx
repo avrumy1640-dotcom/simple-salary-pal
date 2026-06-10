@@ -42,24 +42,26 @@ function Page() {
   if (!employee) return <p className="text-sm text-muted-foreground">No employee record found.</p>;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 unit-in">
       <div>
-        <h1 className="text-2xl font-semibold">My profile</h1>
-        <p className="text-sm text-muted-foreground">Keep your contact details up to date.</p>
+        <h1 className="font-display text-[32px] sm:text-[40px] font-extrabold tracking-tight text-slate-900">My profile</h1>
+        <p className="mt-2 text-base text-slate-600">Keep your contact details up to date.</p>
       </div>
 
-      <div className="rounded-2xl border bg-card p-6 space-y-5">
-        <div>
-          <div className="text-xs uppercase tracking-wider text-muted-foreground">Name</div>
-          <div className="font-medium">{employee.full_name}</div>
-        </div>
-        <div>
-          <div className="text-xs uppercase tracking-wider text-muted-foreground">Email</div>
-          <div className="font-medium">{employee.email ?? "—"}</div>
-        </div>
-        <div>
-          <div className="text-xs uppercase tracking-wider text-muted-foreground">Role</div>
-          <div className="font-medium">{employee.job_title ?? "—"}</div>
+      <div className="rounded-2xl border border-border bg-card p-6 shadow-soft space-y-5">
+        <div className="grid gap-4 sm:grid-cols-3">
+          <div>
+            <div className="text-xs uppercase tracking-wider text-slate-500">Name</div>
+            <div className="mt-1 font-semibold text-slate-900">{employee.full_name}</div>
+          </div>
+          <div>
+            <div className="text-xs uppercase tracking-wider text-slate-500">Email</div>
+            <div className="mt-1 font-semibold text-slate-900">{employee.email ?? "—"}</div>
+          </div>
+          <div>
+            <div className="text-xs uppercase tracking-wider text-slate-500">Role</div>
+            <div className="mt-1 font-semibold text-slate-900">{employee.job_title ?? "—"}</div>
+          </div>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
@@ -74,9 +76,9 @@ function Page() {
         <Button onClick={save}>Save changes</Button>
       </div>
 
-      <div className="rounded-2xl border bg-card p-6">
-        <h2 className="font-semibold">Direct deposit</h2>
-        <p className="text-sm text-muted-foreground">
+      <div className="rounded-2xl border border-border bg-card p-6 shadow-soft">
+        <h2 className="font-display text-lg font-bold text-slate-900">Direct deposit</h2>
+        <p className="mt-1 text-sm text-slate-600">
           {employee.direct_deposit_enabled
             ? `Active — ${employee.bank_account_type ?? "account"} •••• ${employee.bank_account_last4 ?? "----"}`
             : "Not set up yet. Ask HR to enable direct deposit."}
