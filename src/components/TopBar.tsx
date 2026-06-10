@@ -186,6 +186,11 @@ export function TopBar({ companyName, userEmail }: { companyName: string; userEm
                   <Sparkles className="h-4 w-4 mr-2" /> Getting started
                 </Link>
               </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/employee/home" className="cursor-pointer">
+                  <User className="h-4 w-4 mr-2" /> View employee portal
+                </Link>
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={signOut} className="text-destructive cursor-pointer">
                 <LogOut className="h-4 w-4 mr-2" /> Sign out

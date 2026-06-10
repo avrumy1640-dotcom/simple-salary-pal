@@ -11,9 +11,18 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as EmployeeRouteImport } from './routes/employee'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as EmployeeTimeRouteImport } from './routes/employee.time'
+import { Route as EmployeePtoRouteImport } from './routes/employee.pto'
+import { Route as EmployeeProfileRouteImport } from './routes/employee.profile'
+import { Route as EmployeePaystubsRouteImport } from './routes/employee.paystubs'
+import { Route as EmployeeHomeRouteImport } from './routes/employee.home'
+import { Route as EmployeeDocumentsRouteImport } from './routes/employee.documents'
+import { Route as EmployeeBenefitsRouteImport } from './routes/employee.benefits'
+import { Route as AppUsersRouteImport } from './routes/app.users'
 import { Route as AppTrackingRouteImport } from './routes/app.tracking'
 import { Route as AppTimeRouteImport } from './routes/app.time'
 import { Route as AppTaxesRouteImport } from './routes/app.taxes'
@@ -55,6 +64,11 @@ const PricingRoute = PricingRouteImport.update({
   path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EmployeeRoute = EmployeeRouteImport.update({
+  id: '/employee',
+  path: '/employee',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -69,6 +83,46 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const EmployeeTimeRoute = EmployeeTimeRouteImport.update({
+  id: '/time',
+  path: '/time',
+  getParentRoute: () => EmployeeRoute,
+} as any)
+const EmployeePtoRoute = EmployeePtoRouteImport.update({
+  id: '/pto',
+  path: '/pto',
+  getParentRoute: () => EmployeeRoute,
+} as any)
+const EmployeeProfileRoute = EmployeeProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => EmployeeRoute,
+} as any)
+const EmployeePaystubsRoute = EmployeePaystubsRouteImport.update({
+  id: '/paystubs',
+  path: '/paystubs',
+  getParentRoute: () => EmployeeRoute,
+} as any)
+const EmployeeHomeRoute = EmployeeHomeRouteImport.update({
+  id: '/home',
+  path: '/home',
+  getParentRoute: () => EmployeeRoute,
+} as any)
+const EmployeeDocumentsRoute = EmployeeDocumentsRouteImport.update({
+  id: '/documents',
+  path: '/documents',
+  getParentRoute: () => EmployeeRoute,
+} as any)
+const EmployeeBenefitsRoute = EmployeeBenefitsRouteImport.update({
+  id: '/benefits',
+  path: '/benefits',
+  getParentRoute: () => EmployeeRoute,
+} as any)
+const AppUsersRoute = AppUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppTrackingRoute = AppTrackingRouteImport.update({
   id: '/tracking',
@@ -225,6 +279,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
+  '/employee': typeof EmployeeRouteWithChildren
   '/pricing': typeof PricingRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/app/ai-assistant': typeof AppAiAssistantRoute
@@ -257,11 +312,20 @@ export interface FileRoutesByFullPath {
   '/app/taxes': typeof AppTaxesRoute
   '/app/time': typeof AppTimeRoute
   '/app/tracking': typeof AppTrackingRoute
+  '/app/users': typeof AppUsersRoute
+  '/employee/benefits': typeof EmployeeBenefitsRoute
+  '/employee/documents': typeof EmployeeDocumentsRoute
+  '/employee/home': typeof EmployeeHomeRoute
+  '/employee/paystubs': typeof EmployeePaystubsRoute
+  '/employee/profile': typeof EmployeeProfileRoute
+  '/employee/pto': typeof EmployeePtoRoute
+  '/employee/time': typeof EmployeeTimeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
+  '/employee': typeof EmployeeRouteWithChildren
   '/pricing': typeof PricingRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/app/ai-assistant': typeof AppAiAssistantRoute
@@ -294,12 +358,21 @@ export interface FileRoutesByTo {
   '/app/taxes': typeof AppTaxesRoute
   '/app/time': typeof AppTimeRoute
   '/app/tracking': typeof AppTrackingRoute
+  '/app/users': typeof AppUsersRoute
+  '/employee/benefits': typeof EmployeeBenefitsRoute
+  '/employee/documents': typeof EmployeeDocumentsRoute
+  '/employee/home': typeof EmployeeHomeRoute
+  '/employee/paystubs': typeof EmployeePaystubsRoute
+  '/employee/profile': typeof EmployeeProfileRoute
+  '/employee/pto': typeof EmployeePtoRoute
+  '/employee/time': typeof EmployeeTimeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
+  '/employee': typeof EmployeeRouteWithChildren
   '/pricing': typeof PricingRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/app/ai-assistant': typeof AppAiAssistantRoute
@@ -332,6 +405,14 @@ export interface FileRoutesById {
   '/app/taxes': typeof AppTaxesRoute
   '/app/time': typeof AppTimeRoute
   '/app/tracking': typeof AppTrackingRoute
+  '/app/users': typeof AppUsersRoute
+  '/employee/benefits': typeof EmployeeBenefitsRoute
+  '/employee/documents': typeof EmployeeDocumentsRoute
+  '/employee/home': typeof EmployeeHomeRoute
+  '/employee/paystubs': typeof EmployeePaystubsRoute
+  '/employee/profile': typeof EmployeeProfileRoute
+  '/employee/pto': typeof EmployeePtoRoute
+  '/employee/time': typeof EmployeeTimeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -339,6 +420,7 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/auth'
+    | '/employee'
     | '/pricing'
     | '/sitemap.xml'
     | '/app/ai-assistant'
@@ -371,11 +453,20 @@ export interface FileRouteTypes {
     | '/app/taxes'
     | '/app/time'
     | '/app/tracking'
+    | '/app/users'
+    | '/employee/benefits'
+    | '/employee/documents'
+    | '/employee/home'
+    | '/employee/paystubs'
+    | '/employee/profile'
+    | '/employee/pto'
+    | '/employee/time'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/app'
     | '/auth'
+    | '/employee'
     | '/pricing'
     | '/sitemap.xml'
     | '/app/ai-assistant'
@@ -408,11 +499,20 @@ export interface FileRouteTypes {
     | '/app/taxes'
     | '/app/time'
     | '/app/tracking'
+    | '/app/users'
+    | '/employee/benefits'
+    | '/employee/documents'
+    | '/employee/home'
+    | '/employee/paystubs'
+    | '/employee/profile'
+    | '/employee/pto'
+    | '/employee/time'
   id:
     | '__root__'
     | '/'
     | '/app'
     | '/auth'
+    | '/employee'
     | '/pricing'
     | '/sitemap.xml'
     | '/app/ai-assistant'
@@ -445,12 +545,21 @@ export interface FileRouteTypes {
     | '/app/taxes'
     | '/app/time'
     | '/app/tracking'
+    | '/app/users'
+    | '/employee/benefits'
+    | '/employee/documents'
+    | '/employee/home'
+    | '/employee/paystubs'
+    | '/employee/profile'
+    | '/employee/pto'
+    | '/employee/time'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRoute
+  EmployeeRoute: typeof EmployeeRouteWithChildren
   PricingRoute: typeof PricingRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
 }
@@ -469,6 +578,13 @@ declare module '@tanstack/react-router' {
       path: '/pricing'
       fullPath: '/pricing'
       preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/employee': {
+      id: '/employee'
+      path: '/employee'
+      fullPath: '/employee'
+      preLoaderRoute: typeof EmployeeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -491,6 +607,62 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/employee/time': {
+      id: '/employee/time'
+      path: '/time'
+      fullPath: '/employee/time'
+      preLoaderRoute: typeof EmployeeTimeRouteImport
+      parentRoute: typeof EmployeeRoute
+    }
+    '/employee/pto': {
+      id: '/employee/pto'
+      path: '/pto'
+      fullPath: '/employee/pto'
+      preLoaderRoute: typeof EmployeePtoRouteImport
+      parentRoute: typeof EmployeeRoute
+    }
+    '/employee/profile': {
+      id: '/employee/profile'
+      path: '/profile'
+      fullPath: '/employee/profile'
+      preLoaderRoute: typeof EmployeeProfileRouteImport
+      parentRoute: typeof EmployeeRoute
+    }
+    '/employee/paystubs': {
+      id: '/employee/paystubs'
+      path: '/paystubs'
+      fullPath: '/employee/paystubs'
+      preLoaderRoute: typeof EmployeePaystubsRouteImport
+      parentRoute: typeof EmployeeRoute
+    }
+    '/employee/home': {
+      id: '/employee/home'
+      path: '/home'
+      fullPath: '/employee/home'
+      preLoaderRoute: typeof EmployeeHomeRouteImport
+      parentRoute: typeof EmployeeRoute
+    }
+    '/employee/documents': {
+      id: '/employee/documents'
+      path: '/documents'
+      fullPath: '/employee/documents'
+      preLoaderRoute: typeof EmployeeDocumentsRouteImport
+      parentRoute: typeof EmployeeRoute
+    }
+    '/employee/benefits': {
+      id: '/employee/benefits'
+      path: '/benefits'
+      fullPath: '/employee/benefits'
+      preLoaderRoute: typeof EmployeeBenefitsRouteImport
+      parentRoute: typeof EmployeeRoute
+    }
+    '/app/users': {
+      id: '/app/users'
+      path: '/users'
+      fullPath: '/app/users'
+      preLoaderRoute: typeof AppUsersRouteImport
+      parentRoute: typeof AppRoute
     }
     '/app/tracking': {
       id: '/app/tracking'
@@ -736,6 +908,7 @@ interface AppRouteChildren {
   AppTaxesRoute: typeof AppTaxesRoute
   AppTimeRoute: typeof AppTimeRoute
   AppTrackingRoute: typeof AppTrackingRoute
+  AppUsersRoute: typeof AppUsersRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
@@ -769,14 +942,40 @@ const AppRouteChildren: AppRouteChildren = {
   AppTaxesRoute: AppTaxesRoute,
   AppTimeRoute: AppTimeRoute,
   AppTrackingRoute: AppTrackingRoute,
+  AppUsersRoute: AppUsersRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
+interface EmployeeRouteChildren {
+  EmployeeBenefitsRoute: typeof EmployeeBenefitsRoute
+  EmployeeDocumentsRoute: typeof EmployeeDocumentsRoute
+  EmployeeHomeRoute: typeof EmployeeHomeRoute
+  EmployeePaystubsRoute: typeof EmployeePaystubsRoute
+  EmployeeProfileRoute: typeof EmployeeProfileRoute
+  EmployeePtoRoute: typeof EmployeePtoRoute
+  EmployeeTimeRoute: typeof EmployeeTimeRoute
+}
+
+const EmployeeRouteChildren: EmployeeRouteChildren = {
+  EmployeeBenefitsRoute: EmployeeBenefitsRoute,
+  EmployeeDocumentsRoute: EmployeeDocumentsRoute,
+  EmployeeHomeRoute: EmployeeHomeRoute,
+  EmployeePaystubsRoute: EmployeePaystubsRoute,
+  EmployeeProfileRoute: EmployeeProfileRoute,
+  EmployeePtoRoute: EmployeePtoRoute,
+  EmployeeTimeRoute: EmployeeTimeRoute,
+}
+
+const EmployeeRouteWithChildren = EmployeeRoute._addFileChildren(
+  EmployeeRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRoute,
+  EmployeeRoute: EmployeeRouteWithChildren,
   PricingRoute: PricingRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
 }

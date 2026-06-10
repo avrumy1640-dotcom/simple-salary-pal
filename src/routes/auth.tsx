@@ -33,10 +33,17 @@ function AuthPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/app/dashboard" });
+    supabase.auth.getSession().then(async ({ data }) => {
+      if (data.session) await routeByRole(data.session.user.id);
     });
   }, [navigate]);
+
+  async function routeByRole(uid: string) {
+    const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", uid).limit(1);
+    const r = (roles && roles[0]?.role) || "employee";
+    const admin = ["owner","admin","payroll_admin","hr_admin","recruiter","benefits_admin","accountant","auditor","manager","supervisor"].includes(r);
+    navigate({ to: admin ? "/app/dashboard" : "/employee/home" });
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -54,9 +61,9 @@ function AuthPage() {
         toast.success("Account created! You can sign in now.");
         setMode("signin");
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        navigate({ to: "/app/dashboard" });
+        if (data.user) await routeByRole(data.user.id);
       }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Something went wrong");
@@ -66,10 +73,11 @@ function AuthPage() {
   }
 
   async function handleGoogle() {
-    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: `${window.location.origin}/app/dashboard` });
+    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: `${window.location.origin}/auth` });
     if (result.error) { toast.error("Google sign-in failed"); return; }
     if (result.redirected) return;
-    navigate({ to: "/app/dashboard" });
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) await routeByRole(user.id);
   }
 
   return (
