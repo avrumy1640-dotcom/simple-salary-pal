@@ -314,6 +314,13 @@ export type Database = {
             foreignKeyName: "bank_connections_employee_id_fkey"
             columns: ["employee_id"]
             isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "bank_connections_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
             referencedRelation: "employees"
             referencedColumns: ["id"]
           },
@@ -378,6 +385,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "companies"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "benefit_enrollments_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
           },
           {
             foreignKeyName: "benefit_enrollments_employee_id_fkey"
@@ -849,6 +863,13 @@ export type Database = {
             foreignKeyName: "compliance_alerts_employee_id_fkey"
             columns: ["employee_id"]
             isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "compliance_alerts_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
             referencedRelation: "employees"
             referencedColumns: ["id"]
           },
@@ -901,6 +922,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "companies"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "compliance_records_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
           },
           {
             foreignKeyName: "compliance_records_employee_id_fkey"
@@ -1121,6 +1149,13 @@ export type Database = {
             foreignKeyName: "deductions_employee_id_fkey"
             columns: ["employee_id"]
             isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "deductions_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
             referencedRelation: "employees"
             referencedColumns: ["id"]
           },
@@ -1142,6 +1177,7 @@ export type Database = {
           email: string | null
           emergency_contact_name: string | null
           emergency_contact_phone: string | null
+          employment_type: Database["public"]["Enums"]["employment_type"] | null
           extra_withholding: number
           federal_allowances: number
           filing_status: string | null
@@ -1149,18 +1185,28 @@ export type Database = {
           geocoded_address: string | null
           id: string
           job_title: string | null
+          last_accrued_at: string | null
           latitude: number | null
+          leave_end_date: string | null
+          leave_reason: string | null
+          leave_start_date: string | null
+          lifecycle_status: Database["public"]["Enums"]["employee_lifecycle"]
           longitude: number | null
+          manager_id: string | null
           owner_id: string
           pay_rate: number
           pay_type: string
           phone: string | null
           pto_accrual_per_period: number
           pto_balance_hours: number
+          pto_policy_id: string | null
+          rehire_eligible: boolean
           ssn_last4: string | null
           start_date: string | null
           state: string | null
           status: string
+          termination_date: string | null
+          termination_reason: string | null
           updated_at: string
           user_id: string | null
           zip: string | null
@@ -1180,6 +1226,9 @@ export type Database = {
           email?: string | null
           emergency_contact_name?: string | null
           emergency_contact_phone?: string | null
+          employment_type?:
+            | Database["public"]["Enums"]["employment_type"]
+            | null
           extra_withholding?: number
           federal_allowances?: number
           filing_status?: string | null
@@ -1187,18 +1236,28 @@ export type Database = {
           geocoded_address?: string | null
           id?: string
           job_title?: string | null
+          last_accrued_at?: string | null
           latitude?: number | null
+          leave_end_date?: string | null
+          leave_reason?: string | null
+          leave_start_date?: string | null
+          lifecycle_status?: Database["public"]["Enums"]["employee_lifecycle"]
           longitude?: number | null
+          manager_id?: string | null
           owner_id: string
           pay_rate?: number
           pay_type?: string
           phone?: string | null
           pto_accrual_per_period?: number
           pto_balance_hours?: number
+          pto_policy_id?: string | null
+          rehire_eligible?: boolean
           ssn_last4?: string | null
           start_date?: string | null
           state?: string | null
           status?: string
+          termination_date?: string | null
+          termination_reason?: string | null
           updated_at?: string
           user_id?: string | null
           zip?: string | null
@@ -1218,6 +1277,9 @@ export type Database = {
           email?: string | null
           emergency_contact_name?: string | null
           emergency_contact_phone?: string | null
+          employment_type?:
+            | Database["public"]["Enums"]["employment_type"]
+            | null
           extra_withholding?: number
           federal_allowances?: number
           filing_status?: string | null
@@ -1225,18 +1287,28 @@ export type Database = {
           geocoded_address?: string | null
           id?: string
           job_title?: string | null
+          last_accrued_at?: string | null
           latitude?: number | null
+          leave_end_date?: string | null
+          leave_reason?: string | null
+          leave_start_date?: string | null
+          lifecycle_status?: Database["public"]["Enums"]["employee_lifecycle"]
           longitude?: number | null
+          manager_id?: string | null
           owner_id?: string
           pay_rate?: number
           pay_type?: string
           phone?: string | null
           pto_accrual_per_period?: number
           pto_balance_hours?: number
+          pto_policy_id?: string | null
+          rehire_eligible?: boolean
           ssn_last4?: string | null
           start_date?: string | null
           state?: string | null
           status?: string
+          termination_date?: string | null
+          termination_reason?: string | null
           updated_at?: string
           user_id?: string | null
           zip?: string | null
@@ -1247,6 +1319,27 @@ export type Database = {
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employees_manager_id_fkey"
+            columns: ["manager_id"]
+            isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "employees_manager_id_fkey"
+            columns: ["manager_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employees_pto_policy_id_fkey"
+            columns: ["pto_policy_id"]
+            isOneToOne: false
+            referencedRelation: "pto_accrual_policies"
             referencedColumns: ["id"]
           },
         ]
@@ -1376,6 +1469,13 @@ export type Database = {
             foreignKeyName: "field_visits_employee_id_fkey"
             columns: ["employee_id"]
             isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "field_visits_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
             referencedRelation: "employees"
             referencedColumns: ["id"]
           },
@@ -1454,6 +1554,13 @@ export type Database = {
             foreignKeyName: "garnishments_employee_id_fkey"
             columns: ["employee_id"]
             isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "garnishments_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
             referencedRelation: "employees"
             referencedColumns: ["id"]
           },
@@ -1507,6 +1614,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "hr_documents"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "handbook_acknowledgments_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
           },
           {
             foreignKeyName: "handbook_acknowledgments_employee_id_fkey"
@@ -1672,6 +1786,13 @@ export type Database = {
             foreignKeyName: "hr_documents_employee_id_fkey"
             columns: ["employee_id"]
             isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "hr_documents_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
             referencedRelation: "employees"
             referencedColumns: ["id"]
           },
@@ -1743,6 +1864,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "contractors"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hr_forms_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
           },
           {
             foreignKeyName: "hr_forms_employee_id_fkey"
@@ -2004,6 +2132,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "contractors"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "onboarding_tasks_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
           },
           {
             foreignKeyName: "onboarding_tasks_employee_id_fkey"
@@ -2440,6 +2575,13 @@ export type Database = {
             foreignKeyName: "payroll_items_employee_id_fkey"
             columns: ["employee_id"]
             isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "payroll_items_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
             referencedRelation: "employees"
             referencedColumns: ["id"]
           },
@@ -2633,6 +2775,13 @@ export type Database = {
             foreignKeyName: "performance_goals_employee_id_fkey"
             columns: ["employee_id"]
             isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "performance_goals_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
             referencedRelation: "employees"
             referencedColumns: ["id"]
           },
@@ -2683,6 +2832,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "companies"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "performance_notes_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
           },
           {
             foreignKeyName: "performance_notes_employee_id_fkey"
@@ -2823,6 +2979,13 @@ export type Database = {
             foreignKeyName: "performance_reviews_employee_id_fkey"
             columns: ["employee_id"]
             isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "performance_reviews_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
             referencedRelation: "employees"
             referencedColumns: ["id"]
           },
@@ -2937,6 +3100,57 @@ export type Database = {
           },
         ]
       }
+      pto_accrual_runs: {
+        Row: {
+          as_of_date: string
+          company_id: string
+          created_at: string
+          employees_accrued: number
+          hours_total: number
+          id: string
+          notes: string | null
+          policy_id: string | null
+          triggered_by: string | null
+        }
+        Insert: {
+          as_of_date: string
+          company_id: string
+          created_at?: string
+          employees_accrued?: number
+          hours_total?: number
+          id?: string
+          notes?: string | null
+          policy_id?: string | null
+          triggered_by?: string | null
+        }
+        Update: {
+          as_of_date?: string
+          company_id?: string
+          created_at?: string
+          employees_accrued?: number
+          hours_total?: number
+          id?: string
+          notes?: string | null
+          policy_id?: string | null
+          triggered_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pto_accrual_runs_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pto_accrual_runs_policy_id_fkey"
+            columns: ["policy_id"]
+            isOneToOne: false
+            referencedRelation: "pto_accrual_policies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pto_entries: {
         Row: {
           company_id: string
@@ -2987,6 +3201,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "companies"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pto_entries_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
           },
           {
             foreignKeyName: "pto_entries_employee_id_fkey"
@@ -3043,6 +3264,13 @@ export type Database = {
             foreignKeyName: "pto_ledger_employee_id_fkey"
             columns: ["employee_id"]
             isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "pto_ledger_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
             referencedRelation: "employees"
             referencedColumns: ["id"]
           },
@@ -3092,6 +3320,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "companies"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shifts_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
           },
           {
             foreignKeyName: "shifts_employee_id_fkey"
@@ -3242,6 +3477,13 @@ export type Database = {
             foreignKeyName: "time_clock_punches_employee_id_fkey"
             columns: ["employee_id"]
             isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "time_clock_punches_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
             referencedRelation: "employees"
             referencedColumns: ["id"]
           },
@@ -3297,6 +3539,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "companies"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "time_entries_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
           },
           {
             foreignKeyName: "time_entries_employee_id_fkey"
@@ -3376,6 +3625,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "companies"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timesheets_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
           },
           {
             foreignKeyName: "timesheets_employee_id_fkey"
@@ -3500,7 +3756,34 @@ export type Database = {
             foreignKeyName: "bank_connections_employee_id_fkey"
             columns: ["employee_id"]
             isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "bank_connections_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
             referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      employee_pto_balances: {
+        Row: {
+          balance_hours: number | null
+          company_id: string | null
+          employee_id: string | null
+          full_name: string | null
+          last_ledger_at: string | null
+          lifetime_accrued: number | null
+          lifetime_used: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employees_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
             referencedColumns: ["id"]
           },
         ]
@@ -3520,6 +3803,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "companies"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payroll_items_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
           },
           {
             foreignKeyName: "payroll_items_employee_id_fkey"
@@ -3628,6 +3918,18 @@ export type Database = {
         | "handbook"
         | "other"
       compliance_severity: "low" | "medium" | "high" | "critical"
+      employee_lifecycle:
+        | "prospect"
+        | "onboarding"
+        | "active"
+        | "on_leave"
+        | "terminated"
+      employment_type:
+        | "full_time"
+        | "part_time"
+        | "temporary"
+        | "intern"
+        | "seasonal"
       garnishment_type:
         | "child_support"
         | "tax_levy"
@@ -3872,6 +4174,20 @@ export const Constants = {
         "other",
       ],
       compliance_severity: ["low", "medium", "high", "critical"],
+      employee_lifecycle: [
+        "prospect",
+        "onboarding",
+        "active",
+        "on_leave",
+        "terminated",
+      ],
+      employment_type: [
+        "full_time",
+        "part_time",
+        "temporary",
+        "intern",
+        "seasonal",
+      ],
       garnishment_type: [
         "child_support",
         "tax_levy",
