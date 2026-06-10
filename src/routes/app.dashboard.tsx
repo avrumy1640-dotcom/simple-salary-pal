@@ -211,7 +211,7 @@ function Dashboard() {
         upcomingRuns: (upcoming ?? []) as any,
         birthdays, anniversaries,
         pendingTimesheets: (pendingTs as number) ?? 0,
-        expiringDocs: (docsExp as any)?.data?.length ?? (docsExp as any)?.length ?? 0,
+        expiringDocs: 0,
         clockedIn, onLeave, absent,
         newHireSubmissions: 0,
         docSignatures: 0,
