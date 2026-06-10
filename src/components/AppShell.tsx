@@ -215,7 +215,7 @@ export function AppShell() {
                   {(userEmail || "U").slice(0, 2).toUpperCase()}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="truncate text-sm font-semibold text-white">{companyName}</div>
+                  <div className="truncate text-sm font-semibold text-slate-900">{companyName}</div>
                   <div className="truncate text-[10px] text-slate-500">{userEmail}</div>
                 </div>
               </div>
