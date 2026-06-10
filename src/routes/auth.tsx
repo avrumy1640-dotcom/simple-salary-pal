@@ -139,10 +139,6 @@ function AuthPage() {
         </Link>
 
         <div className="surface-glass rounded-[2rem] p-6 shadow-float md:p-7">
-          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-card px-3 py-1 text-xs font-bold text-foreground">
-            <ShieldCheck className="h-3.5 w-3.5 text-primary" />
-            Secure HR + payroll access
-          </div>
           <h1 className="font-display text-3xl font-bold text-foreground">{mode === "signin" ? "Sign in" : "Create your account"}</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {mode === "signin" ? "Pick up where you left off." : "Start running payroll in minutes."}
@@ -240,10 +236,6 @@ function AuthPage() {
           </button>
         </div>
 
-        <div className="mt-5 flex items-center justify-center gap-2 text-xs font-medium text-muted-foreground">
-          <Sparkles className="h-3.5 w-3.5 text-primary" />
-          Secure email verification · Bank-grade encryption
-        </div>
       </div>
     </div>
   );
