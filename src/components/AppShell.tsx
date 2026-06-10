@@ -175,36 +175,69 @@ export function AppShell() {
     );
   };
 
+  // Mobile bottom tab bar — 4 primary + More
+  const mobileTabs = [
+    { to: "/app/dashboard", label: "Home", icon: LayoutDashboard },
+    { to: "/app/employees", label: "People", icon: Users },
+    { to: "/app/payroll", label: "Payroll", icon: Wallet },
+    { to: "/app/time", label: "Time", icon: Clock },
+  ];
+  const isTabActive = (to: string) => path === to || (to !== "/app/dashboard" && path.startsWith(to));
+
   return (
     <div className="min-h-screen text-foreground bg-surface">
       {/* Mobile top bar */}
-      <div className="sticky top-0 z-50 flex items-center justify-between border-b border-border bg-white px-4 py-3 md:hidden">
-        <div className="flex items-center gap-2">
-          <div className="grid h-9 w-9 place-items-center rounded-full bg-primary/15 text-primary text-xs font-bold">{initials}</div>
-          <span className="text-base font-bold tracking-tight text-foreground">{companyName}</span>
+      <div className="sticky top-0 z-50 flex items-center gap-3 border-b border-border bg-white px-4 pt-[max(env(safe-area-inset-top),0.25rem)] pb-3 md:hidden">
+        <button
+          onClick={() => setOpen(true)}
+          aria-label="Open menu"
+          className="grid h-10 w-10 -ml-1 place-items-center rounded-xl text-slate-600 hover:bg-surface active:bg-slate-100"
+        >
+          <Menu className="h-5 w-5" />
+        </button>
+        <div className="flex min-w-0 flex-1 items-center gap-2">
+          <div className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary/15 text-primary text-[11px] font-bold">{initials}</div>
+          <div className="min-w-0">
+            <div className="truncate text-[15px] font-bold leading-tight text-foreground">{currentPageTitle}</div>
+            <div className="truncate text-[11px] leading-tight text-slate-500">{companyName}</div>
+          </div>
         </div>
-        <Button variant="ghost" size="icon" onClick={() => setOpen(!open)}>
-          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </Button>
+        <Link
+          to="/app/notifications"
+          aria-label="Notifications"
+          className="grid h-10 w-10 place-items-center rounded-xl text-slate-600 hover:bg-surface active:bg-slate-100"
+        >
+          <Bell className="h-5 w-5" />
+        </Link>
       </div>
 
       <div className="flex">
         <aside className={cn(
-          "fixed inset-y-0 left-0 z-40 flex transform flex-col border-r border-border bg-white transition-all duration-300 md:sticky md:top-0 md:h-screen md:translate-x-0",
-          collapsed ? "w-[72px]" : "w-64",
-          open ? "translate-x-0 w-64" : "-translate-x-full",
+          "fixed inset-y-0 left-0 z-50 flex transform flex-col border-r border-border bg-white transition-all duration-300 md:sticky md:top-0 md:h-screen md:translate-x-0 md:z-40",
+          collapsed ? "w-[72px]" : "w-72 md:w-64",
+          open ? "translate-x-0 w-[86vw] max-w-[320px]" : "-translate-x-full",
         )}>
           {/* Logo header */}
-          <div className={cn("flex items-center border-b border-border py-4", collapsed ? "px-3 justify-center" : "gap-3 px-5")}>
+          <div className={cn(
+            "flex items-center border-b border-border py-4 pt-[max(env(safe-area-inset-top),1rem)]",
+            collapsed ? "px-3 justify-center" : "gap-3 px-5",
+          )}>
             <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-primary/15 text-primary text-sm font-bold ring-1 ring-primary/20">
               {initials}
             </div>
             {!collapsed && (
-              <div className="flex flex-col min-w-0">
+              <div className="flex flex-col min-w-0 flex-1">
                 <span className="text-[15px] font-bold leading-tight text-foreground truncate">{companyName}</span>
                 <span className="text-[11px] uppercase tracking-wider leading-tight text-slate-400">Admin</span>
               </div>
             )}
+            <button
+              onClick={() => setOpen(false)}
+              className="md:hidden grid h-9 w-9 place-items-center rounded-xl text-slate-500 hover:bg-surface"
+              aria-label="Close menu"
+            >
+              <X className="h-5 w-5" />
+            </button>
           </div>
 
           {/* Grouped nav */}
@@ -226,15 +259,15 @@ export function AppShell() {
             })}
           </nav>
 
-          {/* Bottom pinned: Settings, Help, user, sign out, collapse */}
-          <div className="border-t border-border p-3 space-y-1">
+          {/* Bottom pinned */}
+          <div className="border-t border-border p-3 pb-[max(env(safe-area-inset-bottom),0.75rem)] space-y-1">
             {(ADMIN_ROLES as readonly string[]).includes(role) && (
               <Link
                 to="/app/settings"
                 onClick={() => setOpen(false)}
                 title={collapsed ? "Settings" : undefined}
                 className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2 text-[14px] font-medium text-slate-600 hover:bg-slate-50 hover:text-foreground transition",
+                  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-[14px] font-medium text-slate-600 hover:bg-slate-50 hover:text-foreground transition",
                   collapsed && "justify-center px-2",
                   path.startsWith("/app/settings") && "bg-primary/10 text-foreground",
                 )}
@@ -248,7 +281,7 @@ export function AppShell() {
               onClick={() => setOpen(false)}
               title={collapsed ? "Help Center" : undefined}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2 text-[14px] font-medium text-slate-600 hover:bg-slate-50 hover:text-foreground transition",
+                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-[14px] font-medium text-slate-600 hover:bg-slate-50 hover:text-foreground transition",
                 collapsed && "justify-center px-2",
               )}
             >
@@ -258,14 +291,14 @@ export function AppShell() {
 
             {!collapsed && (
               <div className="mt-2 flex items-center gap-3 rounded-lg bg-surface px-3 py-2">
-                <div className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary/20 text-primary text-xs font-bold">
+                <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary/20 text-primary text-xs font-bold">
                   {userInitials}
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="truncate text-[13px] font-semibold text-foreground">{userEmail.split("@")[0] || "User"}</div>
                   <div className="truncate text-[11px] capitalize text-slate-500">{roleLabel}</div>
                 </div>
-                <button onClick={signOut} title="Sign out" className="grid h-7 w-7 place-items-center rounded-md text-slate-400 hover:bg-white hover:text-destructive transition">
+                <button onClick={signOut} title="Sign out" className="grid h-9 w-9 place-items-center rounded-md text-slate-400 hover:bg-white hover:text-destructive transition">
                   <LogOut className="h-4 w-4" />
                 </button>
               </div>
@@ -290,15 +323,52 @@ export function AppShell() {
           </div>
         </aside>
 
-        {open && <div className="fixed inset-0 z-30 bg-slate-900/40 md:hidden" onClick={() => setOpen(false)} />}
+        {open && (
+          <div
+            className="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-sm md:hidden animate-in fade-in"
+            onClick={() => setOpen(false)}
+          />
+        )}
 
         <main className="flex-1 min-w-0">
           <TopBar companyName={companyName} userEmail={userEmail} pageTitle={currentPageTitle} />
-          <div key={path} className="page-in mx-auto max-w-[1400px] px-4 py-6 sm:p-6 md:p-8">
+          <div key={path} className="page-in mx-auto max-w-[1400px] px-4 py-6 pb-[calc(env(safe-area-inset-bottom)+5rem)] sm:p-6 md:p-8 md:pb-8">
             <Outlet />
           </div>
         </main>
       </div>
+
+      {/* Mobile bottom tab bar */}
+      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/85 pb-[max(env(safe-area-inset-bottom),0px)] md:hidden">
+        <div className="grid grid-cols-5">
+          {mobileTabs.map((t) => {
+            const active = isTabActive(t.to);
+            return (
+              <Link
+                key={t.to}
+                to={t.to}
+                className={cn(
+                  "flex flex-col items-center gap-1 py-2.5 text-[11px] font-semibold transition-colors",
+                  active ? "text-primary" : "text-slate-500",
+                )}
+              >
+                <t.icon className={cn("h-5 w-5", active && "stroke-[2.5]")} />
+                <span>{t.label}</span>
+              </Link>
+            );
+          })}
+          <button
+            onClick={() => setOpen(true)}
+            className={cn(
+              "flex flex-col items-center gap-1 py-2.5 text-[11px] font-semibold transition-colors",
+              open ? "text-primary" : "text-slate-500",
+            )}
+          >
+            <Menu className="h-5 w-5" />
+            <span>More</span>
+          </button>
+        </div>
+      </nav>
     </div>
   );
 }
