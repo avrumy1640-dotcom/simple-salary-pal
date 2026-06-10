@@ -10,7 +10,7 @@ import { calcPay, fmtUSD } from "@/lib/payroll";
 import { calculatePayrollRun, approvePayrollRun } from "@/lib/payroll-workflow.functions";
 import {
   CheckCircle2, ChevronLeft, ChevronRight, PlayCircle, CalendarDays, Users,
-  Clock, ClipboardCheck, AlertTriangle, Info,
+  Clock, ClipboardCheck, AlertTriangle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCompany } from "@/hooks/useCompany";
@@ -39,11 +39,11 @@ interface Row {
 }
 
 const STEPS = [
-  { key: "period", label: "Select period", icon: CalendarDays },
-  { key: "employees", label: "Review employees", icon: Users },
-  { key: "hours", label: "Review hours", icon: Clock },
+  { key: "period", label: "Pick dates", icon: CalendarDays },
+  { key: "employees", label: "Pick people", icon: Users },
+  { key: "hours", label: "Check hours", icon: Clock },
   { key: "approve", label: "Approve", icon: ClipboardCheck },
-  { key: "confirm", label: "Confirm", icon: CheckCircle2 },
+  { key: "confirm", label: "Done", icon: CheckCircle2 },
 ] as const;
 
 function PayrollWizard() {
@@ -51,7 +51,6 @@ function PayrollWizard() {
   const start = new Date(today); start.setDate(today.getDate() - 13);
 
   const [step, setStep] = useState(0);
-  const [direction, setDirection] = useState<1 | -1>(1);
   const [periodStart, setPeriodStart] = useState(start.toISOString().slice(0, 10));
   const [periodEnd, setPeriodEnd] = useState(today.toISOString().slice(0, 10));
   const [payDate, setPayDate] = useState(new Date(today.getTime() + 86400000 * 5).toISOString().slice(0, 10));
@@ -62,22 +61,19 @@ function PayrollWizard() {
   const [runId, setRunId] = useState<string | null>(null);
   const { currentId } = useCompany();
 
-
   async function loadPreview() {
     if (!currentId) { toast.error("Select a company first"); return; }
     setLoading(true);
     const [{ data: emps }, { data: te }, { data: deds }] = await Promise.all([
       supabase.from("employees")
         .select("id, full_name, pay_type, pay_rate, filing_status, dependents, extra_withholding")
-        .eq("company_id", currentId)
-        .eq("status", "active"),
+        .eq("company_id", currentId).eq("status", "active"),
       supabase.from("time_entries")
         .select("employee_id, hours, overtime_hours")
         .eq("company_id", currentId)
         .gte("work_date", periodStart).lte("work_date", periodEnd),
       supabase.from("deductions").select("*")
-        .eq("company_id", currentId)
-        .eq("active", true),
+        .eq("company_id", currentId).eq("active", true),
     ]);
     const hoursByEmp = new Map<string, { reg: number; ot: number }>();
     (te ?? []).forEach((r) => {
@@ -131,12 +127,8 @@ function PayrollWizard() {
     net: acc.net + c.pay.net,
   }), { gross: 0, tax: 0, deductions: 0, net: 0 }), [calc]);
 
-  function next() {
-    if (step < STEPS.length - 1) { setDirection(1); setStep(step + 1); }
-  }
-  function back() {
-    if (step > 0) { setDirection(-1); setStep(step - 1); }
-  }
+  function next() { if (step < STEPS.length - 1) setStep(step + 1); }
+  function back() { if (step > 0) setStep(step - 1); }
 
   const calculateFn = useServerFn(calculatePayrollRun);
   const approveFn = useServerFn(approvePayrollRun);
@@ -146,7 +138,6 @@ function PayrollWizard() {
     if (!currentId) { toast.error("No active company selected"); return; }
     setSubmitting(true);
     try {
-      // Server-side authoritative computation. Client-side `calc` is preview only.
       const result = await calculateFn({
         data: {
           company_id: currentId,
@@ -170,13 +161,8 @@ function PayrollWizard() {
       });
       await approveFn({ data: { run_id: result.run.id } });
       setRunId(result.run.id);
-      const serverNet = result.totals.net;
-      toast.success(
-        `Payroll approved — ${fmtUSD(serverNet)} net${
-          !result.provider.productionReady ? " (calc engine: non-certified stub)" : ""
-        }`
-      );
-      setDirection(1); setStep(4);
+      toast.success(`Payroll approved — ${fmtUSD(result.totals.net)} total`);
+      setStep(4);
     } catch (err: any) {
       toast.error(err?.message || "Failed to approve payroll");
     } finally {
@@ -185,26 +171,20 @@ function PayrollWizard() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header */}
-      <div className="flex flex-wrap items-end justify-between gap-3">
+      <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl font-extrabold tracking-tight text-foreground">Run payroll</h1>
-          <p className="mt-1 text-sm text-white">Five quick steps. We do the math, you press approve.</p>
+          <h1 className="font-display text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">Run payroll</h1>
+          <p className="mt-2 text-base text-slate-600">Five simple steps. We do the math, you press approve.</p>
         </div>
         {step < 4 && (
-          <Button
-            variant="outline"
-            className="border-white/20/15 bg-card text-foreground hover:bg-muted"
-            onClick={() => setShowCancel(true)}
-          >
-            Cancel payroll
-          </Button>
+          <Button variant="outline" onClick={() => setShowCancel(true)}>Cancel</Button>
         )}
       </div>
 
       {/* Stepper */}
-      <div className="rounded-3xl surface-glass p-4 sm:p-5">
+      <div className="rounded-2xl border border-border bg-card p-4 sm:p-5">
         <div className="flex items-center justify-between gap-1">
           {STEPS.map((s, i) => {
             const done = i < step;
@@ -212,26 +192,23 @@ function PayrollWizard() {
             const Icon = s.icon;
             return (
               <div key={s.key} className="flex flex-1 items-center">
-                <div className="flex flex-col items-center gap-1.5">
+                <div className="flex flex-col items-center gap-2">
                   <div className={cn(
-                    "grid h-10 w-10 place-items-center rounded-2xl border-2 transition-all duration-300",
-                    done && "border-foreground bg-primary text-primary-foreground",
-                    active && "border-white/20 bg-primary text-primary-foreground shadow-glow scale-110",
-                    !done && !active && "border-primary bg-card text-white",
+                    "grid h-10 w-10 place-items-center rounded-full border-2 transition-all",
+                    active && "border-slate-900 bg-primary text-slate-900",
+                    done && "border-primary bg-primary text-slate-900",
+                    !done && !active && "border-border bg-card text-slate-400",
                   )}>
-                    {done ? <CheckCircle2 className="h-4 w-4" /> : <Icon className="h-4 w-4" />}
+                    {done ? <CheckCircle2 className="h-5 w-5" /> : <Icon className="h-5 w-5" />}
                   </div>
                   <div className={cn(
-                    "hidden whitespace-nowrap text-[11px] font-bold uppercase tracking-wider sm:block",
-                    active ? "text-foreground" : "text-white",
+                    "hidden whitespace-nowrap text-xs font-semibold sm:block",
+                    active ? "text-slate-900" : "text-slate-500",
                   )}>{s.label}</div>
                 </div>
                 {i < STEPS.length - 1 && (
-                  <div className="mx-2 h-0.5 flex-1 rounded-full bg-primary/60 sm:mx-3">
-                    <div
-                      className="h-0.5 rounded-full bg-primary transition-all duration-500"
-                      style={{ width: i < step ? "100%" : "0%" }}
-                    />
+                  <div className="mx-2 h-0.5 flex-1 rounded-full bg-border sm:mx-3">
+                    <div className="h-0.5 rounded-full bg-primary transition-all duration-500" style={{ width: i < step ? "100%" : "0%" }} />
                   </div>
                 )}
               </div>
@@ -240,9 +217,9 @@ function PayrollWizard() {
         </div>
       </div>
 
-      {/* Step content + running totals sidebar */}
+      {/* Step content + sidebar */}
       <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
-        <div key={step} className={direction === 1 ? "slide-in-right" : "slide-in-left"}>
+        <div>
           {step === 0 && (
             <StepPeriod
               periodStart={periodStart} setPeriodStart={setPeriodStart}
@@ -252,39 +229,31 @@ function PayrollWizard() {
               loading={loading}
             />
           )}
-          {step === 1 && (
-            <StepEmployees rows={rows} setRows={setRows} loading={loading} onBack={back} onContinue={next} />
-          )}
-          {step === 2 && (
-            <StepHours rows={rows} setRows={setRows} onBack={back} onContinue={next} />
-          )}
+          {step === 1 && <StepEmployees rows={rows} setRows={setRows} loading={loading} onBack={back} onContinue={next} />}
+          {step === 2 && <StepHours rows={rows} setRows={setRows} onBack={back} onContinue={next} />}
           {step === 3 && (
             <StepApprove
               calc={calc} totals={totals} periodStart={periodStart} periodEnd={periodEnd} payDate={payDate}
               submitting={submitting} onBack={back} onApprove={approveAndRun}
             />
           )}
-          {step === 4 && (
-            <StepConfirm netTotal={totals.net} runId={runId} payDate={payDate} count={calc.length} />
-          )}
+          {step === 4 && <StepConfirm netTotal={totals.net} runId={runId} payDate={payDate} count={calc.length} />}
         </div>
 
-        {/* Running totals sidebar */}
         {step < 4 && (
-          <aside className="lg:sticky lg:top-24 h-fit rounded-3xl surface-glass p-5 border border-primary/25">
-            <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/55">Running totals</div>
-            <div className="mt-1 text-xs text-white/60">Updates as you move through steps</div>
-            <div className="mt-5 space-y-4">
-              <TotalsRow label="Employees" value={String(calc.length)} />
-              <TotalsRow label="Gross" value={fmtUSD(totals.gross)} />
-              <TotalsRow label="Est. taxes" value={fmtUSD(totals.tax)} muted />
-              <TotalsRow label="Deductions" value={fmtUSD(totals.deductions)} muted />
-              <div className="border-t border-primary/20 pt-4">
-                <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-primary">Net take-home</div>
-                <div className="mt-1 font-display text-3xl font-extrabold tabular text-primary">{fmtUSD(totals.net)}</div>
-              </div>
-              <div className="rounded-2xl border border-primary/20 bg-primary/5 p-3 text-xs text-white/70">
-                Pay date <span className="font-bold text-white">{new Date(payDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
+          <aside className="lg:sticky lg:top-24 h-fit rounded-2xl border border-border bg-card p-6">
+            <div className="text-sm font-semibold text-slate-600">Running totals</div>
+            <div className="mt-5 space-y-3">
+              <SideRow label="People" value={String(calc.length)} />
+              <SideRow label="Gross pay" value={fmtUSD(totals.gross)} />
+              <SideRow label="Taxes" value={fmtUSD(totals.tax)} />
+              <SideRow label="Deductions" value={fmtUSD(totals.deductions)} />
+            </div>
+            <div className="mt-5 border-t border-border pt-5">
+              <div className="text-sm font-semibold text-slate-600">Total take-home</div>
+              <div className="mt-2 font-display text-3xl font-extrabold tabular text-slate-900">{fmtUSD(totals.net)}</div>
+              <div className="mt-3 text-sm text-slate-500">
+                Pay date <span className="font-semibold text-slate-900">{new Date(payDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
               </div>
             </div>
           </aside>
@@ -293,24 +262,13 @@ function PayrollWizard() {
 
       {/* Cancel modal */}
       {showCancel && (
-        <div className="fixed inset-0 z-50 grid place-items-center bg-muted/40 backdrop-blur-sm p-4 animate-in fade-in" onClick={() => setShowCancel(false)}>
-          <div className="w-full max-w-md rounded-3xl bg-card p-6 shadow-float" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-start gap-3">
-              <div className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-[#FEF3C7] text-[#92400E]">
-                <AlertTriangle className="h-5 w-5" />
-              </div>
-              <div>
-                <div className="font-display text-lg font-bold text-foreground">Cancel this payroll run?</div>
-                <p className="mt-1 text-sm text-white">Nothing is saved yet — your progress in this wizard will be cleared.</p>
-              </div>
-            </div>
+        <div className="fixed inset-0 z-50 grid place-items-center bg-slate-900/40 p-4" onClick={() => setShowCancel(false)}>
+          <div className="w-full max-w-md rounded-2xl bg-card p-6 shadow-card" onClick={(e) => e.stopPropagation()}>
+            <div className="font-display text-xl font-bold text-slate-900">Cancel this payroll?</div>
+            <p className="mt-2 text-base text-slate-600">Nothing has been saved. Your progress will be cleared.</p>
             <div className="mt-6 flex justify-end gap-2">
-              <Button variant="outline" className="border-white/20/15 bg-card text-foreground hover:bg-muted" onClick={() => setShowCancel(false)}>
-                Keep going
-              </Button>
-              <Button className="bg-primary text-primary-foreground hover:shadow-glow" onClick={() => { setShowCancel(false); setStep(0); }}>
-                Yes, cancel
-              </Button>
+              <Button variant="outline" onClick={() => setShowCancel(false)}>Keep going</Button>
+              <Button onClick={() => { setShowCancel(false); setStep(0); }}>Yes, cancel</Button>
             </div>
           </div>
         </div>
@@ -321,6 +279,17 @@ function PayrollWizard() {
 
 /* ─────────── Steps ─────────── */
 
+function StepCard({ stepNum, title, subtitle, children }: { stepNum: number; title: string; subtitle: string; children: React.ReactNode }) {
+  return (
+    <div className="rounded-2xl border border-border bg-card p-6 sm:p-8">
+      <div className="text-sm font-semibold text-slate-500">Step {stepNum} of 5</div>
+      <h2 className="mt-1 font-display text-2xl font-extrabold text-slate-900">{title}</h2>
+      <p className="mt-1 text-base text-slate-600">{subtitle}</p>
+      <div className="mt-6">{children}</div>
+    </div>
+  );
+}
+
 function StepPeriod({ periodStart, setPeriodStart, periodEnd, setPeriodEnd, payDate, setPayDate, onContinue, loading }: {
   periodStart: string; setPeriodStart: (v: string) => void;
   periodEnd: string; setPeriodEnd: (v: string) => void;
@@ -328,40 +297,31 @@ function StepPeriod({ periodStart, setPeriodStart, periodEnd, setPeriodEnd, payD
   onContinue: () => void; loading: boolean;
 }) {
   return (
-    <div className="rounded-3xl surface-glass p-6 sm:p-8">
-      <div className="max-w-2xl">
-        <div className="inline-flex items-center gap-2 rounded-full border border-primary bg-muted px-3 py-1 text-xs font-bold text-foreground">
-          <CalendarDays className="h-3.5 w-3.5" /> Step 1 of 5
+    <StepCard stepNum={1} title="When are you paying your team?" subtitle="Pick the work period and the day money lands in their account.">
+      <div className="grid gap-4 sm:grid-cols-3">
+        <div>
+          <Label>Work period starts</Label>
+          <Input type="date" value={periodStart} onChange={(e) => setPeriodStart(e.target.value)} />
         </div>
-        <h2 className="mt-3 font-display text-2xl font-extrabold text-foreground">When are you paying your team?</h2>
-        <p className="mt-1 text-sm text-white">Pick the work period and the day money lands in their account.</p>
-
-        <div className="mt-6 grid gap-4 sm:grid-cols-3">
-          <div>
-            <Label className="text-foreground">Period start</Label>
-            <Input type="date" value={periodStart} onChange={(e) => setPeriodStart(e.target.value)} />
-          </div>
-          <div>
-            <Label className="text-foreground">Period end</Label>
-            <Input type="date" value={periodEnd} onChange={(e) => setPeriodEnd(e.target.value)} />
-          </div>
-          <div>
-            <Label className="text-foreground">Pay date</Label>
-            <Input type="date" value={payDate} onChange={(e) => setPayDate(e.target.value)} />
-          </div>
+        <div>
+          <Label>Work period ends</Label>
+          <Input type="date" value={periodEnd} onChange={(e) => setPeriodEnd(e.target.value)} />
         </div>
-
-        <div className="mt-7 flex justify-end">
-          <Button className="gap-2 bg-primary text-primary-foreground font-bold hover:-translate-y-0.5 hover:shadow-glow" onClick={onContinue} disabled={loading}>
-            {loading ? "Loading…" : "Continue"} <ChevronRight className="h-4 w-4" />
-          </Button>
+        <div>
+          <Label>Money lands on</Label>
+          <Input type="date" value={payDate} onChange={(e) => setPayDate(e.target.value)} />
         </div>
       </div>
-    </div>
+      <div className="mt-8 flex justify-end">
+        <Button size="lg" onClick={onContinue} disabled={loading}>
+          {loading ? "Loading…" : "Continue"} <ChevronRight className="ml-1 h-5 w-5" />
+        </Button>
+      </div>
+    </StepCard>
   );
 }
 
-function StepEmployees({ rows, setRows, loading, onBack, onContinue}: {
+function StepEmployees({ rows, setRows, loading, onBack, onContinue }: {
   rows: Row[]; setRows: (r: Row[]) => void; loading: boolean; onBack: () => void; onContinue: () => void;
 }) {
   function toggle(id: string) {
@@ -369,50 +329,34 @@ function StepEmployees({ rows, setRows, loading, onBack, onContinue}: {
   }
   const selectedCount = rows.filter((r) => r.selected).length;
   return (
-    <div className="rounded-3xl surface-glass p-6 sm:p-8">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <div className="inline-flex items-center gap-2 rounded-full border border-primary bg-muted px-3 py-1 text-xs font-bold text-foreground">
-            <Users className="h-3.5 w-3.5" /> Step 2 of 5
-          </div>
-          <h2 className="mt-3 font-display text-2xl font-extrabold text-foreground">Who's getting paid this run?</h2>
-          <p className="mt-1 text-sm text-white">{selectedCount} of {rows.length} employees included.</p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" className="border-white/20/15 bg-card text-foreground hover:bg-muted" onClick={() => setRows(rows.map((r) => ({ ...r, selected: true })))}>Select all</Button>
-          <Button variant="outline" className="border-white/20/15 bg-card text-foreground hover:bg-muted" onClick={() => setRows(rows.map((r) => ({ ...r, selected: false })))}>Clear</Button>
-        </div>
+    <StepCard stepNum={2} title="Who's getting paid?" subtitle={`${selectedCount} of ${rows.length} people included.`}>
+      <div className="mb-4 flex gap-2">
+        <Button variant="outline" size="sm" onClick={() => setRows(rows.map((r) => ({ ...r, selected: true })))}>Select everyone</Button>
+        <Button variant="outline" size="sm" onClick={() => setRows(rows.map((r) => ({ ...r, selected: false })))}>Clear</Button>
       </div>
 
       {loading ? (
-        <div className="mt-6 space-y-2">
-          {[0, 1, 2].map((i) => <div key={i} className="skeleton h-14 w-full" />)}
-        </div>
+        <div className="space-y-2">{[0, 1, 2].map((i) => <div key={i} className="skeleton h-14 w-full" />)}</div>
       ) : rows.length === 0 ? (
-        <div className="mt-6 rounded-2xl border border-dashed border-primary bg-muted p-8 text-center">
-          <div className="font-display text-lg font-bold text-foreground">No active employees</div>
-          <p className="mt-1 text-sm text-white">Add employees first, then come back.</p>
-          <Link to="/app/employees" className="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-xs font-bold text-primary-foreground hover:shadow-glow">
-            Add employee <ChevronRight className="h-3.5 w-3.5" />
-          </Link>
+        <div className="rounded-2xl border border-dashed border-border bg-surface p-8 text-center">
+          <div className="font-display text-lg font-bold text-slate-900">No active people yet</div>
+          <p className="mt-1 text-base text-slate-600">Add team members first, then come back.</p>
+          <Button asChild className="mt-4"><Link to="/app/employees">Add a person</Link></Button>
         </div>
       ) : (
-        <ul className="mt-5 divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card">
+        <ul className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card">
           {rows.map((r) => (
             <li key={r.emp.id}>
-              <button
-                onClick={() => toggle(r.emp.id)}
-                className="flex w-full items-center gap-3 px-4 py-3.5 text-left transition-colors hover:bg-muted"
-              >
+              <button onClick={() => toggle(r.emp.id)} className="flex w-full items-center gap-3 px-5 py-4 text-left transition-colors hover:bg-surface">
                 <div className={cn(
                   "grid h-6 w-6 shrink-0 place-items-center rounded-md border-2 transition-all",
-                  r.selected ? "border-foreground bg-primary text-primary-foreground" : "border-primary bg-card",
+                  r.selected ? "border-slate-900 bg-primary text-slate-900" : "border-border bg-card",
                 )}>
-                  {r.selected && <CheckCircle2 className="h-3.5 w-3.5" />}
+                  {r.selected && <CheckCircle2 className="h-4 w-4" />}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="font-semibold text-foreground">{r.emp.full_name}</div>
-                  <div className="text-xs text-white">
+                  <div className="text-base font-semibold text-slate-900">{r.emp.full_name}</div>
+                  <div className="text-sm text-slate-500">
                     {r.emp.pay_type === "hourly" ? `Hourly · ${fmtUSD(r.emp.pay_rate)}/hr` : `Salary · ${fmtUSD(r.emp.pay_rate)}/yr`}
                   </div>
                 </div>
@@ -423,54 +367,44 @@ function StepEmployees({ rows, setRows, loading, onBack, onContinue}: {
       )}
 
       <NavRow onBack={onBack} onContinue={onContinue} disabled={selectedCount === 0} />
-    </div>
+    </StepCard>
   );
 }
 
-function StepHours({ rows, setRows, onBack, onContinue}: { rows: Row[]; setRows: (r: Row[]) => void; onBack: () => void; onContinue: () => void }) {
+function StepHours({ rows, setRows, onBack, onContinue }: { rows: Row[]; setRows: (r: Row[]) => void; onBack: () => void; onContinue: () => void }) {
   const active = rows.filter((r) => r.selected);
   function update(id: string, field: "regularHours" | "overtimeHours", v: number) {
     setRows(rows.map((r) => r.emp.id === id ? { ...r, [field]: isNaN(v) ? 0 : v } : r));
   }
   return (
-    <div className="rounded-3xl surface-glass p-6 sm:p-8">
-      <div className="inline-flex items-center gap-2 rounded-full border border-primary bg-muted px-3 py-1 text-xs font-bold text-foreground">
-        <Clock className="h-3.5 w-3.5" /> Step 3 of 5
-      </div>
-      <h2 className="mt-3 font-display text-2xl font-extrabold text-foreground">Review hours worked</h2>
-      <p className="mt-1 text-sm text-white">Edit any hours that look off. Salary employees skip this.</p>
-
-      <div className="mt-5 overflow-x-auto rounded-2xl border border-primary/60 bg-card">
+    <StepCard stepNum={3} title="Check the hours" subtitle="Edit anything that looks off. Salary people skip this.">
+      <div className="overflow-x-auto rounded-2xl border border-border">
         <table className="w-full text-sm">
-          <thead className="bg-muted text-left text-[11px] font-bold uppercase tracking-wider text-white">
+          <thead className="bg-surface text-left text-xs font-semibold text-slate-600">
             <tr>
-              <th className="px-4 py-3">Employee</th>
-              <th className="px-4 py-3">Type</th>
-              <th className="px-4 py-3 text-right">Regular hrs</th>
-              <th className="px-4 py-3 text-right">Overtime hrs</th>
+              <th className="px-5 py-3">Person</th>
+              <th className="px-5 py-3">Pay type</th>
+              <th className="px-5 py-3 text-right">Regular hrs</th>
+              <th className="px-5 py-3 text-right">Overtime hrs</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-border">
+          <tbody className="divide-y divide-border bg-card">
             {active.map((r) => (
-              <tr key={r.emp.id} className="text-foreground">
-                <td className="px-4 py-3 font-semibold">{r.emp.full_name}</td>
-                <td className="px-4 py-3 capitalize text-white">{r.emp.pay_type}</td>
-                <td className="px-4 py-3 text-right">
-                  {r.emp.pay_type === "salary" ? (
-                    <span className="text-white">—</span>
-                  ) : (
+              <tr key={r.emp.id}>
+                <td className="px-5 py-3 text-base font-semibold text-slate-900">{r.emp.full_name}</td>
+                <td className="px-5 py-3 capitalize text-slate-500">{r.emp.pay_type}</td>
+                <td className="px-5 py-3 text-right">
+                  {r.emp.pay_type === "salary" ? <span className="text-slate-400">—</span> : (
                     <Input type="number" min={0} step="0.25" value={r.regularHours}
                       onChange={(e) => update(r.emp.id, "regularHours", parseFloat(e.target.value))}
-                      className="ml-auto h-9 w-24 text-right" />
+                      className="ml-auto h-10 w-24 text-right" />
                   )}
                 </td>
-                <td className="px-4 py-3 text-right">
-                  {r.emp.pay_type === "salary" ? (
-                    <span className="text-white">—</span>
-                  ) : (
+                <td className="px-5 py-3 text-right">
+                  {r.emp.pay_type === "salary" ? <span className="text-slate-400">—</span> : (
                     <Input type="number" min={0} step="0.25" value={r.overtimeHours}
                       onChange={(e) => update(r.emp.id, "overtimeHours", parseFloat(e.target.value))}
-                      className="ml-auto h-9 w-24 text-right" />
+                      className="ml-auto h-10 w-24 text-right" />
                   )}
                 </td>
               </tr>
@@ -478,9 +412,8 @@ function StepHours({ rows, setRows, onBack, onContinue}: { rows: Row[]; setRows:
           </tbody>
         </table>
       </div>
-
       <NavRow onBack={onBack} onContinue={onContinue} />
-    </div>
+    </StepCard>
   );
 }
 
@@ -491,169 +424,110 @@ function StepApprove({ calc, totals, periodStart, periodEnd, payDate, submitting
   submitting: boolean; onBack: () => void; onApprove: () => void;
 }) {
   return (
-    <div className="rounded-3xl surface-glass p-6 sm:p-8">
-      <div className="inline-flex items-center gap-2 rounded-full border border-primary bg-muted px-3 py-1 text-xs font-bold text-foreground">
-        <ClipboardCheck className="h-3.5 w-3.5" /> Step 4 of 5
-      </div>
-      <h2 className="mt-3 font-display text-2xl font-extrabold text-foreground">Final approval</h2>
-      <p className="mt-1 text-sm text-white">
-        Pay date <span className="font-semibold text-foreground">{new Date(payDate).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</span> ·
-        Period {periodStart} → {periodEnd}
-      </p>
-
-      <div className="mt-6 grid gap-3 sm:grid-cols-4">
-        <Tile label="Gross" value={fmtUSD(totals.gross)} />
-        <Tile label="Taxes" value={fmtUSD(totals.tax)} />
-        <Tile label="Deductions" value={fmtUSD(totals.deductions)} />
-        <Tile label="Net take-home" value={fmtUSD(totals.net)} accent />
+    <StepCard
+      stepNum={4}
+      title="Final check"
+      subtitle={`Paying ${new Date(payDate).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })} · period ${periodStart} → ${periodEnd}`}
+    >
+      <div className="grid gap-3 sm:grid-cols-4">
+        <SumTile label="Gross pay" value={fmtUSD(totals.gross)} />
+        <SumTile label="Taxes" value={fmtUSD(totals.tax)} />
+        <SumTile label="Deductions" value={fmtUSD(totals.deductions)} />
+        <SumTile label="Total take-home" value={fmtUSD(totals.net)} accent />
       </div>
 
-      <div className="mt-6 overflow-x-auto rounded-2xl border border-primary/60 bg-card">
+      <div className="mt-6 overflow-x-auto rounded-2xl border border-border">
         <table className="w-full text-sm">
-          <thead className="bg-muted text-left text-[11px] font-bold uppercase tracking-wider text-white">
+          <thead className="bg-surface text-left text-xs font-semibold text-slate-600">
             <tr>
-              <th className="px-4 py-3">Employee</th>
-              <th className="px-4 py-3 text-right">Gross</th>
-              <th className="px-4 py-3 text-right">Taxes</th>
-              <th className="px-4 py-3 text-right">Deductions</th>
-              <th className="px-4 py-3 text-right">Net</th>
+              <th className="px-5 py-3">Person</th>
+              <th className="px-5 py-3 text-right">Gross</th>
+              <th className="px-5 py-3 text-right">Taxes</th>
+              <th className="px-5 py-3 text-right">Deductions</th>
+              <th className="px-5 py-3 text-right">Take-home</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-border text-foreground">
+          <tbody className="divide-y divide-border bg-card">
             {calc.map(({ row, pay }) => (
               <tr key={row.emp.id}>
-                <td className="px-4 py-3 font-semibold">{row.emp.full_name}</td>
-                <td className="px-4 py-3 text-right tabular">{fmtUSD(pay.gross)}</td>
-                <td className="px-4 py-3 text-right tabular text-white">{fmtUSD(pay.federalTax + pay.stateTax + pay.socialSecurity + pay.medicare)}</td>
-                <td className="px-4 py-3 text-right tabular text-white">{fmtUSD(pay.preTaxDeductions + pay.postTaxDeductions)}</td>
-                <td className="px-4 py-3 text-right font-bold tabular">{fmtUSD(pay.net)}</td>
+                <td className="px-5 py-3 font-semibold text-slate-900">{row.emp.full_name}</td>
+                <td className="px-5 py-3 text-right tabular text-slate-700">{fmtUSD(pay.gross)}</td>
+                <td className="px-5 py-3 text-right tabular text-slate-500">{fmtUSD(pay.federalTax + pay.stateTax + pay.socialSecurity + pay.medicare)}</td>
+                <td className="px-5 py-3 text-right tabular text-slate-500">{fmtUSD(pay.preTaxDeductions + pay.postTaxDeductions)}</td>
+                <td className="px-5 py-3 text-right font-bold tabular text-slate-900">{fmtUSD(pay.net)}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
 
-      <div className="mt-5 flex items-start gap-2 rounded-2xl border border-primary/70 bg-muted p-3 text-xs text-foreground">
-        <Info className="mt-0.5 h-4 w-4 shrink-0" />
-        Once approved, this becomes a sealed payroll record. You can view it any time in Pay history.
-      </div>
-      <div className="mt-3 flex items-start gap-2 rounded-2xl border border-amber-500/40 bg-amber-500/10 p-3 text-xs text-amber-200">
-        <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
-        <span>
-          <strong>Non-certified calc engine:</strong> tax withholding uses built-in bracket math, not a licensed
-          tax engine. Approval seals the run for audit, but do not use these numbers for real money movement or
-          government filings until a certified provider (Symmetry, Check, Gusto) is connected.
-        </span>
+      <div className="mt-5 flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+        <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0" />
+        <span>Once you approve, this becomes a sealed record. View it any time in pay history.</span>
       </div>
 
-      <div className="mt-6 space-y-3">
-        <Button
-          className="w-full gap-2 bg-primary text-primary-foreground font-extrabold text-base h-14 rounded-2xl glow-pulse hover:-translate-y-0.5 disabled:opacity-60"
-          onClick={onApprove}
-          disabled={submitting || calc.length === 0}
-        >
-          <PlayCircle className="h-5 w-5" /> {submitting ? "Submitting…" : `Approve & run payroll · ${fmtUSD(totals.net)}`}
+      <div className="mt-6 grid gap-3 sm:grid-cols-[auto_1fr]">
+        <Button variant="outline" size="lg" onClick={onBack} disabled={submitting}>
+          <ChevronLeft className="mr-1 h-5 w-5" /> Back
         </Button>
-        <Button variant="outline" className="w-full gap-2 border-primary/30 bg-card text-white hover:bg-primary/5" onClick={onBack} disabled={submitting}>
-          <ChevronLeft className="h-4 w-4" /> Back
+        <Button size="lg" onClick={onApprove} disabled={submitting || calc.length === 0}>
+          <PlayCircle className="mr-2 h-5 w-5" />
+          {submitting ? "Submitting…" : `Approve and run — ${fmtUSD(totals.net)}`}
         </Button>
       </div>
-    </div>
+    </StepCard>
   );
 }
 
 function StepConfirm({ netTotal, runId, payDate, count }: { netTotal: number; runId: string | null; payDate: string; count: number }) {
   return (
-    <div className="relative overflow-hidden rounded-3xl surface-hero p-8 text-center sm:p-12">
-      <Confetti />
-      <div className="relative z-10">
-        <div className="mx-auto grid h-20 w-20 place-items-center rounded-full bg-card text-primary-foreground shadow-glow checkmark-pop">
-          <CheckCircle2 className="h-10 w-10" />
-        </div>
-        <h2 className="mt-5 font-display text-3xl font-extrabold text-foreground sm:text-4xl">Payroll approved!</h2>
-        <p className="mt-2 text-sm text-white sm:text-base">
-          {count} {count === 1 ? "employee" : "employees"} · {fmtUSD(netTotal)} net · paying out{" "}
-          <span className="font-semibold text-foreground">{new Date(payDate).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</span>
-        </p>
-        {runId && <p className="mt-2 font-mono text-xs text-white">Run ID: {runId.slice(0, 8)}</p>}
-        <div className="mt-7 flex flex-wrap justify-center gap-3">
-          <Link to="/app/paystubs">
-            <Button className="gap-2 bg-primary text-primary-foreground font-bold hover:-translate-y-0.5 hover:shadow-glow">
-              View pay history <ChevronRight className="h-4 w-4" />
-            </Button>
-          </Link>
-          <Link to="/app/dashboard">
-            <Button variant="outline" className="gap-2 border-white/20/15 bg-card text-foreground hover:bg-muted">
-              Back to dashboard
-            </Button>
-          </Link>
-        </div>
+    <div className="rounded-2xl border border-border bg-card p-10 text-center sm:p-14">
+      <div className="mx-auto grid h-20 w-20 place-items-center rounded-full bg-primary text-slate-900">
+        <CheckCircle2 className="h-10 w-10" />
+      </div>
+      <h2 className="mt-6 font-display text-3xl font-extrabold text-slate-900 sm:text-4xl">All done!</h2>
+      <p className="mx-auto mt-3 max-w-lg text-base text-slate-600">
+        {count} {count === 1 ? "person" : "people"} will be paid {fmtUSD(netTotal)} on{" "}
+        <span className="font-semibold text-slate-900">
+          {new Date(payDate).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
+        </span>.
+      </p>
+      {runId && <p className="mt-2 font-mono text-xs text-slate-400">Reference: {runId.slice(0, 8)}</p>}
+      <div className="mt-8 flex flex-wrap justify-center gap-3">
+        <Button asChild size="lg"><Link to="/app/paystubs">See pay history</Link></Button>
+        <Button asChild variant="outline" size="lg"><Link to="/app/dashboard">Back to dashboard</Link></Button>
       </div>
     </div>
   );
 }
 
-function TotalsRow({ label, value, muted }: { label: string; value: string; muted?: boolean }) {
+function SideRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-baseline justify-between">
-      <span className="text-xs font-semibold text-white/60">{label}</span>
-      <span className={`tabular font-bold ${muted ? "text-white/75" : "text-white"}`}>{value}</span>
+      <span className="text-sm text-slate-500">{label}</span>
+      <span className="text-base font-semibold tabular text-slate-900">{value}</span>
     </div>
   );
 }
 
-function Tile({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
+function SumTile({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
   return (
-    <div className={cn(
-      "rounded-2xl p-4 transition-all hover:-translate-y-0.5",
-      accent ? "bg-primary text-primary-foreground shadow-glow" : "bg-card border border-primary/60 text-foreground shadow-soft",
-    )}>
-      <div className={cn("text-[10px] font-bold uppercase tracking-wider", accent ? "text-foreground/70" : "text-white")}>{label}</div>
-      <div className="mt-2 font-display text-2xl font-extrabold tabular">{value}</div>
+    <div className={cn("rounded-2xl border p-4", accent ? "border-slate-900 bg-primary" : "border-border bg-card")}>
+      <div className="text-xs font-semibold text-slate-600">{label}</div>
+      <div className="mt-2 font-display text-xl font-extrabold tabular text-slate-900">{value}</div>
     </div>
   );
 }
 
 function NavRow({ onBack, onContinue, disabled }: { onBack: () => void; onContinue: () => void; disabled?: boolean }) {
   return (
-    <div className="mt-7 flex items-center justify-between">
-      <Button variant="outline" className="gap-2 border-white/20/15 bg-card text-foreground hover:bg-muted" onClick={onBack}>
-        <ChevronLeft className="h-4 w-4" /> Back
+    <div className="mt-8 flex items-center justify-between">
+      <Button variant="outline" size="lg" onClick={onBack}>
+        <ChevronLeft className="mr-1 h-5 w-5" /> Back
       </Button>
-      <Button className="gap-2 bg-primary text-primary-foreground font-bold hover:-translate-y-0.5 hover:shadow-glow" onClick={onContinue} disabled={disabled}>
-        Continue<ChevronRight className="h-4 w-4" />
+      <Button size="lg" onClick={onContinue} disabled={disabled}>
+        Continue <ChevronRight className="ml-1 h-5 w-5" />
       </Button>
-    </div>
-  );
-}
-
-function Confetti() {
-  // Lightweight CSS confetti — no deps
-  const pieces = Array.from({ length: 28 });
-  const colors = ["primary", "blue-400", "slate-300", "foreground"];
-  return (
-    <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-      {pieces.map((_, i) => {
-        const left = (i * 37) % 100;
-        const delay = (i % 10) * 0.12;
-        const dur = 2.4 + ((i * 13) % 18) / 10;
-        const color = colors[i % colors.length];
-        const size = 6 + (i % 4) * 2;
-        return (
-          <span
-            key={i}
-            className="confetti-piece"
-            style={{
-              left: `${left}%`,
-              width: `${size}px`,
-              height: `${size * 0.4}px`,
-              background: color,
-              animationDelay: `${delay}s`,
-              animationDuration: `${dur}s`,
-            }}
-          />
-        );
-      })}
     </div>
   );
 }
