@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { PageHeader } from "@/components/PageHeader";
 import { chatWithAssistant } from "@/lib/ai-assistant.functions";
-import { Bot, Plus, Send, Trash2, Sparkles, Loader2, User } from "lucide-react";
+import { Bot, Plus, Send, Trash2, Loader2, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -177,7 +177,7 @@ function AIAssistantPage() {
             {messages.length === 0 ? (
               <div className="mx-auto max-w-2xl py-8 text-center">
                 <div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl gradient-brand text-primary-foreground shadow-lg">
-                  <Sparkles className="h-7 w-7" />
+                  <Bot className="h-7 w-7" />
                 </div>
                 <h2 className="mt-4 font-display text-2xl font-extrabold text-slate-900">
                   How can I help you today?

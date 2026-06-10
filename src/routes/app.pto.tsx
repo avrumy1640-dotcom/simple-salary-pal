@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { Plus, CalendarDays, Check, X, Clock, RefreshCw, Sparkles } from "lucide-react";
+import { Plus, CalendarDays, Check, X, Clock, RefreshCw } from "lucide-react";
 import { useCompany } from "@/hooks/useCompany";
 import { approvePtoRequest, denyPtoRequest, runAccrual } from "@/lib/pto.functions";
 
@@ -140,7 +140,7 @@ function PTOPage() {
           <Button variant="outline" className="gap-2 rounded-full" onClick={() => refresh()}><RefreshCw className="h-4 w-4" /> Refresh</Button>
           <Dialog open={accrualOpen} onOpenChange={setAccrualOpen}>
             <DialogTrigger asChild>
-              <Button variant="outline" className="gap-2 rounded-full"><Sparkles className="h-4 w-4" /> Run accrual</Button>
+              <Button variant="outline" className="gap-2 rounded-full">Run accrual</Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader><DialogTitle>Post a PTO accrual</DialogTitle></DialogHeader>

@@ -13,7 +13,7 @@ import {
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { Megaphone, Plus, Pin, Trash2, Send, AlertTriangle, Sparkles, Eye } from "lucide-react";
+import { Megaphone, Plus, Pin, Trash2, Send, AlertTriangle, Eye } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { format } from "date-fns";
@@ -133,7 +133,7 @@ function AnnouncementsPage() {
         {[
           { label: "Total", value: items.length, icon: Megaphone, tone: "default" },
           { label: "Published", value: published, icon: Send, tone: "success" },
-          { label: "Drafts", value: drafts, icon: Sparkles, tone: "default" },
+          { label: "Drafts", value: drafts, icon: Pin, tone: "default" },
           { label: "Urgent live", value: urgent, icon: AlertTriangle, tone: urgent > 0 ? "destructive" : "default" },
         ].map((s) => (
           <div key={s.label} className="rounded-xl border border-border bg-card p-4">

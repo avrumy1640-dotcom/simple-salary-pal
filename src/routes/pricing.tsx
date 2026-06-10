@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Check, Sparkles, ArrowRight } from "lucide-react";
+import { Check, ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/pricing")({
   head: () => ({
@@ -103,7 +103,7 @@ function PricingPage() {
       <section className="mx-auto max-w-7xl px-5 pb-24 pt-16 md:px-8 md:pt-24">
         <div className="mx-auto max-w-2xl text-center">
           <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-muted px-3 py-1 text-xs font-semibold text-foreground">
-            <Sparkles className="h-3.5 w-3.5" /> Simple, transparent pricing
+            Simple, transparent pricing
           </div>
           <h1 className="mt-5 font-display text-5xl font-extrabold tracking-tight text-foreground md:text-6xl">
             One price. Everything included.
