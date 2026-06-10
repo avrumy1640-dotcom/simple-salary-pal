@@ -128,7 +128,7 @@ function RecruitingPage() {
   };
 
   async function moveStage(c: Candidate, stage: string) {
-    const { error } = await supabase.from("candidates").update({ current_stage: stage }).eq("id", c.id);
+    const { error } = await supabase.from("candidates").update({ current_stage: stage as any }).eq("id", c.id);
     if (error) { toast.error(error.message); return; }
     setCandidates((cur) => cur.map((x) => x.id === c.id ? { ...x, current_stage: stage } : x));
   }
