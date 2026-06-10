@@ -212,7 +212,7 @@ function AuthPage() {
               <Label htmlFor="password" className="text-foreground">Password</Label>
               <Input id="password" type="password" autoComplete={mode === "signin" ? "current-password" : "new-password"} value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
               {mode === "signin" && (
-                <div className="mt-1 text-right">
+                <div className="mt-1 text-center">
                   <Link to="/forgot-password" className="text-xs text-primary hover:underline">Forgot password?</Link>
                 </div>
               )}
