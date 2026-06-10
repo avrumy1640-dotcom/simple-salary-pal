@@ -34,7 +34,6 @@ const nav: NavItem[] = [
   { to: "/app/announcements", label: "Announcements", icon: Megaphone, roles: HR_ROLES },
   { to: "/app/notifications", label: "Notifications", icon: Bell, roles: [...MANAGER_ROLES] },
   { to: "/app/ai-assistant", label: "AI Assistant", icon: Bot, roles: ANY_ADMIN },
-  { to: "/app/integrations", label: "Integrations", icon: Plug, roles: ADMIN_ROLES },
   { to: "/app/users", label: "Users & roles", icon: Users, roles: ADMIN_ROLES },
   { to: "/app/audit", label: "Audit log", icon: ShieldCheck, roles: ADMIN_ROLES },
   { to: "/app/settings", label: "Settings", icon: SettingsIcon, roles: ADMIN_ROLES },
