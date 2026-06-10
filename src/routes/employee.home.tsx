@@ -87,11 +87,11 @@ function EmployeeHome() {
     : "Not scheduled";
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 unit-in">
       {/* Header */}
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
+          <h1 className="font-display text-[32px] sm:text-[40px] font-extrabold tracking-tight text-slate-900">
             Hi {first}
           </h1>
           <p className="mt-2 text-base text-slate-600">Here's everything you need today.</p>
