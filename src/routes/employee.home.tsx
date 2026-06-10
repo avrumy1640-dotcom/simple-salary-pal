@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import {
   Wallet, Play, Square, CalendarDays, FileText, CheckCircle2, Clock as ClockIcon,
+  MapPin, FolderOpen, ChevronRight,
 } from "lucide-react";
 
 export const Route = createFileRoute("/employee/home")({
@@ -282,6 +283,33 @@ function EmployeeHome() {
               </div>
             );
           })}
+        </div>
+      </div>
+
+      {/* More tools */}
+      <div>
+        <div className="mb-3 px-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">More</div>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          {[
+            { to: "/employee/schedule", label: "My schedule", desc: "Shifts & swaps", icon: CalendarDays, tone: "bg-violet-50 text-violet-700" },
+            { to: "/employee/punch", label: "Clock in / out", desc: "Punches & geofence", icon: MapPin, tone: "bg-emerald-50 text-emerald-700" },
+            { to: "/employee/documents", label: "Documents", desc: "Handbook & forms", icon: FolderOpen, tone: "bg-sky-50 text-sky-700" },
+          ].map((q) => (
+            <Link
+              key={q.to}
+              to={q.to}
+              className="group flex items-center gap-3 rounded-2xl border border-border bg-card p-4 shadow-soft transition hover:border-primary/40 hover:shadow-md active:translate-y-px"
+            >
+              <span className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl ${q.tone}`}>
+                <q.icon className="h-5 w-5" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-sm font-bold text-slate-900">{q.label}</span>
+                <span className="block truncate text-[12px] text-slate-500">{q.desc}</span>
+              </span>
+              <ChevronRight className="h-4 w-4 shrink-0 text-slate-300 transition group-hover:text-slate-500" />
+            </Link>
+          ))}
         </div>
       </div>
 
