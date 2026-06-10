@@ -9,7 +9,7 @@ export const Route = createFileRoute("/employee/documents")({
   component: Page,
 });
 
-interface Doc { id: string; title: string; doc_type: string | null; created_at: string; }
+interface Doc { id: string; title: string; category: string | null; created_at: string; }
 
 function Page() {
   const { employee, loading } = useMyEmployee();
@@ -20,11 +20,11 @@ function Page() {
     (async () => {
       const { data } = await supabase
         .from("hr_documents")
-        .select("id, title, doc_type, created_at")
+        .select("id, title, category, created_at")
         .or(`employee_id.eq.${employee.id},employee_id.is.null`)
         .order("created_at", { ascending: false })
         .limit(50);
-      setDocs((data ?? []) as Doc[]);
+      setDocs(((data ?? []) as unknown) as Doc[]);
     })();
   }, [employee?.id]);
 
@@ -51,7 +51,7 @@ function Page() {
                 <div className="flex-1 min-w-0">
                   <div className="font-medium">{d.title}</div>
                   <div className="text-xs text-muted-foreground">
-                    {d.doc_type ?? "Document"} · {new Date(d.created_at).toLocaleDateString()}
+                    {d.category ?? "Document"} · {new Date(d.created_at).toLocaleDateString()}
                   </div>
                 </div>
               </li>
