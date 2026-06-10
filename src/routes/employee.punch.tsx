@@ -161,6 +161,10 @@ function PunchPage() {
   const geofenceBlocked = !!(selectedLoc?.geofence_required && insideGeofence === false);
   const geofenceAcquiring = !!(selectedLoc?.geofence_required && !coords && !geoError);
 
+  if (loading) return null;
+  if (!employee) return <p className="text-sm text-muted-foreground">No employee record found.</p>;
+
+
   return (
     <div className="space-y-8 unit-in">
       <div>
