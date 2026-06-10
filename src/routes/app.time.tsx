@@ -205,48 +205,45 @@ function TimePage() {
   const pendingPto = pto.filter((p) => p.status === "pending");
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-300">
+    <div className="p-6 md:p-8 space-y-6 animate-in fade-in duration-300">
       <header className="flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
-            <Clock className="h-7 w-7 text-primary" />
-            Time & attendance
-          </h1>
-          <p className="text-muted-foreground mt-1">Weekly hours, PTO approvals, and your company holiday calendar.</p>
+          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">Time & attendance</h1>
+          <p className="text-slate-500 mt-1">Weekly hours, PTO approvals, and your company holiday calendar.</p>
         </div>
       </header>
 
       <Tabs defaultValue="timesheet">
-        <TabsList className="grid w-full grid-cols-4 max-w-xl">
-          <TabsTrigger value="timesheet" className="gap-1.5"><Clock className="h-3.5 w-3.5" /> Timesheet</TabsTrigger>
-          <TabsTrigger value="approvals" className="gap-1.5"><ShieldCheck className="h-3.5 w-3.5" /> Approvals</TabsTrigger>
-          <TabsTrigger value="pto" className="gap-1.5">
+        <TabsList className="grid w-full grid-cols-4 max-w-xl bg-surface rounded-xl p-1">
+          <TabsTrigger value="timesheet" className="gap-1.5 rounded-lg data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm"><Clock className="h-3.5 w-3.5" /> Timesheet</TabsTrigger>
+          <TabsTrigger value="approvals" className="gap-1.5 rounded-lg data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm"><ShieldCheck className="h-3.5 w-3.5" /> Approvals</TabsTrigger>
+          <TabsTrigger value="pto" className="gap-1.5 rounded-lg data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm">
             <CalendarDays className="h-3.5 w-3.5" /> PTO
-            {pendingPto.length > 0 && <span className="ml-1 px-1.5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold">{pendingPto.length}</span>}
+            {pendingPto.length > 0 && <span className="ml-1 px-1.5 rounded-full bg-primary text-slate-900 text-xs font-bold">{pendingPto.length}</span>}
           </TabsTrigger>
-          <TabsTrigger value="holidays" className="gap-1.5"><CalendarIcon className="h-3.5 w-3.5" /> Holidays</TabsTrigger>
+          <TabsTrigger value="holidays" className="gap-1.5 rounded-lg data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm"><CalendarIcon className="h-3.5 w-3.5" /> Holidays</TabsTrigger>
         </TabsList>
 
         {/* TIMESHEET TAB */}
         <TabsContent value="timesheet" className="space-y-4 mt-6">
           {/* Week navigator */}
-          <div className="flex flex-wrap items-center gap-3 surface-glass p-4 rounded-xl">
-            <Button variant="outline" size="sm" onClick={() => setWeekStart(addDays(weekStart, -7))} className="gap-1">
+          <div className="flex flex-wrap items-center gap-3 bg-card border border-border p-4 rounded-2xl">
+            <Button variant="outline" size="sm" onClick={() => setWeekStart(addDays(weekStart, -7))} className="gap-1 rounded-xl border-border text-slate-700 hover:bg-surface">
               <ChevronLeft className="h-4 w-4" /> Prev
             </Button>
             <div className="flex items-center gap-2">
-              <CalendarIcon className="h-4 w-4 text-muted-foreground" />
-              <span className="font-semibold">{fmtRange(weekStart, weekEnd)}</span>
+              <CalendarIcon className="h-4 w-4 text-slate-500" />
+              <span className="font-semibold text-slate-900">{fmtRange(weekStart, weekEnd)}</span>
             </div>
-            <Button variant="outline" size="sm" onClick={() => setWeekStart(addDays(weekStart, 7))} className="gap-1">
+            <Button variant="outline" size="sm" onClick={() => setWeekStart(addDays(weekStart, 7))} className="gap-1 rounded-xl border-border text-slate-700 hover:bg-surface">
               Next <ChevronRight className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="sm" onClick={() => setWeekStart(startOfWeek(new Date()))}>This week</Button>
+            <Button variant="ghost" size="sm" onClick={() => setWeekStart(startOfWeek(new Date()))} className="text-slate-500 hover:text-slate-900">This week</Button>
 
             <div className="ml-auto flex flex-wrap gap-2">
-              <Button variant="outline" size="sm" onClick={fillStandardWeek} className="gap-1"><Plus className="h-3.5 w-3.5" /> Fill Mon–Fri 8h</Button>
-              <Button variant="ghost" size="sm" onClick={clearWeek} className="gap-1 text-muted-foreground"><Trash2 className="h-3.5 w-3.5" /> Clear</Button>
-              <Button size="sm" onClick={saveWeek} disabled={saving} className="gap-1">
+              <Button variant="outline" size="sm" onClick={fillStandardWeek} className="gap-1 rounded-xl border-border text-slate-700 hover:bg-surface"><Plus className="h-3.5 w-3.5" /> Fill Mon–Fri 8h</Button>
+              <Button variant="ghost" size="sm" onClick={clearWeek} className="gap-1 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl"><Trash2 className="h-3.5 w-3.5" /> Clear</Button>
+              <Button size="sm" onClick={saveWeek} disabled={saving} className="gap-1 bg-primary text-slate-900 hover:bg-primary/90 rounded-xl">
                 {saving ? "Saving…" : "Save timesheet"}
               </Button>
             </div>
@@ -254,39 +251,39 @@ function TimePage() {
 
           {/* KPIs */}
           <div className="grid grid-cols-3 gap-4">
-            <Kpi label="Total hours" value={totals.total.toFixed(1)} />
-            <Kpi label="Regular" value={totals.regular.toFixed(1)} />
-            <Kpi label="Overtime" value={totals.ot.toFixed(1)} highlight={totals.ot > 0} />
+            <SummaryTile label="Total hours" value={totals.total.toFixed(1)} />
+            <SummaryTile label="Regular" value={totals.regular.toFixed(1)} />
+            <SummaryTile label="Overtime" value={totals.ot.toFixed(1)} highlight={totals.ot > 0} />
           </div>
 
           {/* Grid */}
           {loading ? (
-            <div className="surface-glass rounded-xl p-12 text-center text-muted-foreground">Loading…</div>
+            <div className="bg-card border border-border rounded-2xl p-12 text-center text-slate-500">Loading…</div>
           ) : emps.length === 0 ? (
-            <div className="surface-glass rounded-xl p-12 text-center">
-              <Clock className="h-12 w-12 mx-auto text-muted-foreground/40 mb-3" />
-              <p className="font-medium">No active employees yet.</p>
-              <p className="text-sm text-muted-foreground mt-1">Add employees first, then log their hours here.</p>
+            <div className="bg-card border border-border rounded-2xl p-12 text-center">
+              <Clock className="h-12 w-12 mx-auto text-slate-300 mb-3" />
+              <p className="font-semibold text-slate-900">No active employees yet.</p>
+              <p className="text-sm text-slate-500 mt-1">Add employees first, then log their hours here.</p>
             </div>
           ) : (
-            <div className="surface-glass rounded-xl overflow-x-auto">
+            <div className="bg-card border border-border rounded-2xl overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
+                <thead className="bg-surface text-xs uppercase tracking-wide text-slate-500">
                   <tr>
-                    <th className="text-left px-4 py-3 sticky left-0 bg-muted/40 z-10 min-w-[180px]">Employee</th>
+                    <th className="text-left px-4 py-3 sticky left-0 bg-surface z-10 min-w-[180px] text-slate-700">Employee</th>
                     {weekDays.map((d) => {
                       const isToday = fmtIso(d) === fmtIso(new Date());
                       const isWeekend = d.getDay() === 0 || d.getDay() === 6;
                       const holiday = US_HOLIDAYS_2026.find((h) => h.date === fmtIso(d));
                       return (
-                        <th key={fmtIso(d)} className={`text-center px-2 py-3 min-w-[90px] ${isToday ? "text-primary" : ""} ${isWeekend ? "bg-muted/20" : ""}`}>
+                        <th key={fmtIso(d)} className={`text-center px-2 py-3 min-w-[90px] ${isToday ? "text-primary" : ""} ${isWeekend ? "bg-surface/50" : ""}`}>
                           <div className="font-bold">{fmtDay(d)}</div>
-                          <div className={`text-base font-normal ${isToday ? "text-primary" : "text-foreground"}`}>{fmtDayNum(d)}</div>
-                          {holiday && <div className="text-[9px] text-amber-600 normal-case font-medium mt-0.5 truncate" title={holiday.name}>{holiday.name}</div>}
+                          <div className={`text-base font-normal ${isToday ? "text-primary" : "text-slate-900"}`}>{fmtDayNum(d)}</div>
+                          {holiday && <div className="text-xs text-amber-600 normal-case font-medium mt-0.5 truncate" title={holiday.name}>{holiday.name}</div>}
                         </th>
                       );
                     })}
-                    <th className="text-center px-3 py-3 bg-muted/60 min-w-[80px]">Total</th>
+                    <th className="text-center px-3 py-3 bg-surface/80 min-w-[80px] text-slate-700">Total</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -295,30 +292,30 @@ function TimePage() {
                     const overOT = rowTotal > 40;
                     return (
                       <tr key={emp.id} className="border-t border-border/40">
-                        <td className="px-4 py-2 sticky left-0 bg-card/95 backdrop-blur z-10">
-                          <div className="font-medium truncate">{emp.full_name}</div>
-                          <div className="text-xs text-muted-foreground capitalize">{emp.pay_type}</div>
+                        <td className="px-4 py-2 sticky left-0 bg-white z-10">
+                          <div className="font-medium truncate text-slate-900">{emp.full_name}</div>
+                          <div className="text-xs text-slate-500 capitalize">{emp.pay_type}</div>
                         </td>
                         {weekDays.map((d) => {
                           const iso = fmtIso(d);
                           const val = grid[emp.id]?.[iso] ?? 0;
                           const isWeekend = d.getDay() === 0 || d.getDay() === 6;
                           return (
-                            <td key={iso} className={`px-1 py-1 ${isWeekend ? "bg-muted/10" : ""}`}>
+                            <td key={iso} className={`px-1 py-1 ${isWeekend ? "bg-surface/30" : ""}`}>
                               <Input
                                 type="number"
                                 min={0} max={24} step="0.25"
                                 value={val || ""}
                                 placeholder="0"
                                 onChange={(e) => setCell(emp.id, iso, e.target.value)}
-                                className="h-9 text-center px-1 tabular-nums"
+                                className="h-9 text-center px-1 tabular-nums bg-white border-border rounded-lg"
                               />
                             </td>
                           );
                         })}
-                        <td className={`px-3 py-2 text-center font-bold tabular-nums ${overOT ? "text-amber-600" : ""}`}>
+                        <td className={`px-3 py-2 text-center font-bold tabular-nums ${overOT ? "text-amber-600" : "text-slate-900"}`}>
                           {rowTotal.toFixed(1)}
-                          {overOT && <div className="text-[10px] font-medium">+{(rowTotal - 40).toFixed(1)} OT</div>}
+                          {overOT && <div className="text-xs font-medium text-amber-600">+{(rowTotal - 40).toFixed(1)} OT</div>}
                         </td>
                       </tr>
                     );
@@ -336,33 +333,33 @@ function TimePage() {
 
         {/* PTO TAB */}
         <TabsContent value="pto" className="space-y-4 mt-6">
-          <div className="surface-glass rounded-xl p-5">
-            <h2 className="font-semibold mb-1">Pending requests</h2>
-            <p className="text-sm text-muted-foreground mb-4">Approve or decline time-off requests from your team.</p>
+          <div className="bg-card border border-border rounded-2xl p-5">
+            <h2 className="font-semibold text-slate-900 mb-1">Pending requests</h2>
+            <p className="text-sm text-slate-500 mb-4">Approve or decline time-off requests from your team.</p>
             {pendingPto.length === 0 ? (
-              <div className="text-center py-8 text-sm text-muted-foreground">
-                <Check className="h-10 w-10 mx-auto text-emerald-500/60 mb-2" />
+              <div className="text-center py-8 text-sm text-slate-500">
+                <Check className="h-10 w-10 mx-auto text-emerald-400 mb-2" />
                 You're all caught up — no pending requests.
               </div>
             ) : (
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {pendingPto.map((p) => (
-                  <div key={p.id} className="flex flex-wrap items-center gap-3 rounded-xl border border-amber-200 bg-amber-50/50 p-4">
+                  <div key={p.id} className="flex flex-wrap items-center gap-3 rounded-xl border border-amber-200 bg-amber-50/60 p-4">
                     <div className="min-w-0 flex-1">
-                      <div className="font-medium flex items-center gap-2">
+                      <div className="font-medium text-slate-900 flex items-center gap-2">
                         {p.employees?.full_name ?? "Employee"}
-                        <Badge variant="outline" className="capitalize text-xs">{p.pto_type}</Badge>
+                        <Badge variant="outline" className="capitalize text-xs border-border text-slate-600">{p.pto_type}</Badge>
                       </div>
-                      <div className="text-sm text-muted-foreground">
+                      <div className="text-sm text-slate-500">
                         {new Date(p.start_date).toLocaleDateString()} – {new Date(p.end_date).toLocaleDateString()} · {p.hours}h
                       </div>
-                      {p.notes && <div className="text-xs text-muted-foreground italic mt-1">"{p.notes}"</div>}
+                      {p.notes && <div className="text-xs text-slate-500 italic mt-1">"{p.notes}"</div>}
                     </div>
                     <div className="flex gap-2">
-                      <Button size="sm" variant="outline" onClick={() => approvePto(p.id, "rejected")} className="gap-1">
+                      <Button size="sm" variant="outline" onClick={() => approvePto(p.id, "rejected")} className="gap-1 rounded-xl border-border text-slate-700 hover:bg-red-50 hover:text-red-600 hover:border-red-200">
                         <X className="h-3.5 w-3.5" /> Decline
                       </Button>
-                      <Button size="sm" onClick={() => approvePto(p.id, "approved")} className="gap-1 bg-emerald-600 hover:bg-emerald-700">
+                      <Button size="sm" onClick={() => approvePto(p.id, "approved")} className="gap-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl">
                         <Check className="h-3.5 w-3.5" /> Approve
                       </Button>
                     </div>
@@ -372,20 +369,20 @@ function TimePage() {
             )}
           </div>
 
-          <div className="surface-glass rounded-xl p-5">
-            <h2 className="font-semibold mb-3">Recent decisions</h2>
+          <div className="bg-card border border-border rounded-2xl p-5">
+            <h2 className="font-semibold text-slate-900 mb-3">Recent decisions</h2>
             {pto.filter((p) => p.status !== "pending").length === 0 ? (
-              <div className="text-sm text-muted-foreground">No recent decisions.</div>
+              <div className="text-sm text-slate-500">No recent decisions.</div>
             ) : (
               <div className="divide-y divide-border/40">
                 {pto.filter((p) => p.status !== "pending").slice(0, 10).map((p) => (
                   <div key={p.id} className="flex items-center gap-3 py-3 text-sm">
-                    <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${
-                      p.status === "approved" ? "bg-emerald-100 text-emerald-700" : "bg-rose-100 text-rose-700"
+                    <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${
+                      p.status === "approved" ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-600"
                     }`}>{p.status}</span>
                     <div className="min-w-0 flex-1">
-                      <div className="font-medium truncate">{p.employees?.full_name}</div>
-                      <div className="text-xs text-muted-foreground">
+                      <div className="font-medium text-slate-900 truncate">{p.employees?.full_name}</div>
+                      <div className="text-xs text-slate-500">
                         {p.pto_type} · {new Date(p.start_date).toLocaleDateString()} – {new Date(p.end_date).toLocaleDateString()} · {p.hours}h
                       </div>
                     </div>
@@ -398,22 +395,22 @@ function TimePage() {
 
         {/* HOLIDAYS TAB */}
         <TabsContent value="holidays" className="space-y-4 mt-6">
-          <div className="surface-glass rounded-xl p-5">
-            <h2 className="font-semibold mb-1">2026 holiday calendar</h2>
-            <p className="text-sm text-muted-foreground mb-4">Federal US holidays — these days are highlighted on your timesheet automatically.</p>
+          <div className="bg-card border border-border rounded-2xl p-5">
+            <h2 className="font-semibold text-slate-900 mb-1">2026 holiday calendar</h2>
+            <p className="text-sm text-slate-500 mb-4">Federal US holidays — these days are highlighted on your timesheet automatically.</p>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {US_HOLIDAYS_2026.map((h) => {
                 const d = new Date(h.date + "T12:00:00");
                 const past = d < new Date();
                 return (
-                  <div key={h.date} className={`rounded-xl border p-4 ${past ? "opacity-60" : "bg-background/50"}`}>
-                    <div className="text-xs uppercase tracking-wide text-muted-foreground">
+                  <div key={h.date} className={`rounded-xl border border-border p-4 ${past ? "opacity-60" : "bg-white"}`}>
+                    <div className="text-xs uppercase tracking-wide text-slate-500">
                       {d.toLocaleDateString("en-US", { weekday: "long" })}
                     </div>
-                    <div className="text-lg font-bold">
+                    <div className="text-lg font-bold text-slate-900">
                       {d.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                     </div>
-                    <div className="text-sm font-medium">{h.name}</div>
+                    <div className="text-sm font-medium text-slate-700">{h.name}</div>
                   </div>
                 );
               })}
@@ -425,11 +422,11 @@ function TimePage() {
   );
 }
 
-function Kpi({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
+function SummaryTile({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
   return (
-    <div className={`surface-glass rounded-xl p-4 ${highlight ? "ring-1 ring-amber-400/40" : ""}`}>
-      <div className="text-xs uppercase tracking-wide text-muted-foreground">{label}</div>
-      <div className={`text-2xl font-bold mt-1 tabular-nums ${highlight ? "text-amber-600" : ""}`}>{value}<span className="text-base font-normal text-muted-foreground ml-1">hrs</span></div>
+    <div className={`bg-card border border-border rounded-2xl p-5 ${highlight ? "ring-1 ring-amber-400/40" : ""}`}>
+      <div className="text-sm text-slate-500">{label}</div>
+      <div className={`text-3xl font-extrabold mt-2 tabular-nums ${highlight ? "text-amber-600" : "text-slate-900"}`}>{value}<span className="text-base font-normal text-slate-500 ml-1">hrs</span></div>
     </div>
   );
 }
