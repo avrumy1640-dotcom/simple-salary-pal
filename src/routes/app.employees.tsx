@@ -106,8 +106,12 @@ function EmployeesPage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
     if (!currentId) { toast.error("No active company selected"); return; }
+    // Strip lifecycle fields — those are owned by employee-lifecycle.functions.ts
+    const { lifecycle_status: _ls, termination_date: _td, termination_reason: _tr,
+            rehire_eligible: _re, leave_start_date: _lsd, leave_end_date: _led,
+            leave_reason: _lr, ...rest } = form as any;
     const payload = {
-      ...form,
+      ...rest,
       pay_rate: Number(form.pay_rate) || 0,
       dependents: Number(form.dependents) || 0,
       extra_withholding: Number(form.extra_withholding) || 0,
