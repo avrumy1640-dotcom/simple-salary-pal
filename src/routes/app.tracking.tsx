@@ -69,17 +69,17 @@ function TrackingPage() {
 
   async function refresh() {
     const [{ data: e }, { data: c }, { data: p }, { data: v }] = await Promise.all([
-      supabase.from("employees").select("id, full_name, latitude, longitude, geocoded_address").order("full_name"),
-      supabase.from("contractors").select("id, full_name, latitude, longitude, geocoded_address").order("full_name"),
-      supabase.from("time_clock_punches").select("*").order("punched_at", { ascending: false }).limit(50),
-      supabase.from("field_visits").select("*").order("created_at", { ascending: false }).limit(50),
+      supabase.from("employees").select("id, full_name, latitude, longitude, geocoded_address").eq("company_id", currentId ?? "").order("full_name"),
+      supabase.from("contractors").select("id, full_name, latitude, longitude, geocoded_address").eq("company_id", currentId ?? "").order("full_name"),
+      supabase.from("time_clock_punches").select("*").eq("company_id", currentId ?? "").order("punched_at", { ascending: false }).limit(50),
+      supabase.from("field_visits").select("*").eq("company_id", currentId ?? "").order("created_at", { ascending: false }).limit(50),
     ]);
     setEmployees((e ?? []) as Employee[]);
     setContractors((c ?? []) as Contractor[]);
     setPunches((p ?? []) as Punch[]);
     setVisits((v ?? []) as Visit[]);
   }
-  useEffect(() => { refresh(); }, []);
+  useEffect(() => { if (currentId) refresh(); }, [currentId]);
 
   async function flushQueue() {
     const q = loadOffline();

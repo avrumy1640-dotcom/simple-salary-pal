@@ -75,19 +75,21 @@ function ReportsPage() {
 
 
   useEffect(() => {
+    if (!currentId) return;
     (async () => {
       const [{ data: r }, { count }] = await Promise.all([
-        supabase.from("payroll_runs").select("*").order("created_at", { ascending: false }).limit(10),
-        supabase.from("employees").select("id", { count: "exact", head: true }).eq("status", "active"),
+        supabase.from("payroll_runs").select("*").eq("company_id", currentId).order("created_at", { ascending: false }).limit(10),
+        supabase.from("employees").select("id", { count: "exact", head: true }).eq("company_id", currentId).eq("status", "active"),
       ]);
       setRuns((r ?? []) as Run[]);
       setEmpCount(count ?? 0);
     })();
-  }, []);
+  }, [currentId]);
 
 
   async function exportRun(id: string) {
-    const { data } = await supabase.from("payroll_items").select("*").eq("run_id", id);
+    if (!currentId) return;
+    const { data } = await supabase.from("payroll_items").select("*").eq("company_id", currentId).eq("run_id", id);
     if (!data || data.length === 0) return;
     const headers = ["Employee", "Regular hours", "Overtime hours", "Gross", "Federal tax", "Social security", "Medicare", "State tax", "Net pay"];
     const rows = data.map((d: any) => [
@@ -103,7 +105,8 @@ function ReportsPage() {
   }
 
   async function exportEmployees() {
-    const { data } = await supabase.from("employees").select("*");
+    if (!currentId) return;
+    const { data } = await supabase.from("employees").select("*").eq("company_id", currentId);
     if (!data) return;
     const headers = ["Name", "Email", "Job title", "Pay type", "Pay rate", "Status", "Start date"];
     const rows = data.map((e: any) => [e.full_name, e.email ?? "", e.job_title ?? "", e.pay_type, e.pay_rate, e.status, e.start_date ?? ""]);

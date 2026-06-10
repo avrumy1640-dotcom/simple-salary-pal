@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { fmtUSD } from "@/lib/payroll";
 import { Button } from "@/components/ui/button";
 import { Receipt, Download, Banknote } from "lucide-react";
+import { useCompany } from "@/hooks/useCompany";
 
 export const Route = createFileRoute("/app/paystubs")({
   head: () => ({ meta: [{ title: "Pay stubs & ACH — Paylo" }] }),
@@ -24,25 +25,27 @@ interface Item {
 interface Run { id: string; period_start: string; period_end: string; pay_date: string; net_total: number; status: string }
 
 function PayStubsPage() {
+  const { currentId } = useCompany();
   const [runs, setRuns] = useState<Run[]>([]);
   const [items, setItems] = useState<Item[]>([]);
   const [activeRun, setActiveRun] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!currentId) return;
     (async () => {
-      const { data: r } = await supabase.from("payroll_runs").select("id, period_start, period_end, pay_date, net_total, status").order("pay_date", { ascending: false });
+      const { data: r } = await supabase.from("payroll_runs").select("id, period_start, period_end, pay_date, net_total, status").eq("company_id", currentId).order("pay_date", { ascending: false });
       setRuns((r ?? []) as Run[]);
       if (r && r.length) setActiveRun(r[0].id);
     })();
-  }, []);
+  }, [currentId]);
 
   useEffect(() => {
-    if (!activeRun) return;
+    if (!activeRun || !currentId) return;
     (async () => {
-      const { data } = await supabase.from("payroll_items").select("*").eq("run_id", activeRun);
+      const { data } = await supabase.from("payroll_items").select("*").eq("company_id", currentId).eq("run_id", activeRun);
       setItems((data ?? []) as Item[]);
     })();
-  }, [activeRun]);
+  }, [activeRun, currentId]);
 
   function downloadStub(it: Item) {
     const run = runs.find((r) => r.id === it.run_id);
@@ -77,9 +80,10 @@ function PayStubsPage() {
   async function downloadAchBatch() {
     if (!activeRun) return;
     const run = runs.find((r) => r.id === activeRun);
-    const { data: emps } = await supabase.from("employees").select("id, full_name, bank_routing_last4, bank_account_last4");
+    if (!currentId) return;
+    const { data: emps } = await supabase.from("employees").select("id, full_name, bank_routing_last4, bank_account_last4").eq("company_id", currentId);
     const empMap = new Map((emps ?? []).map((e) => [e.id as string, e]));
-    const { data: rich } = await supabase.from("payroll_items").select("employee_id, employee_name, net_pay").eq("run_id", activeRun);
+    const { data: rich } = await supabase.from("payroll_items").select("employee_id, employee_name, net_pay").eq("company_id", currentId).eq("run_id", activeRun);
 
     const header = `ACH BATCH FILE (preview — not a NACHA-formatted file)`;
     const meta = `Pay date: ${run?.pay_date ?? "-"} | Items: ${(rich ?? []).length} | Total net: ${fmtUSD(run?.net_total ?? 0)}`;

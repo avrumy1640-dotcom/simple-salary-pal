@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { CheckCircle2, Circle, ArrowRight, BookOpen, Calculator, Building2, Users, Wallet, Receipt } from "lucide-react";
+import { useCompany } from "@/hooks/useCompany";
 
 export const Route = createFileRoute("/app/getting-started")({
   head: () => ({ meta: [{ title: "Getting started — Paylo" }] }),
@@ -16,15 +17,17 @@ interface Status {
 }
 
 function GettingStartedPage() {
+  const { currentId } = useCompany();
   const [s, setS] = useState<Status>({ hasCompany: false, hasEmployees: false, hasTime: false, hasPayroll: false });
 
   useEffect(() => {
+    if (!currentId) return;
     (async () => {
       const [{ data: cs }, { count: ec }, { count: tc }, { count: pc }] = await Promise.all([
-        supabase.from("company_settings").select("onboarding_complete").maybeSingle(),
-        supabase.from("employees").select("*", { count: "exact", head: true }),
-        supabase.from("time_entries").select("*", { count: "exact", head: true }),
-        supabase.from("payroll_runs").select("*", { count: "exact", head: true }),
+        supabase.from("company_settings").select("onboarding_complete").eq("company_id", currentId).maybeSingle(),
+        supabase.from("employees").select("*", { count: "exact", head: true }).eq("company_id", currentId),
+        supabase.from("time_entries").select("*", { count: "exact", head: true }).eq("company_id", currentId),
+        supabase.from("payroll_runs").select("*", { count: "exact", head: true }).eq("company_id", currentId),
       ]);
       setS({
         hasCompany: !!cs?.onboarding_complete,
@@ -33,7 +36,7 @@ function GettingStartedPage() {
         hasPayroll: (pc ?? 0) > 0,
       });
     })();
-  }, []);
+  }, [currentId]);
 
   const steps = [
     { done: s.hasCompany, title: "Set up your company", desc: "Add your business name, EIN, and pay schedule.", to: "/app/settings", icon: Building2 },

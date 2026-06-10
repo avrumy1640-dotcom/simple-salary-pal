@@ -10,6 +10,7 @@ import {
 import {
   History, Search, Download, ChevronRight, Calendar, Users, DollarSign, TrendingUp,
 } from "lucide-react";
+import { useCompany } from "@/hooks/useCompany";
 
 export const Route = createFileRoute("/app/pay-history")({
   head: () => ({ meta: [{ title: "Pay history — Paylo" }] }),
@@ -46,6 +47,7 @@ function fmtDate(d: string) {
 }
 
 function PayHistoryPage() {
+  const { currentId } = useCompany();
   const [runs, setRuns] = useState<Run[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
@@ -55,29 +57,32 @@ function PayHistoryPage() {
   const [itemsLoading, setItemsLoading] = useState(false);
 
   useEffect(() => {
+    if (!currentId) return;
     (async () => {
       const { data } = await supabase
         .from("payroll_runs")
         .select("*")
+        .eq("company_id", currentId)
         .order("pay_date", { ascending: false });
       setRuns((data as Run[]) ?? []);
       setLoading(false);
     })();
-  }, []);
+  }, [currentId]);
 
   useEffect(() => {
-    if (!selected) { setItems([]); return; }
+    if (!selected || !currentId) { setItems([]); return; }
     (async () => {
       setItemsLoading(true);
       const { data } = await supabase
         .from("payroll_items")
         .select("*")
+        .eq("company_id", currentId)
         .eq("run_id", selected.id)
         .order("employee_name");
       setItems((data as Item[]) ?? []);
       setItemsLoading(false);
     })();
-  }, [selected]);
+  }, [selected, currentId]);
 
   const years = useMemo(() => {
     const set = new Set(runs.map((r) => new Date(r.pay_date).getFullYear().toString()));
@@ -121,7 +126,8 @@ function PayHistoryPage() {
   }
 
   async function downloadRun(r: Run) {
-    const { data } = await supabase.from("payroll_items").select("*").eq("run_id", r.id).order("employee_name");
+    if (!currentId) return;
+    const { data } = await supabase.from("payroll_items").select("*").eq("company_id", currentId).eq("run_id", r.id).order("employee_name");
     const items = (data ?? []) as Item[];
     const rows = [
       ["Employee", "Reg hrs", "OT hrs", "Gross", "Federal", "SS", "Medicare", "State", "Net"],

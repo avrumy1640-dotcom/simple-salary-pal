@@ -75,9 +75,9 @@ function DocumentsPage() {
 
   async function refresh() {
     const [{ data: emps }, { data: cons }, { data: d }] = await Promise.all([
-      supabase.from("employees").select("id, full_name").order("full_name"),
-      supabase.from("contractors").select("id, full_name").order("full_name"),
-      supabase.from("hr_documents").select("*").order("uploaded_at", { ascending: false }),
+      supabase.from("employees").select("id, full_name").eq("company_id", currentId ?? "").order("full_name"),
+      supabase.from("contractors").select("id, full_name").eq("company_id", currentId ?? "").order("full_name"),
+      supabase.from("hr_documents").select("*").eq("company_id", currentId ?? "").order("uploaded_at", { ascending: false }),
     ]);
     setPeople([
       ...((emps ?? []) as any[]).map((e) => ({ id: e.id, full_name: e.full_name, kind: "employee" as const })),
@@ -85,7 +85,7 @@ function DocumentsPage() {
     ]);
     setDocs((d ?? []) as Doc[]);
   }
-  useEffect(() => { refresh(); }, []);
+  useEffect(() => { if (currentId) refresh(); }, [currentId]);
 
   async function upload() {
     const file = fileRef.current?.files?.[0];

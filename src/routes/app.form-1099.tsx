@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { useCompany } from "@/hooks/useCompany";
 
 export const Route = createFileRoute("/app/form-1099")({
   head: () => ({ meta: [{ title: "1099-NEC preview & validation — Paylo" }] }),
@@ -62,6 +63,7 @@ function validate(c: Contractor, ytd: number, reportable: boolean): Issue[] {
 }
 
 function Form1099Page() {
+  const { currentId } = useCompany();
   const [year, setYear] = useState(new Date().getFullYear());
   const [contractors, setContractors] = useState<Contractor[]>([]);
   const [payments, setPayments] = useState<Payment[]>([]);
@@ -70,17 +72,18 @@ function Form1099Page() {
   const [filter, setFilter] = useState<"all" | "reportable" | "issues" | "ready">("reportable");
 
   useEffect(() => {
+    if (!currentId) return;
     (async () => {
       const [{ data: c }, { data: p }, { data: comp }] = await Promise.all([
-        supabase.from("contractors").select("id, full_name, business_name, email, address_line1, city, state, zip, tax_id_type, tax_id_last4, status"),
-        supabase.from("contractor_payments").select("contractor_id, amount, payment_date"),
-        supabase.from("company_settings").select("legal_name, ein, address_line1, city, state, zip").maybeSingle(),
+        supabase.from("contractors").select("id, full_name, business_name, email, address_line1, city, state, zip, tax_id_type, tax_id_last4, status").eq("company_id", currentId),
+        supabase.from("contractor_payments").select("contractor_id, amount, payment_date").eq("company_id", currentId),
+        supabase.from("company_settings").select("legal_name, ein, address_line1, city, state, zip").eq("company_id", currentId).maybeSingle(),
       ]);
       setContractors((c ?? []) as Contractor[]);
       setPayments((p ?? []) as Payment[]);
       setCompany((comp ?? null) as Company | null);
     })();
-  }, []);
+  }, [currentId]);
 
   const rows: Row[] = useMemo(() => {
     const totals = new Map<string, number>();

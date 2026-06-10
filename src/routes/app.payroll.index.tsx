@@ -77,11 +77,12 @@ function PayrollOverview() {
   const [itemsByRun, setItemsByRun] = useState<Record<string, Item[]>>({});
 
   useEffect(() => {
+    if (!currentId) return;
     (async () => {
       setLoading(true);
       const [{ data: rs }, { count: empCount }] = await Promise.all([
-        supabase.from("payroll_runs").select("*").order("pay_date", { ascending: false }),
-        supabase.from("employees").select("*", { count: "exact", head: true }).eq("status", "active"),
+        supabase.from("payroll_runs").select("*").eq("company_id", currentId).order("pay_date", { ascending: false }),
+        supabase.from("employees").select("*", { count: "exact", head: true }).eq("company_id", currentId).eq("status", "active"),
       ]);
       setRuns((rs as Run[]) ?? []);
       setActiveEmps(empCount ?? 0);
@@ -138,9 +139,9 @@ function PayrollOverview() {
       return;
     }
     setExpandedId(r.id);
-    if (!itemsByRun[r.id]) {
+    if (!itemsByRun[r.id] && currentId) {
       const { data } = await supabase
-        .from("payroll_items").select("*").eq("run_id", r.id).order("employee_name");
+        .from("payroll_items").select("*").eq("company_id", currentId).eq("run_id", r.id).order("employee_name");
       setItemsByRun((prev) => ({ ...prev, [r.id]: (data as Item[]) ?? [] }));
     }
   }
@@ -148,7 +149,8 @@ function PayrollOverview() {
   async function downloadRun(r: Run) {
     let items = itemsByRun[r.id];
     if (!items) {
-      const { data } = await supabase.from("payroll_items").select("*").eq("run_id", r.id).order("employee_name");
+      if (!currentId) return;
+      const { data } = await supabase.from("payroll_items").select("*").eq("company_id", currentId).eq("run_id", r.id).order("employee_name");
       items = (data as Item[]) ?? [];
     }
     const rows = [
