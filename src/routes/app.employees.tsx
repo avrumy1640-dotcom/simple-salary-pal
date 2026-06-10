@@ -15,9 +15,11 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Info, Building2, Banknote, FileText as FileIcon, Phone, Mail, MapPin, Calendar, DollarSign, Search } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { Plus, Pencil, Trash2, Info, Building2, Banknote, FileText as FileIcon, Phone, Mail, MapPin, Calendar, DollarSign, Search, UserX, UserCheck, Pause } from "lucide-react";
 import { fmtUSD } from "@/lib/payroll";
 import { useCompany } from "@/hooks/useCompany";
+import { terminateEmployee, reactivateEmployee, placeOnLeave, returnFromLeave } from "@/lib/employee-lifecycle.functions";
 
 export const Route = createFileRoute("/app/employees")({
   head: () => ({ meta: [{ title: "Employees — Paylo" }] }),
