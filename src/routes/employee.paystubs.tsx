@@ -61,32 +61,53 @@ function Page() {
     URL.revokeObjectURL(url);
   }
 
+  const ytdNet = items
+    .filter((p) => p.payroll_runs?.pay_date && new Date(p.payroll_runs.pay_date).getFullYear() === new Date().getFullYear())
+    .reduce((s, p) => s + Number(p.net_pay), 0);
+  const lastNet = items[0] ? Number(items[0].net_pay) : 0;
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 unit-in">
       <div>
-        <h1 className="text-2xl font-semibold">My pay stubs</h1>
-        <p className="text-sm text-muted-foreground">Download any pay stub from your history.</p>
+        <h1 className="font-display text-[32px] sm:text-[40px] font-extrabold tracking-tight text-slate-900">My pay stubs</h1>
+        <p className="mt-2 text-base text-slate-600">Download any pay stub from your history.</p>
       </div>
-      <div className="rounded-2xl border bg-card">
-        <div className="flex items-center gap-2 border-b px-5 py-3 text-sm font-medium">
-          <Wallet className="h-4 w-4" /> {items.length} pay stub{items.length === 1 ? "" : "s"}
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div className="rounded-2xl border border-border bg-card p-5 shadow-soft">
+          <div className="text-xs uppercase tracking-wider text-slate-500">Last paycheck</div>
+          <div className="mt-2 font-display text-2xl font-bold text-slate-900">{fmt(lastNet)}</div>
+        </div>
+        <div className="rounded-2xl border border-border bg-card p-5 shadow-soft">
+          <div className="text-xs uppercase tracking-wider text-slate-500">YTD net</div>
+          <div className="mt-2 font-display text-2xl font-bold text-slate-900">{fmt(ytdNet)}</div>
+        </div>
+        <div className="rounded-2xl border border-border bg-card p-5 shadow-soft">
+          <div className="text-xs uppercase tracking-wider text-slate-500">Stubs available</div>
+          <div className="mt-2 font-display text-2xl font-bold text-slate-900">{items.length}</div>
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-border bg-card shadow-soft">
+        <div className="flex items-center gap-2 border-b border-border px-5 py-3 text-sm font-semibold text-slate-700">
+          <Wallet className="h-4 w-4" /> Pay history
         </div>
         {items.length === 0 ? (
-          <div className="p-6 text-sm text-muted-foreground">No pay stubs yet.</div>
+          <div className="p-6 text-sm text-slate-500">No pay stubs yet.</div>
         ) : (
-          <ul className="divide-y">
+          <ul className="divide-y divide-border">
             {items.map((p) => (
-              <li key={p.id} className="flex flex-wrap items-center gap-3 px-5 py-3">
-                <FileText className="h-4 w-4 text-muted-foreground" />
+              <li key={p.id} className="flex flex-wrap items-center gap-3 px-5 py-4">
+                <FileText className="h-4 w-4 text-slate-400" />
                 <div className="flex-1 min-w-0">
-                  <div className="font-medium">Pay date {p.payroll_runs?.pay_date ?? "—"}</div>
-                  <div className="text-xs text-muted-foreground">
+                  <div className="font-semibold text-slate-900">Pay date {p.payroll_runs?.pay_date ?? "—"}</div>
+                  <div className="text-xs text-slate-500">
                     {p.payroll_runs?.period_start ?? "—"} → {p.payroll_runs?.period_end ?? "—"}
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-sm font-semibold">{fmt(Number(p.net_pay))}</div>
-                  <div className="text-xs text-muted-foreground">Gross {fmt(Number(p.gross_pay))}</div>
+                  <div className="text-sm font-bold text-slate-900">{fmt(Number(p.net_pay))}</div>
+                  <div className="text-xs text-slate-500">Gross {fmt(Number(p.gross_pay))}</div>
                 </div>
                 <Button size="sm" variant="outline" className="gap-1" onClick={() => download(p)}>
                   <Download className="h-3.5 w-3.5" /> Download
