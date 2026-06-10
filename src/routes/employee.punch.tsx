@@ -5,7 +5,7 @@ import { useMyEmployee } from "@/lib/useMyEmployee";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Clock, Play, Square, MapPin, AlertCircle, ShieldCheck, Coffee } from "lucide-react";
+import { Clock, Play, Square, MapPin, AlertCircle, ShieldCheck, Coffee, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/employee/punch")({
@@ -135,8 +135,35 @@ function PunchPage() {
     load();
   }
 
+  // Live elapsed timer since last clock-in / break-end
+  const [now, setNow] = useState(Date.now());
+  useEffect(() => {
+    if (!clockedIn) return;
+    const t = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(t);
+  }, [clockedIn]);
+  const elapsedMs = clockedIn && lastPunch ? now - new Date(lastPunch.punched_at).getTime() : 0;
+  const elapsed = (() => {
+    const s = Math.max(0, Math.floor(elapsedMs / 1000));
+    const h = Math.floor(s / 3600).toString().padStart(2, "0");
+    const m = Math.floor((s % 3600) / 60).toString().padStart(2, "0");
+    const sec = (s % 60).toString().padStart(2, "0");
+    return `${h}:${m}:${sec}`;
+  })();
+
+  const status: "in" | "out" | "break" = onBreak ? "break" : clockedIn ? "in" : "out";
+  const statusMeta = {
+    in:    { label: "On the clock",    dot: "bg-emerald-500", text: "text-emerald-700", bg: "bg-emerald-50",  ring: "ring-emerald-200" },
+    out:   { label: "Off the clock",   dot: "bg-slate-400",   text: "text-slate-600",  bg: "bg-slate-50",    ring: "ring-slate-200" },
+    break: { label: "On break",        dot: "bg-amber-500",   text: "text-amber-700",  bg: "bg-amber-50",    ring: "ring-amber-200" },
+  }[status];
+
+  const geofenceBlocked = !!(selectedLoc?.geofence_required && insideGeofence === false);
+  const geofenceAcquiring = !!(selectedLoc?.geofence_required && !coords && !geoError);
+
   if (loading) return null;
   if (!employee) return <p className="text-sm text-muted-foreground">No employee record found.</p>;
+
 
   return (
     <div className="space-y-8 unit-in">
@@ -145,8 +172,26 @@ function PunchPage() {
         <p className="mt-2 text-base text-slate-600">Confirm your worksite, then punch in.</p>
       </div>
 
+      {/* Live status hero */}
+      <div className={`rounded-3xl border border-border ${statusMeta.bg} p-6 shadow-soft`}>
+        <div className="flex items-center gap-2">
+          <span className={`relative inline-flex h-2.5 w-2.5 rounded-full ${statusMeta.dot}`}>
+            {status === "in" && <span className={`absolute inset-0 animate-ping rounded-full ${statusMeta.dot} opacity-60`} />}
+          </span>
+          <span className={`text-xs font-semibold uppercase tracking-[0.14em] ${statusMeta.text}`}>{statusMeta.label}</span>
+        </div>
+        <div className="mt-3 font-display text-5xl sm:text-6xl font-extrabold tabular text-slate-900">
+          {clockedIn ? elapsed : "00:00:00"}
+        </div>
+        <div className="mt-1 text-sm text-slate-600">
+          {clockedIn
+            ? `Since ${new Date(lastPunch!.punched_at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`
+            : "Ready when you are."}
+        </div>
+      </div>
+
       {activeShift && (
-        <div className="rounded-xl border border-primary/30 bg-primary/5 p-4">
+        <div className="rounded-2xl border border-primary/30 bg-primary/5 p-4">
           <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary">
             <Clock className="h-3.5 w-3.5" /> Scheduled shift
           </div>
@@ -174,56 +219,99 @@ function PunchPage() {
           </Select>
         </div>
 
-        <div className="rounded-md border border-border bg-surface px-3 py-2.5 text-sm">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-slate-700">
-              <MapPin className="h-3.5 w-3.5" />
+        {/* Geofence status */}
+        <div className="rounded-xl border border-border bg-surface px-4 py-3 text-sm">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2 text-slate-700 min-w-0">
+              <MapPin className="h-4 w-4 shrink-0 text-slate-500" />
               {coords ? (
-                <span>{coords.lat.toFixed(5)}, {coords.lng.toFixed(5)} <span className="text-slate-400">(±{Math.round(coords.acc)}m)</span></span>
+                <span className="truncate">
+                  {coords.lat.toFixed(5)}, {coords.lng.toFixed(5)}{" "}
+                  <span className="text-slate-400">±{Math.round(coords.acc)}m</span>
+                </span>
               ) : geoError ? (
-                <span className="text-rose-600">{geoError}</span>
+                <span className="text-rose-600">Couldn't get location: {geoError}</span>
               ) : (
-                <span className="text-slate-500">Acquiring location…</span>
+                <span className="inline-flex items-center gap-1.5 text-slate-500">
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" /> Finding your location…
+                </span>
               )}
             </div>
             <Button variant="outline" size="sm" onClick={captureLocation}>Refresh</Button>
           </div>
-          {selectedLoc?.latitude && distance !== null && (
-            <div className="mt-2 flex items-center gap-2">
-              {insideGeofence ? (
-                <Badge className="bg-emerald-100 text-emerald-800 hover:bg-emerald-100"><ShieldCheck className="mr-1 h-3 w-3" /> Inside geofence ({Math.round(distance)} m)</Badge>
+
+          {selectedLoc?.geofence_required && (
+            <div className="mt-3">
+              {geofenceAcquiring ? (
+                <div className="flex items-center gap-2 rounded-lg bg-slate-100 px-3 py-2 text-xs font-medium text-slate-600">
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  Waiting for location to verify you're at {selectedLoc.name}…
+                </div>
+              ) : distance === null ? (
+                <div className="flex items-center gap-2 rounded-lg bg-slate-100 px-3 py-2 text-xs font-medium text-slate-600">
+                  <AlertCircle className="h-3.5 w-3.5" />
+                  This worksite requires location to punch in.
+                </div>
+              ) : insideGeofence ? (
+                <div className="flex items-center gap-2 rounded-lg bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-800 ring-1 ring-emerald-200">
+                  <ShieldCheck className="h-4 w-4" />
+                  You're at {selectedLoc.name} — {Math.round(distance)} m from center (within {selectedLoc.geofence_radius_m} m).
+                </div>
               ) : (
-                <Badge variant="destructive"><AlertCircle className="mr-1 h-3 w-3" /> Outside geofence ({Math.round(distance)} m / {selectedLoc.geofence_radius_m} m)</Badge>
+                <div className="flex items-start gap-2 rounded-lg bg-rose-50 px-3 py-2 text-xs font-semibold text-rose-800 ring-1 ring-rose-200">
+                  <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+                  <span>
+                    You're <strong>{Math.round(distance)} m</strong> from {selectedLoc.name} — must be within {selectedLoc.geofence_radius_m} m to punch in. Move closer, then tap Refresh.
+                  </span>
+                </div>
               )}
             </div>
           )}
         </div>
 
-        <div className="flex flex-wrap gap-2">
+        {/* Giant action buttons */}
+        <div className="space-y-2">
           {!clockedIn && !onBreak && (
-            <Button onClick={() => punch("in")} disabled={busy || (selectedLoc?.geofence_required && insideGeofence === false)} className="flex-1 min-w-[140px]">
-              <Play className="mr-1 h-4 w-4" /> Clock in
+            <Button
+              onClick={() => punch("in")}
+              disabled={busy || geofenceBlocked || geofenceAcquiring}
+              className="h-20 w-full rounded-2xl bg-emerald-600 text-lg font-bold text-white shadow-lg shadow-emerald-600/25 transition hover:bg-emerald-700 disabled:opacity-50"
+            >
+              {busy ? <Loader2 className="mr-2 h-6 w-6 animate-spin" /> : <Play className="mr-2 h-6 w-6" />}
+              Clock in
             </Button>
           )}
           {clockedIn && !onBreak && (
-            <>
-              <Button onClick={() => punch("break_start")} variant="outline" disabled={busy} className="flex-1 min-w-[140px]">
-                <Coffee className="mr-1 h-4 w-4" /> Start break
+            <div className="grid grid-cols-2 gap-2">
+              <Button
+                onClick={() => punch("break_start")}
+                variant="outline"
+                disabled={busy}
+                className="h-16 rounded-2xl border-amber-300 bg-amber-50 text-base font-semibold text-amber-900 hover:bg-amber-100"
+              >
+                <Coffee className="mr-2 h-5 w-5" /> Start break
               </Button>
-              <Button onClick={() => punch("out")} disabled={busy} className="flex-1 min-w-[140px]">
-                <Square className="mr-1 h-4 w-4" /> Clock out
+              <Button
+                onClick={() => punch("out")}
+                disabled={busy}
+                className="h-16 rounded-2xl bg-rose-600 text-base font-bold text-white shadow-lg shadow-rose-600/25 hover:bg-rose-700"
+              >
+                {busy ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Square className="mr-2 h-5 w-5" />}
+                Clock out
               </Button>
-            </>
+            </div>
           )}
           {onBreak && (
-            <Button onClick={() => punch("break_end")} disabled={busy} className="flex-1 min-w-[140px]">
-              <Play className="mr-1 h-4 w-4" /> End break
+            <Button
+              onClick={() => punch("break_end")}
+              disabled={busy}
+              className="h-20 w-full rounded-2xl bg-emerald-600 text-lg font-bold text-white shadow-lg shadow-emerald-600/25 hover:bg-emerald-700"
+            >
+              {busy ? <Loader2 className="mr-2 h-6 w-6 animate-spin" /> : <Play className="mr-2 h-6 w-6" />}
+              End break & resume
             </Button>
           )}
         </div>
-        {selectedLoc?.geofence_required && insideGeofence === false && (
-          <p className="text-xs text-rose-600">You must be inside the {selectedLoc.name} geofence to punch in.</p>
-        )}
       </div>
 
       <div className="rounded-2xl border border-border bg-card shadow-soft">
@@ -234,19 +322,23 @@ function PunchPage() {
           <div className="p-6 text-sm text-slate-500">No punches yet.</div>
         ) : (
           <ul className="divide-y divide-border">
-            {recent.map((p) => (
-              <li key={p.id} className="flex items-center justify-between gap-3 px-4 py-2.5 text-sm">
-                <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="capitalize">{p.punch_type.replace("_", " ")}</Badge>
-                  <span className="text-slate-700">{new Date(p.punched_at).toLocaleString()}</span>
-                </div>
-                {p.geofence_required && (
-                  p.geofence_ok
-                    ? <ShieldCheck className="h-4 w-4 text-emerald-600" />
-                    : <AlertCircle className="h-4 w-4 text-rose-600" />
-                )}
-              </li>
-            ))}
+            {recent.map((p) => {
+              const isIn = p.punch_type === "in" || p.punch_type === "break_end";
+              return (
+                <li key={p.id} className="flex items-center justify-between gap-3 px-4 py-3 text-sm">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className={`inline-flex h-2 w-2 rounded-full ${isIn ? "bg-emerald-500" : "bg-rose-500"}`} />
+                    <Badge variant="outline" className="capitalize">{p.punch_type.replace("_", " ")}</Badge>
+                    <span className="truncate text-slate-700">{new Date(p.punched_at).toLocaleString()}</span>
+                  </div>
+                  {p.geofence_required && (
+                    p.geofence_ok
+                      ? <ShieldCheck className="h-4 w-4 text-emerald-600" />
+                      : <AlertCircle className="h-4 w-4 text-rose-600" />
+                  )}
+                </li>
+              );
+            })}
           </ul>
         )}
       </div>
