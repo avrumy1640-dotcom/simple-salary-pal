@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ArrowUpRight, ArrowRight, CheckCircle2, Users, Clock, Briefcase,
-  ShieldCheck, Wallet, CalendarDays, FileBadge, Sparkles,
+  ShieldCheck, Wallet, CalendarDays, FileBadge,
 } from "lucide-react";
 import { ScrollReveal, StaggerChildren, StaggerItem } from "@/components/motion/ScrollReveal";
 
