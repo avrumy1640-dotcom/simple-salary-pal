@@ -2414,6 +2414,56 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          body: string | null
+          company_id: string
+          created_at: string
+          entity_id: string | null
+          entity_type: string | null
+          id: string
+          kind: Database["public"]["Enums"]["notification_kind"]
+          link_path: string | null
+          read_at: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          company_id: string
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          kind: Database["public"]["Enums"]["notification_kind"]
+          link_path?: string | null
+          read_at?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          company_id?: string
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["notification_kind"]
+          link_path?: string | null
+          read_at?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       onboarding_assignments: {
         Row: {
           assigned_by: string | null
@@ -4436,6 +4486,18 @@ export type Database = {
       }
     }
     Views: {
+      attendance_report_v: {
+        Row: {
+          actual_hours: number | null
+          company_id: string | null
+          employee_id: string | null
+          scheduled_hours: number | null
+          scheduled_shifts: number | null
+          variance_hours: number | null
+          week_start: string | null
+        }
+        Relationships: []
+      }
       bank_connections_safe: {
         Row: {
           account_mask: string | null
@@ -4688,6 +4750,18 @@ export type Database = {
         Args: { _company_id: string; _user_id: string }
         Returns: boolean
       }
+      notify_managers: {
+        Args: {
+          _body: string
+          _company_id: string
+          _entity_id: string
+          _entity_type: string
+          _kind: Database["public"]["Enums"]["notification_kind"]
+          _link: string
+          _title: string
+        }
+        Returns: undefined
+      }
       publish_shifts: {
         Args: { _company_id: string; _end: string; _start: string }
         Returns: number
@@ -4797,6 +4871,15 @@ export type Database = {
       interview_mode: "phone" | "video" | "onsite"
       interview_status: "scheduled" | "completed" | "no_show" | "cancelled"
       job_status: "draft" | "open" | "on_hold" | "closed" | "filled"
+      notification_kind:
+        | "swap_requested"
+        | "swap_approved"
+        | "swap_denied"
+        | "swap_cancelled"
+        | "shift_published"
+        | "shift_cancelled"
+        | "pto_decided"
+        | "generic"
       pay_frequency: "weekly" | "biweekly" | "semimonthly" | "monthly"
       payroll_status:
         | "draft"
@@ -5061,6 +5144,16 @@ export const Constants = {
       interview_mode: ["phone", "video", "onsite"],
       interview_status: ["scheduled", "completed", "no_show", "cancelled"],
       job_status: ["draft", "open", "on_hold", "closed", "filled"],
+      notification_kind: [
+        "swap_requested",
+        "swap_approved",
+        "swap_denied",
+        "swap_cancelled",
+        "shift_published",
+        "shift_cancelled",
+        "pto_decided",
+        "generic",
+      ],
       pay_frequency: ["weekly", "biweekly", "semimonthly", "monthly"],
       payroll_status: [
         "draft",

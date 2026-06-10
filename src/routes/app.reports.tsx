@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useServerFn } from "@tanstack/react-start";
 import { exportW2Summary, export1099Summary, exportGlForRun, exportAuditLog, exportPayrollRegister } from "@/lib/reports.functions";
+import { getAttendanceReport } from "@/lib/attendance.functions";
 import { useCompany } from "@/hooks/useCompany";
 import { toast } from "sonner";
 import {
@@ -32,6 +33,9 @@ function ReportsPage() {
   const glFn = useServerFn(exportGlForRun);
   const auditFn = useServerFn(exportAuditLog);
   const regFn = useServerFn(exportPayrollRegister);
+  const attFn = useServerFn(getAttendanceReport);
+  const [attendance, setAttendance] = useState<any[]>([]);
+  const [attLoading, setAttLoading] = useState(false);
 
   function downloadCsv(filename: string, csv: string) {
     const blob = new Blob([csv], { type: "text/csv" });
@@ -44,6 +48,31 @@ function ReportsPage() {
     try { const r = await fn(); downloadCsv(r.filename, r.csv); toast.success(`${label} downloaded`); }
     catch (e: any) { toast.error(e.message || `${label} failed`); }
   }
+  async function loadAttendance() {
+    if (!currentId) return;
+    setAttLoading(true);
+    try {
+      const weekStart = (() => {
+        const d = new Date(); d.setDate(d.getDate() - d.getDay() - 21); d.setHours(0,0,0,0);
+        return d.toISOString();
+      })();
+      const r = await attFn({ data: { companyId: currentId, weekStart, weeks: 4 } });
+      setAttendance(r.rows);
+    } catch (e: any) { toast.error(e.message); }
+    finally { setAttLoading(false); }
+  }
+  useEffect(() => { loadAttendance(); }, [currentId]);
+
+  function exportAttendance() {
+    if (!attendance.length) { toast.error("No attendance data"); return; }
+    const headers = ["Week of", "Employee", "Scheduled hours", "Scheduled shifts", "Actual hours", "Variance"];
+    const rows = attendance.map((r: any) => [
+      r.week_start, r.employee_name, r.scheduled_hours, r.scheduled_shifts, r.actual_hours, r.variance_hours,
+    ]);
+    const csv = [headers, ...rows].map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
+    downloadCsv(`attendance-${new Date().toISOString().slice(0,10)}.csv`, csv);
+  }
+
 
   useEffect(() => {
     (async () => {
@@ -179,6 +208,57 @@ function ReportsPage() {
             </Button>
           </div>
           <p className="text-xs text-muted-foreground">All exports are server-generated against paid runs. The audit log is append-only and reflects every change to employee, payroll, and HR records.</p>
+        </div>
+      </div>
+
+      {/* Attendance — scheduled vs actual */}
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Attendance (last 4 weeks)</h2>
+          <div className="flex gap-2">
+            <Button size="sm" variant="ghost" onClick={loadAttendance} disabled={attLoading}>Refresh</Button>
+            <Button size="sm" variant="outline" onClick={exportAttendance} disabled={!attendance.length} className="gap-2">
+              <Download className="h-4 w-4" /> Export CSV
+            </Button>
+          </div>
+        </div>
+        <div className="surface-glass rounded-2xl overflow-hidden">
+          {attLoading ? (
+            <div className="p-6 text-center text-sm text-muted-foreground">Loading…</div>
+          ) : attendance.length === 0 ? (
+            <div className="p-8 text-center text-sm text-muted-foreground">
+              <Clock className="h-10 w-10 mx-auto text-muted-foreground/30 mb-2" />
+              No scheduled or actual hours in the last 4 weeks.
+            </div>
+          ) : (
+            <table className="w-full text-sm">
+              <thead className="bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
+                <tr>
+                  <th className="px-4 py-2 text-left">Week of</th>
+                  <th className="px-4 py-2 text-left">Employee</th>
+                  <th className="px-4 py-2 text-right">Scheduled</th>
+                  <th className="px-4 py-2 text-right">Actual</th>
+                  <th className="px-4 py-2 text-right">Variance</th>
+                </tr>
+              </thead>
+              <tbody>
+                {attendance.map((r: any, i: number) => {
+                  const v = Number(r.variance_hours);
+                  return (
+                    <tr key={i} className="border-t border-border/40">
+                      <td className="px-4 py-2 tabular-nums">{r.week_start}</td>
+                      <td className="px-4 py-2">{r.employee_name}</td>
+                      <td className="px-4 py-2 text-right tabular-nums">{Number(r.scheduled_hours).toFixed(1)}h <span className="text-muted-foreground">· {r.scheduled_shifts}</span></td>
+                      <td className="px-4 py-2 text-right tabular-nums">{Number(r.actual_hours).toFixed(1)}h</td>
+                      <td className={`px-4 py-2 text-right tabular-nums font-semibold ${v < -0.5 ? "text-rose-600" : v > 0.5 ? "text-emerald-600" : "text-slate-600"}`}>
+                        {v >= 0 ? "+" : ""}{v.toFixed(1)}h
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
 

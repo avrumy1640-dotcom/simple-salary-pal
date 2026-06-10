@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
   Home, Wallet, CalendarDays, Clock, HeartHandshake, FolderOpen,
-  UserCircle2, LogOut, Menu, X,
+  UserCircle2, LogOut, Menu, X, MapPin, Bell,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -14,6 +14,8 @@ const nav = [
   { to: "/employee/pto", label: "Time off", icon: CalendarDays },
   { to: "/employee/schedule", label: "Schedule", icon: CalendarDays },
   { to: "/employee/time", label: "Time clock", icon: Clock },
+  { to: "/employee/punch", label: "Punch in/out", icon: MapPin },
+  { to: "/employee/notifications", label: "Notifications", icon: Bell },
   { to: "/employee/benefits", label: "Benefits", icon: HeartHandshake },
   { to: "/employee/documents", label: "Documents", icon: FolderOpen },
   { to: "/employee/profile", label: "My profile", icon: UserCircle2 },
