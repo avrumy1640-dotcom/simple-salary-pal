@@ -20,6 +20,7 @@ const nav: NavItem[] = [
   { to: "/app/scheduling", label: "Scheduling", icon: CalendarDays },
   { to: "/app/recruiting", label: "Recruiting", icon: UserPlus },
   { to: "/app/onboarding", label: "Onboarding", icon: ShieldCheck },
+  { to: "/app/onboarding-templates", label: "Onboarding templates", icon: ShieldCheck },
   { to: "/app/benefits", label: "Benefits", icon: HeartHandshake },
   { to: "/app/performance", label: "Performance", icon: Target },
   { to: "/app/compliance", label: "Compliance", icon: ShieldCheck },
