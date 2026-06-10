@@ -45,10 +45,10 @@ function Page() {
           .eq("employee_id", employee.id)
           .order("created_at", { ascending: false })
           .limit(48),
-        supabase.from("companies").select("name").eq("id", employee.company_id).maybeSingle(),
+        supabase.from("companies").select("legal_name, dba").eq("id", employee.company_id).maybeSingle(),
       ]);
       setItems((data ?? []) as unknown as PayItem[]);
-      setCompanyName(comp?.name ?? "");
+      setCompanyName((comp?.dba || comp?.legal_name) ?? "");
     })();
   }, [employee?.id]);
 
