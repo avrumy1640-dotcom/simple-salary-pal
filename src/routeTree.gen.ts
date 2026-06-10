@@ -28,6 +28,7 @@ import { Route as AppPerformanceRouteImport } from './routes/app.performance'
 import { Route as AppPaystubsRouteImport } from './routes/app.paystubs'
 import { Route as AppPayrollRouteImport } from './routes/app.payroll'
 import { Route as AppPayHistoryRouteImport } from './routes/app.pay-history'
+import { Route as AppOnboardingTemplatesRouteImport } from './routes/app.onboarding-templates'
 import { Route as AppOnboardingRouteImport } from './routes/app.onboarding'
 import { Route as AppIntegrationsRouteImport } from './routes/app.integrations'
 import { Route as AppGettingStartedRouteImport } from './routes/app.getting-started'
@@ -137,6 +138,11 @@ const AppPayHistoryRoute = AppPayHistoryRouteImport.update({
   path: '/pay-history',
   getParentRoute: () => AppRoute,
 } as any)
+const AppOnboardingTemplatesRoute = AppOnboardingTemplatesRouteImport.update({
+  id: '/onboarding-templates',
+  path: '/onboarding-templates',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppOnboardingRoute = AppOnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
@@ -222,6 +228,7 @@ export interface FileRoutesByFullPath {
   '/app/getting-started': typeof AppGettingStartedRoute
   '/app/integrations': typeof AppIntegrationsRoute
   '/app/onboarding': typeof AppOnboardingRoute
+  '/app/onboarding-templates': typeof AppOnboardingTemplatesRoute
   '/app/pay-history': typeof AppPayHistoryRoute
   '/app/payroll': typeof AppPayrollRoute
   '/app/paystubs': typeof AppPaystubsRoute
@@ -256,6 +263,7 @@ export interface FileRoutesByTo {
   '/app/getting-started': typeof AppGettingStartedRoute
   '/app/integrations': typeof AppIntegrationsRoute
   '/app/onboarding': typeof AppOnboardingRoute
+  '/app/onboarding-templates': typeof AppOnboardingTemplatesRoute
   '/app/pay-history': typeof AppPayHistoryRoute
   '/app/payroll': typeof AppPayrollRoute
   '/app/paystubs': typeof AppPaystubsRoute
@@ -291,6 +299,7 @@ export interface FileRoutesById {
   '/app/getting-started': typeof AppGettingStartedRoute
   '/app/integrations': typeof AppIntegrationsRoute
   '/app/onboarding': typeof AppOnboardingRoute
+  '/app/onboarding-templates': typeof AppOnboardingTemplatesRoute
   '/app/pay-history': typeof AppPayHistoryRoute
   '/app/payroll': typeof AppPayrollRoute
   '/app/paystubs': typeof AppPaystubsRoute
@@ -327,6 +336,7 @@ export interface FileRouteTypes {
     | '/app/getting-started'
     | '/app/integrations'
     | '/app/onboarding'
+    | '/app/onboarding-templates'
     | '/app/pay-history'
     | '/app/payroll'
     | '/app/paystubs'
@@ -361,6 +371,7 @@ export interface FileRouteTypes {
     | '/app/getting-started'
     | '/app/integrations'
     | '/app/onboarding'
+    | '/app/onboarding-templates'
     | '/app/pay-history'
     | '/app/payroll'
     | '/app/paystubs'
@@ -395,6 +406,7 @@ export interface FileRouteTypes {
     | '/app/getting-started'
     | '/app/integrations'
     | '/app/onboarding'
+    | '/app/onboarding-templates'
     | '/app/pay-history'
     | '/app/payroll'
     | '/app/paystubs'
@@ -554,6 +566,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPayHistoryRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/onboarding-templates': {
+      id: '/app/onboarding-templates'
+      path: '/onboarding-templates'
+      fullPath: '/app/onboarding-templates'
+      preLoaderRoute: typeof AppOnboardingTemplatesRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/onboarding': {
       id: '/app/onboarding'
       path: '/onboarding'
@@ -662,6 +681,7 @@ interface AppRouteChildren {
   AppGettingStartedRoute: typeof AppGettingStartedRoute
   AppIntegrationsRoute: typeof AppIntegrationsRoute
   AppOnboardingRoute: typeof AppOnboardingRoute
+  AppOnboardingTemplatesRoute: typeof AppOnboardingTemplatesRoute
   AppPayHistoryRoute: typeof AppPayHistoryRoute
   AppPayrollRoute: typeof AppPayrollRoute
   AppPaystubsRoute: typeof AppPaystubsRoute
@@ -692,6 +712,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppGettingStartedRoute: AppGettingStartedRoute,
   AppIntegrationsRoute: AppIntegrationsRoute,
   AppOnboardingRoute: AppOnboardingRoute,
+  AppOnboardingTemplatesRoute: AppOnboardingTemplatesRoute,
   AppPayHistoryRoute: AppPayHistoryRoute,
   AppPayrollRoute: AppPayrollRoute,
   AppPaystubsRoute: AppPaystubsRoute,
