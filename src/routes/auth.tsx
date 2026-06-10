@@ -72,6 +72,29 @@ function AuthPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  function friendlyError(msg: string): string {
+    const m = msg.toLowerCase();
+    if (m.includes("already registered") || m.includes("user already") || m.includes("already exists")) {
+      return "An account with this email already exists. Try signing in instead.";
+    }
+    if (m.includes("invalid login") || m.includes("invalid credentials")) {
+      return "Incorrect email or password. Please try again.";
+    }
+    if (m.includes("email not confirmed")) {
+      return "Please confirm your email first. Check your inbox for the verification link.";
+    }
+    if (m.includes("password") && (m.includes("short") || m.includes("weak") || m.includes("6 characters"))) {
+      return "Please choose a stronger password with at least 8 characters.";
+    }
+    if (m.includes("network") || m.includes("fetch")) {
+      return "Connection problem. Please check your internet and try again.";
+    }
+    if (m.includes("rate") || m.includes("too many")) {
+      return "Too many attempts. Please wait a moment and try again.";
+    }
+    return msg;
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
@@ -79,6 +102,7 @@ function AuthPage() {
       if (mode === "signup") {
         if (!firstName.trim() || !lastName.trim()) throw new Error("Please enter your first and last name.");
         if (accountType === "employer" && !companyName.trim()) throw new Error("Please enter your company name.");
+        if (password.length < 8) throw new Error("Please choose a stronger password with at least 8 characters.");
 
         const { data, error } = await supabase.auth.signUp({
           email: email.trim(),
@@ -95,24 +119,30 @@ function AuthPage() {
           },
         });
         if (error) throw error;
-        if (data.user && !data.session) {
-          toast.success("Check your inbox to confirm your email, then sign in.");
-          setMode("signin");
-        } else if (data.session) {
+
+        // With auto-confirm enabled, signUp returns a session. If not, sign in directly.
+        if (!data.session) {
+          const { data: signIn, error: signInError } = await supabase.auth.signInWithPassword({
+            email: email.trim(),
+            password,
+          });
+          if (signInError) throw signInError;
+          if (signIn.user) {
+            toast.success("Account created successfully. Welcome to the app.");
+            await routeByRoleOrProfile(navigate, signIn.user.id);
+          }
+        } else {
+          toast.success("Account created successfully. Welcome to the app.");
           await routeByRoleOrProfile(navigate, data.session.user.id);
         }
       } else {
         const { data, error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
-        if (error) {
-          if (/email not confirmed/i.test(error.message)) {
-            throw new Error("Please confirm your email first. Check your inbox for the verification link.");
-          }
-          throw error;
-        }
+        if (error) throw error;
         if (data.user) await routeByRoleOrProfile(navigate, data.user.id);
       }
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Something went wrong");
+      const raw = err instanceof Error ? err.message : "Something went wrong";
+      toast.error(friendlyError(raw));
     } finally {
       setLoading(false);
     }
