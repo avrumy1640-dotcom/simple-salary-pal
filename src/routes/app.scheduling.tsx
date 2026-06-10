@@ -46,21 +46,32 @@ function SchedulingPage() {
   const [weekStart, setWeekStart] = useState(startOfWeek(new Date()));
   const [shifts, setShifts] = useState<Shift[]>([]);
   const [employees, setEmployees] = useState<Emp[]>([]);
+  const [locations, setLocations] = useState<WorkLocation[]>([]);
+  const [swaps, setSwaps] = useState<Swap[]>([]);
   const [open, setOpen] = useState(false);
   const [preset, setPreset] = useState<{ date?: string; emp?: string } | null>(null);
+  const [publishing, setPublishing] = useState(false);
+
+  const publish = useServerFn(publishWeek);
+  const decide = useServerFn(decideSwap);
+  const cancelShiftFn = useServerFn(cancelShift);
 
   const weekEnd = useMemo(() => addDays(weekStart, 7), [weekStart]);
 
   async function load() {
     if (!currentId) return;
-    const [s, e] = await Promise.all([
+    const [s, e, l, sw] = await Promise.all([
       supabase.from("shifts").select("*").eq("company_id", currentId)
         .gte("start_at", weekStart.toISOString()).lt("start_at", weekEnd.toISOString())
         .order("start_at"),
       supabase.from("employees").select("id, full_name, job_title").eq("company_id", currentId).eq("status","active").order("full_name"),
+      supabase.from("work_locations").select("id, name").eq("company_id", currentId).eq("is_active", true).order("name"),
+      supabase.from("shift_swap_requests").select("*").eq("company_id", currentId).eq("status","pending").order("created_at", { ascending: false }),
     ]);
     setShifts((s.data ?? []) as Shift[]);
     setEmployees((e.data ?? []) as Emp[]);
+    setLocations((l.data ?? []) as WorkLocation[]);
+    setSwaps((sw.data ?? []) as Swap[]);
   }
   useEffect(() => { load(); }, [currentId, weekStart.getTime()]);
 
@@ -69,19 +80,46 @@ function SchedulingPage() {
   const totals = useMemo(() => {
     const map: Record<string, number> = {};
     for (const s of shifts) {
-      if (!s.employee_id) continue;
+      if (!s.employee_id || s.status === "cancelled") continue;
       map[s.employee_id] = (map[s.employee_id] ?? 0) + hours(s);
     }
     return map;
   }, [shifts]);
 
-  const weekHours = useMemo(() => shifts.reduce((a, s) => a + hours(s), 0), [shifts]);
-  const unassigned = shifts.filter((s) => !s.employee_id).length;
+  const weekHours = useMemo(() => shifts.filter(s => s.status !== "cancelled").reduce((a, s) => a + hours(s), 0), [shifts]);
+  const unassigned = shifts.filter((s) => !s.employee_id && s.status !== "cancelled").length;
+  const draftCount = shifts.filter((s) => s.status === "draft" && s.employee_id).length;
+  const empName = (id: string | null) => employees.find(e => e.id === id)?.full_name ?? "—";
 
-  async function deleteShift(id: string) {
-    const { error } = await supabase.from("shifts").delete().eq("id", id);
-    if (error) { toast.error(error.message); return; }
-    setShifts((c) => c.filter((s) => s.id !== id));
+  async function deleteShift(id: string, status: string) {
+    if (status === "published") {
+      const r = await cancelShiftFn({ data: { shiftId: id } });
+      if (!r) return;
+      toast.success("Shift cancelled");
+    } else {
+      const { error } = await supabase.from("shifts").delete().eq("id", id);
+      if (error) { toast.error(error.message); return; }
+    }
+    load();
+  }
+
+  async function handlePublish() {
+    if (!currentId) return;
+    setPublishing(true);
+    try {
+      const r = await publish({ data: { companyId: currentId, weekStart: weekStart.toISOString(), weekEnd: weekEnd.toISOString() } });
+      toast.success(`Published ${r.published} shift${r.published === 1 ? "" : "s"}`);
+      load();
+    } catch (e: any) { toast.error(e.message); }
+    finally { setPublishing(false); }
+  }
+
+  async function handleDecideSwap(swapId: string, decision: "approved" | "denied") {
+    try {
+      await decide({ data: { swapId, decision } });
+      toast.success(`Swap ${decision}`);
+      load();
+    } catch (e: any) { toast.error(e.message); }
   }
 
   function openFor(date: Date, empId?: string) {
@@ -97,10 +135,14 @@ function SchedulingPage() {
         actions={
           <>
             <Button variant="outline" size="sm" onClick={() => setWeekStart(startOfWeek(new Date()))}>Today</Button>
+            <Button variant="outline" size="sm" onClick={handlePublish} disabled={publishing || draftCount === 0}>
+              <Send className="mr-1 h-4 w-4" /> Publish week {draftCount > 0 && `(${draftCount})`}
+            </Button>
             <Button size="sm" onClick={() => { setPreset(null); setOpen(true); }}><Plus className="mr-1 h-4 w-4" /> New shift</Button>
           </>
         }
       />
+
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {[
