@@ -70,7 +70,13 @@ export function AppShell() {
         supabase.from("payroll_runs").select("*", { count: "exact", head: true }).eq("status", "draft"),
       ]);
       setCompanyName(prof?.company_name || "Your company");
-      setRole((roles && roles[0]?.role) || "employee");
+      const r = (roles && roles[0]?.role) || "employee";
+      setRole(r);
+      // Employees cannot access the admin console — send them to their portal.
+      if (!isAdmin(r) && !isManager(r)) {
+        navigate({ to: "/employee/home" });
+        return;
+      }
       setBadges({ "/app/payroll": draftRuns ?? 0 });
       setChecking(false);
     });
