@@ -77,11 +77,12 @@ function PayrollOverview() {
   const [itemsByRun, setItemsByRun] = useState<Record<string, Item[]>>({});
 
   useEffect(() => {
+    if (!currentId) return;
     (async () => {
       setLoading(true);
       const [{ data: rs }, { count: empCount }] = await Promise.all([
-        supabase.from("payroll_runs").select("*").order("pay_date", { ascending: false }),
-        supabase.from("employees").select("*", { count: "exact", head: true }).eq("status", "active"),
+        supabase.from("payroll_runs").select("*").eq("company_id", currentId).order("pay_date", { ascending: false }),
+        supabase.from("employees").select("*", { count: "exact", head: true }).eq("company_id", currentId).eq("status", "active"),
       ]);
       setRuns((rs as Run[]) ?? []);
       setActiveEmps(empCount ?? 0);
