@@ -35,7 +35,6 @@ const searchTargets = [
   { to: "/app/tax-filing", label: "Tax filing", icon: Landmark },
   { to: "/app/reports", label: "Reports", icon: FileText },
   { to: "/app/settings", label: "Company settings", icon: SettingsIcon },
-  { to: "/app/getting-started", label: "Getting started", icon: ClipboardCheck },
 ] as const;
 
 interface Notification {
@@ -46,13 +45,12 @@ interface Notification {
   unread: boolean;
 }
 
-export function TopBar({ companyName, userEmail }: { companyName: string; userEmail: string }) {
+export function TopBar({ companyName, userEmail, pageTitle }: { companyName: string; userEmail: string; pageTitle?: string }) {
   const navigate = useNavigate();
   const path = useRouterState({ select: (s) => s.location.pathname });
   const [searchOpen, setSearchOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
-  // ⌘K to open search
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
@@ -64,7 +62,6 @@ export function TopBar({ companyName, userEmail }: { companyName: string; userEm
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  // Build a quick activity-based notification feed
   useEffect(() => {
     (async () => {
       const out: Notification[] = [];
@@ -113,29 +110,32 @@ export function TopBar({ companyName, userEmail }: { companyName: string; userEm
 
   return (
     <>
-      <div className="hidden md:flex sticky top-0 z-30 items-center gap-3 border-b border-primary/20 bg-card/80 backdrop-blur-2xl px-6 py-3">
+      <div className="hidden md:flex sticky top-0 z-30 items-center gap-4 border-b border-border bg-white px-6 py-3">
+        <h1 className="text-[22px] font-bold tracking-tight text-foreground min-w-[160px]">{pageTitle ?? "Dashboard"}</h1>
+
         <button
           onClick={() => setSearchOpen(true)}
-          className="group flex flex-1 max-w-xl items-center gap-2.5 rounded-full border border-primary/20 bg-card/70 px-4 py-2 text-sm text-slate-500 transition hover:border-primary/40 hover:shadow-soft"
+          className="group ml-4 flex flex-1 max-w-2xl items-center gap-2.5 rounded-lg border border-border bg-surface px-4 py-2 text-sm text-slate-500 transition hover:border-primary/40 hover:bg-white"
         >
-          <Search className="h-4 w-4" />
-          <span className="flex-1 text-left">Search pages, employees, payrolls…</span>
+          <Search className="h-4 w-4 text-slate-400" />
+          <span className="flex-1 text-left">Search employees, payroll runs, reports…</span>
+          <kbd className="hidden lg:inline rounded border border-border bg-white px-1.5 py-0.5 text-[10px] font-medium text-slate-400">⌘K</kbd>
         </button>
 
         <div className="ml-auto flex items-center gap-2">
           <Popover>
             <PopoverTrigger asChild>
-              <button className="relative grid h-10 w-10 place-items-center rounded-full border border-primary/20 bg-card/70 text-foreground transition hover:shadow-soft">
+              <button className="relative grid h-10 w-10 place-items-center rounded-full border border-border bg-white text-slate-600 transition hover:bg-surface">
                 <Bell className="h-4 w-4" />
                 {unread > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 grid h-5 min-w-[20px] place-items-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground">
+                  <span className="absolute -top-0.5 -right-0.5 grid h-5 min-w-[20px] place-items-center rounded-full bg-destructive px-1 text-[10px] font-bold text-white">
                     {unread}
                   </span>
                 )}
               </button>
             </PopoverTrigger>
             <PopoverContent className="w-80 p-0" align="end">
-              <div className="border-b px-4 py-3">
+              <div className="border-b border-border px-4 py-3">
                 <div className="font-semibold text-sm">Notifications</div>
                 <div className="text-xs text-muted-foreground">{unread} unread</div>
               </div>
@@ -144,7 +144,7 @@ export function TopBar({ companyName, userEmail }: { companyName: string; userEm
                   <div className="p-6 text-center text-sm text-muted-foreground">You're all caught up 🎉</div>
                 ) : (
                   notifications.map((n) => (
-                    <div key={n.id} className="border-b last:border-b-0 px-4 py-3 hover:bg-muted/30">
+                    <div key={n.id} className="border-b border-border last:border-b-0 px-4 py-3 hover:bg-surface">
                       <div className="flex items-start gap-2">
                         {n.unread && <span className="mt-1.5 h-2 w-2 rounded-full bg-primary flex-shrink-0" />}
                         <div className="flex-1 min-w-0">
@@ -162,33 +162,50 @@ export function TopBar({ companyName, userEmail }: { companyName: string; userEm
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-2 rounded-full border border-primary/20 bg-card/70 py-1 pl-1 pr-3 transition hover:shadow-soft">
-                <span className="grid h-8 w-8 place-items-center rounded-full gradient-brand text-xs font-bold text-foreground">
-                  {initials}
-                </span>
+              <button className="flex items-center gap-2 rounded-full border border-border bg-white py-1 pl-3 pr-2 transition hover:bg-surface">
                 <span className="hidden lg:inline text-sm font-medium text-foreground max-w-[140px] truncate">{companyName}</span>
-                <ChevronDown className="h-3.5 w-3.5 text-slate-500" />
+                <ChevronDown className="h-3.5 w-3.5 text-slate-400" />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel>
                 <div className="font-semibold text-sm">{companyName}</div>
-                <div className="text-xs font-normal text-muted-foreground truncate">{userEmail}</div>
+                <div className="text-xs font-normal text-muted-foreground truncate">Company</div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link to="/app/companies" className="cursor-pointer">
+                  <Briefcase className="h-4 w-4 mr-2" /> Switch company
+                </Link>
+              </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link to="/app/settings" className="cursor-pointer">
                   <SettingsIcon className="h-4 w-4 mr-2" /> Company settings
                 </Link>
               </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="grid h-10 w-10 place-items-center rounded-full bg-primary/15 text-primary text-xs font-bold ring-1 ring-primary/20 hover:bg-primary/25 transition">
+                {initials}
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel>
+                <div className="font-semibold text-sm">{userEmail.split("@")[0]}</div>
+                <div className="text-xs font-normal text-muted-foreground truncate">{userEmail}</div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <Link to="/app/getting-started" className="cursor-pointer">
-                  <ClipboardCheck className="h-4 w-4 mr-2" /> Getting started
+                <Link to="/employee/profile" className="cursor-pointer">
+                  <User className="h-4 w-4 mr-2" /> Profile
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link to="/employee/home" className="cursor-pointer">
-                  <User className="h-4 w-4 mr-2" /> View employee portal
+                <Link to="/app/settings" className="cursor-pointer">
+                  <SettingsIcon className="h-4 w-4 mr-2" /> Settings
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
