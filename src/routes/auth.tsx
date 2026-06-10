@@ -138,7 +138,7 @@ function AuthPage() {
           <span className="font-display text-3xl font-bold tracking-tight text-foreground">Paylo</span>
         </Link>
 
-        <div className="surface-glass rounded-[2rem] p-6 shadow-float md:p-7">
+        <div className="surface-glass rounded-[2rem] p-6 shadow-float text-center md:p-7">
           <h1 className="font-display text-3xl font-bold text-foreground">{mode === "signin" ? "Sign in" : "Create your account"}</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {mode === "signin" ? "Pick up where you left off." : "Start running payroll in minutes."}
@@ -157,7 +157,7 @@ function AuthPage() {
             <div className="h-px flex-1 bg-border" /> OR <div className="h-px flex-1 bg-border" />
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4 text-center">
             {mode === "signup" && (
               <>
                 <div>
@@ -212,7 +212,7 @@ function AuthPage() {
               <Label htmlFor="password" className="text-foreground">Password</Label>
               <Input id="password" type="password" autoComplete={mode === "signin" ? "current-password" : "new-password"} value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
               {mode === "signin" && (
-                <div className="mt-1 text-right">
+                <div className="mt-1 text-center">
                   <Link to="/forgot-password" className="text-xs text-primary hover:underline">Forgot password?</Link>
                 </div>
               )}
