@@ -55,8 +55,8 @@ function ContractorsPage() {
 
   async function load() {
     const [{ data: c }, { data: p }] = await Promise.all([
-      supabase.from("contractors").select("*").order("created_at", { ascending: false }),
-      supabase.from("contractor_payments").select("*").order("payment_date", { ascending: false }),
+      supabase.from("contractors").select("*").eq("company_id", currentId ?? "").order("created_at", { ascending: false }),
+      supabase.from("contractor_payments").select("*").eq("company_id", currentId ?? "").order("payment_date", { ascending: false }),
     ]);
     setContractors((c ?? []) as Contractor[]);
     setPayments((p ?? []) as Payment[]);

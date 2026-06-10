@@ -139,9 +139,9 @@ function PayrollOverview() {
       return;
     }
     setExpandedId(r.id);
-    if (!itemsByRun[r.id]) {
+    if (!itemsByRun[r.id] && currentId) {
       const { data } = await supabase
-        .from("payroll_items").select("*").eq("run_id", r.id).order("employee_name");
+        .from("payroll_items").select("*").eq("company_id", currentId).eq("run_id", r.id).order("employee_name");
       setItemsByRun((prev) => ({ ...prev, [r.id]: (data as Item[]) ?? [] }));
     }
   }
@@ -149,7 +149,8 @@ function PayrollOverview() {
   async function downloadRun(r: Run) {
     let items = itemsByRun[r.id];
     if (!items) {
-      const { data } = await supabase.from("payroll_items").select("*").eq("run_id", r.id).order("employee_name");
+      if (!currentId) return;
+      const { data } = await supabase.from("payroll_items").select("*").eq("company_id", currentId).eq("run_id", r.id).order("employee_name");
       items = (data as Item[]) ?? [];
     }
     const rows = [

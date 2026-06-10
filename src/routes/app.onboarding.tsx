@@ -58,8 +58,8 @@ function OnboardingPage() {
 
   async function loadPeople() {
     const [{ data: emps }, { data: cons }] = await Promise.all([
-      supabase.from("employees").select("id, full_name, start_date").order("full_name"),
-      supabase.from("contractors").select("id, full_name").order("full_name"),
+      supabase.from("employees").select("id, full_name, start_date").eq("company_id", currentId ?? "").order("full_name"),
+      supabase.from("contractors").select("id, full_name").eq("company_id", currentId ?? "").order("full_name"),
     ]);
     const list: Person[] = [
       ...((emps ?? []) as any[]).map((e) => ({ id: e.id, full_name: e.full_name, start_date: e.start_date, kind: "employee" as const })),
