@@ -6,7 +6,7 @@ import {
   LayoutDashboard, Users, Clock, Wallet, FileText, LogOut, Menu, X,
   CalendarDays, Settings as SettingsIcon, UserPlus, Target, ShieldCheck,
   BarChart3, FolderOpen, Megaphone, Plug, HeartHandshake, ChevronLeft,
-  ChevronRight, Building2, Sparkles,
+  ChevronRight, Building2, Sparkles, MapPin,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TopBar } from "@/components/TopBar";
@@ -17,6 +17,7 @@ const nav: NavItem[] = [
   { to: "/app/employees", label: "Employees", icon: Users },
   { to: "/app/payroll", label: "Payroll", icon: Wallet },
   { to: "/app/time", label: "Time tracking", icon: Clock },
+  { to: "/app/tracking", label: "Location & field", icon: MapPin },
   { to: "/app/scheduling", label: "Scheduling", icon: CalendarDays },
   { to: "/app/recruiting", label: "Recruiting", icon: UserPlus },
   { to: "/app/onboarding", label: "Onboarding", icon: ShieldCheck },
