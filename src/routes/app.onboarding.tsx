@@ -78,7 +78,7 @@ function OnboardingPage() {
     setForms((f ?? []) as Form[]);
   }
 
-  useEffect(() => { loadPeople(); loadTasks(); }, []);
+  useEffect(() => { if (currentId) { loadPeople(); loadTasks(); } }, [currentId]);
 
   const person = useMemo(() => people.find((p) => p.id === selected) || null, [people, selected]);
   const personTasks = useMemo(() => {
