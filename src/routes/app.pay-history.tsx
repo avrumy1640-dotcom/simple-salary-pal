@@ -151,34 +151,33 @@ function PayHistoryPage() {
     <div className="p-6 md:p-8 space-y-6 animate-in fade-in duration-300">
       <header className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
-            <History className="h-7 w-7 text-primary" />
+          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 flex items-center gap-3">
             Pay history
           </h1>
-          <p className="text-muted-foreground mt-1">Every payroll run you've ever processed, in one place.</p>
+          <p className="text-slate-500 mt-1">All your past payroll runs, in one place.</p>
         </div>
-        <Button onClick={exportCsv} disabled={!filtered.length} className="gap-2">
+        <Button onClick={exportCsv} disabled={!filtered.length} className="gap-2 bg-primary text-slate-900 hover:bg-primary/90 rounded-xl">
           <Download className="h-4 w-4" /> Export CSV
         </Button>
       </header>
 
       {/* KPI strip */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <StatCard icon={Calendar} label="Runs" value={String(totals.count)} />
-        <StatCard icon={DollarSign} label="Gross paid" value={fmtUSD(totals.gross)} />
-        <StatCard icon={TrendingUp} label="Taxes withheld" value={fmtUSD(totals.tax)} />
-        <StatCard icon={Users} label="Net to employees" value={fmtUSD(totals.net)} highlight />
+        <SummaryTile icon={Calendar} label="Runs" value={String(totals.count)} />
+        <SummaryTile icon={DollarSign} label="Gross paid" value={fmtUSD(totals.gross)} />
+        <SummaryTile icon={TrendingUp} label="Taxes withheld" value={fmtUSD(totals.tax)} />
+        <SummaryTile icon={Users} label="Net to employees" value={fmtUSD(totals.net)} highlight />
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap items-center gap-3 surface-glass p-4 rounded-xl">
+      <div className="flex flex-wrap items-center gap-3 bg-card border border-border p-4 rounded-2xl">
         <div className="relative flex-1 min-w-[220px]">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
           <Input
-            placeholder="Search by date or status…"
+            placeholder="Search by date or status"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="pl-9"
+            className="pl-9 bg-white border-border rounded-xl"
           />
         </div>
         <div className="flex gap-2">
@@ -186,10 +185,10 @@ function PayHistoryPage() {
             <button
               key={y}
               onClick={() => setYear(y)}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${
+              className={`px-3 py-1.5 rounded-xl text-sm font-medium transition ${
                 year === y
-                  ? "bg-primary text-primary-foreground shadow-sm"
-                  : "bg-muted/50 text-muted-foreground hover:bg-muted"
+                  ? "bg-primary text-slate-900 shadow-sm"
+                  : "bg-surface text-slate-500 hover:bg-surface/80"
               }`}
             >
               {y === "all" ? "All years" : y}
@@ -199,55 +198,54 @@ function PayHistoryPage() {
       </div>
 
       {/* List */}
-      <div className="surface-glass rounded-xl overflow-hidden">
+      <div className="bg-card border border-border rounded-2xl overflow-hidden">
         {loading ? (
-          <div className="p-12 text-center text-muted-foreground">Loading history…</div>
+          <div className="p-12 text-center text-slate-500">Loading history…</div>
         ) : filtered.length === 0 ? (
           <div className="p-12 text-center">
-            <History className="h-12 w-12 mx-auto text-muted-foreground/40 mb-3" />
-            <p className="font-medium">No payroll runs yet</p>
-            <p className="text-sm text-muted-foreground mt-1">Once you run payroll, the history will show up here.</p>
+            <History className="h-12 w-12 mx-auto text-slate-300 mb-3" />
+            <p className="font-semibold text-slate-900">No payroll runs yet</p>
+            <p className="text-sm text-slate-500 mt-1">Once you run payroll, everything will show up here.</p>
           </div>
         ) : (
           <div className="divide-y divide-border/50">
-            <div className="hidden md:grid grid-cols-[1.2fr_1.4fr_0.8fr_1fr_1fr_1fr_auto] gap-4 px-5 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground bg-muted/30">
+            <div className="hidden md:grid grid-cols-[1.2fr_1.4fr_0.8fr_1fr_1fr_1fr_auto] gap-4 px-5 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500 bg-surface">
               <div>Pay date</div><div>Period</div><div>Status</div>
               <div className="text-right">Gross</div><div className="text-right">Taxes</div><div className="text-right">Net</div><div />
             </div>
             {filtered.map((r) => (
               <div
                 key={r.id}
-                className="group grid grid-cols-2 md:grid-cols-[1.2fr_1.4fr_0.8fr_1fr_1fr_1fr_auto] gap-x-4 gap-y-1 px-5 py-5 hover:bg-primary/[0.04] transition border-l-2 border-transparent hover:border-primary"
+                className="group grid grid-cols-2 md:grid-cols-[1.2fr_1.4fr_0.8fr_1fr_1fr_1fr_auto] gap-x-4 gap-y-1 px-5 py-5 hover:bg-surface transition cursor-pointer"
+                onClick={() => setSelected(r)}
               >
-                <button onClick={() => setSelected(r)} className="text-left font-semibold text-white">{fmtDate(r.pay_date)}</button>
-                <div className="text-sm text-white/60">
+                <div className="text-left font-semibold text-slate-900">{fmtDate(r.pay_date)}</div>
+                <div className="text-sm text-slate-500">
                   {fmtDate(r.period_start)} – {fmtDate(r.period_end)}
                 </div>
                 <div>
-                  <span className={`inline-flex px-2.5 py-1 rounded-full text-[11px] font-bold ${
+                  <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${
                     r.status === "approved" || r.status === "completed"
-                      ? "bg-primary/15 text-primary border border-primary/40"
+                      ? "bg-primary/15 text-emerald-700"
                       : r.status === "draft"
-                      ? "border border-white/30 text-white/80"
-                      : "bg-destructive/15 text-destructive"
+                      ? "bg-slate-100 text-slate-600"
+                      : "bg-red-50 text-red-600"
                   }`}>{r.status}</span>
                 </div>
-                <div className="text-right tabular-nums text-white/85">{fmtUSD(r.gross_total ?? 0)}</div>
-                <div className="text-right tabular-nums text-white/60">{fmtUSD(r.tax_total ?? 0)}</div>
-                <div className="text-right tabular-nums font-bold text-white">{fmtUSD(r.net_total)}</div>
+                <div className="text-right tabular-nums text-slate-700">{fmtUSD(r.gross_total ?? 0)}</div>
+                <div className="text-right tabular-nums text-slate-500">{fmtUSD(r.tax_total ?? 0)}</div>
+                <div className="text-right tabular-nums font-bold text-slate-900">{fmtUSD(r.net_total)}</div>
                 <div className="flex items-center gap-1 self-center">
                   <Button
                     size="icon"
                     variant="ghost"
                     title="Download CSV"
                     onClick={(e) => { e.stopPropagation(); downloadRun(r); }}
-                    className="h-9 w-9 text-primary hover:bg-primary/10"
+                    className="h-9 w-9 text-slate-500 hover:text-slate-900 hover:bg-surface rounded-xl"
                   >
                     <Download className="h-4 w-4" />
                   </Button>
-                  <button onClick={() => setSelected(r)} className="hidden md:block">
-                    <ChevronRight className="h-5 w-5 text-white/40 group-hover:text-primary group-hover:translate-x-1 transition" />
-                  </button>
+                  <ChevronRight className="h-5 w-5 text-slate-300 group-hover:text-slate-900 group-hover:translate-x-1 transition" />
                 </div>
               </div>
             ))}
@@ -257,28 +255,28 @@ function PayHistoryPage() {
 
       {/* Detail dialog */}
       <Dialog open={!!selected} onOpenChange={(o) => !o && setSelected(null)}>
-        <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
+        <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto rounded-2xl">
           {selected && (
             <>
               <DialogHeader>
-                <DialogTitle>Payroll on {fmtDate(selected.pay_date)}</DialogTitle>
-                <DialogDescription>
+                <DialogTitle className="text-slate-900">Payroll on {fmtDate(selected.pay_date)}</DialogTitle>
+                <DialogDescription className="text-slate-500">
                   Pay period {fmtDate(selected.period_start)} – {fmtDate(selected.period_end)} · {items.length} employee{items.length === 1 ? "" : "s"}
                 </DialogDescription>
               </DialogHeader>
 
               <div className="grid grid-cols-3 gap-3 my-4">
-                <MiniStat label="Gross" value={fmtUSD(selected.gross_total ?? 0)} />
-                <MiniStat label="Taxes" value={fmtUSD(selected.tax_total ?? 0)} />
-                <MiniStat label="Net" value={fmtUSD(selected.net_total)} highlight />
+                <MiniTile label="Gross" value={fmtUSD(selected.gross_total ?? 0)} />
+                <MiniTile label="Taxes" value={fmtUSD(selected.tax_total ?? 0)} />
+                <MiniTile label="Net" value={fmtUSD(selected.net_total)} highlight />
               </div>
 
               {itemsLoading ? (
-                <div className="text-center py-8 text-muted-foreground">Loading employees…</div>
+                <div className="text-center py-8 text-slate-500">Loading employees…</div>
               ) : (
-                <div className="rounded-lg border border-border/50 overflow-hidden">
+                <div className="rounded-xl border border-border overflow-hidden">
                   <table className="w-full text-sm">
-                    <thead className="bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
+                    <thead className="bg-surface text-xs uppercase tracking-wide text-slate-500">
                       <tr>
                         <th className="text-left px-3 py-2">Employee</th>
                         <th className="text-right px-3 py-2">Hours</th>
@@ -292,11 +290,11 @@ function PayHistoryPage() {
                         const tax = it.federal_tax + it.social_security + it.medicare + it.state_tax;
                         return (
                           <tr key={it.id} className="border-t border-border/40">
-                            <td className="px-3 py-2 font-medium">{it.employee_name}</td>
-                            <td className="px-3 py-2 text-right tabular-nums">{(it.regular_hours ?? 0) + (it.overtime_hours ?? 0) || "—"}</td>
-                            <td className="px-3 py-2 text-right tabular-nums">{fmtUSD(it.gross_pay)}</td>
-                            <td className="px-3 py-2 text-right tabular-nums text-muted-foreground">{fmtUSD(tax)}</td>
-                            <td className="px-3 py-2 text-right tabular-nums font-semibold">{fmtUSD(it.net_pay)}</td>
+                            <td className="px-3 py-2 font-medium text-slate-900">{it.employee_name}</td>
+                            <td className="px-3 py-2 text-right tabular-nums text-slate-600">{(it.regular_hours ?? 0) + (it.overtime_hours ?? 0) || "—"}</td>
+                            <td className="px-3 py-2 text-right tabular-nums text-slate-700">{fmtUSD(it.gross_pay)}</td>
+                            <td className="px-3 py-2 text-right tabular-nums text-slate-500">{fmtUSD(tax)}</td>
+                            <td className="px-3 py-2 text-right tabular-nums font-semibold text-slate-900">{fmtUSD(it.net_pay)}</td>
                           </tr>
                         );
                       })}
@@ -312,22 +310,22 @@ function PayHistoryPage() {
   );
 }
 
-function StatCard({ icon: Icon, label, value, highlight }: { icon: any; label: string; value: string; highlight?: boolean }) {
+function SummaryTile({ icon: Icon, label, value, highlight }: { icon: any; label: string; value: string; highlight?: boolean }) {
   return (
-    <div className={`surface-glass rounded-xl p-4 ${highlight ? "ring-1 ring-primary/30" : ""}`}>
-      <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-muted-foreground">
-        <Icon className="h-3.5 w-3.5" /> {label}
+    <div className={`bg-card border border-border rounded-2xl p-5 ${highlight ? "ring-1 ring-primary/40" : ""}`}>
+      <div className="flex items-center gap-2 text-sm text-slate-500">
+        <Icon className="h-4 w-4" /> {label}
       </div>
-      <div className={`text-2xl font-bold mt-1 tabular-nums ${highlight ? "text-primary" : ""}`}>{value}</div>
+      <div className={`text-3xl font-extrabold mt-2 tabular-nums ${highlight ? "text-primary" : "text-slate-900"}`}>{value}</div>
     </div>
   );
 }
 
-function MiniStat({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
+function MiniTile({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
   return (
-    <div className="rounded-lg border border-border/50 p-3">
-      <div className="text-xs uppercase tracking-wide text-muted-foreground">{label}</div>
-      <div className={`text-lg font-bold tabular-nums mt-0.5 ${highlight ? "text-primary" : ""}`}>{value}</div>
+    <div className="rounded-xl border border-border p-3 bg-card">
+      <div className="text-xs uppercase tracking-wide text-slate-500">{label}</div>
+      <div className={`text-lg font-bold tabular-nums mt-0.5 ${highlight ? "text-primary" : "text-slate-900"}`}>{value}</div>
     </div>
   );
 }
