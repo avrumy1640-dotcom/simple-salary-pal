@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
   Home, Wallet, CalendarDays, Clock, HeartHandshake, FolderOpen,
-  UserCircle2, LogOut, Menu, X, MapPin, Bell,
+  UserCircle2, LogOut, Menu, X, MapPin, Bell, Copy, Check,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -28,6 +28,7 @@ export function EmployeeShell() {
   const [email, setEmail] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [hasEmployeeRecord, setHasEmployeeRecord] = useState(true);
+  const [copied, setCopied] = useState(false);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -55,6 +56,25 @@ export function EmployeeShell() {
   async function signOut() {
     await supabase.auth.signOut();
     navigate({ to: "/auth" });
+  }
+
+  async function copyEmail() {
+    if (!email) return;
+    try {
+      await navigator.clipboard.writeText(email);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // fallback for older browsers / insecure contexts
+      const ta = document.createElement("textarea");
+      ta.value = email;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
   }
 
   if (checking) {
@@ -140,6 +160,15 @@ export function EmployeeShell() {
                   We couldn't find an employee record for <span className="font-medium">{email}</span>.
                   Ask your employer to add you to their team roster using this exact email, then sign back in.
                 </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="mt-6 gap-2"
+                  onClick={copyEmail}
+                >
+                  {copied ? <Check className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
+                  {copied ? "Copied to clipboard" : "Copy email to clipboard"}
+                </Button>
               </div>
             )}
           </div>
