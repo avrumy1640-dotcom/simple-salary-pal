@@ -4,6 +4,27 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Unit-style scoped tokens (used on the dashboard pilot) */
+:root {
+  --unit-hairline: oklch(0.93 0.005 250);
+  --unit-ink: #0A0A0A;
+  --unit-muted: #6B7280;
+  --font-unit: "Inter Tight", "Geist", Inter, system-ui, -apple-system, sans-serif;
+  --font-unit-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+.unit-scope { font-family: var(--font-unit); color: var(--unit-ink); }
+.unit-scope .unit-hairline { border-color: var(--unit-hairline); }
+.unit-scope .unit-num { font-family: var(--font-unit); font-variant-numeric: tabular-nums; letter-spacing: -0.04em; }
+.unit-aurora {
+  background: radial-gradient(circle at 30% 30%, #A7F3D0 0%, transparent 55%),
+              radial-gradient(circle at 70% 40%, #7DD3FC 0%, transparent 55%),
+              radial-gradient(circle at 50% 70%, #C4B5FD 0%, transparent 60%);
+  filter: blur(48px);
+  opacity: 0.55;
+}
+@keyframes unit-fade-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.unit-in { animation: unit-fade-in 0.5s cubic-bezier(0.22,1,0.36,1) both; }
+
 @theme inline {
   --font-sans: Arial, Helvetica, "Helvetica Neue", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-display: Arial, Helvetica, "Helvetica Neue", system-ui, sans-serif;
