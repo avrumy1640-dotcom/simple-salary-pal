@@ -147,7 +147,7 @@ export function AppShell() {
             {!collapsed && (
               <div className="flex flex-col min-w-0">
                 <span className="font-display text-lg font-bold leading-tight tracking-tight text-white">Paylo</span>
-                <span className="truncate text-xs font-medium leading-tight text-white/60">{companyName}</span>
+                <span className="truncate text-xs font-medium leading-tight text-slate-500">{companyName}</span>
               </div>
             )}
           </div>
@@ -160,7 +160,7 @@ export function AppShell() {
               collapsed && "justify-center px-2",
               path === "/app/getting-started"
                 ? "gradient-brand text-primary-foreground shadow-glow"
-                : "surface-glass text-white hover:-translate-y-0.5 hover:shadow-glow",
+                : "surface-glass text-slate-900 hover:-translate-y-0.5 hover:shadow-glow",
             )}
           >
             <Sparkles className="h-4 w-4 shrink-0" /> {!collapsed && "Getting started"}
@@ -169,7 +169,7 @@ export function AppShell() {
           <nav className="mt-4 flex-1 space-y-6 overflow-y-auto px-3 pb-3">
             {navGroups.map((g) => (
               <div key={g.label}>
-                {!collapsed && <div className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.14em] text-white/45">{g.label}</div>}
+                {!collapsed && <div className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">{g.label}</div>}
                 <div className="space-y-1">
                   {g.items.map((n) => {
                     const active = path === n.to || (n.to !== "/app/dashboard" && path.startsWith(n.to));
@@ -185,11 +185,11 @@ export function AppShell() {
                           collapsed && "justify-center px-2",
                           active
                             ? "bg-primary/15 text-primary border border-primary/40 shadow-[0_0_20px_-6px_rgba(61,255,255,0.5)]"
-                            : "text-white/70 hover:bg-primary/10 hover:text-white hover:translate-x-1",
+                            : "text-slate-600 hover:bg-primary/10 hover:text-slate-900 hover:translate-x-1",
                         )}
                       >
                         {active && <span className="absolute left-0 top-1/2 h-7 w-[3px] -translate-y-1/2 rounded-r-full bg-primary shadow-[0_0_8px_rgba(61,255,255,0.8)]" />}
-                        <n.icon className={cn("h-4 w-4 shrink-0 transition-colors", active ? "text-primary" : "text-white/55 group-hover:text-white")} />
+                        <n.icon className={cn("h-4 w-4 shrink-0 transition-colors", active ? "text-primary" : "text-slate-500 group-hover:text-slate-900")} />
                         {!collapsed && <span className="flex-1 truncate">{n.label}</span>}
                         {badge > 0 && (
                           <span className={cn(
@@ -216,14 +216,14 @@ export function AppShell() {
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="truncate text-sm font-semibold text-white">{companyName}</div>
-                  <div className="truncate text-[10px] text-white/55">{userEmail}</div>
+                  <div className="truncate text-[10px] text-slate-500">{userEmail}</div>
                 </div>
               </div>
             )}
             <div className="flex gap-2">
               <Button
                 variant="ghost"
-                className={cn("gap-2 rounded-xl font-semibold text-white/85 hover:bg-primary/10 hover:text-white", collapsed ? "w-full justify-center px-2" : "flex-1 justify-start")}
+                className={cn("gap-2 rounded-xl font-semibold text-slate-700 hover:bg-primary/10 hover:text-slate-900", collapsed ? "w-full justify-center px-2" : "flex-1 justify-start")}
                 onClick={signOut}
               >
                 <LogOut className="h-4 w-4" /> {!collapsed && "Sign out"}
