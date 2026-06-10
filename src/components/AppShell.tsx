@@ -180,18 +180,6 @@ export function AppShell() {
               <Building2 className="h-[18px] w-[18px] shrink-0 text-slate-500" />
               {!collapsed && <span>Companies</span>}
             </Link>
-            <Link
-              to="/app/audit"
-              onClick={() => setOpen(false)}
-              className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2 text-[13px] font-medium text-slate-600 hover:bg-surface hover:text-slate-900",
-                collapsed && "justify-center px-2",
-              )}
-              title={collapsed ? "Audit log" : undefined}
-            >
-              <FileText className="h-[18px] w-[18px] shrink-0 text-slate-500" />
-              {!collapsed && <span>Audit log</span>}
-            </Link>
           </nav>
 
           <div className="border-t border-border p-3 space-y-2">
