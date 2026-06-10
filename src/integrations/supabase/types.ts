@@ -1343,6 +1343,7 @@ export type Database = {
           company_id: string
           created_at: string
           date_of_birth: string | null
+          department: string | null
           dependents: number
           direct_deposit_enabled: boolean
           email: string | null
@@ -1392,6 +1393,7 @@ export type Database = {
           company_id: string
           created_at?: string
           date_of_birth?: string | null
+          department?: string | null
           dependents?: number
           direct_deposit_enabled?: boolean
           email?: string | null
@@ -1443,6 +1445,7 @@ export type Database = {
           company_id?: string
           created_at?: string
           date_of_birth?: string | null
+          department?: string | null
           dependents?: number
           direct_deposit_enabled?: boolean
           email?: string | null
