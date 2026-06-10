@@ -27,15 +27,23 @@ export function EmployeeShell() {
   const [checking, setChecking] = useState(true);
   const [email, setEmail] = useState("");
   const [companyName, setCompanyName] = useState("");
+  const [hasEmployeeRecord, setHasEmployeeRecord] = useState(true);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
       if (!data.session) { navigate({ to: "/auth" }); return; }
       const uid = data.session.user.id;
-      setEmail(data.session.user.email ?? "");
+      const userEmail = data.session.user.email ?? "";
+      setEmail(userEmail);
       const { data: prof } = await supabase.from("profiles").select("company_name").eq("id", uid).maybeSingle();
       setCompanyName(prof?.company_name || "Your workplace");
+      if (userEmail) {
+        const { data: emp } = await supabase.from("employees").select("id").ilike("email", userEmail).limit(1);
+        setHasEmployeeRecord(!!(emp && emp.length));
+      } else {
+        setHasEmployeeRecord(false);
+      }
       setChecking(false);
     });
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => {
@@ -123,7 +131,17 @@ export function EmployeeShell() {
 
         <main className="flex-1 min-w-0">
           <div key={path} className="page-in mx-auto max-w-5xl px-4 py-6 sm:p-6 md:p-8">
-            <Outlet />
+            {hasEmployeeRecord ? (
+              <Outlet />
+            ) : (
+              <div className="rounded-2xl border bg-card p-10 text-center">
+                <h1 className="text-xl font-semibold">You're not linked to a workplace yet</h1>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  We couldn't find an employee record for <span className="font-medium">{email}</span>.
+                  Ask your employer to add you to their team roster using this exact email, then sign back in.
+                </p>
+              </div>
+            )}
           </div>
         </main>
       </div>
