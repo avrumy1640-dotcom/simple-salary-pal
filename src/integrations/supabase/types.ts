@@ -2288,6 +2288,76 @@ export type Database = {
           },
         ]
       }
+      payroll_item_lines: {
+        Row: {
+          amount: number
+          code: string
+          company_id: string
+          created_at: string
+          description: string | null
+          hours: number | null
+          id: string
+          item_id: string
+          line_type: string
+          metadata: Json
+          rate: number | null
+          run_id: string
+          taxable: boolean
+        }
+        Insert: {
+          amount?: number
+          code: string
+          company_id: string
+          created_at?: string
+          description?: string | null
+          hours?: number | null
+          id?: string
+          item_id: string
+          line_type: string
+          metadata?: Json
+          rate?: number | null
+          run_id: string
+          taxable?: boolean
+        }
+        Update: {
+          amount?: number
+          code?: string
+          company_id?: string
+          created_at?: string
+          description?: string | null
+          hours?: number | null
+          id?: string
+          item_id?: string
+          line_type?: string
+          metadata?: Json
+          rate?: number | null
+          run_id?: string
+          taxable?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payroll_item_lines_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payroll_item_lines_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "payroll_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payroll_item_lines_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "payroll_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payroll_items: {
         Row: {
           company_id: string
@@ -3375,6 +3445,31 @@ export type Database = {
           },
           {
             foreignKeyName: "bank_connections_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      employee_ytd_wages: {
+        Row: {
+          company_id: string | null
+          employee_id: string | null
+          tax_year: number | null
+          ytd_gross: number | null
+          ytd_ss_wages: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payroll_items_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payroll_items_employee_id_fkey"
             columns: ["employee_id"]
             isOneToOne: false
             referencedRelation: "employees"
