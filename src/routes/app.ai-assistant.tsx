@@ -120,7 +120,7 @@ function AIAssistantPage() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <PageHeader
         title="AI HR Assistant"
         description="Ask anything about payroll, compliance, benefits, and people operations. Trained on US HR best practices."
@@ -131,11 +131,11 @@ function AIAssistantPage() {
         }
       />
 
-      <div className="grid gap-4 lg:grid-cols-[260px_1fr]">
+      <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
         {/* Sidebar */}
-        <aside className="rounded-xl border border-border bg-card">
-          <div className="border-b border-border p-3">
-            <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+        <aside className="rounded-xl bg-card">
+          <div className="border-b border-border px-4 py-3">
+            <div className="text-xs font-semibold uppercase tracking-wider text-slate-500">
               Conversations
             </div>
           </div>
@@ -149,18 +149,18 @@ function AIAssistantPage() {
                 <div
                   key={c.id}
                   className={cn(
-                    "group flex items-center justify-between gap-2 rounded-lg px-2 py-2 text-sm cursor-pointer",
-                    activeId === c.id ? "bg-primary/10 text-slate-900" : "hover:bg-slate-50 text-slate-700"
+                    "group flex items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-sm cursor-pointer",
+                    activeId === c.id ? "bg-primary text-slate-900" : "hover:bg-surface text-slate-700"
                   )}
                   onClick={() => setActiveId(c.id)}
                 >
-                  <span className="truncate">{c.title}</span>
+                  <span className="truncate font-medium text-slate-900">{c.title}</span>
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       deleteConvo(c.id);
                     }}
-                    className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-destructive"
+                    className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-destructive transition-opacity"
                     aria-label="Delete conversation"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
@@ -172,17 +172,17 @@ function AIAssistantPage() {
         </aside>
 
         {/* Chat area */}
-        <section className="flex h-[68vh] flex-col rounded-xl border border-border bg-card">
+        <section className="flex h-[68vh] flex-col rounded-xl bg-card">
           <div ref={scrollRef} className="flex-1 overflow-y-auto p-6">
             {messages.length === 0 ? (
               <div className="mx-auto max-w-2xl py-8 text-center">
-                <div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl gradient-brand text-primary-foreground shadow-lg">
+                <div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-primary text-slate-900 shadow-sm">
                   <Bot className="h-7 w-7" />
                 </div>
-                <h2 className="mt-4 font-display text-2xl font-extrabold text-slate-900">
+                <h2 className="mt-4 text-2xl font-extrabold text-slate-900">
                   How can I help you today?
                 </h2>
-                <p className="mt-1 text-sm text-slate-600">
+                <p className="mt-1 text-sm text-slate-500">
                   I can answer payroll, compliance, and HR questions for your team.
                 </p>
                 <div className="mx-auto mt-6 grid max-w-xl gap-2 text-left">
@@ -190,7 +190,7 @@ function AIAssistantPage() {
                     <button
                       key={s}
                       onClick={() => send(s)}
-                      className="rounded-lg border border-border bg-background px-3 py-2 text-sm text-slate-700 hover:border-primary hover:bg-primary/5 transition"
+                      className="rounded-lg bg-background px-3 py-2.5 text-sm text-slate-700 hover:bg-surface transition text-left"
                     >
                       {s}
                     </button>
@@ -205,8 +205,8 @@ function AIAssistantPage() {
                       className={cn(
                         "grid h-8 w-8 shrink-0 place-items-center rounded-lg",
                         m.role === "user"
-                          ? "bg-slate-200 text-slate-700"
-                          : "gradient-brand text-primary-foreground"
+                          ? "bg-surface text-slate-700"
+                          : "bg-primary text-slate-900"
                       )}
                     >
                       {m.role === "user" ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
@@ -223,7 +223,7 @@ function AIAssistantPage() {
                 ))}
                 {sending && (
                   <div className="flex gap-3">
-                    <div className="grid h-8 w-8 place-items-center rounded-lg gradient-brand text-primary-foreground">
+                    <div className="grid h-8 w-8 place-items-center rounded-lg bg-primary text-slate-900">
                       <Bot className="h-4 w-4" />
                     </div>
                     <div className="flex items-center gap-2 text-sm text-slate-500">
@@ -252,7 +252,7 @@ function AIAssistantPage() {
                 className="min-h-[44px] max-h-40 resize-none"
                 disabled={sending}
               />
-              <Button onClick={() => send()} disabled={sending || !input.trim()} size="icon" className="h-11 w-11 gradient-brand text-primary-foreground">
+              <Button onClick={() => send()} disabled={sending || !input.trim()} size="icon" className="h-11 w-11 bg-primary text-slate-900 hover:bg-primary/90">
                 {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
               </Button>
             </div>
