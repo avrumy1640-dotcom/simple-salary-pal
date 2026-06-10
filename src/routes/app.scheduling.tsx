@@ -224,11 +224,40 @@ function SchedulingPage() {
         </table>
       </div>
 
+      {swaps.length > 0 && (
+        <div className="rounded-xl border border-border bg-card">
+          <div className="border-b border-border px-4 py-3 font-display text-sm font-semibold text-slate-900">Pending swap requests ({swaps.length})</div>
+          <ul className="divide-y divide-border text-sm">
+            {swaps.map((sw) => {
+              const shift = shifts.find((s) => s.id === sw.shift_id);
+              return (
+                <li key={sw.id} className="flex items-center justify-between gap-3 px-4 py-3">
+                  <div>
+                    <div className="font-semibold text-slate-900">
+                      {empName(sw.requested_by_employee_id)} → {sw.request_type === "drop" ? "drop shift" : `swap with ${empName(sw.target_employee_id)}`}
+                    </div>
+                    <div className="text-xs text-slate-500">
+                      {shift ? `${new Date(shift.start_at).toLocaleString()} – ${fmtTime(shift.end_at)}` : "Shift removed"}
+                      {sw.reason && ` · ${sw.reason}`}
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button size="sm" variant="outline" onClick={() => handleDecideSwap(sw.id, "denied")}><X className="mr-1 h-3 w-3" /> Deny</Button>
+                    <Button size="sm" onClick={() => handleDecideSwap(sw.id, "approved")}><Check className="mr-1 h-3 w-3" /> Approve</Button>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
+
       <NewShiftDialog
         open={open}
         onClose={() => { setOpen(false); setPreset(null); }}
         companyId={currentId}
         employees={employees}
+        locations={locations}
         preset={preset}
         onCreated={load}
       />
