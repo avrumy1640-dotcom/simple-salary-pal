@@ -2,7 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useMyEmployee } from "@/lib/useMyEmployee";
-import { Wallet, CalendarDays, Clock, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Wallet, CalendarDays, Clock, ArrowRight, FileText, User } from "lucide-react";
 
 export const Route = createFileRoute("/employee/home")({
   head: () => ({ meta: [{ title: "My workplace — Paylo" }] }),
@@ -10,6 +11,34 @@ export const Route = createFileRoute("/employee/home")({
 });
 
 function fmt(n: number) { return n.toLocaleString("en-US", { style: "currency", currency: "USD" }); }
+
+function Tile({ icon: Icon, label, value }: { icon: any; label: string; value: string }) {
+  return (
+    <div className="rounded-2xl border border-border bg-card p-6">
+      <div className="flex items-center gap-3">
+        <div className="grid h-10 w-10 place-items-center rounded-xl bg-primary/15 text-slate-900">
+          <Icon className="h-5 w-5" />
+        </div>
+        <span className="text-sm font-medium text-slate-600">{label}</span>
+      </div>
+      <div className="mt-4 font-display text-3xl font-extrabold tabular text-slate-900">{value}</div>
+    </div>
+  );
+}
+
+function ActionLink({ to, icon: Icon, label }: { to: string; icon: any; label: string }) {
+  return (
+    <Link to={to} className="flex items-center justify-between rounded-2xl border border-border bg-card px-5 py-4 transition-shadow hover:shadow-card">
+      <span className="flex items-center gap-3">
+        <span className="grid h-9 w-9 place-items-center rounded-xl bg-primary/15 text-slate-900">
+          <Icon className="h-4 w-4" />
+        </span>
+        <span className="text-base font-semibold text-slate-900">{label}</span>
+      </span>
+      <ArrowRight className="h-5 w-5 text-slate-400" />
+    </Link>
+  );
+}
 
 function EmployeeHome() {
   const { employee, loading } = useMyEmployee();
@@ -37,14 +66,14 @@ function EmployeeHome() {
     })();
   }, [employee?.id]);
 
-  if (loading) return <div className="text-sm text-muted-foreground">Loading…</div>;
+  if (loading) return <div className="text-base text-slate-500">Loading…</div>;
 
   if (!employee) {
     return (
-      <div className="rounded-2xl border bg-card p-10 text-center">
-        <CalendarDays className="mx-auto h-10 w-10 text-muted-foreground" />
-        <h1 className="mt-3 text-xl font-semibold">Welcome!</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
+      <div className="rounded-2xl border border-border bg-card p-10 text-center">
+        <CalendarDays className="mx-auto h-12 w-12 text-slate-400" />
+        <h1 className="mt-4 font-display text-2xl font-bold text-slate-900">Welcome!</h1>
+        <p className="mx-auto mt-2 max-w-md text-base text-slate-600">
           We couldn't find an employee record linked to your email. Ask your
           administrator to add you to the team roster, then sign back in.
         </p>
@@ -53,46 +82,43 @@ function EmployeeHome() {
   }
 
   const first = employee.full_name.split(" ")[0];
+  const nextDateFmt = nextPayDate
+    ? new Date(nextPayDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })
+    : "Not scheduled";
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
+      {/* Header */}
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 className="font-display text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
+            Hi {first}
+          </h1>
+          <p className="mt-2 text-base text-slate-600">Here's everything you need today.</p>
+        </div>
+        <Button asChild size="lg">
+          <Link to="/employee/pto">Request time off</Link>
+        </Button>
+      </div>
+
+      {/* 3 tiles */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <Tile icon={Wallet} label="Last paycheck" value={lastNet != null ? fmt(lastNet) : "—"} />
+        <Tile icon={CalendarDays} label="Time off available" value={`${Number(employee.pto_balance_hours).toFixed(0)} hrs`} />
+        <Tile icon={Clock} label="Next payday" value={nextDateFmt} />
+      </div>
+
+      {/* Quick actions */}
       <div>
-        <div className="text-xs font-semibold uppercase tracking-wider text-primary">Employee portal</div>
-        <h1 className="text-3xl font-semibold tracking-tight">Hi {first} 👋</h1>
-        <p className="text-sm text-muted-foreground">Here's your latest at a glance.</p>
-      </div>
-
-      <div className="grid gap-4 sm:grid-cols-3">
-        <Tile icon={Wallet} label="Last net pay" value={lastNet != null ? fmt(lastNet) : "—"} href="/employee/paystubs" />
-        <Tile icon={CalendarDays} label="PTO available" value={`${Number(employee.pto_balance_hours).toFixed(1)}h`} href="/employee/pto" />
-        <Tile icon={Clock} label="Next pay date" value={nextPayDate ?? "Not scheduled"} href="/employee/paystubs" />
-      </div>
-
-      <div className="rounded-2xl border bg-card p-6">
-        <h2 className="font-semibold">Quick actions</h2>
-        <div className="mt-3 grid gap-3 sm:grid-cols-2">
-          <Link to="/employee/pto" className="flex items-center justify-between rounded-xl border p-4 hover:bg-surface">
-            <span>Request time off</span> <ArrowRight className="h-4 w-4" />
-          </Link>
-          <Link to="/employee/time" className="flex items-center justify-between rounded-xl border p-4 hover:bg-surface">
-            <span>Clock in / out</span> <ArrowRight className="h-4 w-4" />
-          </Link>
-          <Link to="/employee/profile" className="flex items-center justify-between rounded-xl border p-4 hover:bg-surface">
-            <span>Update my info</span> <ArrowRight className="h-4 w-4" />
-          </Link>
-          <Link to="/employee/documents" className="flex items-center justify-between rounded-xl border p-4 hover:bg-surface">
-            <span>View documents</span> <ArrowRight className="h-4 w-4" />
-          </Link>
+        <h2 className="font-display text-lg font-bold text-slate-900">What would you like to do?</h2>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <ActionLink to="/employee/paystubs" icon={Wallet} label="View my paychecks" />
+          <ActionLink to="/employee/pto" icon={CalendarDays} label="Request time off" />
+          <ActionLink to="/employee/time" icon={Clock} label="Clock in or out" />
+          <ActionLink to="/employee/documents" icon={FileText} label="View my documents" />
+          <ActionLink to="/employee/profile" icon={User} label="Update my information" />
         </div>
       </div>
     </div>
-  );
-}
-
-function Tile({ icon: Icon, label, value, href }: { icon: any; label: string; value: string; href: string }) {
-  return (
-    <Link to={href} className="rounded-2xl border bg-card p-5 hover:shadow-soft transition">
-      <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-muted-foreground"><Icon className="h-3.5 w-3.5" /> {label}</div>
-      <div className="mt-2 text-2xl font-semibold">{value}</div>
-    </Link>
   );
 }
