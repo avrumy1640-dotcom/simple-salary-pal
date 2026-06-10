@@ -56,8 +56,10 @@ const navGroups = [
     ],
   },
   {
-    label: "Settings",
+    label: "Admin",
     items: [
+      { to: "/app/companies", label: "Companies", icon: Building2 },
+      { to: "/app/audit", label: "Audit log", icon: ShieldCheck },
       { to: "/app/settings", label: "Company settings", icon: SettingsIcon },
     ],
   },
