@@ -12,6 +12,7 @@ const nav = [
   { to: "/employee/home", label: "Home", icon: Home },
   { to: "/employee/paystubs", label: "Pay stubs", icon: Wallet },
   { to: "/employee/pto", label: "Time off", icon: CalendarDays },
+  { to: "/employee/schedule", label: "Schedule", icon: CalendarDays },
   { to: "/employee/time", label: "Time clock", icon: Clock },
   { to: "/employee/benefits", label: "Benefits", icon: HeartHandshake },
   { to: "/employee/documents", label: "Documents", icon: FolderOpen },
