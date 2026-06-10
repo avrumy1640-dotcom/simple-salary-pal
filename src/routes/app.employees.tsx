@@ -62,7 +62,7 @@ interface Employee {
   start_date?: string | null;
 }
 
-type FormState = Omit<Employee, "id">;
+type FormState = Omit<Employee, "id" | "lifecycle_status" | "termination_date" | "termination_reason" | "rehire_eligible" | "leave_start_date" | "leave_end_date" | "leave_reason">;
 
 const empty: FormState = {
   full_name: "", email: "", job_title: "", pay_type: "hourly", pay_rate: 20, status: "active",
