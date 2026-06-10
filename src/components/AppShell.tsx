@@ -134,7 +134,7 @@ export function AppShell() {
           </div>
 
           <nav className="mt-3 flex-1 space-y-0.5 overflow-y-auto px-2 pb-3">
-            {nav.map((n) => {
+            {nav.filter((n) => (n.roles as readonly string[]).includes(role)).map((n) => {
               const active = path === n.to || (n.to !== "/app/dashboard" && path.startsWith(n.to));
               const badge = badges[n.to] ?? 0;
               return (
