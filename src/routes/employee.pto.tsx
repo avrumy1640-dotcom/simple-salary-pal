@@ -17,23 +17,33 @@ export const Route = createFileRoute("/employee/pto")({
 });
 
 interface PTO { id: string; pto_type: string; start_date: string; end_date: string; hours: number; status: string; notes: string | null; }
+interface Balance { balance_hours: number; lifetime_accrued: number; lifetime_used: number }
 
 function Page() {
   const { employee, loading } = useMyEmployee();
   const today = new Date().toISOString().slice(0, 10);
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState<PTO[]>([]);
+  const [balance, setBalance] = useState<Balance | null>(null);
   const [form, setForm] = useState({ pto_type: "vacation", start_date: today, end_date: today, hours: 8, notes: "" });
 
   async function load() {
     if (!employee) return;
-    const { data } = await supabase
-      .from("pto_entries")
-      .select("id, pto_type, start_date, end_date, hours, status, notes")
-      .eq("employee_id", employee.id)
-      .order("start_date", { ascending: false })
-      .limit(50);
-    setItems((data ?? []) as PTO[]);
+    const [{ data: entries }, { data: bal }] = await Promise.all([
+      supabase
+        .from("pto_entries")
+        .select("id, pto_type, start_date, end_date, hours, status, notes")
+        .eq("employee_id", employee.id)
+        .order("start_date", { ascending: false })
+        .limit(50),
+      supabase
+        .from("employee_pto_balances")
+        .select("balance_hours, lifetime_accrued, lifetime_used")
+        .eq("employee_id", employee.id)
+        .maybeSingle(),
+    ]);
+    setItems((entries ?? []) as PTO[]);
+    setBalance((bal ?? null) as Balance | null);
   }
   useEffect(() => { load(); }, [employee?.id]);
 
@@ -60,7 +70,10 @@ function Page() {
       <div className="flex items-end justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold">Time off</h1>
-          <p className="text-sm text-muted-foreground">You have {Number(employee.pto_balance_hours).toFixed(1)}h available.</p>
+          <p className="text-sm text-muted-foreground">
+            You have {Number(balance?.balance_hours ?? employee.pto_balance_hours ?? 0).toFixed(1)}h available
+            {balance && <> · accrued {Number(balance.lifetime_accrued).toFixed(1)}h · used {Number(balance.lifetime_used).toFixed(1)}h</>}.
+          </p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild><Button className="gap-1"><Plus className="h-4 w-4" /> Request time off</Button></DialogTrigger>

@@ -15,9 +15,11 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Info, Building2, Banknote, FileText as FileIcon, Phone, Mail, MapPin, Calendar, DollarSign, Search } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { Plus, Pencil, Trash2, Info, Building2, Banknote, FileText as FileIcon, Phone, Mail, MapPin, Calendar, DollarSign, Search, UserX, UserCheck, Pause } from "lucide-react";
 import { fmtUSD } from "@/lib/payroll";
 import { useCompany } from "@/hooks/useCompany";
+import { terminateEmployee, reactivateEmployee, placeOnLeave, returnFromLeave } from "@/lib/employee-lifecycle.functions";
 
 export const Route = createFileRoute("/app/employees")({
   head: () => ({ meta: [{ title: "Employees — Paylo" }] }),
@@ -32,6 +34,13 @@ interface Employee {
   pay_type: "hourly" | "salary";
   pay_rate: number;
   status: "active" | "inactive";
+  lifecycle_status?: "prospect" | "onboarding" | "active" | "on_leave" | "terminated" | null;
+  termination_date?: string | null;
+  termination_reason?: string | null;
+  rehire_eligible?: boolean | null;
+  leave_start_date?: string | null;
+  leave_end_date?: string | null;
+  leave_reason?: string | null;
   address_line1?: string | null;
   city?: string | null;
   state?: string | null;
@@ -53,7 +62,7 @@ interface Employee {
   start_date?: string | null;
 }
 
-type FormState = Omit<Employee, "id">;
+type FormState = Omit<Employee, "id" | "lifecycle_status" | "termination_date" | "termination_reason" | "rehire_eligible" | "leave_start_date" | "leave_end_date" | "leave_reason">;
 
 const empty: FormState = {
   full_name: "", email: "", job_title: "", pay_type: "hourly", pay_rate: 20, status: "active",
@@ -76,6 +85,20 @@ function EmployeesPage() {
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
   const { currentId } = useCompany();
 
+  const terminateFn = useServerFn(terminateEmployee);
+  const reactivateFn = useServerFn(reactivateEmployee);
+  const placeOnLeaveFn = useServerFn(placeOnLeave);
+  const returnFromLeaveFn = useServerFn(returnFromLeave);
+
+  const [terminateOpen, setTerminateOpen] = useState(false);
+  const [terminateForm, setTerminateForm] = useState({
+    termination_date: new Date().toISOString().slice(0, 10),
+    reason: "",
+    rehire_eligible: true,
+    payout_pto: false,
+  });
+  const [leaveOpen, setLeaveOpen] = useState(false);
+  const [leaveForm, setLeaveForm] = useState({ leave_start_date: new Date().toISOString().slice(0, 10), leave_end_date: "", reason: "" });
 
   async function refresh() {
     setLoading(true);
@@ -84,6 +107,52 @@ function EmployeesPage() {
     setLoading(false);
   }
   useEffect(() => { refresh(); }, []);
+
+  async function doTerminate() {
+    if (!detail) return;
+    if (terminateForm.reason.trim().length < 3) { toast.error("Reason is required"); return; }
+    try {
+      await terminateFn({ data: { employee_id: detail.id, ...terminateForm } });
+      toast.success(`${detail.full_name} terminated`);
+      setTerminateOpen(false);
+      setDetail(null);
+      refresh();
+    } catch (err: any) { toast.error(err?.message ?? "Termination failed"); }
+  }
+  async function doReactivate() {
+    if (!detail) return;
+    try {
+      await reactivateFn({ data: { employee_id: detail.id } });
+      toast.success(`${detail.full_name} reactivated`);
+      setDetail(null);
+      refresh();
+    } catch (err: any) { toast.error(err?.message ?? "Reactivation failed"); }
+  }
+  async function doPlaceOnLeave() {
+    if (!detail) return;
+    if (leaveForm.reason.trim().length < 3) { toast.error("Reason is required"); return; }
+    try {
+      await placeOnLeaveFn({ data: {
+        employee_id: detail.id,
+        leave_start_date: leaveForm.leave_start_date,
+        leave_end_date: leaveForm.leave_end_date || null,
+        reason: leaveForm.reason,
+      } });
+      toast.success(`${detail.full_name} placed on leave`);
+      setLeaveOpen(false);
+      setDetail(null);
+      refresh();
+    } catch (err: any) { toast.error(err?.message ?? "Failed"); }
+  }
+  async function doReturnFromLeave() {
+    if (!detail) return;
+    try {
+      await returnFromLeaveFn({ data: { employee_id: detail.id } });
+      toast.success(`${detail.full_name} returned from leave`);
+      setDetail(null);
+      refresh();
+    } catch (err: any) { toast.error(err?.message ?? "Failed"); }
+  }
 
   function openNew() { setEditing(null); setForm(empty); setOpen(true); }
   function openEdit(e: Employee) {
@@ -97,8 +166,12 @@ function EmployeesPage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
     if (!currentId) { toast.error("No active company selected"); return; }
+    // Strip lifecycle fields — those are owned by employee-lifecycle.functions.ts
+    const { lifecycle_status: _ls, termination_date: _td, termination_reason: _tr,
+            rehire_eligible: _re, leave_start_date: _lsd, leave_end_date: _led,
+            leave_reason: _lr, ...rest } = form as any;
     const payload = {
-      ...form,
+      ...rest,
       pay_rate: Number(form.pay_rate) || 0,
       dependents: Number(form.dependents) || 0,
       extra_withholding: Number(form.extra_withholding) || 0,
@@ -426,8 +499,34 @@ function EmployeesPage() {
                   <DetailRow label="Phone" value={detail.emergency_contact_phone || "—"} />
                 </DetailGroup>
 
-                <div className="flex gap-2 pt-2">
-                  <Button onClick={() => { setDetail(null); openEdit(detail); }} className="flex-1 gap-2"><Pencil className="h-4 w-4" /> Edit</Button>
+                <DetailGroup title="Employment status">
+                  <DetailRow label="Lifecycle" value={detail.lifecycle_status ?? "active"} />
+                  {detail.lifecycle_status === "terminated" && <>
+                    <DetailRow label="Terminated" value={detail.termination_date ? new Date(detail.termination_date).toLocaleDateString() : "—"} />
+                    <DetailRow label="Reason" value={detail.termination_reason ?? "—"} />
+                    <DetailRow label="Rehire eligible" value={detail.rehire_eligible ? "Yes" : "No"} />
+                  </>}
+                  {detail.lifecycle_status === "on_leave" && <>
+                    <DetailRow label="Leave start" value={detail.leave_start_date ? new Date(detail.leave_start_date).toLocaleDateString() : "—"} />
+                    <DetailRow label="Expected return" value={detail.leave_end_date ? new Date(detail.leave_end_date).toLocaleDateString() : "—"} />
+                    <DetailRow label="Reason" value={detail.leave_reason ?? "—"} />
+                  </>}
+                </DetailGroup>
+
+                <div className="flex flex-wrap gap-2 pt-2">
+                  <Button onClick={() => { setDetail(null); openEdit(detail); }} className="flex-1 gap-2 min-w-[120px]"><Pencil className="h-4 w-4" /> Edit</Button>
+                  {(!detail.lifecycle_status || detail.lifecycle_status === "active") && (
+                    <>
+                      <Button variant="outline" onClick={() => setLeaveOpen(true)} className="gap-2"><Pause className="h-4 w-4" /> Place on leave</Button>
+                      <Button variant="outline" onClick={() => setTerminateOpen(true)} className="gap-2 text-destructive hover:text-destructive"><UserX className="h-4 w-4" /> Terminate</Button>
+                    </>
+                  )}
+                  {detail.lifecycle_status === "on_leave" && (
+                    <Button variant="outline" onClick={doReturnFromLeave} className="gap-2"><UserCheck className="h-4 w-4" /> Return from leave</Button>
+                  )}
+                  {detail.lifecycle_status === "terminated" && (
+                    <Button variant="outline" onClick={doReactivate} className="gap-2"><UserCheck className="h-4 w-4" /> Rehire / reactivate</Button>
+                  )}
                   <Button variant="outline" onClick={() => setConfirmDelete(detail)} className="gap-2 text-destructive hover:text-destructive">
                     <Trash2 className="h-4 w-4" /> Remove
                   </Button>
@@ -437,6 +536,52 @@ function EmployeesPage() {
           )}
         </SheetContent>
       </Sheet>
+
+      {/* Terminate dialog */}
+      <Dialog open={terminateOpen} onOpenChange={setTerminateOpen}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Terminate {detail?.full_name}</DialogTitle></DialogHeader>
+          <div className="space-y-3">
+            <div><Label>Termination date</Label><Input type="date" value={terminateForm.termination_date} onChange={(e) => setTerminateForm({ ...terminateForm, termination_date: e.target.value })} /></div>
+            <div><Label>Reason</Label><Input value={terminateForm.reason} onChange={(e) => setTerminateForm({ ...terminateForm, reason: e.target.value })} maxLength={500} placeholder="Voluntary resignation, layoff, performance, etc." /></div>
+            <div className="flex items-center justify-between rounded-lg border p-3">
+              <div><div className="text-sm font-medium">Eligible for rehire</div></div>
+              <Switch checked={terminateForm.rehire_eligible} onCheckedChange={(v) => setTerminateForm({ ...terminateForm, rehire_eligible: v })} />
+            </div>
+            <div className="flex items-center justify-between rounded-lg border p-3">
+              <div>
+                <div className="text-sm font-medium">Pay out remaining PTO</div>
+                <div className="text-xs text-muted-foreground">Zeroes the balance via a final ledger debit. State law may require this regardless.</div>
+              </div>
+              <Switch checked={terminateForm.payout_pto} onCheckedChange={(v) => setTerminateForm({ ...terminateForm, payout_pto: v })} />
+            </div>
+            <p className="text-xs text-muted-foreground">Compensation and banking fields become immutable after termination. Reactivate to edit them again.</p>
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setTerminateOpen(false)}>Cancel</Button>
+            <Button onClick={doTerminate} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Terminate</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Leave dialog */}
+      <Dialog open={leaveOpen} onOpenChange={setLeaveOpen}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Place {detail?.full_name} on leave</DialogTitle></DialogHeader>
+          <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-3">
+              <div><Label>Leave start</Label><Input type="date" value={leaveForm.leave_start_date} onChange={(e) => setLeaveForm({ ...leaveForm, leave_start_date: e.target.value })} /></div>
+              <div><Label>Expected return (optional)</Label><Input type="date" value={leaveForm.leave_end_date} onChange={(e) => setLeaveForm({ ...leaveForm, leave_end_date: e.target.value })} /></div>
+            </div>
+            <div><Label>Reason</Label><Input value={leaveForm.reason} onChange={(e) => setLeaveForm({ ...leaveForm, reason: e.target.value })} placeholder="FMLA, medical, personal, etc." maxLength={500} /></div>
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setLeaveOpen(false)}>Cancel</Button>
+            <Button onClick={doPlaceOnLeave}>Place on leave</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
 
       {/* Delete confirmation */}
       <AlertDialog open={!!confirmDelete} onOpenChange={(o) => !o && setConfirmDelete(null)}>
