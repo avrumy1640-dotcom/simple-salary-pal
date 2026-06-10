@@ -27,15 +27,23 @@ export function EmployeeShell() {
   const [checking, setChecking] = useState(true);
   const [email, setEmail] = useState("");
   const [companyName, setCompanyName] = useState("");
+  const [hasEmployeeRecord, setHasEmployeeRecord] = useState(true);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
       if (!data.session) { navigate({ to: "/auth" }); return; }
       const uid = data.session.user.id;
-      setEmail(data.session.user.email ?? "");
+      const userEmail = data.session.user.email ?? "";
+      setEmail(userEmail);
       const { data: prof } = await supabase.from("profiles").select("company_name").eq("id", uid).maybeSingle();
       setCompanyName(prof?.company_name || "Your workplace");
+      if (userEmail) {
+        const { data: emp } = await supabase.from("employees").select("id").ilike("email", userEmail).limit(1);
+        setHasEmployeeRecord(!!(emp && emp.length));
+      } else {
+        setHasEmployeeRecord(false);
+      }
       setChecking(false);
     });
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => {
