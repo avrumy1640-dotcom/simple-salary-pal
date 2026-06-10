@@ -1,24 +1,17 @@
 import { Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
 import {
-  Home, Wallet, CalendarDays, Clock, HeartHandshake, FolderOpen,
-  UserCircle2, LogOut, Menu, X, MapPin, Bell, Copy, Check,
+  Home, Wallet, CalendarDays, User, HeartHandshake, LogOut, ChevronDown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const nav = [
   { to: "/employee/home", label: "Home", icon: Home },
-  { to: "/employee/paystubs", label: "Pay stubs", icon: Wallet },
-  { to: "/employee/pto", label: "Time off", icon: CalendarDays },
-  { to: "/employee/schedule", label: "Schedule", icon: CalendarDays },
-  { to: "/employee/time", label: "Time clock", icon: Clock },
-  { to: "/employee/punch", label: "Punch in/out", icon: MapPin },
-  { to: "/employee/notifications", label: "Notifications", icon: Bell },
+  { to: "/employee/paystubs", label: "Pay Stubs", icon: Wallet },
+  { to: "/employee/pto", label: "Time Off", icon: CalendarDays },
+  { to: "/employee/profile", label: "My Info", icon: User },
   { to: "/employee/benefits", label: "Benefits", icon: HeartHandshake },
-  { to: "/employee/documents", label: "Documents", icon: FolderOpen },
-  { to: "/employee/profile", label: "My profile", icon: UserCircle2 },
 ];
 
 export function EmployeeShell() {
@@ -26,10 +19,10 @@ export function EmployeeShell() {
   const path = useRouterState({ select: (s) => s.location.pathname });
   const [checking, setChecking] = useState(true);
   const [email, setEmail] = useState("");
+  const [fullName, setFullName] = useState("");
   const [companyName, setCompanyName] = useState("");
-  const [hasEmployeeRecord, setHasEmployeeRecord] = useState(true);
-  const [copied, setCopied] = useState(false);
-  const [open, setOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
@@ -37,14 +30,14 @@ export function EmployeeShell() {
       const uid = data.session.user.id;
       const userEmail = data.session.user.email ?? "";
       setEmail(userEmail);
-      const { data: prof } = await supabase.from("profiles").select("company_name").eq("id", uid).maybeSingle();
+      const [{ data: prof }, { data: emp }] = await Promise.all([
+        supabase.from("profiles").select("company_name").eq("id", uid).maybeSingle(),
+        userEmail
+          ? supabase.from("employees").select("full_name").ilike("email", userEmail).maybeSingle()
+          : Promise.resolve({ data: null }),
+      ]);
       setCompanyName(prof?.company_name || "Your workplace");
-      if (userEmail) {
-        const { data: emp } = await supabase.from("employees").select("id").ilike("email", userEmail).limit(1);
-        setHasEmployeeRecord(!!(emp && emp.length));
-      } else {
-        setHasEmployeeRecord(false);
-      }
+      setFullName(emp?.full_name || userEmail.split("@")[0] || "Employee");
       setChecking(false);
     });
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => {
@@ -53,28 +46,17 @@ export function EmployeeShell() {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
+  useEffect(() => {
+    function onClick(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenuOpen(false);
+    }
+    document.addEventListener("mousedown", onClick);
+    return () => document.removeEventListener("mousedown", onClick);
+  }, []);
+
   async function signOut() {
     await supabase.auth.signOut();
     navigate({ to: "/auth" });
-  }
-
-  async function copyEmail() {
-    if (!email) return;
-    try {
-      await navigator.clipboard.writeText(email);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // fallback for older browsers / insecure contexts
-      const ta = document.createElement("textarea");
-      ta.value = email;
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand("copy");
-      document.body.removeChild(ta);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
   }
 
   if (checking) {
@@ -85,95 +67,105 @@ export function EmployeeShell() {
     );
   }
 
+  const first = fullName.split(" ")[0];
+  const initials = fullName.split(" ").map(s => s[0]).filter(Boolean).slice(0, 2).join("").toUpperCase() || "U";
+  const isActive = (to: string) => path === to || path.startsWith(to + "/");
+
   return (
-    <div className="min-h-screen text-foreground bg-background">
-      <div className="sticky top-0 z-50 flex items-center justify-between border-b border-border bg-card px-4 py-3 md:hidden">
-        <div className="flex items-center gap-2">
-          <div className="grid h-9 w-9 place-items-center rounded-xl gradient-brand text-sm font-bold text-primary-foreground">P</div>
-          <span className="font-display text-base font-bold">{companyName}</span>
-        </div>
-        <Button variant="ghost" size="icon" onClick={() => setOpen(!open)}>
-          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </Button>
-      </div>
-
-      <div className="flex">
-        <aside className={cn(
-          "fixed inset-y-0 left-0 z-40 flex w-64 transform flex-col border-r border-border bg-sidebar transition-transform md:sticky md:top-0 md:h-screen md:translate-x-0",
-          open ? "translate-x-0" : "-translate-x-full",
-        )}>
-          <div className="hidden items-center gap-3 border-b border-border px-4 py-4 md:flex">
-            <div className="grid h-10 w-10 place-items-center rounded-xl gradient-brand font-bold text-primary-foreground">P</div>
-            <div className="flex flex-col min-w-0">
-              <span className="font-display text-base font-bold text-slate-900">My workplace</span>
-              <span className="truncate text-xs text-slate-500">{companyName}</span>
+    <div className="min-h-screen bg-background text-foreground">
+      {/* Top bar — desktop & mobile */}
+      <header className="sticky top-0 z-40 border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
+          <Link to="/employee/home" className="flex min-w-0 items-center gap-2.5">
+            <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl gradient-brand text-sm font-bold text-primary-foreground">P</div>
+            <div className="min-w-0">
+              <div className="truncate font-display text-[15px] font-bold leading-tight text-slate-900">{companyName}</div>
+              <div className="hidden text-[11px] uppercase tracking-wider text-slate-400 sm:block">Employee Portal</div>
             </div>
-          </div>
+          </Link>
 
-          <nav className="mt-3 flex-1 space-y-0.5 px-2">
-            {nav.map((n) => {
-              const active = path === n.to || path.startsWith(n.to + "/");
+          {/* Desktop tabs */}
+          <nav className="hidden md:flex items-center gap-1">
+            {nav.map(n => {
+              const active = isActive(n.to);
               return (
                 <Link
                   key={n.to}
                   to={n.to}
-                  onClick={() => setOpen(false)}
                   className={cn(
-                    "group relative flex items-center gap-3 rounded-lg px-3 py-2 text-[13px] font-medium transition-colors",
-                    active ? "bg-surface text-slate-900" : "text-slate-600 hover:bg-surface hover:text-slate-900",
+                    "relative px-3 py-2 text-sm font-semibold transition-colors",
+                    active ? "text-slate-900" : "text-slate-500 hover:text-slate-900",
                   )}
                 >
-                  {active && <span className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r-full bg-primary" />}
-                  <n.icon className={cn("h-[18px] w-[18px]", active ? "text-slate-900" : "text-slate-500")} />
-                  <span className="flex-1 truncate">{n.label}</span>
+                  {n.label}
+                  {active && <span className="absolute inset-x-3 -bottom-[17px] h-[3px] rounded-full bg-primary" />}
                 </Link>
               );
             })}
           </nav>
 
-          <div className="border-t border-border p-3 space-y-2">
-            <div className="flex items-center gap-3 rounded-lg bg-surface px-3 py-2">
-              <div className="grid h-8 w-8 shrink-0 place-items-center rounded-full gradient-brand text-xs font-bold text-primary-foreground">
-                {(email || "U").slice(0, 2).toUpperCase()}
-              </div>
-              <div className="min-w-0 flex-1">
-                <div className="truncate text-[13px] font-semibold text-slate-900">{email.split("@")[0] || "Employee"}</div>
-                <div className="truncate text-[11px] text-slate-500">Employee</div>
-              </div>
-            </div>
-            <Button variant="ghost" size="sm" className="w-full justify-start gap-2 text-slate-700" onClick={signOut}>
-              <LogOut className="h-4 w-4" /> Sign out
-            </Button>
-          </div>
-        </aside>
-
-        {open && <div className="fixed inset-0 z-30 bg-slate-900/40 md:hidden" onClick={() => setOpen(false)} />}
-
-        <main className="flex-1 min-w-0">
-          <div key={path} className="page-in mx-auto max-w-5xl px-4 py-6 sm:p-6 md:p-8">
-            {hasEmployeeRecord ? (
-              <Outlet />
-            ) : (
-              <div className="rounded-2xl border bg-card p-10 text-center">
-                <h1 className="text-xl font-semibold">You're not linked to a workplace yet</h1>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  We couldn't find an employee record for <span className="font-medium">{email}</span>.
-                  Ask your employer to add you to their team roster using this exact email, then sign back in.
-                </p>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="mt-6 gap-2"
-                  onClick={copyEmail}
+          {/* Avatar dropdown */}
+          <div className="relative shrink-0" ref={menuRef}>
+            <button
+              onClick={() => setMenuOpen(o => !o)}
+              className="flex items-center gap-2 rounded-full border border-border bg-card pl-1 pr-2.5 py-1 transition hover:bg-surface"
+            >
+              <span className="grid h-8 w-8 place-items-center rounded-full gradient-brand text-xs font-bold text-primary-foreground">
+                {initials}
+              </span>
+              <span className="hidden sm:inline text-sm font-semibold text-slate-900 max-w-[140px] truncate">{first}</span>
+              <ChevronDown className="hidden sm:block h-4 w-4 text-slate-400" />
+            </button>
+            {menuOpen && (
+              <div className="absolute right-0 mt-2 w-56 overflow-hidden rounded-xl border border-border bg-card shadow-lg">
+                <div className="border-b border-border px-4 py-3">
+                  <div className="text-sm font-semibold text-slate-900 truncate">{fullName}</div>
+                  <div className="text-xs text-slate-500 truncate">{email}</div>
+                </div>
+                <Link
+                  to="/employee/profile"
+                  onClick={() => setMenuOpen(false)}
+                  className="flex items-center gap-2 px-4 py-2.5 text-sm text-slate-700 hover:bg-surface"
                 >
-                  {copied ? <Check className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
-                  {copied ? "Copied to clipboard" : "Copy email to clipboard"}
-                </Button>
+                  <User className="h-4 w-4" /> Profile
+                </Link>
+                <button
+                  onClick={signOut}
+                  className="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-rose-600 hover:bg-surface"
+                >
+                  <LogOut className="h-4 w-4" /> Sign out
+                </button>
               </div>
             )}
           </div>
-        </main>
-      </div>
+        </div>
+      </header>
+
+      <main key={path} className="page-in mx-auto max-w-6xl px-4 pb-24 pt-6 sm:px-6 sm:pb-8 md:pt-8">
+        <Outlet />
+      </main>
+
+      {/* Mobile bottom tab bar */}
+      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 backdrop-blur md:hidden">
+        <div className="grid grid-cols-5">
+          {nav.map(n => {
+            const active = isActive(n.to);
+            return (
+              <Link
+                key={n.to}
+                to={n.to}
+                className={cn(
+                  "flex flex-col items-center gap-1 py-2.5 text-[11px] font-medium transition-colors",
+                  active ? "text-primary" : "text-slate-500",
+                )}
+              >
+                <n.icon className={cn("h-5 w-5", active && "stroke-[2.5]")} />
+                <span>{n.label}</span>
+              </Link>
+            );
+          })}
+        </div>
+      </nav>
     </div>
   );
 }
