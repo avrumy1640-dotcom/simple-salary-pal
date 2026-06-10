@@ -226,7 +226,7 @@ function PunchPage() {
         )}
       </div>
 
-      <div className="rounded-xl border border-border bg-card">
+      <div className="rounded-2xl border border-border bg-card shadow-soft">
         <div className="flex items-center gap-2 border-b border-border px-4 py-3 font-display text-sm font-semibold text-slate-900">
           <Clock className="h-4 w-4" /> Recent punches
         </div>
