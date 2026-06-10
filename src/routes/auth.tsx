@@ -73,10 +73,11 @@ function AuthPage() {
   }
 
   async function handleGoogle() {
-    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: `${window.location.origin}/app/dashboard` });
+    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: `${window.location.origin}/auth` });
     if (result.error) { toast.error("Google sign-in failed"); return; }
     if (result.redirected) return;
-    navigate({ to: "/app/dashboard" });
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) await routeByRole(user.id);
   }
 
   return (
