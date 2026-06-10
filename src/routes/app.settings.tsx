@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -119,12 +119,13 @@ function SettingsPage() {
       </header>
 
       <Tabs defaultValue="company" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 h-auto gap-1 p-1.5 bg-card/40 border border-primary/15">
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-6 h-auto gap-1 p-1.5 bg-card/40 border border-primary/15">
           <TabsTrigger value="company" className="gap-2 py-3 text-sm font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"><Building2 className="h-4 w-4" /> Company</TabsTrigger>
           <TabsTrigger value="schedule" className="gap-2 py-3 text-sm font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"><Calendar className="h-4 w-4" /> Schedule</TabsTrigger>
           <TabsTrigger value="notifications" className="gap-2 py-3 text-sm font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"><Bell className="h-4 w-4" /> Notifications</TabsTrigger>
           <TabsTrigger value="branding" className="gap-2 py-3 text-sm font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"><Palette className="h-4 w-4" /> Branding</TabsTrigger>
           <TabsTrigger value="security" className="gap-2 py-3 text-sm font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"><ShieldCheck className="h-4 w-4" /> Security</TabsTrigger>
+          <TabsTrigger value="integrations" className="gap-2 py-3 text-sm font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"><Plug className="h-4 w-4" /> Integrations</TabsTrigger>
         </TabsList>
 
         <TabsContent value="company" className="space-y-4 mt-6">
@@ -230,6 +231,21 @@ function SettingsPage() {
               </Button>
             </div>
           </div>
+        </TabsContent>
+
+        <TabsContent value="integrations" className="space-y-4 mt-6">
+          <Section title="Integrations" hint="Connect Paylo with your accounting, benefits, and communication tools.">
+            <div className="flex flex-col gap-4">
+              <p className="text-sm text-muted-foreground">
+                Manage connected apps, API keys, and third-party services from the Integrations page.
+              </p>
+              <Link to="/app/integrations">
+                <Button className="gap-2 bg-primary text-foreground hover:opacity-90">
+                  <Plug className="h-4 w-4" /> Open Integrations
+                </Button>
+              </Link>
+            </div>
+          </Section>
         </TabsContent>
       </Tabs>
     </div>
