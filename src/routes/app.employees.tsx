@@ -626,11 +626,11 @@ function DetailRow({ icon: Icon, label, value }: { icon?: any; label: string; va
   );
 }
 
-function SummaryChip({ label, value, muted }: { label: string; value: number; muted?: boolean }) {
+function SummaryTile({ label, value }: { label: string; value: number }) {
   return (
-    <div className={`rounded-2xl border ${muted ? "border-white/10 bg-card/40" : "border-primary/30 bg-primary/5"} p-4 transition hover:border-primary/60 hover:shadow-glow`}>
-      <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/55">{label}</div>
-      <div className={`mt-1 font-display text-3xl font-extrabold tabular ${muted ? "text-white/80" : "text-primary"}`}>{value}</div>
+    <div className="rounded-2xl border border-border bg-card p-5">
+      <div className="text-sm font-medium text-slate-600">{label}</div>
+      <div className="mt-2 font-display text-3xl font-extrabold tabular text-slate-900">{value}</div>
     </div>
   );
 }
