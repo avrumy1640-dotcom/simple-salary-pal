@@ -32,7 +32,9 @@ import { Route as AppEmployeesRouteImport } from './routes/app.employees'
 import { Route as AppDocumentsRouteImport } from './routes/app.documents'
 import { Route as AppDashboardRouteImport } from './routes/app.dashboard'
 import { Route as AppContractorsRouteImport } from './routes/app.contractors'
+import { Route as AppCompaniesRouteImport } from './routes/app.companies'
 import { Route as AppBenefitsRouteImport } from './routes/app.benefits'
+import { Route as AppAuditRouteImport } from './routes/app.audit'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -149,9 +151,19 @@ const AppContractorsRoute = AppContractorsRouteImport.update({
   path: '/contractors',
   getParentRoute: () => AppRoute,
 } as any)
+const AppCompaniesRoute = AppCompaniesRouteImport.update({
+  id: '/companies',
+  path: '/companies',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppBenefitsRoute = AppBenefitsRouteImport.update({
   id: '/benefits',
   path: '/benefits',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAuditRoute = AppAuditRouteImport.update({
+  id: '/audit',
+  path: '/audit',
   getParentRoute: () => AppRoute,
 } as any)
 
@@ -161,7 +173,9 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/pricing': typeof PricingRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/app/audit': typeof AppAuditRoute
   '/app/benefits': typeof AppBenefitsRoute
+  '/app/companies': typeof AppCompaniesRoute
   '/app/contractors': typeof AppContractorsRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/documents': typeof AppDocumentsRoute
@@ -187,7 +201,9 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/pricing': typeof PricingRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/app/audit': typeof AppAuditRoute
   '/app/benefits': typeof AppBenefitsRoute
+  '/app/companies': typeof AppCompaniesRoute
   '/app/contractors': typeof AppContractorsRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/documents': typeof AppDocumentsRoute
@@ -214,7 +230,9 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/pricing': typeof PricingRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/app/audit': typeof AppAuditRoute
   '/app/benefits': typeof AppBenefitsRoute
+  '/app/companies': typeof AppCompaniesRoute
   '/app/contractors': typeof AppContractorsRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/documents': typeof AppDocumentsRoute
@@ -242,7 +260,9 @@ export interface FileRouteTypes {
     | '/auth'
     | '/pricing'
     | '/sitemap.xml'
+    | '/app/audit'
     | '/app/benefits'
+    | '/app/companies'
     | '/app/contractors'
     | '/app/dashboard'
     | '/app/documents'
@@ -268,7 +288,9 @@ export interface FileRouteTypes {
     | '/auth'
     | '/pricing'
     | '/sitemap.xml'
+    | '/app/audit'
     | '/app/benefits'
+    | '/app/companies'
     | '/app/contractors'
     | '/app/dashboard'
     | '/app/documents'
@@ -294,7 +316,9 @@ export interface FileRouteTypes {
     | '/auth'
     | '/pricing'
     | '/sitemap.xml'
+    | '/app/audit'
     | '/app/benefits'
+    | '/app/companies'
     | '/app/contractors'
     | '/app/dashboard'
     | '/app/documents'
@@ -486,6 +510,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppContractorsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/companies': {
+      id: '/app/companies'
+      path: '/companies'
+      fullPath: '/app/companies'
+      preLoaderRoute: typeof AppCompaniesRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/benefits': {
       id: '/app/benefits'
       path: '/benefits'
@@ -493,11 +524,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppBenefitsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/audit': {
+      id: '/app/audit'
+      path: '/audit'
+      fullPath: '/app/audit'
+      preLoaderRoute: typeof AppAuditRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
+  AppAuditRoute: typeof AppAuditRoute
   AppBenefitsRoute: typeof AppBenefitsRoute
+  AppCompaniesRoute: typeof AppCompaniesRoute
   AppContractorsRoute: typeof AppContractorsRoute
   AppDashboardRoute: typeof AppDashboardRoute
   AppDocumentsRoute: typeof AppDocumentsRoute
@@ -519,7 +559,9 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAuditRoute: AppAuditRoute,
   AppBenefitsRoute: AppBenefitsRoute,
+  AppCompaniesRoute: AppCompaniesRoute,
   AppContractorsRoute: AppContractorsRoute,
   AppDashboardRoute: AppDashboardRoute,
   AppDocumentsRoute: AppDocumentsRoute,
