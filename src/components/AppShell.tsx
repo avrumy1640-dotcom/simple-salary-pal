@@ -25,6 +25,7 @@ const nav: NavItem[] = [
   { to: "/app/performance", label: "Performance", icon: Target },
   { to: "/app/compliance", label: "Compliance", icon: ShieldCheck },
   { to: "/app/reports", label: "Reports", icon: BarChart3 },
+  { to: "/app/analytics", label: "Analytics", icon: BarChart3 },
   { to: "/app/documents", label: "Documents", icon: FolderOpen },
   { to: "/app/announcements", label: "Announcements", icon: Megaphone },
   { to: "/app/integrations", label: "Integrations", icon: Plug },
