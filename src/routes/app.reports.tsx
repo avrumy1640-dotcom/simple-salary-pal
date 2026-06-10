@@ -2,9 +2,13 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { useServerFn } from "@tanstack/react-start";
+import { exportW2Summary, export1099Summary, exportGlForRun, exportAuditLog, exportPayrollRegister } from "@/lib/reports.functions";
+import { useCompany } from "@/hooks/useCompany";
+import { toast } from "sonner";
 import {
   Download, FileText, Users, DollarSign, Calendar, Clock, FileBadge,
-  TrendingUp, PieChart, Briefcase, HeartHandshake, ChevronRight,
+  TrendingUp, PieChart, Briefcase, HeartHandshake, ChevronRight, BookOpen, ShieldCheck,
 } from "lucide-react";
 import { fmtUSD } from "@/lib/payroll";
 
