@@ -1,8 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Users, Wallet, CalendarDays, PlayCircle, Cake, Award, ArrowRight } from "lucide-react";
+import { ArrowUpRight, ArrowRight } from "lucide-react";
 import { fmtUSD } from "@/lib/payroll";
 
 export const Route = createFileRoute("/app/dashboard")({
@@ -10,16 +9,12 @@ export const Route = createFileRoute("/app/dashboard")({
   component: Dashboard,
 });
 
-function Tile({ label, value, icon: Icon }: { label: string; value: string; icon: typeof Users }) {
+function StatCell({ label, value, sub }: { label: string; value: string; sub?: string }) {
   return (
-    <div className="rounded-2xl border border-border bg-card p-6">
-      <div className="flex items-center gap-3">
-        <div className="grid h-10 w-10 place-items-center rounded-xl bg-primary/15 text-slate-900">
-          <Icon className="h-5 w-5" />
-        </div>
-        <span className="text-sm font-medium text-slate-600">{label}</span>
-      </div>
-      <div className="mt-4 font-display text-3xl font-extrabold tabular text-slate-900">{value}</div>
+    <div className="flex-1 px-8 py-7">
+      <div className="text-[11px] font-medium uppercase tracking-[0.12em] text-neutral-500">{label}</div>
+      <div className="unit-num mt-3 text-4xl font-medium text-neutral-950">{value}</div>
+      {sub && <div className="mt-1 text-sm text-neutral-500">{sub}</div>}
     </div>
   );
 }
@@ -86,60 +81,101 @@ function Dashboard() {
     })();
   }, []);
 
+  const today = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
+  const nextPayLabel = data.nextPayDate
+    ? new Date(data.nextPayDate).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })
+    : "Not scheduled";
+
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex flex-wrap items-end justify-between gap-4">
+    <div className="unit-scope -m-6 min-h-[calc(100vh-4rem)] bg-white p-0 md:-m-8">
+      {/* Top bar */}
+      <div className="unit-in flex flex-wrap items-end justify-between gap-6 border-b unit-hairline px-8 py-7 md:px-12">
         <div>
-          <h1 className="font-display text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">Welcome back</h1>
-          <p className="mt-2 text-base text-slate-600">Here's what's happening with your team today.</p>
+          <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-neutral-500">{today}</div>
+          <h1 className="mt-2 text-4xl font-semibold tracking-[-0.03em] text-neutral-950 md:text-5xl">Overview</h1>
         </div>
-        <Button asChild size="lg">
-          <Link to="/app/payroll"><PlayCircle className="mr-2 h-5 w-5" />Run payroll</Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          <button className="rounded-full border unit-hairline px-4 py-2 text-sm font-medium text-neutral-700 transition hover:bg-neutral-50">
+            This month
+          </button>
+          <Link
+            to="/app/payroll"
+            className="inline-flex items-center gap-2 rounded-full bg-neutral-950 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-neutral-800"
+          >
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+            Run payroll
+          </Link>
+        </div>
       </div>
 
-      {/* 4 simple tiles */}
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        {loading ? Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="rounded-2xl border border-border bg-card p-6">
-            <div className="skeleton h-4 w-24" /><div className="skeleton mt-5 h-8 w-24" />
+      {/* Hero KPI with aurora */}
+      <div className="unit-in relative overflow-hidden border-b unit-hairline px-8 py-14 md:px-12 md:py-20" style={{ animationDelay: "60ms" }}>
+        <div className="unit-aurora pointer-events-none absolute -right-32 top-1/2 h-[460px] w-[460px] -translate-y-1/2 rounded-full" />
+        <div className="relative">
+          <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-neutral-500">Paid this month</div>
+          {loading ? (
+            <div className="skeleton mt-5 h-16 w-72" />
+          ) : (
+            <div className="unit-num mt-4 text-6xl font-medium text-neutral-950 md:text-7xl">
+              {fmtUSD(data.monthTotal)}
+            </div>
+          )}
+          <div className="mt-5 flex items-center gap-6 text-sm text-neutral-600">
+            <span className="inline-flex items-center gap-2">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+              Next payday · <span className="text-neutral-950">{nextPayLabel}</span>
+            </span>
+            <Link to="/app/payroll" className="inline-flex items-center gap-1 text-neutral-950 underline-offset-4 hover:underline">
+              View payroll <ArrowUpRight className="h-3.5 w-3.5" />
+            </Link>
           </div>
-        )) : (
-          <>
-            <Tile label="Team members" value={data.activeEmployees.toLocaleString()} icon={Users} />
-            <Tile label="Paid this month" value={fmtUSD(data.monthTotal)} icon={Wallet} />
-            <Tile label="Time-off requests" value={data.pendingPto.toLocaleString()} icon={CalendarDays} />
-            <Tile label="Next payday" value={data.nextPayDate ? new Date(data.nextPayDate).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "—"} icon={PlayCircle} />
-          </>
-        )}
+        </div>
       </div>
 
-      {/* Upcoming payrolls */}
-      <div className="rounded-2xl border border-border bg-card">
-        <div className="flex items-center justify-between border-b border-border px-6 py-5">
-          <h2 className="font-display text-lg font-bold text-slate-900">Upcoming paydays</h2>
-          <Button asChild variant="ghost" size="sm"><Link to="/app/payroll">See all <ArrowRight className="ml-1 h-4 w-4" /></Link></Button>
+      {/* Stat row */}
+      <div className="unit-in grid grid-cols-1 divide-y unit-hairline border-b unit-hairline md:grid-cols-3 md:divide-x md:divide-y-0" style={{ animationDelay: "120ms" }}>
+        <StatCell label="Team members" value={loading ? "—" : data.activeEmployees.toLocaleString()} sub="Active" />
+        <StatCell label="Time-off requests" value={loading ? "—" : data.pendingPto.toLocaleString()} sub="Pending review" />
+        <StatCell label="Upcoming paydays" value={loading ? "—" : data.upcomingRuns.length.toLocaleString()} sub="Next 30 days" />
+      </div>
+
+      {/* Activity */}
+      <div className="unit-in px-8 py-10 md:px-12 md:py-14" style={{ animationDelay: "180ms" }}>
+        <div className="mb-6 flex items-end justify-between">
+          <div>
+            <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-neutral-500">Recent activity</div>
+            <h2 className="mt-2 text-2xl font-semibold tracking-tight text-neutral-950">Upcoming paydays</h2>
+          </div>
+          <Link to="/app/payroll" className="inline-flex items-center gap-1 text-sm text-neutral-600 hover:text-neutral-950">
+            See all <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
         </div>
-        {data.upcomingRuns.length === 0 ? (
-          <div className="p-10 text-center">
-            <p className="text-base text-slate-600">No upcoming paydays scheduled.</p>
-            <Button asChild className="mt-4"><Link to="/app/payroll">Schedule a payday</Link></Button>
+
+        {loading ? (
+          <div className="space-y-1">
+            {Array.from({ length: 3 }).map((_, i) => <div key={i} className="skeleton h-14" />)}
+          </div>
+        ) : data.upcomingRuns.length === 0 ? (
+          <div className="border-t unit-hairline py-12 text-center">
+            <p className="text-neutral-500">No upcoming paydays scheduled.</p>
+            <Link to="/app/payroll" className="mt-4 inline-flex items-center gap-2 rounded-full bg-neutral-950 px-5 py-2 text-sm font-medium text-white hover:bg-neutral-800">
+              Schedule a payday
+            </Link>
           </div>
         ) : (
-          <div className="divide-y divide-border">
+          <div className="border-t unit-hairline">
             {data.upcomingRuns.map((r, i) => (
-              <div key={i} className="flex items-center justify-between px-6 py-4">
-                <div>
-                  <div className="text-base font-semibold text-slate-900">
-                    {new Date(r.pay_date).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
+              <div key={i} className="flex items-center justify-between border-b unit-hairline py-5">
+                <div className="flex items-center gap-4">
+                  <span className="h-1.5 w-1.5 rounded-full bg-neutral-300" />
+                  <div>
+                    <div className="text-base font-medium text-neutral-950">
+                      {new Date(r.pay_date).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
+                    </div>
+                    <div className="text-xs uppercase tracking-wider text-neutral-500">{r.status}</div>
                   </div>
-                  <div className="text-sm capitalize text-slate-500">{r.status}</div>
                 </div>
-                <div className="text-right">
-                  <div className="text-base font-bold tabular text-slate-900">{fmtUSD(Number(r.net_total ?? 0))}</div>
-                  <div className="text-xs text-slate-500">Total pay</div>
-                </div>
+                <div className="unit-num text-lg font-medium text-neutral-950">{fmtUSD(Number(r.net_total ?? 0))}</div>
               </div>
             ))}
           </div>
@@ -147,45 +183,41 @@ function Dashboard() {
       </div>
 
       {/* Birthdays + Anniversaries */}
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="rounded-2xl border border-border bg-card">
-          <div className="flex items-center gap-2 border-b border-border px-6 py-5">
-            <Cake className="h-5 w-5 text-slate-500" />
-            <h3 className="font-display text-base font-bold text-slate-900">Birthdays this month</h3>
-          </div>
+      <div className="unit-in grid border-t unit-hairline md:grid-cols-2 md:divide-x unit-hairline" style={{ animationDelay: "240ms" }}>
+        <div className="px-8 py-10 md:px-12 md:py-14">
+          <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-neutral-500">Birthdays</div>
+          <h3 className="mt-2 text-xl font-semibold tracking-tight text-neutral-950">This month</h3>
           {data.birthdays.length === 0 ? (
-            <p className="px-6 py-6 text-sm text-slate-500">Nothing coming up.</p>
+            <p className="mt-6 text-sm text-neutral-500">Nothing coming up.</p>
           ) : (
-            <div className="divide-y divide-border">
+            <ul className="mt-6 border-t unit-hairline">
               {data.birthdays.map((b, i) => (
-                <div key={i} className="flex items-center justify-between px-6 py-3">
-                  <span className="text-base text-slate-800">{b.name}</span>
-                  <span className="text-sm font-medium text-slate-500">{b.date}</span>
-                </div>
+                <li key={i} className="flex items-center justify-between border-b unit-hairline py-4">
+                  <span className="text-base text-neutral-900">{b.name}</span>
+                  <span className="text-sm text-neutral-500">{b.date}</span>
+                </li>
               ))}
-            </div>
+            </ul>
           )}
         </div>
 
-        <div className="rounded-2xl border border-border bg-card">
-          <div className="flex items-center gap-2 border-b border-border px-6 py-5">
-            <Award className="h-5 w-5 text-slate-500" />
-            <h3 className="font-display text-base font-bold text-slate-900">Work anniversaries</h3>
-          </div>
+        <div className="px-8 py-10 md:px-12 md:py-14">
+          <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-neutral-500">Anniversaries</div>
+          <h3 className="mt-2 text-xl font-semibold tracking-tight text-neutral-950">This month</h3>
           {data.anniversaries.length === 0 ? (
-            <p className="px-6 py-6 text-sm text-slate-500">Nothing coming up.</p>
+            <p className="mt-6 text-sm text-neutral-500">Nothing coming up.</p>
           ) : (
-            <div className="divide-y divide-border">
+            <ul className="mt-6 border-t unit-hairline">
               {data.anniversaries.map((a, i) => (
-                <div key={i} className="flex items-center justify-between px-6 py-3">
-                  <span className="text-base text-slate-800">{a.name}</span>
-                  <span className="text-sm font-medium text-slate-500">
-                    <span className="mr-2 rounded-md bg-primary/20 px-2 py-0.5 text-xs font-bold text-slate-900">{a.years} yr</span>
+                <li key={i} className="flex items-center justify-between border-b unit-hairline py-4">
+                  <span className="text-base text-neutral-900">{a.name}</span>
+                  <span className="flex items-center gap-3 text-sm text-neutral-500">
+                    <span className="rounded-full border unit-hairline px-2 py-0.5 text-[11px] font-medium text-neutral-700">{a.years} yr</span>
                     {a.date}
                   </span>
-                </div>
+                </li>
               ))}
-            </div>
+            </ul>
           )}
         </div>
       </div>
