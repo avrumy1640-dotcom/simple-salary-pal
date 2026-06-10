@@ -130,27 +130,27 @@ function PTOPage() {
   const balanceFor = (id: string) => balances[id]?.balance_hours ?? Number(emps.find((e) => e.id === id)?.pto_balance_hours ?? 0);
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
+    <div className="p-6 md:p-8 space-y-6 animate-in fade-in duration-300">
+      <header className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Time off (PTO)</h1>
-          <p className="text-sm text-muted-foreground">Balances are computed authoritatively from the PTO ledger. Approvals automatically debit balances; denials reverse them.</p>
+          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">Time off</h1>
+          <p className="text-slate-500 mt-1">Track balances, approve requests, and run accruals.</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="gap-2 rounded-full" onClick={() => refresh()}><RefreshCw className="h-4 w-4" /> Refresh</Button>
+          <Button variant="outline" className="gap-2 rounded-xl border-border text-slate-700 hover:bg-surface" onClick={() => refresh()}><RefreshCw className="h-4 w-4" /> Refresh</Button>
           <Dialog open={accrualOpen} onOpenChange={setAccrualOpen}>
             <DialogTrigger asChild>
-              <Button variant="outline" className="gap-2 rounded-full">Run accrual</Button>
+              <Button variant="outline" className="gap-2 rounded-xl border-border text-slate-700 hover:bg-surface">Run accrual</Button>
             </DialogTrigger>
-            <DialogContent>
-              <DialogHeader><DialogTitle>Post a PTO accrual</DialogTitle></DialogHeader>
-              <div className="space-y-3">
-                <p className="text-sm text-muted-foreground">Credits each eligible employee per their assigned policy. Idempotent per (date, policy) — a duplicate run on the same day will not double-credit.</p>
-                <div><Label>As-of date</Label><Input type="date" value={accrual.as_of_date} onChange={(e) => setAccrual({ ...accrual, as_of_date: e.target.value })} /></div>
+            <DialogContent className="rounded-2xl">
+              <DialogHeader><DialogTitle className="text-slate-900">Post a PTO accrual</DialogTitle></DialogHeader>
+              <div className="space-y-4">
+                <p className="text-sm text-slate-500">Credits each eligible employee per their assigned policy. Running again on the same day won't double-credit anyone.</p>
+                <div><Label className="text-slate-700">As-of date</Label><Input type="date" value={accrual.as_of_date} onChange={(e) => setAccrual({ ...accrual, as_of_date: e.target.value })} className="rounded-xl border-border bg-white" /></div>
                 <div>
-                  <Label>Policy (optional — all policies if blank)</Label>
+                  <Label className="text-slate-700">Policy (optional — all policies if blank)</Label>
                   <Select value={accrual.policy_id || "ALL"} onValueChange={(v) => setAccrual({ ...accrual, policy_id: v === "ALL" ? "" : v })}>
-                    <SelectTrigger><SelectValue placeholder="All policies" /></SelectTrigger>
+                    <SelectTrigger className="rounded-xl border-border bg-white"><SelectValue placeholder="All policies" /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="ALL">All policies</SelectItem>
                       {policies.map((p) => <SelectItem key={p.id} value={p.id}>{p.name} ({p.hours_per_period}h / {p.frequency})</SelectItem>)}
@@ -159,71 +159,72 @@ function PTOPage() {
                 </div>
               </div>
               <DialogFooter>
-                <Button variant="ghost" onClick={() => setAccrualOpen(false)}>Cancel</Button>
-                <Button onClick={executeAccrual}>Post accrual</Button>
+                <Button variant="ghost" onClick={() => setAccrualOpen(false)} className="rounded-xl">Cancel</Button>
+                <Button onClick={executeAccrual} className="bg-primary text-slate-900 hover:bg-primary/90 rounded-xl">Post accrual</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-              <Button className="gap-2 rounded-full bg-primary text-primary-foreground hover:opacity-90"><Plus className="h-4 w-4" /> Log time off</Button>
+              <Button className="gap-2 rounded-xl bg-primary text-slate-900 hover:bg-primary/90"><Plus className="h-4 w-4" /> Log time off</Button>
             </DialogTrigger>
-            <DialogContent>
-              <DialogHeader><DialogTitle>Log time off</DialogTitle></DialogHeader>
-              <div className="space-y-3">
+            <DialogContent className="rounded-2xl">
+              <DialogHeader><DialogTitle className="text-slate-900">Log time off</DialogTitle></DialogHeader>
+              <div className="space-y-4">
                 <div>
-                  <Label>Employee</Label>
+                  <Label className="text-slate-700">Employee</Label>
                   <Select value={form.employee_id} onValueChange={(v) => setForm({ ...form, employee_id: v })}>
-                    <SelectTrigger><SelectValue placeholder="Choose…" /></SelectTrigger>
+                    <SelectTrigger className="rounded-xl border-border bg-white"><SelectValue placeholder="Choose an employee" /></SelectTrigger>
                     <SelectContent>{emps.map((e) => <SelectItem key={e.id} value={e.id}>{e.full_name} ({balanceFor(e.id).toFixed(1)}h available)</SelectItem>)}</SelectContent>
                   </Select>
                 </div>
                 <div>
-                  <Label>Type</Label>
+                  <Label className="text-slate-700">Type</Label>
                   <Select value={form.pto_type} onValueChange={(v) => setForm({ ...form, pto_type: v })}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="rounded-xl border-border bg-white"><SelectValue /></SelectTrigger>
                     <SelectContent>{TYPES.map((t) => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}</SelectContent>
                   </Select>
                 </div>
-                <div className="grid gap-3 grid-cols-2">
-                  <div><Label>Start date</Label><Input type="date" value={form.start_date} onChange={(e) => setForm({ ...form, start_date: e.target.value })} /></div>
-                  <div><Label>End date</Label><Input type="date" value={form.end_date} onChange={(e) => setForm({ ...form, end_date: e.target.value })} /></div>
+                <div className="grid gap-4 grid-cols-2">
+                  <div><Label className="text-slate-700">Start date</Label><Input type="date" value={form.start_date} onChange={(e) => setForm({ ...form, start_date: e.target.value })} className="rounded-xl border-border bg-white" /></div>
+                  <div><Label className="text-slate-700">End date</Label><Input type="date" value={form.end_date} onChange={(e) => setForm({ ...form, end_date: e.target.value })} className="rounded-xl border-border bg-white" /></div>
                 </div>
                 <div>
-                  <Label>Total hours</Label>
-                  <Input type="number" min={0} step="0.5" value={form.hours} onChange={(e) => setForm({ ...form, hours: Number(e.target.value) })} />
-                  <p className="mt-1 text-xs text-muted-foreground">Usually 8 hours per full day off.</p>
+                  <Label className="text-slate-700">Total hours</Label>
+                  <Input type="number" min={0} step="0.5" value={form.hours} onChange={(e) => setForm({ ...form, hours: Number(e.target.value) })} className="rounded-xl border-border bg-white" />
+                  <p className="mt-1 text-xs text-slate-500">Usually 8 hours per full day off.</p>
                 </div>
-                <div><Label>Notes</Label><Textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} maxLength={500} /></div>
+                <div><Label className="text-slate-700">Notes</Label><Textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} maxLength={500} className="rounded-xl border-border bg-white" /></div>
               </div>
               <DialogFooter>
-                <Button variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
-                <Button onClick={add}>Submit request</Button>
+                <Button variant="ghost" onClick={() => setOpen(false)} className="rounded-xl">Cancel</Button>
+                <Button onClick={add} className="bg-primary text-slate-900 hover:bg-primary/90 rounded-xl">Submit request</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
         </div>
-      </div>
+      </header>
 
-      <div className="rounded-2xl border bg-card">
-        <div className="border-b px-5 py-3 text-sm font-medium flex items-center gap-2"><CalendarDays className="h-4 w-4" /> PTO balances</div>
+      {/* Balances */}
+      <div className="bg-card border border-border rounded-2xl overflow-hidden">
+        <div className="border-b px-5 py-3 text-sm font-semibold text-slate-700 flex items-center gap-2 bg-surface"><CalendarDays className="h-4 w-4 text-slate-500" /> PTO balances</div>
         {emps.length === 0 ? (
-          <div className="p-6 text-sm text-muted-foreground">Add active employees to track PTO.</div>
+          <div className="p-8 text-center text-slate-500">Add active employees to track time off.</div>
         ) : (
-          <div className="grid gap-3 p-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 p-5 sm:grid-cols-2 lg:grid-cols-3">
             {emps.map((e) => {
               const b = balances[e.id];
               const balance = b ? Number(b.balance_hours) : Number(e.pto_balance_hours);
               return (
-                <div key={e.id} className="rounded-xl border bg-background p-4">
+                <div key={e.id} className="rounded-xl border border-border bg-white p-5 hover:shadow-sm transition">
                   <div className="flex items-center justify-between">
-                    <div className="text-sm font-medium">{e.full_name}</div>
-                    {!e.pto_policy_id && <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] text-muted-foreground">No policy</span>}
+                    <div className="text-sm font-semibold text-slate-900">{e.full_name}</div>
+                    {!e.pto_policy_id && <span className="rounded-full bg-surface px-2.5 py-1 text-xs font-medium text-slate-500">No policy</span>}
                   </div>
-                  <div className="mt-2 text-2xl font-bold text-foreground">{balance.toFixed(1)}h</div>
-                  <div className="text-xs text-muted-foreground">≈ {(balance / 8).toFixed(1)} days available</div>
+                  <div className="mt-2 text-3xl font-extrabold text-slate-900">{balance.toFixed(1)}h</div>
+                  <div className="text-sm text-slate-500">≈ {(balance / 8).toFixed(1)} days available</div>
                   {b && (
-                    <div className="mt-2 text-[11px] text-muted-foreground">
+                    <div className="mt-2 text-xs text-slate-500">
                       Accrued: {Number(b.lifetime_accrued).toFixed(1)}h · Used: {Number(b.lifetime_used).toFixed(1)}h
                     </div>
                   )}
@@ -234,28 +235,29 @@ function PTOPage() {
         )}
       </div>
 
-      <div className="rounded-2xl border bg-card">
-        <div className="border-b px-5 py-3 text-sm font-medium">Recent requests</div>
+      {/* Requests */}
+      <div className="bg-card border border-border rounded-2xl overflow-hidden">
+        <div className="border-b px-5 py-3 text-sm font-semibold text-slate-700 bg-surface">Recent requests</div>
         {entries.length === 0 ? (
-          <div className="p-6 text-sm text-muted-foreground">No time off requests yet.</div>
+          <div className="p-8 text-center text-slate-500">No time off requests yet.</div>
         ) : (
-          <ul className="divide-y">
+          <ul className="divide-y divide-border/50">
             {entries.map((e) => (
-              <li key={e.id} className="flex flex-wrap items-center gap-3 px-5 py-3">
-                <Clock className="h-4 w-4 text-muted-foreground" />
+              <li key={e.id} className="flex flex-wrap items-center gap-3 px-5 py-4 hover:bg-surface transition">
+                <Clock className="h-4 w-4 text-slate-400" />
                 <div className="flex-1 min-w-0">
-                  <div className="font-medium">{nameOf(e.employee_id)} · <span className="capitalize text-muted-foreground font-normal">{e.pto_type}</span></div>
-                  <div className="text-xs text-muted-foreground">{e.start_date} → {e.end_date} · {e.hours}h</div>
+                  <div className="font-medium text-slate-900">{nameOf(e.employee_id)} · <span className="capitalize text-slate-500 font-normal">{e.pto_type}</span></div>
+                  <div className="text-sm text-slate-500">{e.start_date} → {e.end_date} · {e.hours}h</div>
                 </div>
-                <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${
-                  e.status === "approved" ? "bg-[oklch(0.94_0.05_155)] text-[oklch(0.4_0.16_155)]" :
-                  e.status === "denied" || e.status === "cancelled" ? "bg-destructive/10 text-destructive" :
-                  "bg-muted text-muted-foreground"
+                <span className={`rounded-full px-2.5 py-1 text-xs font-semibold capitalize ${
+                  e.status === "approved" ? "bg-emerald-50 text-emerald-700" :
+                  e.status === "denied" || e.status === "cancelled" ? "bg-red-50 text-red-600" :
+                  "bg-slate-100 text-slate-600"
                 }`}>{e.status}</span>
                 {e.status === "pending" && (
                   <>
-                    <Button size="sm" variant="ghost" onClick={() => approve(e.id)} className="gap-1 text-[oklch(0.4_0.16_155)]"><Check className="h-4 w-4" /> Approve</Button>
-                    <Button size="sm" variant="ghost" onClick={() => deny(e.id)} className="gap-1 text-destructive"><X className="h-4 w-4" /> Deny</Button>
+                    <Button size="sm" variant="ghost" onClick={() => approve(e.id)} className="gap-1 text-emerald-700 hover:bg-emerald-50 rounded-lg"><Check className="h-4 w-4" /> Approve</Button>
+                    <Button size="sm" variant="ghost" onClick={() => deny(e.id)} className="gap-1 text-red-600 hover:bg-red-50 rounded-lg"><X className="h-4 w-4" /> Deny</Button>
                   </>
                 )}
               </li>
