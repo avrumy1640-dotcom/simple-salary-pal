@@ -226,20 +226,17 @@ function EmployeesPage() {
   const totalSalary = items.filter((e) => e.pay_type === "salary").length;
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
+    <div className="space-y-8">
+      <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-4xl font-extrabold tracking-tight text-white flex items-center gap-3">
-            Employees
-            <span className="inline-flex items-center rounded-full bg-primary/15 border border-primary/40 px-3 py-1 text-base font-bold text-primary tabular">
-              {items.length}
-            </span>
+          <h1 className="font-display text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
+            Your team
           </h1>
-          <p className="mt-1 text-sm text-white/65">Manage your team — contact, tax setup, and direct deposit.</p>
+          <p className="mt-2 text-base text-slate-600">{items.length} {items.length === 1 ? "person" : "people"} · contact, pay, and tax setup all in one place.</p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button onClick={openNew} size="lg" className="gap-2 rounded-2xl bg-primary text-primary-foreground hover:shadow-glow font-bold"><Plus className="h-4 w-4" /> Add employee</Button>
+            <Button onClick={openNew} size="lg"><Plus className="mr-2 h-5 w-5" /> Add a person</Button>
           </DialogTrigger>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
@@ -376,32 +373,32 @@ function EmployeesPage() {
         </Dialog>
       </div>
 
-      {/* Summary chips */}
+      {/* Summary tiles */}
       {!loading && items.length > 0 && (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <SummaryChip label="Active" value={totalActive} />
-          <SummaryChip label="Inactive" value={totalInactive} muted />
-          <SummaryChip label="Salary" value={totalSalary} />
-          <SummaryChip label="Direct deposit" value={totalDD} />
+          <SummaryTile label="Active" value={totalActive} />
+          <SummaryTile label="Inactive" value={totalInactive} />
+          <SummaryTile label="Salary" value={totalSalary} />
+          <SummaryTile label="Direct deposit" value={totalDD} />
         </div>
       )}
 
       {/* Filters */}
       {!loading && items.length > 0 && (
-        <div className="flex flex-wrap items-center gap-3 surface-glass p-3 rounded-xl">
+        <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-border bg-card p-3">
           <div className="relative flex-1 min-w-[220px]">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input placeholder="Search by name, email, or title…" value={query} onChange={(e) => setQuery(e.target.value)} className="pl-9" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+            <Input placeholder="Search by name, email, or title" value={query} onChange={(e) => setQuery(e.target.value)} className="pl-9" />
           </div>
           <div className="flex gap-2">
             {(["all", "active", "inactive"] as const).map((s) => (
               <button
                 key={s}
                 onClick={() => setStatusFilter(s)}
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition capitalize ${
+                className={`px-4 py-2 rounded-xl text-sm font-semibold transition capitalize ${
                   statusFilter === s
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "bg-muted/50 text-muted-foreground hover:bg-muted"
+                    ? "bg-primary text-slate-900"
+                    : "bg-surface text-slate-600 hover:bg-slate-100"
                 }`}
               >{s}</button>
             ))}
@@ -409,35 +406,34 @@ function EmployeesPage() {
         </div>
       )}
 
-      <div className="rounded-2xl border bg-card">
+      <div className="rounded-2xl border border-border bg-card overflow-hidden">
         {loading ? (
-          <div className="p-6 text-sm text-muted-foreground">Loading…</div>
+          <div className="p-6 text-base text-slate-500">Loading…</div>
         ) : items.length === 0 ? (
-          <div className="p-10 text-center">
-            <p className="text-sm text-muted-foreground">No employees yet.</p>
-            <Button onClick={openNew} className="mt-4 gap-2 rounded-full bg-primary text-primary-foreground hover:opacity-90"><Plus className="h-4 w-4" /> Add your first employee</Button>
+          <div className="p-12 text-center">
+            <p className="text-base text-slate-600">No team members yet.</p>
+            <Button onClick={openNew} size="lg" className="mt-4"><Plus className="mr-2 h-5 w-5" /> Add your first person</Button>
           </div>
         ) : filtered.length === 0 ? (
-          <div className="p-10 text-center text-sm text-muted-foreground">No matches.</div>
+          <div className="p-12 text-center text-base text-slate-500">No matches.</div>
         ) : (
-          <ul className="divide-y divide-primary/10">
+          <ul className="divide-y divide-border">
             {filtered.map((e) => (
               <li
                 key={e.id}
-                className="group relative flex flex-wrap items-center gap-3 px-5 py-5 hover:bg-primary/[0.04] transition cursor-pointer border-l-2 border-transparent hover:border-primary hover:shadow-[inset_8px_0_24px_-16px_rgba(61,255,255,0.6)]"
+                className="group flex flex-wrap items-center gap-3 px-5 py-4 hover:bg-surface transition cursor-pointer"
                 onClick={() => setDetail(e)}
               >
-                <div className="grid h-11 w-11 place-items-center rounded-full bg-primary/10 border border-primary/30 text-sm font-bold text-primary">
+                <div className="grid h-11 w-11 place-items-center rounded-full bg-primary/20 text-sm font-bold text-slate-900">
                   {e.full_name.split(" ").map((p) => p[0]).slice(0, 2).join("").toUpperCase()}
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <p className="truncate font-semibold text-white">{e.full_name}</p>
-                    <span className="rounded-full border border-primary/40 px-2 py-0.5 text-[10px] font-bold text-primary">W-2</span>
+                    <p className="truncate text-base font-semibold text-slate-900">{e.full_name}</p>
                     {e.status === "inactive" && <Badge variant="secondary">Inactive</Badge>}
-                    {e.direct_deposit_enabled && <span className="rounded-full border border-white/25 px-2 py-0.5 text-[10px] font-bold text-white/80">Direct deposit</span>}
+                    {e.direct_deposit_enabled && <Badge variant="info">Direct deposit</Badge>}
                   </div>
-                  <p className="truncate text-sm text-white/60 mt-0.5">
+                  <p className="truncate text-sm text-slate-500 mt-0.5">
                     {e.job_title || "—"} · {e.pay_type === "hourly" ? `${fmtUSD(e.pay_rate)}/hr` : `${fmtUSD(e.pay_rate)}/yr`}
                   </p>
                 </div>
@@ -630,11 +626,11 @@ function DetailRow({ icon: Icon, label, value }: { icon?: any; label: string; va
   );
 }
 
-function SummaryChip({ label, value, muted }: { label: string; value: number; muted?: boolean }) {
+function SummaryTile({ label, value }: { label: string; value: number }) {
   return (
-    <div className={`rounded-2xl border ${muted ? "border-white/10 bg-card/40" : "border-primary/30 bg-primary/5"} p-4 transition hover:border-primary/60 hover:shadow-glow`}>
-      <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/55">{label}</div>
-      <div className={`mt-1 font-display text-3xl font-extrabold tabular ${muted ? "text-white/80" : "text-primary"}`}>{value}</div>
+    <div className="rounded-2xl border border-border bg-card p-5">
+      <div className="text-sm font-medium text-slate-600">{label}</div>
+      <div className="mt-2 font-display text-3xl font-extrabold tabular text-slate-900">{value}</div>
     </div>
   );
 }
