@@ -236,10 +236,6 @@ function AuthPage() {
           </button>
         </div>
 
-        <div className="mt-5 flex items-center justify-center gap-2 text-xs font-medium text-muted-foreground">
-          <Sparkles className="h-3.5 w-3.5 text-primary" />
-          Secure email verification · Bank-grade encryption
-        </div>
       </div>
     </div>
   );
