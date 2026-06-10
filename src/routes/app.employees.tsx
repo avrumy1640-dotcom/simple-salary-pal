@@ -101,12 +101,17 @@ function EmployeesPage() {
   const [leaveForm, setLeaveForm] = useState({ leave_start_date: new Date().toISOString().slice(0, 10), leave_end_date: "", reason: "" });
 
   async function refresh() {
+    if (!currentId) { setItems([]); setLoading(false); return; }
     setLoading(true);
-    const { data } = await supabase.from("employees").select("*").order("created_at", { ascending: false });
+    const { data } = await supabase
+      .from("employees")
+      .select("*")
+      .eq("company_id", currentId)
+      .order("created_at", { ascending: false });
     setItems((data ?? []) as Employee[]);
     setLoading(false);
   }
-  useEffect(() => { refresh(); }, []);
+  useEffect(() => { refresh(); /* eslint-disable-next-line */ }, [currentId]);
 
   async function doTerminate() {
     if (!detail) return;

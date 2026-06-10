@@ -55,8 +55,16 @@ export function TimesheetApprovals() {
   async function load() {
     if (!currentId) return;
     const [{ data: e }, { data: t }] = await Promise.all([
-      supabase.from("employees").select("id, full_name").eq("status", "active").order("full_name"),
-      supabase.from("timesheets").select("*, employees(full_name)").order("period_end", { ascending: false }).limit(50),
+      supabase.from("employees")
+        .select("id, full_name")
+        .eq("company_id", currentId)
+        .eq("status", "active")
+        .order("full_name"),
+      supabase.from("timesheets")
+        .select("*, employees(full_name)")
+        .eq("company_id", currentId)
+        .order("period_end", { ascending: false })
+        .limit(50),
     ]);
     setEmps((e ?? []) as Emp[]);
     setSheets((t ?? []) as unknown as Ts[]);

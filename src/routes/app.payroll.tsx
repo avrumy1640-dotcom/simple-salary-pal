@@ -64,11 +64,20 @@ function PayrollWizard() {
 
 
   async function loadPreview() {
+    if (!currentId) { toast.error("Select a company first"); return; }
     setLoading(true);
     const [{ data: emps }, { data: te }, { data: deds }] = await Promise.all([
-      supabase.from("employees").select("id, full_name, pay_type, pay_rate, filing_status, dependents, extra_withholding").eq("status", "active"),
-      supabase.from("time_entries").select("employee_id, hours, overtime_hours").gte("work_date", periodStart).lte("work_date", periodEnd),
-      supabase.from("deductions").select("*").eq("active", true),
+      supabase.from("employees")
+        .select("id, full_name, pay_type, pay_rate, filing_status, dependents, extra_withholding")
+        .eq("company_id", currentId)
+        .eq("status", "active"),
+      supabase.from("time_entries")
+        .select("employee_id, hours, overtime_hours")
+        .eq("company_id", currentId)
+        .gte("work_date", periodStart).lte("work_date", periodEnd),
+      supabase.from("deductions").select("*")
+        .eq("company_id", currentId)
+        .eq("active", true),
     ]);
     const hoursByEmp = new Map<string, { reg: number; ot: number }>();
     (te ?? []).forEach((r) => {
