@@ -6,7 +6,7 @@ import {
   LayoutDashboard, Users, Clock, Wallet, FileText, LogOut, Menu, X,
   CalendarDays, Settings as SettingsIcon, UserPlus, Target, ShieldCheck,
   BarChart3, FolderOpen, Megaphone, Plug, HeartHandshake, ChevronLeft,
-  ChevronRight, Building2,
+  ChevronRight, Building2, Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TopBar } from "@/components/TopBar";
@@ -28,6 +28,7 @@ const nav: NavItem[] = [
   { to: "/app/analytics", label: "Analytics", icon: BarChart3 },
   { to: "/app/documents", label: "Documents", icon: FolderOpen },
   { to: "/app/announcements", label: "Announcements", icon: Megaphone },
+  { to: "/app/ai-assistant", label: "AI Assistant", icon: Sparkles },
   { to: "/app/integrations", label: "Integrations", icon: Plug },
   { to: "/app/settings", label: "Settings", icon: SettingsIcon },
 ];
