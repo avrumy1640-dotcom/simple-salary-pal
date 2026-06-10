@@ -265,12 +265,12 @@ function SchedulingPage() {
   );
 }
 
-function NewShiftDialog({ open, onClose, companyId, employees, preset, onCreated }: {
+function NewShiftDialog({ open, onClose, companyId, employees, locations, preset, onCreated }: {
   open: boolean; onClose: () => void; companyId: string | null;
-  employees: Emp[]; preset: { date?: string; emp?: string } | null; onCreated: () => void;
+  employees: Emp[]; locations: WorkLocation[]; preset: { date?: string; emp?: string } | null; onCreated: () => void;
 }) {
   const today = new Date().toISOString().slice(0,10);
-  const [form, setForm] = useState({ employee_id: "", date: today, start: "09:00", end: "17:00", role: "", location: "" });
+  const [form, setForm] = useState({ employee_id: "", date: today, start: "09:00", end: "17:00", role: "", location: "", work_location_id: "" });
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
