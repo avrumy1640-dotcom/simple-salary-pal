@@ -33,10 +33,17 @@ function AuthPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/app/dashboard" });
+    supabase.auth.getSession().then(async ({ data }) => {
+      if (data.session) await routeByRole(data.session.user.id);
     });
   }, [navigate]);
+
+  async function routeByRole(uid: string) {
+    const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", uid).limit(1);
+    const r = (roles && roles[0]?.role) || "employee";
+    const admin = ["owner","admin","payroll_admin","hr_admin","recruiter","benefits_admin","accountant","auditor","manager","supervisor"].includes(r);
+    navigate({ to: admin ? "/app/dashboard" : "/employee/home" });
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
