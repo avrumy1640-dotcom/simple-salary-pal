@@ -74,6 +74,7 @@ export function EmployeeShell() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <EmployeeNotificationBanner />
       {/* Top bar — desktop & mobile */}
       <header className="sticky top-0 z-40 border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
