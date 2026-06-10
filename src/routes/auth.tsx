@@ -61,9 +61,9 @@ function AuthPage() {
         toast.success("Account created! You can sign in now.");
         setMode("signin");
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        navigate({ to: "/app/dashboard" });
+        if (data.user) await routeByRole(data.user.id);
       }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Something went wrong");
