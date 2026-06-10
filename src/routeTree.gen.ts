@@ -17,6 +17,7 @@ import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as EmployeeTimeRouteImport } from './routes/employee.time'
 import { Route as EmployeeScheduleRouteImport } from './routes/employee.schedule'
+import { Route as EmployeePunchRouteImport } from './routes/employee.punch'
 import { Route as EmployeePtoRouteImport } from './routes/employee.pto'
 import { Route as EmployeeProfileRouteImport } from './routes/employee.profile'
 import { Route as EmployeePaystubsRouteImport } from './routes/employee.paystubs'
@@ -40,6 +41,7 @@ import { Route as AppPayrollRouteImport } from './routes/app.payroll'
 import { Route as AppPayHistoryRouteImport } from './routes/app.pay-history'
 import { Route as AppOnboardingTemplatesRouteImport } from './routes/app.onboarding-templates'
 import { Route as AppOnboardingRouteImport } from './routes/app.onboarding'
+import { Route as AppNotificationsRouteImport } from './routes/app.notifications'
 import { Route as AppLocationsRouteImport } from './routes/app.locations'
 import { Route as AppIntegrationsRouteImport } from './routes/app.integrations'
 import { Route as AppGettingStartedRouteImport } from './routes/app.getting-started'
@@ -94,6 +96,11 @@ const EmployeeTimeRoute = EmployeeTimeRouteImport.update({
 const EmployeeScheduleRoute = EmployeeScheduleRouteImport.update({
   id: '/schedule',
   path: '/schedule',
+  getParentRoute: () => EmployeeRoute,
+} as any)
+const EmployeePunchRoute = EmployeePunchRouteImport.update({
+  id: '/punch',
+  path: '/punch',
   getParentRoute: () => EmployeeRoute,
 } as any)
 const EmployeePtoRoute = EmployeePtoRouteImport.update({
@@ -211,6 +218,11 @@ const AppOnboardingRoute = AppOnboardingRouteImport.update({
   path: '/onboarding',
   getParentRoute: () => AppRoute,
 } as any)
+const AppNotificationsRoute = AppNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppLocationsRoute = AppLocationsRouteImport.update({
   id: '/locations',
   path: '/locations',
@@ -309,6 +321,7 @@ export interface FileRoutesByFullPath {
   '/app/getting-started': typeof AppGettingStartedRoute
   '/app/integrations': typeof AppIntegrationsRoute
   '/app/locations': typeof AppLocationsRoute
+  '/app/notifications': typeof AppNotificationsRoute
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/onboarding-templates': typeof AppOnboardingTemplatesRoute
   '/app/pay-history': typeof AppPayHistoryRoute
@@ -332,6 +345,7 @@ export interface FileRoutesByFullPath {
   '/employee/paystubs': typeof EmployeePaystubsRoute
   '/employee/profile': typeof EmployeeProfileRoute
   '/employee/pto': typeof EmployeePtoRoute
+  '/employee/punch': typeof EmployeePunchRoute
   '/employee/schedule': typeof EmployeeScheduleRoute
   '/employee/time': typeof EmployeeTimeRoute
 }
@@ -357,6 +371,7 @@ export interface FileRoutesByTo {
   '/app/getting-started': typeof AppGettingStartedRoute
   '/app/integrations': typeof AppIntegrationsRoute
   '/app/locations': typeof AppLocationsRoute
+  '/app/notifications': typeof AppNotificationsRoute
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/onboarding-templates': typeof AppOnboardingTemplatesRoute
   '/app/pay-history': typeof AppPayHistoryRoute
@@ -380,6 +395,7 @@ export interface FileRoutesByTo {
   '/employee/paystubs': typeof EmployeePaystubsRoute
   '/employee/profile': typeof EmployeeProfileRoute
   '/employee/pto': typeof EmployeePtoRoute
+  '/employee/punch': typeof EmployeePunchRoute
   '/employee/schedule': typeof EmployeeScheduleRoute
   '/employee/time': typeof EmployeeTimeRoute
 }
@@ -406,6 +422,7 @@ export interface FileRoutesById {
   '/app/getting-started': typeof AppGettingStartedRoute
   '/app/integrations': typeof AppIntegrationsRoute
   '/app/locations': typeof AppLocationsRoute
+  '/app/notifications': typeof AppNotificationsRoute
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/onboarding-templates': typeof AppOnboardingTemplatesRoute
   '/app/pay-history': typeof AppPayHistoryRoute
@@ -429,6 +446,7 @@ export interface FileRoutesById {
   '/employee/paystubs': typeof EmployeePaystubsRoute
   '/employee/profile': typeof EmployeeProfileRoute
   '/employee/pto': typeof EmployeePtoRoute
+  '/employee/punch': typeof EmployeePunchRoute
   '/employee/schedule': typeof EmployeeScheduleRoute
   '/employee/time': typeof EmployeeTimeRoute
 }
@@ -456,6 +474,7 @@ export interface FileRouteTypes {
     | '/app/getting-started'
     | '/app/integrations'
     | '/app/locations'
+    | '/app/notifications'
     | '/app/onboarding'
     | '/app/onboarding-templates'
     | '/app/pay-history'
@@ -479,6 +498,7 @@ export interface FileRouteTypes {
     | '/employee/paystubs'
     | '/employee/profile'
     | '/employee/pto'
+    | '/employee/punch'
     | '/employee/schedule'
     | '/employee/time'
   fileRoutesByTo: FileRoutesByTo
@@ -504,6 +524,7 @@ export interface FileRouteTypes {
     | '/app/getting-started'
     | '/app/integrations'
     | '/app/locations'
+    | '/app/notifications'
     | '/app/onboarding'
     | '/app/onboarding-templates'
     | '/app/pay-history'
@@ -527,6 +548,7 @@ export interface FileRouteTypes {
     | '/employee/paystubs'
     | '/employee/profile'
     | '/employee/pto'
+    | '/employee/punch'
     | '/employee/schedule'
     | '/employee/time'
   id:
@@ -552,6 +574,7 @@ export interface FileRouteTypes {
     | '/app/getting-started'
     | '/app/integrations'
     | '/app/locations'
+    | '/app/notifications'
     | '/app/onboarding'
     | '/app/onboarding-templates'
     | '/app/pay-history'
@@ -575,6 +598,7 @@ export interface FileRouteTypes {
     | '/employee/paystubs'
     | '/employee/profile'
     | '/employee/pto'
+    | '/employee/punch'
     | '/employee/schedule'
     | '/employee/time'
   fileRoutesById: FileRoutesById
@@ -644,6 +668,13 @@ declare module '@tanstack/react-router' {
       path: '/schedule'
       fullPath: '/employee/schedule'
       preLoaderRoute: typeof EmployeeScheduleRouteImport
+      parentRoute: typeof EmployeeRoute
+    }
+    '/employee/punch': {
+      id: '/employee/punch'
+      path: '/punch'
+      fullPath: '/employee/punch'
+      preLoaderRoute: typeof EmployeePunchRouteImport
       parentRoute: typeof EmployeeRoute
     }
     '/employee/pto': {
@@ -807,6 +838,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppOnboardingRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/notifications': {
+      id: '/app/notifications'
+      path: '/notifications'
+      fullPath: '/app/notifications'
+      preLoaderRoute: typeof AppNotificationsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/locations': {
       id: '/app/locations'
       path: '/locations'
@@ -931,6 +969,7 @@ interface AppRouteChildren {
   AppGettingStartedRoute: typeof AppGettingStartedRoute
   AppIntegrationsRoute: typeof AppIntegrationsRoute
   AppLocationsRoute: typeof AppLocationsRoute
+  AppNotificationsRoute: typeof AppNotificationsRoute
   AppOnboardingRoute: typeof AppOnboardingRoute
   AppOnboardingTemplatesRoute: typeof AppOnboardingTemplatesRoute
   AppPayHistoryRoute: typeof AppPayHistoryRoute
@@ -966,6 +1005,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppGettingStartedRoute: AppGettingStartedRoute,
   AppIntegrationsRoute: AppIntegrationsRoute,
   AppLocationsRoute: AppLocationsRoute,
+  AppNotificationsRoute: AppNotificationsRoute,
   AppOnboardingRoute: AppOnboardingRoute,
   AppOnboardingTemplatesRoute: AppOnboardingTemplatesRoute,
   AppPayHistoryRoute: AppPayHistoryRoute,
@@ -994,6 +1034,7 @@ interface EmployeeRouteChildren {
   EmployeePaystubsRoute: typeof EmployeePaystubsRoute
   EmployeeProfileRoute: typeof EmployeeProfileRoute
   EmployeePtoRoute: typeof EmployeePtoRoute
+  EmployeePunchRoute: typeof EmployeePunchRoute
   EmployeeScheduleRoute: typeof EmployeeScheduleRoute
   EmployeeTimeRoute: typeof EmployeeTimeRoute
 }
@@ -1005,6 +1046,7 @@ const EmployeeRouteChildren: EmployeeRouteChildren = {
   EmployeePaystubsRoute: EmployeePaystubsRoute,
   EmployeeProfileRoute: EmployeeProfileRoute,
   EmployeePtoRoute: EmployeePtoRoute,
+  EmployeePunchRoute: EmployeePunchRoute,
   EmployeeScheduleRoute: EmployeeScheduleRoute,
   EmployeeTimeRoute: EmployeeTimeRoute,
 }
@@ -1024,3 +1066,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
