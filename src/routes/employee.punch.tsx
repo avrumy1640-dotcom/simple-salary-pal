@@ -139,10 +139,10 @@ function PunchPage() {
   if (!employee) return <p className="text-sm text-muted-foreground">No employee record found.</p>;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 unit-in">
       <div>
-        <h1 className="font-display text-2xl font-bold text-slate-900">Punch in / out</h1>
-        <p className="text-sm text-slate-500">Confirm your worksite, then punch in.</p>
+        <h1 className="font-display text-[32px] sm:text-[40px] font-extrabold tracking-tight text-slate-900">Punch in / out</h1>
+        <p className="mt-2 text-base text-slate-600">Confirm your worksite, then punch in.</p>
       </div>
 
       {activeShift && (
@@ -159,7 +159,7 @@ function PunchPage() {
         </div>
       )}
 
-      <div className="rounded-xl border border-border bg-card p-5 space-y-4">
+      <div className="rounded-2xl border border-border bg-card p-5 shadow-soft space-y-4">
         <div>
           <div className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Worksite</div>
           <Select value={chosenLoc} onValueChange={setChosenLoc}>
@@ -226,7 +226,7 @@ function PunchPage() {
         )}
       </div>
 
-      <div className="rounded-xl border border-border bg-card">
+      <div className="rounded-2xl border border-border bg-card shadow-soft">
         <div className="flex items-center gap-2 border-b border-border px-4 py-3 font-display text-sm font-semibold text-slate-900">
           <Clock className="h-4 w-4" /> Recent punches
         </div>
