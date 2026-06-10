@@ -70,7 +70,10 @@ function Page() {
       <div className="flex items-end justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold">Time off</h1>
-          <p className="text-sm text-muted-foreground">You have {Number(employee.pto_balance_hours).toFixed(1)}h available.</p>
+          <p className="text-sm text-muted-foreground">
+            You have {Number(balance?.balance_hours ?? employee.pto_balance_hours ?? 0).toFixed(1)}h available
+            {balance && <> · accrued {Number(balance.lifetime_accrued).toFixed(1)}h · used {Number(balance.lifetime_used).toFixed(1)}h</>}.
+          </p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild><Button className="gap-1"><Plus className="h-4 w-4" /> Request time off</Button></DialogTrigger>
