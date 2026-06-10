@@ -6,7 +6,7 @@ import {
   LayoutDashboard, Users, Clock, Wallet, FileText, LogOut, Menu, X,
   CalendarDays, Settings as SettingsIcon, UserPlus, Target, ShieldCheck,
   BarChart3, FolderOpen, ChevronLeft, ChevronRight, HelpCircle,
-  HeartHandshake, LineChart, Landmark, ListChecks,
+  HeartHandshake, LineChart, Landmark, ListChecks, Bell,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TopBar } from "@/components/TopBar";
