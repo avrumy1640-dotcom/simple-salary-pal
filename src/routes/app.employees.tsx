@@ -34,6 +34,13 @@ interface Employee {
   pay_type: "hourly" | "salary";
   pay_rate: number;
   status: "active" | "inactive";
+  lifecycle_status?: "prospect" | "onboarding" | "active" | "on_leave" | "terminated" | null;
+  termination_date?: string | null;
+  termination_reason?: string | null;
+  rehire_eligible?: boolean | null;
+  leave_start_date?: string | null;
+  leave_end_date?: string | null;
+  leave_reason?: string | null;
   address_line1?: string | null;
   city?: string | null;
   state?: string | null;
