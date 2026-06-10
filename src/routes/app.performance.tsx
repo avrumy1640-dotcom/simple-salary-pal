@@ -78,7 +78,7 @@ function PerformancePage() {
     if (!currentId) return;
     if (employees.length === 0) { toast.error("Add employees first"); return; }
     const rows = employees.map((e) => ({
-      company_id: currentId, cycle_id: c.id, employee_id: e.id, review_type: "manager", status: "not_started",
+      company_id: currentId, cycle_id: c.id, employee_id: e.id, review_type: "manager", status: "not_started" as const,
     }));
     const { error: rErr } = await supabase.from("performance_reviews").insert(rows);
     if (rErr) { toast.error(rErr.message); return; }
