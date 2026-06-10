@@ -5,6 +5,7 @@ import {
   Home, Wallet, CalendarDays, User, HeartHandshake, LogOut, ChevronDown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { EmployeeNotificationBanner } from "@/components/EmployeeNotificationBanner";
 
 const nav = [
   { to: "/employee/home", label: "Home", icon: Home },
