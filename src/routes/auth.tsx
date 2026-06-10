@@ -138,7 +138,7 @@ function AuthPage() {
           <span className="font-display text-3xl font-bold tracking-tight text-foreground">Paylo</span>
         </Link>
 
-        <div className="surface-glass rounded-[2rem] p-6 shadow-float md:p-7">
+        <div className="surface-glass rounded-[2rem] p-6 shadow-float text-center md:p-7">
           <h1 className="font-display text-3xl font-bold text-foreground">{mode === "signin" ? "Sign in" : "Create your account"}</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {mode === "signin" ? "Pick up where you left off." : "Start running payroll in minutes."}
