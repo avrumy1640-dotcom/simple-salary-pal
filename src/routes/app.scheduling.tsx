@@ -289,6 +289,7 @@ function NewShiftDialog({ open, onClose, companyId, employees, locations, preset
       employee_id: form.employee_id || null,
       start_at: start.toISOString(), end_at: end.toISOString(),
       role: form.role || null, location: form.location || null,
+      work_location_id: form.work_location_id || null,
     });
     setBusy(false);
     if (error) { toast.error(error.message); return; }
