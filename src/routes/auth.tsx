@@ -157,7 +157,7 @@ function AuthPage() {
             <div className="h-px flex-1 bg-border" /> OR <div className="h-px flex-1 bg-border" />
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4 text-center">
             {mode === "signup" && (
               <>
                 <div>
