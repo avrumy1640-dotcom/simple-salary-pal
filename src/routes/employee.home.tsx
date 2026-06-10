@@ -14,7 +14,7 @@ function fmt(n: number) { return n.toLocaleString("en-US", { style: "currency", 
 
 function Tile({ icon: Icon, label, value }: { icon: any; label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-border bg-card p-6">
+    <div className="rounded-2xl border border-border bg-card p-6 shadow-soft">
       <div className="flex items-center gap-3">
         <div className="grid h-10 w-10 place-items-center rounded-xl bg-primary/15 text-slate-900">
           <Icon className="h-5 w-5" />
