@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { fmtUSD } from "@/lib/payroll";
 import { FileBadge, Download, Calendar, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useCompany } from "@/hooks/useCompany";
 
 export const Route = createFileRoute("/app/taxes")({
   head: () => ({ meta: [{ title: "Taxes & forms — Paylo" }] }),
@@ -13,14 +14,16 @@ export const Route = createFileRoute("/app/taxes")({
 interface EmpTotal { employee_id: string; employee_name: string; gross: number; federal: number; ss: number; medicare: number; state: number; net: number }
 
 function TaxesPage() {
+  const { currentId } = useCompany();
   const year = new Date().getFullYear();
   const [totals, setTotals] = useState<EmpTotal[]>([]);
   const [qtrTotals, setQtrTotals] = useState<{ q: number; gross: number; fed: number; fica: number }[]>([]);
 
   useEffect(() => {
+    if (!currentId) return;
     (async () => {
-      const { data: items } = await supabase.from("payroll_items").select("employee_id, employee_name, gross_pay, federal_tax, social_security, medicare, state_tax, net_pay, run_id");
-      const { data: runs } = await supabase.from("payroll_runs").select("id, pay_date");
+      const { data: items } = await supabase.from("payroll_items").select("employee_id, employee_name, gross_pay, federal_tax, social_security, medicare, state_tax, net_pay, run_id").eq("company_id", currentId);
+      const { data: runs } = await supabase.from("payroll_runs").select("id, pay_date").eq("company_id", currentId);
       const runMap = new Map((runs ?? []).map((r) => [r.id as string, r.pay_date as string]));
       const byEmp = new Map<string, EmpTotal>();
       const byQtr = new Map<number, { gross: number; fed: number; fica: number }>();
@@ -47,7 +50,7 @@ function TaxesPage() {
       setTotals(Array.from(byEmp.values()));
       setQtrTotals([1, 2, 3, 4].map((q) => ({ q, ...(byQtr.get(q) ?? { gross: 0, fed: 0, fica: 0 }) })));
     })();
-  }, [year]);
+  }, [year, currentId]);
 
   function downloadW2(emp: EmpTotal) {
     const lines = [

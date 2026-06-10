@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { fmtUSD } from "@/lib/payroll";
 import { useCountUp } from "@/hooks/useCountUp";
+import { useCompany } from "@/hooks/useCompany";
 
 export const Route = createFileRoute("/app/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — Paylo" }] }),
@@ -138,7 +139,9 @@ function Dashboard() {
     payrollApproved: false,
   });
 
+  const { currentId } = useCompany();
   useEffect(() => {
+    if (!currentId) return;
     (async () => {
       const today = new Date();
       const startMonth = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().slice(0, 10);
@@ -159,14 +162,14 @@ function Dashboard() {
         { count: clockedInCount },
         { count: onLeaveCount },
       ] = await Promise.all([
-        supabase.from("employees").select("*", { count: "exact", head: true }).eq("status", "active"),
-        supabase.from("pto_entries").select("*", { count: "exact", head: true }).eq("status", "pending"),
-        supabase.from("payroll_runs").select("net_total,gross_total,total_taxes").gte("pay_date", startMonth).neq("status", "draft"),
-        supabase.from("payroll_runs").select("id,pay_date,net_total,status").gte("pay_date", todayStr).order("pay_date", { ascending: true }).limit(3),
-        supabase.from("employees").select("id,full_name,date_of_birth,start_date").eq("status", "active").limit(500),
-        safe(supabase.from("timesheets").select("*", { count: "exact", head: true }).eq("status", "submitted"), { count: 0 } as any),
-        safe(supabase.from("time_entries").select("*", { count: "exact", head: true }).is("clock_out", null).gte("clock_in", todayStr), { count: 0 } as any),
-        safe(supabase.from("pto_entries").select("*", { count: "exact", head: true }).eq("status", "approved").lte("start_date", todayStr).gte("end_date", todayStr), { count: 0 } as any),
+        supabase.from("employees").select("*", { count: "exact", head: true }).eq("company_id", currentId).eq("status", "active"),
+        supabase.from("pto_entries").select("*", { count: "exact", head: true }).eq("company_id", currentId).eq("status", "pending"),
+        supabase.from("payroll_runs").select("net_total,gross_total,total_taxes").eq("company_id", currentId).gte("pay_date", startMonth).neq("status", "draft"),
+        supabase.from("payroll_runs").select("id,pay_date,net_total,status").eq("company_id", currentId).gte("pay_date", todayStr).order("pay_date", { ascending: true }).limit(3),
+        supabase.from("employees").select("id,full_name,date_of_birth,start_date").eq("company_id", currentId).eq("status", "active").limit(500),
+        safe(supabase.from("timesheets").select("*", { count: "exact", head: true }).eq("company_id", currentId).eq("status", "submitted"), { count: 0 } as any),
+        safe(supabase.from("time_entries").select("*", { count: "exact", head: true }).eq("company_id", currentId).is("clock_out", null).gte("clock_in", todayStr), { count: 0 } as any),
+        safe(supabase.from("pto_entries").select("*", { count: "exact", head: true }).eq("company_id", currentId).eq("status", "approved").lte("start_date", todayStr).gte("end_date", todayStr), { count: 0 } as any),
       ]);
       void in30Str;
 
