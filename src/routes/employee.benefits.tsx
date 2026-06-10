@@ -97,46 +97,104 @@ function Page() {
 
   const enrolledPlanIds = new Set(items.filter(i => i.status === "active" || i.status === "pending").map(i => (i as any).benefit_plans?.name));
 
+  const activeEnrollments = items.filter(i => i.status === "active" || i.status === "pending");
+  const totalMonthly = activeEnrollments.reduce((s, i) => s + Number(i.employee_monthly_cost ?? 0), 0);
+  const perPaycheck = totalMonthly / 2;
+
+  const PLAN_TONE: Record<string, string> = {
+    medical: "bg-rose-50 text-rose-700",
+    dental: "bg-sky-50 text-sky-700",
+    vision: "bg-violet-50 text-violet-700",
+    life: "bg-amber-50 text-amber-700",
+    disability: "bg-emerald-50 text-emerald-700",
+  };
+
   return (
     <div className="space-y-8 unit-in">
       <div>
-        <h1 className="font-display text-[32px] sm:text-[40px] font-extrabold tracking-tight text-slate-900">My benefits</h1>
-        <p className="mt-2 text-base text-slate-600">
-          {windowOpen ? "Open enrollment is active — you can elect coverage." : "Open enrollment is closed. Contact HR for qualifying-life-event changes."}
-        </p>
+        <h1 className="font-display text-[28px] sm:text-[40px] font-extrabold tracking-tight text-slate-900">Benefits</h1>
+        <p className="mt-1 text-sm sm:text-base text-slate-500">Here's what you're enrolled in and what it costs you each paycheck.</p>
       </div>
 
-      <div className="rounded-2xl border border-border bg-card shadow-soft">
-        <div className="flex items-center gap-2 border-b border-border px-5 py-3 text-sm font-semibold text-slate-700">
-          <HeartHandshake className="h-4 w-4" /> {items.length} enrollment{items.length === 1 ? "" : "s"}
+      {/* Open enrollment banner */}
+      {windowOpen && (
+        <div className="rounded-3xl border border-amber-300 bg-gradient-to-br from-amber-50 to-amber-100/60 p-5 sm:p-6 shadow-soft">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <div className="text-xs font-semibold uppercase tracking-[0.14em] text-amber-800">Open enrollment is active</div>
+              <div className="mt-1 font-display text-lg font-bold text-slate-900">Review and update your benefits</div>
+              <p className="mt-1 text-sm text-slate-700">Make your elections now — changes take effect on the next pay period.</p>
+            </div>
+            <Button className="h-12 sm:w-auto bg-amber-600 hover:bg-amber-700 text-white font-bold" onClick={() => document.getElementById("available-plans")?.scrollIntoView({ behavior: "smooth" })}>
+              Update my benefits
+            </Button>
+          </div>
         </div>
-        {items.length === 0 ? (
-          <div className="p-6 text-sm text-muted-foreground">You're not enrolled in any benefits yet.</div>
+      )}
+
+      {/* Enrolled cards */}
+      <div>
+        <h2 className="font-display text-lg font-bold text-slate-900">Your enrollments</h2>
+        {activeEnrollments.length === 0 ? (
+          <div className="mt-3 rounded-2xl border border-dashed border-border bg-surface p-6 text-sm text-slate-500">
+            You're not enrolled in any benefits yet.
+          </div>
         ) : (
-          <ul className="divide-y">
-            {items.map((e) => (
-              <li key={e.id} className="flex items-center gap-3 px-5 py-3">
-                <div className="flex-1 min-w-0">
-                  <div className="font-medium">{e.benefit_plans?.name ?? "Plan"}</div>
-                  <div className="text-xs text-muted-foreground capitalize">
-                    {e.benefit_plans?.plan_type ?? "—"} · {e.coverage_tier ?? "—"} · {e.status}
+          <div className="mt-3 grid gap-3 sm:grid-cols-2">
+            {activeEnrollments.map((e) => {
+              const type = e.benefit_plans?.plan_type ?? "medical";
+              const tone = PLAN_TONE[type] ?? "bg-slate-100 text-slate-700";
+              return (
+                <div key={e.id} className="rounded-3xl border border-border bg-card p-5 shadow-soft">
+                  <div className="flex items-center justify-between">
+                    <span className={`grid h-10 w-10 place-items-center rounded-xl ${tone}`}>
+                      <HeartHandshake className="h-5 w-5" />
+                    </span>
+                    <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${e.status === "active" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>
+                      {e.status}
+                    </span>
                   </div>
-                </div>
-                <div className="text-right text-sm">
+                  <div className="mt-3 font-display text-base font-bold text-slate-900">{e.benefit_plans?.name ?? "Plan"}</div>
+                  <div className="text-xs capitalize text-slate-500">{type} · {e.coverage_tier ?? "employee"}</div>
                   {e.employee_monthly_cost != null && (
-                    <div className="font-semibold">${Number(e.employee_monthly_cost).toFixed(2)}/mo</div>
+                    <div className="mt-4">
+                      <div className="font-display text-2xl font-extrabold tabular text-primary">${Number(e.employee_monthly_cost).toFixed(2)}</div>
+                      <div className="text-[11px] uppercase tracking-wider text-slate-400">per month</div>
+                    </div>
                   )}
-                  {e.effective_date && <div className="text-xs text-muted-foreground">Eff. {e.effective_date}</div>}
+                  {e.effective_date && <div className="mt-2 text-xs text-slate-500">Effective {e.effective_date}</div>}
                 </div>
-              </li>
-            ))}
-          </ul>
+              );
+            })}
+          </div>
         )}
       </div>
 
+      {/* Totals summary */}
+      {activeEnrollments.length > 0 && (
+        <div className="rounded-3xl border border-border bg-card p-6 shadow-soft">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <div className="text-xs uppercase tracking-[0.14em] text-slate-500 font-semibold">Your total benefits deductions</div>
+              <div className="mt-1 font-display text-4xl font-extrabold tabular text-slate-900">${totalMonthly.toFixed(2)}</div>
+              <div className="text-sm text-slate-500">per month · about ${perPaycheck.toFixed(2)} per paycheck</div>
+            </div>
+          </div>
+          <div className="mt-5 divide-y divide-border rounded-2xl border border-border bg-surface">
+            {activeEnrollments.map((e) => (
+              <div key={e.id} className="flex items-center justify-between px-4 py-3 text-sm">
+                <span className="text-slate-700">{e.benefit_plans?.name ?? "Plan"} <span className="text-slate-400 capitalize">· {e.benefit_plans?.plan_type ?? "—"}</span></span>
+                <span className="font-bold tabular text-slate-900">${Number(e.employee_monthly_cost ?? 0).toFixed(2)}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+
       {windowOpen && (
-        <div className="rounded-2xl border border-border bg-card shadow-soft">
-          <div className="border-b border-border px-5 py-3 text-sm font-semibold text-slate-700">Available plans</div>
+        <div id="available-plans" className="rounded-3xl border border-border bg-card shadow-soft">
+          <div className="border-b border-border px-6 py-4 font-display text-base font-bold text-slate-900">Available plans</div>
           {plans.length === 0 ? (
             <div className="p-6 text-sm text-muted-foreground">No active plans configured.</div>
           ) : (
