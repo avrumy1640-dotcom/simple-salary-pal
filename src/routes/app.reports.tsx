@@ -2,9 +2,13 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { useServerFn } from "@tanstack/react-start";
+import { exportW2Summary, export1099Summary, exportGlForRun, exportAuditLog, exportPayrollRegister } from "@/lib/reports.functions";
+import { useCompany } from "@/hooks/useCompany";
+import { toast } from "sonner";
 import {
   Download, FileText, Users, DollarSign, Calendar, Clock, FileBadge,
-  TrendingUp, PieChart, Briefcase, HeartHandshake, ChevronRight,
+  TrendingUp, PieChart, Briefcase, HeartHandshake, ChevronRight, BookOpen, ShieldCheck,
 } from "lucide-react";
 import { fmtUSD } from "@/lib/payroll";
 
@@ -21,6 +25,25 @@ interface Run {
 function ReportsPage() {
   const [runs, setRuns] = useState<Run[]>([]);
   const [empCount, setEmpCount] = useState(0);
+  const { currentId } = useCompany();
+  const [year, setYear] = useState<number>(new Date().getFullYear());
+  const w2Fn = useServerFn(exportW2Summary);
+  const f1099Fn = useServerFn(export1099Summary);
+  const glFn = useServerFn(exportGlForRun);
+  const auditFn = useServerFn(exportAuditLog);
+  const regFn = useServerFn(exportPayrollRegister);
+
+  function downloadCsv(filename: string, csv: string) {
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = filename; a.click();
+    URL.revokeObjectURL(url);
+  }
+  async function runExport(fn: () => Promise<{ filename: string; csv: string }>, label: string) {
+    try { const r = await fn(); downloadCsv(r.filename, r.csv); toast.success(`${label} downloaded`); }
+    catch (e: any) { toast.error(e.message || `${label} failed`); }
+  }
 
   useEffect(() => {
     (async () => {
@@ -32,6 +55,7 @@ function ReportsPage() {
       setEmpCount(count ?? 0);
     })();
   }, []);
+
 
   async function exportRun(id: string) {
     const { data } = await supabase.from("payroll_items").select("*").eq("run_id", id);
@@ -125,9 +149,42 @@ function ReportsPage() {
         </div>
       </div>
 
+      {/* Year-end & ledger */}
+      <div>
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">Year-end & ledger</h2>
+        <div className="surface-glass rounded-2xl p-5 space-y-3">
+          <div className="flex items-center gap-3 flex-wrap">
+            <label className="text-sm text-muted-foreground">Tax year</label>
+            <input
+              type="number"
+              className="w-24 rounded-md border bg-background px-2 py-1 text-sm"
+              value={year}
+              onChange={(e) => setYear(parseInt(e.target.value) || year)}
+            />
+            <Button size="sm" variant="outline" disabled={!currentId} className="gap-2"
+              onClick={() => currentId && runExport(() => w2Fn({ data: { company_id: currentId, year } }), "W-2 summary")}>
+              <FileBadge className="h-4 w-4" /> W-2 summary
+            </Button>
+            <Button size="sm" variant="outline" disabled={!currentId} className="gap-2"
+              onClick={() => currentId && runExport(() => f1099Fn({ data: { company_id: currentId, year } }), "1099 summary")}>
+              <Briefcase className="h-4 w-4" /> 1099 summary
+            </Button>
+            <Button size="sm" variant="outline" disabled={!currentId} className="gap-2"
+              onClick={() => currentId && runExport(() => regFn({ data: { company_id: currentId, year } }), "Payroll register")}>
+              <DollarSign className="h-4 w-4" /> Payroll register
+            </Button>
+            <Button size="sm" variant="outline" disabled={!currentId} className="gap-2"
+              onClick={() => currentId && runExport(() => auditFn({ data: { company_id: currentId, days: 365 } }), "Audit log")}>
+              <ShieldCheck className="h-4 w-4" /> Audit log (1y)
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground">All exports are server-generated against paid runs. The audit log is append-only and reflects every change to employee, payroll, and HR records.</p>
+        </div>
+      </div>
+
       {/* Recent runs quick export */}
       <div>
-        <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">Recent payroll exports</h2>
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">Recent payroll runs</h2>
         <div className="surface-glass rounded-2xl overflow-hidden">
           {runs.length === 0 ? (
             <div className="p-8 text-center text-sm text-muted-foreground">
@@ -143,17 +200,22 @@ function ReportsPage() {
                     <div className="min-w-0">
                       <div className="font-medium">{new Date(r.pay_date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</div>
                       <div className="text-xs text-muted-foreground truncate">
-                        Period {new Date(r.period_start).toLocaleDateString()} – {new Date(r.period_end).toLocaleDateString()}
+                        Period {new Date(r.period_start).toLocaleDateString()} – {new Date(r.period_end).toLocaleDateString()} · {r.status}
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <div className="text-right hidden sm:block">
+                  <div className="flex items-center gap-2">
+                    <div className="text-right hidden sm:block mr-2">
                       <div className="text-sm font-semibold tabular-nums">{fmtUSD(r.net_total)}</div>
                       <div className="text-xs text-muted-foreground">net</div>
                     </div>
                     <Button variant="ghost" size="sm" onClick={() => exportRun(r.id)} className="gap-2">
-                      <Download className="h-4 w-4" /> CSV
+                      <Download className="h-4 w-4" /> Items
+                    </Button>
+                    <Button variant="ghost" size="sm"
+                      onClick={() => runExport(() => glFn({ data: { run_id: r.id } }), "GL journal")}
+                      className="gap-2">
+                      <BookOpen className="h-4 w-4" /> GL
                     </Button>
                   </div>
                 </div>
@@ -162,6 +224,7 @@ function ReportsPage() {
           )}
         </div>
       </div>
+
     </div>
   );
 }
