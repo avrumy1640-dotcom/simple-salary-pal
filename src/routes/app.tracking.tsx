@@ -205,8 +205,22 @@ function TrackingPage() {
                 <Button onClick={() => punch("out")} disabled={busy} variant="outline" className="gap-2 rounded-full"><LogOutIcon className="h-4 w-4" /> Clock out</Button>
               </div>
             </div>
-            <p className="text-xs text-muted-foreground"><Locate className="inline h-3 w-3" /> GPS is captured from this device when you punch.</p>
-          </div>
+            <div className="flex items-center justify-between gap-2 flex-wrap">
+              <p className="text-xs text-muted-foreground"><Locate className="inline h-3 w-3" /> GPS is captured from this device when you punch.</p>
+              <div className="flex items-center gap-2 text-xs">
+                <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 ${online ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-900"}`}>
+                  <span className={`h-1.5 w-1.5 rounded-full ${online ? "bg-emerald-600" : "bg-amber-600"}`} />
+                  {online ? "Online" : "Offline"}
+                </span>
+                {queued.length > 0 && (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5">
+                    {queued.length} queued punch{queued.length === 1 ? "" : "es"}
+                    {online && <button onClick={flushQueue} className="ml-1 underline">Sync now</button>}
+                  </span>
+                )}
+              </div>
+            </div>
+
 
           <GoogleMap markers={punchMarkers} />
 
