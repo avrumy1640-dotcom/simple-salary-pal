@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
   Home, Wallet, CalendarDays, Clock, HeartHandshake, FolderOpen,
-  UserCircle2, LogOut, Menu, X,
+  UserCircle2, LogOut, Menu, X, MapPin, Bell,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
