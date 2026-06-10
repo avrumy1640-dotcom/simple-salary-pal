@@ -33,6 +33,9 @@ function ReportsPage() {
   const glFn = useServerFn(exportGlForRun);
   const auditFn = useServerFn(exportAuditLog);
   const regFn = useServerFn(exportPayrollRegister);
+  const attFn = useServerFn(getAttendanceReport);
+  const [attendance, setAttendance] = useState<any[]>([]);
+  const [attLoading, setAttLoading] = useState(false);
 
   function downloadCsv(filename: string, csv: string) {
     const blob = new Blob([csv], { type: "text/csv" });
