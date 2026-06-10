@@ -1,5 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { z } from "zod";
+
+const uuid = z.string().uuid();
+const isoDt = z.string().min(8).max(40);
 
 async function assertManager(supabase: any, userId: string, companyId: string) {
   const { data: ok } = await supabase.rpc("has_any_role", {
@@ -12,7 +16,9 @@ async function assertManager(supabase: any, userId: string, companyId: string) {
 
 export const publishWeek = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { companyId: string; weekStart: string; weekEnd: string }) => d)
+  .inputValidator((d: unknown) =>
+    z.object({ companyId: uuid, weekStart: isoDt, weekEnd: isoDt }).parse(d),
+  )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     await assertManager(supabase, userId, data.companyId);
@@ -27,7 +33,7 @@ export const publishWeek = createServerFn({ method: "POST" })
 
 export const cancelShift = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { shiftId: string }) => d)
+  .inputValidator((d: unknown) => z.object({ shiftId: uuid }).parse(d))
   .handler(async ({ data, context }) => {
     const { supabase } = context;
     const { data: shift, error: e1 } = await supabase
@@ -42,13 +48,15 @@ export const cancelShift = createServerFn({ method: "POST" })
 
 export const requestSwap = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: {
-    shiftId: string;
-    requestType: "drop" | "swap";
-    targetEmployeeId?: string | null;
-    targetShiftId?: string | null;
-    reason?: string;
-  }) => d)
+  .inputValidator((d: unknown) =>
+    z.object({
+      shiftId: uuid,
+      requestType: z.enum(["drop","swap"]),
+      targetEmployeeId: uuid.nullable().optional(),
+      targetShiftId: uuid.nullable().optional(),
+      reason: z.string().max(500).optional(),
+    }).parse(d),
+  )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const { data: shift } = await supabase
@@ -72,7 +80,9 @@ export const requestSwap = createServerFn({ method: "POST" })
 
 export const decideSwap = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { swapId: string; decision: "approved" | "denied"; notes?: string }) => d)
+  .inputValidator((d: unknown) =>
+    z.object({ swapId: uuid, decision: z.enum(["approved","denied"]), notes: z.string().max(500).optional() }).parse(d),
+  )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const { data: swap, error: e1 } = await supabase
@@ -113,7 +123,7 @@ export const decideSwap = createServerFn({ method: "POST" })
 
 export const cancelSwap = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { swapId: string }) => d)
+  .inputValidator((d: unknown) => z.object({ swapId: uuid }).parse(d))
   .handler(async ({ data, context }) => {
     const { supabase } = context;
     const { error } = await supabase.from("shift_swap_requests")

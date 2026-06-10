@@ -1,10 +1,16 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { z } from "zod";
 
-type AppRole =
-  | "owner" | "admin" | "payroll_admin" | "hr_admin" | "manager"
-  | "employee" | "supervisor" | "recruiter" | "benefits_admin"
-  | "accountant" | "auditor";
+const ROLES = [
+  "owner","admin","payroll_admin","hr_admin","manager","employee",
+  "supervisor","recruiter","benefits_admin","accountant","auditor",
+] as const;
+type AppRole = (typeof ROLES)[number];
+
+const uuid = z.string().uuid();
+const emailSchema = z.string().trim().email().max(255);
+const roleSchema = z.enum(ROLES);
 
 async function ensureAdmin(supabase: any, userId: string, companyId: string) {
   const { data, error } = await supabase.rpc("has_any_role", {
@@ -15,9 +21,20 @@ async function ensureAdmin(supabase: any, userId: string, companyId: string) {
   if (error || !data) throw new Error("Forbidden");
 }
 
+async function isOwner(adminClient: any, userId: string, companyId: string) {
+  const { data } = await adminClient
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", userId)
+    .eq("company_id", companyId)
+    .eq("role", "owner")
+    .maybeSingle();
+  return !!data;
+}
+
 export const listCompanyUsers = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: { companyId: string }) => data)
+  .inputValidator((d: unknown) => z.object({ companyId: uuid }).parse(d))
   .handler(async ({ data, context }) => {
     await ensureAdmin(context.supabase, context.userId, data.companyId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -52,10 +69,31 @@ export const listCompanyUsers = createServerFn({ method: "GET" })
 
 export const updateUserRole = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: { companyId: string; userId: string; role: AppRole }) => data)
+  .inputValidator((d: unknown) =>
+    z.object({ companyId: uuid, userId: uuid, role: roleSchema }).parse(d),
+  )
   .handler(async ({ data, context }) => {
     await ensureAdmin(context.supabase, context.userId, data.companyId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    // Only owners may assign the owner role (prevents admin self-promotion)
+    if (data.role === "owner") {
+      const callerIsOwner = await isOwner(supabaseAdmin, context.userId, data.companyId);
+      if (!callerIsOwner) throw new Error("Only owners can assign the owner role");
+    }
+    // Prevent the last owner from being demoted to anything else
+    if (data.role !== "owner") {
+      const target = await isOwner(supabaseAdmin, data.userId, data.companyId);
+      if (target) {
+        const { count } = await supabaseAdmin
+          .from("user_roles")
+          .select("*", { count: "exact", head: true })
+          .eq("company_id", data.companyId)
+          .eq("role", "owner");
+        if ((count ?? 0) <= 1) throw new Error("Cannot demote the last owner");
+      }
+    }
+
     await supabaseAdmin.from("user_roles")
       .delete()
       .eq("user_id", data.userId)
@@ -72,11 +110,21 @@ export const updateUserRole = createServerFn({ method: "POST" })
 
 export const removeCompanyUser = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: { companyId: string; userId: string }) => data)
+  .inputValidator((d: unknown) => z.object({ companyId: uuid, userId: uuid }).parse(d))
   .handler(async ({ data, context }) => {
     await ensureAdmin(context.supabase, context.userId, data.companyId);
     if (data.userId === context.userId) throw new Error("Cannot remove yourself");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    // Don't allow removing the last owner
+    const target = await isOwner(supabaseAdmin, data.userId, data.companyId);
+    if (target) {
+      const { count } = await supabaseAdmin
+        .from("user_roles")
+        .select("*", { count: "exact", head: true })
+        .eq("company_id", data.companyId)
+        .eq("role", "owner");
+      if ((count ?? 0) <= 1) throw new Error("Cannot remove the last owner");
+    }
     await supabaseAdmin.from("user_roles").delete().eq("user_id", data.userId).eq("company_id", data.companyId);
     await supabaseAdmin.from("company_users").delete().eq("user_id", data.userId).eq("company_id", data.companyId);
     return { ok: true };
@@ -84,11 +132,19 @@ export const removeCompanyUser = createServerFn({ method: "POST" })
 
 export const inviteTeammate = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: { companyId: string; email: string; role: AppRole }) => data)
+  .inputValidator((d: unknown) =>
+    z.object({ companyId: uuid, email: emailSchema, role: roleSchema }).parse(d),
+  )
   .handler(async ({ data, context }) => {
     await ensureAdmin(context.supabase, context.userId, data.companyId);
+    if (data.role === "owner") {
+      const callerIsOwner = await (async () => {
+        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        return isOwner(supabaseAdmin, context.userId, data.companyId);
+      })();
+      if (!callerIsOwner) throw new Error("Only owners can invite an owner");
+    }
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    // Try to find existing user by email
     const { data: list } = await supabaseAdmin.auth.admin.listUsers();
     const existing = list?.users?.find((u) => (u.email ?? "").toLowerCase() === data.email.toLowerCase());
     let targetId = existing?.id;
