@@ -1,15 +1,12 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
-import { Badge } from "@/components/ui/badge";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
@@ -20,12 +17,12 @@ import {
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
 import {
-  Plus, Pencil, Trash2, Info, Building2, Banknote, FileText as FileIcon, Phone, Mail, MapPin,
-  Calendar, DollarSign, Search, UserX, UserCheck, Pause, MoreHorizontal, Eye, Zap, UserPlus,
+  Trash2, Search, UserX, MoreHorizontal, Eye, Zap, UserPlus, Pencil,
 } from "lucide-react";
 import { fmtUSD } from "@/lib/payroll";
 import { useCompany } from "@/hooks/useCompany";
 import { terminateEmployee, reactivateEmployee, placeOnLeave, returnFromLeave } from "@/lib/employee-lifecycle.functions";
+import { AddEmployeeWizard } from "@/components/AddEmployeeWizard";
 
 export const Route = createFileRoute("/app/employees")({
   head: () => ({ meta: [{ title: "Employees — Paylo" }] }),
