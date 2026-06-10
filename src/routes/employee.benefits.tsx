@@ -135,8 +135,8 @@ function Page() {
       </div>
 
       {windowOpen && (
-        <div className="rounded-2xl border bg-card">
-          <div className="border-b px-5 py-3 text-sm font-medium">Available plans</div>
+        <div className="rounded-2xl border border-border bg-card shadow-soft">
+          <div className="border-b border-border px-5 py-3 text-sm font-semibold text-slate-700">Available plans</div>
           {plans.length === 0 ? (
             <div className="p-6 text-sm text-muted-foreground">No active plans configured.</div>
           ) : (
