@@ -20,21 +20,27 @@ import { Route as AppTaxesRouteImport } from './routes/app.taxes'
 import { Route as AppTaxFilingRouteImport } from './routes/app.tax-filing'
 import { Route as AppSettingsRouteImport } from './routes/app.settings'
 import { Route as AppSelfServiceRouteImport } from './routes/app.self-service'
+import { Route as AppSchedulingRouteImport } from './routes/app.scheduling'
 import { Route as AppReportsRouteImport } from './routes/app.reports'
+import { Route as AppRecruitingRouteImport } from './routes/app.recruiting'
 import { Route as AppPtoRouteImport } from './routes/app.pto'
+import { Route as AppPerformanceRouteImport } from './routes/app.performance'
 import { Route as AppPaystubsRouteImport } from './routes/app.paystubs'
 import { Route as AppPayrollRouteImport } from './routes/app.payroll'
 import { Route as AppPayHistoryRouteImport } from './routes/app.pay-history'
 import { Route as AppOnboardingRouteImport } from './routes/app.onboarding'
+import { Route as AppIntegrationsRouteImport } from './routes/app.integrations'
 import { Route as AppGettingStartedRouteImport } from './routes/app.getting-started'
 import { Route as AppForm1099RouteImport } from './routes/app.form-1099'
 import { Route as AppEmployeesRouteImport } from './routes/app.employees'
 import { Route as AppDocumentsRouteImport } from './routes/app.documents'
 import { Route as AppDashboardRouteImport } from './routes/app.dashboard'
 import { Route as AppContractorsRouteImport } from './routes/app.contractors'
+import { Route as AppComplianceRouteImport } from './routes/app.compliance'
 import { Route as AppCompaniesRouteImport } from './routes/app.companies'
 import { Route as AppBenefitsRouteImport } from './routes/app.benefits'
 import { Route as AppAuditRouteImport } from './routes/app.audit'
+import { Route as AppAnnouncementsRouteImport } from './routes/app.announcements'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -91,14 +97,29 @@ const AppSelfServiceRoute = AppSelfServiceRouteImport.update({
   path: '/self-service',
   getParentRoute: () => AppRoute,
 } as any)
+const AppSchedulingRoute = AppSchedulingRouteImport.update({
+  id: '/scheduling',
+  path: '/scheduling',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppReportsRoute = AppReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
   getParentRoute: () => AppRoute,
 } as any)
+const AppRecruitingRoute = AppRecruitingRouteImport.update({
+  id: '/recruiting',
+  path: '/recruiting',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppPtoRoute = AppPtoRouteImport.update({
   id: '/pto',
   path: '/pto',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPerformanceRoute = AppPerformanceRouteImport.update({
+  id: '/performance',
+  path: '/performance',
   getParentRoute: () => AppRoute,
 } as any)
 const AppPaystubsRoute = AppPaystubsRouteImport.update({
@@ -119,6 +140,11 @@ const AppPayHistoryRoute = AppPayHistoryRouteImport.update({
 const AppOnboardingRoute = AppOnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppIntegrationsRoute = AppIntegrationsRouteImport.update({
+  id: '/integrations',
+  path: '/integrations',
   getParentRoute: () => AppRoute,
 } as any)
 const AppGettingStartedRoute = AppGettingStartedRouteImport.update({
@@ -151,6 +177,11 @@ const AppContractorsRoute = AppContractorsRouteImport.update({
   path: '/contractors',
   getParentRoute: () => AppRoute,
 } as any)
+const AppComplianceRoute = AppComplianceRouteImport.update({
+  id: '/compliance',
+  path: '/compliance',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppCompaniesRoute = AppCompaniesRouteImport.update({
   id: '/companies',
   path: '/companies',
@@ -166,6 +197,11 @@ const AppAuditRoute = AppAuditRouteImport.update({
   path: '/audit',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAnnouncementsRoute = AppAnnouncementsRouteImport.update({
+  id: '/announcements',
+  path: '/announcements',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -173,21 +209,27 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/pricing': typeof PricingRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/app/announcements': typeof AppAnnouncementsRoute
   '/app/audit': typeof AppAuditRoute
   '/app/benefits': typeof AppBenefitsRoute
   '/app/companies': typeof AppCompaniesRoute
+  '/app/compliance': typeof AppComplianceRoute
   '/app/contractors': typeof AppContractorsRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/documents': typeof AppDocumentsRoute
   '/app/employees': typeof AppEmployeesRoute
   '/app/form-1099': typeof AppForm1099Route
   '/app/getting-started': typeof AppGettingStartedRoute
+  '/app/integrations': typeof AppIntegrationsRoute
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/pay-history': typeof AppPayHistoryRoute
   '/app/payroll': typeof AppPayrollRoute
   '/app/paystubs': typeof AppPaystubsRoute
+  '/app/performance': typeof AppPerformanceRoute
   '/app/pto': typeof AppPtoRoute
+  '/app/recruiting': typeof AppRecruitingRoute
   '/app/reports': typeof AppReportsRoute
+  '/app/scheduling': typeof AppSchedulingRoute
   '/app/self-service': typeof AppSelfServiceRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/tax-filing': typeof AppTaxFilingRoute
@@ -201,21 +243,27 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/pricing': typeof PricingRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/app/announcements': typeof AppAnnouncementsRoute
   '/app/audit': typeof AppAuditRoute
   '/app/benefits': typeof AppBenefitsRoute
   '/app/companies': typeof AppCompaniesRoute
+  '/app/compliance': typeof AppComplianceRoute
   '/app/contractors': typeof AppContractorsRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/documents': typeof AppDocumentsRoute
   '/app/employees': typeof AppEmployeesRoute
   '/app/form-1099': typeof AppForm1099Route
   '/app/getting-started': typeof AppGettingStartedRoute
+  '/app/integrations': typeof AppIntegrationsRoute
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/pay-history': typeof AppPayHistoryRoute
   '/app/payroll': typeof AppPayrollRoute
   '/app/paystubs': typeof AppPaystubsRoute
+  '/app/performance': typeof AppPerformanceRoute
   '/app/pto': typeof AppPtoRoute
+  '/app/recruiting': typeof AppRecruitingRoute
   '/app/reports': typeof AppReportsRoute
+  '/app/scheduling': typeof AppSchedulingRoute
   '/app/self-service': typeof AppSelfServiceRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/tax-filing': typeof AppTaxFilingRoute
@@ -230,21 +278,27 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/pricing': typeof PricingRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/app/announcements': typeof AppAnnouncementsRoute
   '/app/audit': typeof AppAuditRoute
   '/app/benefits': typeof AppBenefitsRoute
   '/app/companies': typeof AppCompaniesRoute
+  '/app/compliance': typeof AppComplianceRoute
   '/app/contractors': typeof AppContractorsRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/documents': typeof AppDocumentsRoute
   '/app/employees': typeof AppEmployeesRoute
   '/app/form-1099': typeof AppForm1099Route
   '/app/getting-started': typeof AppGettingStartedRoute
+  '/app/integrations': typeof AppIntegrationsRoute
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/pay-history': typeof AppPayHistoryRoute
   '/app/payroll': typeof AppPayrollRoute
   '/app/paystubs': typeof AppPaystubsRoute
+  '/app/performance': typeof AppPerformanceRoute
   '/app/pto': typeof AppPtoRoute
+  '/app/recruiting': typeof AppRecruitingRoute
   '/app/reports': typeof AppReportsRoute
+  '/app/scheduling': typeof AppSchedulingRoute
   '/app/self-service': typeof AppSelfServiceRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/tax-filing': typeof AppTaxFilingRoute
@@ -260,21 +314,27 @@ export interface FileRouteTypes {
     | '/auth'
     | '/pricing'
     | '/sitemap.xml'
+    | '/app/announcements'
     | '/app/audit'
     | '/app/benefits'
     | '/app/companies'
+    | '/app/compliance'
     | '/app/contractors'
     | '/app/dashboard'
     | '/app/documents'
     | '/app/employees'
     | '/app/form-1099'
     | '/app/getting-started'
+    | '/app/integrations'
     | '/app/onboarding'
     | '/app/pay-history'
     | '/app/payroll'
     | '/app/paystubs'
+    | '/app/performance'
     | '/app/pto'
+    | '/app/recruiting'
     | '/app/reports'
+    | '/app/scheduling'
     | '/app/self-service'
     | '/app/settings'
     | '/app/tax-filing'
@@ -288,21 +348,27 @@ export interface FileRouteTypes {
     | '/auth'
     | '/pricing'
     | '/sitemap.xml'
+    | '/app/announcements'
     | '/app/audit'
     | '/app/benefits'
     | '/app/companies'
+    | '/app/compliance'
     | '/app/contractors'
     | '/app/dashboard'
     | '/app/documents'
     | '/app/employees'
     | '/app/form-1099'
     | '/app/getting-started'
+    | '/app/integrations'
     | '/app/onboarding'
     | '/app/pay-history'
     | '/app/payroll'
     | '/app/paystubs'
+    | '/app/performance'
     | '/app/pto'
+    | '/app/recruiting'
     | '/app/reports'
+    | '/app/scheduling'
     | '/app/self-service'
     | '/app/settings'
     | '/app/tax-filing'
@@ -316,21 +382,27 @@ export interface FileRouteTypes {
     | '/auth'
     | '/pricing'
     | '/sitemap.xml'
+    | '/app/announcements'
     | '/app/audit'
     | '/app/benefits'
     | '/app/companies'
+    | '/app/compliance'
     | '/app/contractors'
     | '/app/dashboard'
     | '/app/documents'
     | '/app/employees'
     | '/app/form-1099'
     | '/app/getting-started'
+    | '/app/integrations'
     | '/app/onboarding'
     | '/app/pay-history'
     | '/app/payroll'
     | '/app/paystubs'
+    | '/app/performance'
     | '/app/pto'
+    | '/app/recruiting'
     | '/app/reports'
+    | '/app/scheduling'
     | '/app/self-service'
     | '/app/settings'
     | '/app/tax-filing'
@@ -426,6 +498,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSelfServiceRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/scheduling': {
+      id: '/app/scheduling'
+      path: '/scheduling'
+      fullPath: '/app/scheduling'
+      preLoaderRoute: typeof AppSchedulingRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/reports': {
       id: '/app/reports'
       path: '/reports'
@@ -433,11 +512,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppReportsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/recruiting': {
+      id: '/app/recruiting'
+      path: '/recruiting'
+      fullPath: '/app/recruiting'
+      preLoaderRoute: typeof AppRecruitingRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/pto': {
       id: '/app/pto'
       path: '/pto'
       fullPath: '/app/pto'
       preLoaderRoute: typeof AppPtoRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/performance': {
+      id: '/app/performance'
+      path: '/performance'
+      fullPath: '/app/performance'
+      preLoaderRoute: typeof AppPerformanceRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/paystubs': {
@@ -466,6 +559,13 @@ declare module '@tanstack/react-router' {
       path: '/onboarding'
       fullPath: '/app/onboarding'
       preLoaderRoute: typeof AppOnboardingRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/integrations': {
+      id: '/app/integrations'
+      path: '/integrations'
+      fullPath: '/app/integrations'
+      preLoaderRoute: typeof AppIntegrationsRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/getting-started': {
@@ -510,6 +610,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppContractorsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/compliance': {
+      id: '/app/compliance'
+      path: '/compliance'
+      fullPath: '/app/compliance'
+      preLoaderRoute: typeof AppComplianceRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/companies': {
       id: '/app/companies'
       path: '/companies'
@@ -531,25 +638,38 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAuditRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/announcements': {
+      id: '/app/announcements'
+      path: '/announcements'
+      fullPath: '/app/announcements'
+      preLoaderRoute: typeof AppAnnouncementsRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
+  AppAnnouncementsRoute: typeof AppAnnouncementsRoute
   AppAuditRoute: typeof AppAuditRoute
   AppBenefitsRoute: typeof AppBenefitsRoute
   AppCompaniesRoute: typeof AppCompaniesRoute
+  AppComplianceRoute: typeof AppComplianceRoute
   AppContractorsRoute: typeof AppContractorsRoute
   AppDashboardRoute: typeof AppDashboardRoute
   AppDocumentsRoute: typeof AppDocumentsRoute
   AppEmployeesRoute: typeof AppEmployeesRoute
   AppForm1099Route: typeof AppForm1099Route
   AppGettingStartedRoute: typeof AppGettingStartedRoute
+  AppIntegrationsRoute: typeof AppIntegrationsRoute
   AppOnboardingRoute: typeof AppOnboardingRoute
   AppPayHistoryRoute: typeof AppPayHistoryRoute
   AppPayrollRoute: typeof AppPayrollRoute
   AppPaystubsRoute: typeof AppPaystubsRoute
+  AppPerformanceRoute: typeof AppPerformanceRoute
   AppPtoRoute: typeof AppPtoRoute
+  AppRecruitingRoute: typeof AppRecruitingRoute
   AppReportsRoute: typeof AppReportsRoute
+  AppSchedulingRoute: typeof AppSchedulingRoute
   AppSelfServiceRoute: typeof AppSelfServiceRoute
   AppSettingsRoute: typeof AppSettingsRoute
   AppTaxFilingRoute: typeof AppTaxFilingRoute
@@ -559,21 +679,27 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAnnouncementsRoute: AppAnnouncementsRoute,
   AppAuditRoute: AppAuditRoute,
   AppBenefitsRoute: AppBenefitsRoute,
   AppCompaniesRoute: AppCompaniesRoute,
+  AppComplianceRoute: AppComplianceRoute,
   AppContractorsRoute: AppContractorsRoute,
   AppDashboardRoute: AppDashboardRoute,
   AppDocumentsRoute: AppDocumentsRoute,
   AppEmployeesRoute: AppEmployeesRoute,
   AppForm1099Route: AppForm1099Route,
   AppGettingStartedRoute: AppGettingStartedRoute,
+  AppIntegrationsRoute: AppIntegrationsRoute,
   AppOnboardingRoute: AppOnboardingRoute,
   AppPayHistoryRoute: AppPayHistoryRoute,
   AppPayrollRoute: AppPayrollRoute,
   AppPaystubsRoute: AppPaystubsRoute,
+  AppPerformanceRoute: AppPerformanceRoute,
   AppPtoRoute: AppPtoRoute,
+  AppRecruitingRoute: AppRecruitingRoute,
   AppReportsRoute: AppReportsRoute,
+  AppSchedulingRoute: AppSchedulingRoute,
   AppSelfServiceRoute: AppSelfServiceRoute,
   AppSettingsRoute: AppSettingsRoute,
   AppTaxFilingRoute: AppTaxFilingRoute,
@@ -594,13 +720,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
