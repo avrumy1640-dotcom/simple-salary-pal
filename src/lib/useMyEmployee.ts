@@ -3,6 +3,8 @@ import { supabase } from "@/integrations/supabase/client";
 
 export interface EmployeeRecord {
   id: string;
+  company_id: string;
+  user_id: string | null;
   full_name: string;
   email: string | null;
   job_title: string | null;

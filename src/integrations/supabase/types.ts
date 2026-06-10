@@ -235,7 +235,7 @@ export type Database = {
           account_name: string | null
           account_subtype: string | null
           account_type: string | null
-          company_id: string | null
+          company_id: string
           contractor_id: string | null
           created_at: string
           employee_id: string | null
@@ -257,7 +257,7 @@ export type Database = {
           account_name?: string | null
           account_subtype?: string | null
           account_type?: string | null
-          company_id?: string | null
+          company_id: string
           contractor_id?: string | null
           created_at?: string
           employee_id?: string | null
@@ -279,7 +279,7 @@ export type Database = {
           account_name?: string | null
           account_subtype?: string | null
           account_type?: string | null
-          company_id?: string | null
+          company_id?: string
           contractor_id?: string | null
           created_at?: string
           employee_id?: string | null
@@ -673,7 +673,7 @@ export type Database = {
           business_city: string | null
           business_state: string | null
           business_zip: string | null
-          company_id: string | null
+          company_id: string
           created_at: string
           ein: string | null
           id: string
@@ -690,7 +690,7 @@ export type Database = {
           business_city?: string | null
           business_state?: string | null
           business_zip?: string | null
-          company_id?: string | null
+          company_id: string
           created_at?: string
           ein?: string | null
           id?: string
@@ -707,7 +707,7 @@ export type Database = {
           business_city?: string | null
           business_state?: string | null
           business_zip?: string | null
-          company_id?: string | null
+          company_id?: string
           created_at?: string
           ein?: string | null
           id?: string
@@ -723,7 +723,7 @@ export type Database = {
           {
             foreignKeyName: "company_settings_company_id_fkey"
             columns: ["company_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "companies"
             referencedColumns: ["id"]
           },
@@ -897,7 +897,7 @@ export type Database = {
         Row: {
           amount: number
           category: string | null
-          company_id: string | null
+          company_id: string
           contractor_id: string
           contractor_name: string
           created_at: string
@@ -912,7 +912,7 @@ export type Database = {
         Insert: {
           amount: number
           category?: string | null
-          company_id?: string | null
+          company_id: string
           contractor_id: string
           contractor_name: string
           created_at?: string
@@ -927,7 +927,7 @@ export type Database = {
         Update: {
           amount?: number
           category?: string | null
-          company_id?: string | null
+          company_id?: string
           contractor_id?: string
           contractor_name?: string
           created_at?: string
@@ -964,7 +964,7 @@ export type Database = {
           bank_routing_last4: string | null
           business_name: string | null
           city: string | null
-          company_id: string | null
+          company_id: string
           created_at: string
           email: string | null
           full_name: string
@@ -991,7 +991,7 @@ export type Database = {
           bank_routing_last4?: string | null
           business_name?: string | null
           city?: string | null
-          company_id?: string | null
+          company_id: string
           created_at?: string
           email?: string | null
           full_name: string
@@ -1018,7 +1018,7 @@ export type Database = {
           bank_routing_last4?: string | null
           business_name?: string | null
           city?: string | null
-          company_id?: string | null
+          company_id?: string
           created_at?: string
           email?: string | null
           full_name?: string
@@ -1054,7 +1054,7 @@ export type Database = {
           amount: number
           amount_type: string
           category: string
-          company_id: string | null
+          company_id: string
           created_at: string
           employee_id: string
           id: string
@@ -1068,7 +1068,7 @@ export type Database = {
           amount?: number
           amount_type?: string
           category?: string
-          company_id?: string | null
+          company_id: string
           created_at?: string
           employee_id: string
           id?: string
@@ -1082,7 +1082,7 @@ export type Database = {
           amount?: number
           amount_type?: string
           category?: string
-          company_id?: string | null
+          company_id?: string
           created_at?: string
           employee_id?: string
           id?: string
@@ -1116,7 +1116,7 @@ export type Database = {
           bank_account_type: string | null
           bank_routing_last4: string | null
           city: string | null
-          company_id: string | null
+          company_id: string
           created_at: string
           date_of_birth: string | null
           dependents: number
@@ -1144,6 +1144,7 @@ export type Database = {
           state: string | null
           status: string
           updated_at: string
+          user_id: string | null
           zip: string | null
         }
         Insert: {
@@ -1153,7 +1154,7 @@ export type Database = {
           bank_account_type?: string | null
           bank_routing_last4?: string | null
           city?: string | null
-          company_id?: string | null
+          company_id: string
           created_at?: string
           date_of_birth?: string | null
           dependents?: number
@@ -1181,6 +1182,7 @@ export type Database = {
           state?: string | null
           status?: string
           updated_at?: string
+          user_id?: string | null
           zip?: string | null
         }
         Update: {
@@ -1190,7 +1192,7 @@ export type Database = {
           bank_account_type?: string | null
           bank_routing_last4?: string | null
           city?: string | null
-          company_id?: string | null
+          company_id?: string
           created_at?: string
           date_of_birth?: string | null
           dependents?: number
@@ -1218,6 +1220,7 @@ export type Database = {
           state?: string | null
           status?: string
           updated_at?: string
+          user_id?: string | null
           zip?: string | null
         }
         Relationships: [
@@ -1284,7 +1287,7 @@ export type Database = {
       field_visits: {
         Row: {
           address: string | null
-          company_id: string | null
+          company_id: string
           contractor_id: string | null
           created_at: string
           duration_minutes: number | null
@@ -1302,7 +1305,7 @@ export type Database = {
         }
         Insert: {
           address?: string | null
-          company_id?: string | null
+          company_id: string
           contractor_id?: string | null
           created_at?: string
           duration_minutes?: number | null
@@ -1320,7 +1323,7 @@ export type Database = {
         }
         Update: {
           address?: string | null
-          company_id?: string | null
+          company_id?: string
           contractor_id?: string | null
           created_at?: string
           duration_minutes?: number | null
@@ -1565,7 +1568,7 @@ export type Database = {
       hr_documents: {
         Row: {
           category: string
-          company_id: string | null
+          company_id: string
           contractor_id: string | null
           created_at: string
           employee_id: string | null
@@ -1588,7 +1591,7 @@ export type Database = {
         }
         Insert: {
           category?: string
-          company_id?: string | null
+          company_id: string
           contractor_id?: string | null
           created_at?: string
           employee_id?: string | null
@@ -1611,7 +1614,7 @@ export type Database = {
         }
         Update: {
           category?: string
-          company_id?: string | null
+          company_id?: string
           contractor_id?: string | null
           created_at?: string
           employee_id?: string | null
@@ -1658,7 +1661,7 @@ export type Database = {
       }
       hr_forms: {
         Row: {
-          company_id: string | null
+          company_id: string
           contractor_id: string | null
           created_at: string
           data: Json
@@ -1675,7 +1678,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
-          company_id?: string | null
+          company_id: string
           contractor_id?: string | null
           created_at?: string
           data?: Json
@@ -1692,7 +1695,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
-          company_id?: string | null
+          company_id?: string
           contractor_id?: string | null
           created_at?: string
           data?: Json
@@ -1920,7 +1923,7 @@ export type Database = {
       onboarding_tasks: {
         Row: {
           category: string
-          company_id: string | null
+          company_id: string
           completed_at: string | null
           contractor_id: string | null
           created_at: string
@@ -1937,7 +1940,7 @@ export type Database = {
         }
         Insert: {
           category?: string
-          company_id?: string | null
+          company_id: string
           completed_at?: string | null
           contractor_id?: string | null
           created_at?: string
@@ -1954,7 +1957,7 @@ export type Database = {
         }
         Update: {
           category?: string
-          company_id?: string | null
+          company_id?: string
           completed_at?: string | null
           contractor_id?: string | null
           created_at?: string
@@ -2287,7 +2290,7 @@ export type Database = {
       }
       payroll_items: {
         Row: {
-          company_id: string | null
+          company_id: string
           created_at: string
           employee_id: string
           employee_name: string
@@ -2304,7 +2307,7 @@ export type Database = {
           state_tax: number
         }
         Insert: {
-          company_id?: string | null
+          company_id: string
           created_at?: string
           employee_id: string
           employee_name: string
@@ -2321,7 +2324,7 @@ export type Database = {
           state_tax?: number
         }
         Update: {
-          company_id?: string | null
+          company_id?: string
           created_at?: string
           employee_id?: string
           employee_name?: string
@@ -2407,7 +2410,7 @@ export type Database = {
         Row: {
           approved_at: string | null
           approved_by: string | null
-          company_id: string | null
+          company_id: string
           correction_of: string | null
           created_at: string
           gross_total: number
@@ -2428,7 +2431,7 @@ export type Database = {
         Insert: {
           approved_at?: string | null
           approved_by?: string | null
-          company_id?: string | null
+          company_id: string
           correction_of?: string | null
           created_at?: string
           gross_total?: number
@@ -2449,7 +2452,7 @@ export type Database = {
         Update: {
           approved_at?: string | null
           approved_by?: string | null
-          company_id?: string | null
+          company_id?: string
           correction_of?: string | null
           created_at?: string
           gross_total?: number
@@ -2848,7 +2851,7 @@ export type Database = {
       }
       pto_entries: {
         Row: {
-          company_id: string | null
+          company_id: string
           created_at: string
           employee_id: string
           end_date: string
@@ -2862,7 +2865,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
-          company_id?: string | null
+          company_id: string
           created_at?: string
           employee_id: string
           end_date: string
@@ -2876,7 +2879,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
-          company_id?: string | null
+          company_id?: string
           created_at?: string
           employee_id?: string
           end_date?: string
@@ -3078,7 +3081,7 @@ export type Database = {
         Row: {
           accuracy_m: number | null
           address: string | null
-          company_id: string | null
+          company_id: string
           created_at: string
           employee_id: string | null
           id: string
@@ -3093,7 +3096,7 @@ export type Database = {
         Insert: {
           accuracy_m?: number | null
           address?: string | null
-          company_id?: string | null
+          company_id: string
           created_at?: string
           employee_id?: string | null
           id?: string
@@ -3108,7 +3111,7 @@ export type Database = {
         Update: {
           accuracy_m?: number | null
           address?: string | null
-          company_id?: string | null
+          company_id?: string
           created_at?: string
           employee_id?: string | null
           id?: string
@@ -3139,7 +3142,7 @@ export type Database = {
       }
       time_entries: {
         Row: {
-          company_id: string | null
+          company_id: string
           created_at: string
           employee_id: string
           hours: number
@@ -3150,7 +3153,7 @@ export type Database = {
           work_date: string
         }
         Insert: {
-          company_id?: string | null
+          company_id: string
           created_at?: string
           employee_id: string
           hours?: number
@@ -3161,7 +3164,7 @@ export type Database = {
           work_date: string
         }
         Update: {
-          company_id?: string | null
+          company_id?: string
           created_at?: string
           employee_id?: string
           hours?: number
@@ -3381,6 +3384,7 @@ export type Database = {
       }
     }
     Functions: {
+      current_employee_id: { Args: { _company_id: string }; Returns: string }
       has_any_role: {
         Args: {
           _company_id: string

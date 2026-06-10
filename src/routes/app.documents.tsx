@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { Upload, FileText, Trash2, Download, CheckCircle2, Search, History, PenLine, XCircle, Eye } from "lucide-react";
+import { useCompany } from "@/hooks/useCompany";
 
 export const Route = createFileRoute("/app/documents")({
   head: () => ({ meta: [{ title: "HR documents — Paylo" }] }),
@@ -69,6 +70,8 @@ function DocumentsPage() {
   const [historyOpen, setHistoryOpen] = useState<Doc | null>(null);
   const [history, setHistory] = useState<SigEvent[]>([]);
   const [signForm, setSignForm] = useState({ name: "", email: "", note: "" });
+  const { currentId } = useCompany();
+
 
   async function refresh() {
     const [{ data: emps }, { data: cons }, { data: d }] = await Promise.all([
@@ -102,6 +105,7 @@ function DocumentsPage() {
       if (upErr) throw upErr;
       const { error: insErr } = await supabase.from("hr_documents").insert({
         owner_id: user.id,
+        company_id: currentId!,
         employee_id: person?.kind === "employee" ? person.id : null,
         contractor_id: person?.kind === "contractor" ? person.id : null,
         title: form.title.trim(),

@@ -43,7 +43,7 @@ function Page() {
     if (!user) return;
     const { error } = await supabase.from("pto_entries").insert({
       ...form, hours: Number(form.hours) || 0,
-      employee_id: employee.id, owner_id: user.id, status: "pending",
+      employee_id: employee.id, company_id: employee.company_id, owner_id: user.id, status: "pending",
     });
     if (error) { toast.error(error.message); return; }
     toast.success("Time off request submitted");
