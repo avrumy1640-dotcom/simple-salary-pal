@@ -7,9 +7,10 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import {
-  ChevronLeft, ChevronRight, Clock, Calendar as CalendarIcon, Check, X, CalendarDays, Plus, Trash2,
+  ChevronLeft, ChevronRight, Clock, Calendar as CalendarIcon, Check, X, CalendarDays, Plus, Trash2, ShieldCheck,
 } from "lucide-react";
 import { useCompany } from "@/hooks/useCompany";
+import { TimesheetApprovals } from "@/components/TimesheetApprovals";
 
 export const Route = createFileRoute("/app/time")({
   head: () => ({ meta: [{ title: "Time & attendance — Paylo" }] }),
@@ -216,8 +217,9 @@ function TimePage() {
       </header>
 
       <Tabs defaultValue="timesheet">
-        <TabsList className="grid w-full grid-cols-3 max-w-md">
+        <TabsList className="grid w-full grid-cols-4 max-w-xl">
           <TabsTrigger value="timesheet" className="gap-1.5"><Clock className="h-3.5 w-3.5" /> Timesheet</TabsTrigger>
+          <TabsTrigger value="approvals" className="gap-1.5"><ShieldCheck className="h-3.5 w-3.5" /> Approvals</TabsTrigger>
           <TabsTrigger value="pto" className="gap-1.5">
             <CalendarDays className="h-3.5 w-3.5" /> PTO
             {pendingPto.length > 0 && <span className="ml-1 px-1.5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold">{pendingPto.length}</span>}
