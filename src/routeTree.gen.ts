@@ -40,6 +40,7 @@ import { Route as AppRecruitingRouteImport } from './routes/app.recruiting'
 import { Route as AppPtoRouteImport } from './routes/app.pto'
 import { Route as AppPerformanceRouteImport } from './routes/app.performance'
 import { Route as AppPaystubsRouteImport } from './routes/app.paystubs'
+import { Route as AppPayrollRouteImport } from './routes/app.payroll'
 import { Route as AppPayHistoryRouteImport } from './routes/app.pay-history'
 import { Route as AppOnboardingTemplatesRouteImport } from './routes/app.onboarding-templates'
 import { Route as AppOnboardingRouteImport } from './routes/app.onboarding'
@@ -218,6 +219,11 @@ const AppPaystubsRoute = AppPaystubsRouteImport.update({
   path: '/paystubs',
   getParentRoute: () => AppRoute,
 } as any)
+const AppPayrollRoute = AppPayrollRouteImport.update({
+  id: '/payroll',
+  path: '/payroll',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppPayHistoryRoute = AppPayHistoryRouteImport.update({
   id: '/pay-history',
   path: '/pay-history',
@@ -314,14 +320,14 @@ const AppAiAssistantRoute = AppAiAssistantRouteImport.update({
   getParentRoute: () => AppRoute,
 } as any)
 const AppPayrollIndexRoute = AppPayrollIndexRouteImport.update({
-  id: '/payroll/',
-  path: '/payroll/',
-  getParentRoute: () => AppRoute,
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppPayrollRoute,
 } as any)
 const AppPayrollRunRoute = AppPayrollRunRouteImport.update({
-  id: '/payroll/run',
-  path: '/payroll/run',
-  getParentRoute: () => AppRoute,
+  id: '/run',
+  path: '/run',
+  getParentRoute: () => AppPayrollRoute,
 } as any)
 const AppEmployeesIdRoute = AppEmployeesIdRouteImport.update({
   id: '/$id',
@@ -357,6 +363,7 @@ export interface FileRoutesByFullPath {
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/onboarding-templates': typeof AppOnboardingTemplatesRoute
   '/app/pay-history': typeof AppPayHistoryRoute
+  '/app/payroll': typeof AppPayrollRouteWithChildren
   '/app/paystubs': typeof AppPaystubsRoute
   '/app/performance': typeof AppPerformanceRoute
   '/app/pto': typeof AppPtoRoute
@@ -468,6 +475,7 @@ export interface FileRoutesById {
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/onboarding-templates': typeof AppOnboardingTemplatesRoute
   '/app/pay-history': typeof AppPayHistoryRoute
+  '/app/payroll': typeof AppPayrollRouteWithChildren
   '/app/paystubs': typeof AppPaystubsRoute
   '/app/performance': typeof AppPerformanceRoute
   '/app/pto': typeof AppPtoRoute
@@ -525,6 +533,7 @@ export interface FileRouteTypes {
     | '/app/onboarding'
     | '/app/onboarding-templates'
     | '/app/pay-history'
+    | '/app/payroll'
     | '/app/paystubs'
     | '/app/performance'
     | '/app/pto'
@@ -635,6 +644,7 @@ export interface FileRouteTypes {
     | '/app/onboarding'
     | '/app/onboarding-templates'
     | '/app/pay-history'
+    | '/app/payroll'
     | '/app/paystubs'
     | '/app/performance'
     | '/app/pto'
@@ -893,6 +903,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPaystubsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/payroll': {
+      id: '/app/payroll'
+      path: '/payroll'
+      fullPath: '/app/payroll'
+      preLoaderRoute: typeof AppPayrollRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/pay-history': {
       id: '/app/pay-history'
       path: '/pay-history'
@@ -1028,17 +1045,17 @@ declare module '@tanstack/react-router' {
     }
     '/app/payroll/': {
       id: '/app/payroll/'
-      path: '/payroll'
+      path: '/'
       fullPath: '/app/payroll/'
       preLoaderRoute: typeof AppPayrollIndexRouteImport
-      parentRoute: typeof AppRoute
+      parentRoute: typeof AppPayrollRoute
     }
     '/app/payroll/run': {
       id: '/app/payroll/run'
-      path: '/payroll/run'
+      path: '/run'
       fullPath: '/app/payroll/run'
       preLoaderRoute: typeof AppPayrollRunRouteImport
-      parentRoute: typeof AppRoute
+      parentRoute: typeof AppPayrollRoute
     }
     '/app/employees/$id': {
       id: '/app/employees/$id'
@@ -1062,6 +1079,20 @@ const AppEmployeesRouteWithChildren = AppEmployeesRoute._addFileChildren(
   AppEmployeesRouteChildren,
 )
 
+interface AppPayrollRouteChildren {
+  AppPayrollRunRoute: typeof AppPayrollRunRoute
+  AppPayrollIndexRoute: typeof AppPayrollIndexRoute
+}
+
+const AppPayrollRouteChildren: AppPayrollRouteChildren = {
+  AppPayrollRunRoute: AppPayrollRunRoute,
+  AppPayrollIndexRoute: AppPayrollIndexRoute,
+}
+
+const AppPayrollRouteWithChildren = AppPayrollRoute._addFileChildren(
+  AppPayrollRouteChildren,
+)
+
 interface AppRouteChildren {
   AppAiAssistantRoute: typeof AppAiAssistantRoute
   AppAnalyticsRoute: typeof AppAnalyticsRoute
@@ -1082,6 +1113,7 @@ interface AppRouteChildren {
   AppOnboardingRoute: typeof AppOnboardingRoute
   AppOnboardingTemplatesRoute: typeof AppOnboardingTemplatesRoute
   AppPayHistoryRoute: typeof AppPayHistoryRoute
+  AppPayrollRoute: typeof AppPayrollRouteWithChildren
   AppPaystubsRoute: typeof AppPaystubsRoute
   AppPerformanceRoute: typeof AppPerformanceRoute
   AppPtoRoute: typeof AppPtoRoute
@@ -1095,8 +1127,6 @@ interface AppRouteChildren {
   AppTimeRoute: typeof AppTimeRoute
   AppTrackingRoute: typeof AppTrackingRoute
   AppUsersRoute: typeof AppUsersRoute
-  AppPayrollRunRoute: typeof AppPayrollRunRoute
-  AppPayrollIndexRoute: typeof AppPayrollIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
@@ -1119,6 +1149,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppOnboardingRoute: AppOnboardingRoute,
   AppOnboardingTemplatesRoute: AppOnboardingTemplatesRoute,
   AppPayHistoryRoute: AppPayHistoryRoute,
+  AppPayrollRoute: AppPayrollRouteWithChildren,
   AppPaystubsRoute: AppPaystubsRoute,
   AppPerformanceRoute: AppPerformanceRoute,
   AppPtoRoute: AppPtoRoute,
@@ -1132,8 +1163,6 @@ const AppRouteChildren: AppRouteChildren = {
   AppTimeRoute: AppTimeRoute,
   AppTrackingRoute: AppTrackingRoute,
   AppUsersRoute: AppUsersRoute,
-  AppPayrollRunRoute: AppPayrollRunRoute,
-  AppPayrollIndexRoute: AppPayrollIndexRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
