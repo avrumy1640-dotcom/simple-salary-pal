@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
-import { Save, Info, Building2, Calendar, Bell, Palette, ShieldCheck } from "lucide-react";
+import { Save, Info, Building2, Calendar, Bell, Palette, ShieldCheck, Plug } from "lucide-react";
 import { useCompany } from "@/hooks/useCompany";
 
 export const Route = createFileRoute("/app/settings")({
