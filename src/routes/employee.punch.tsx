@@ -139,10 +139,10 @@ function PunchPage() {
   if (!employee) return <p className="text-sm text-muted-foreground">No employee record found.</p>;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 unit-in">
       <div>
-        <h1 className="font-display text-2xl font-bold text-slate-900">Punch in / out</h1>
-        <p className="text-sm text-slate-500">Confirm your worksite, then punch in.</p>
+        <h1 className="font-display text-[32px] sm:text-[40px] font-extrabold tracking-tight text-slate-900">Punch in / out</h1>
+        <p className="mt-2 text-base text-slate-600">Confirm your worksite, then punch in.</p>
       </div>
 
       {activeShift && (
