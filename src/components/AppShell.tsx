@@ -7,6 +7,7 @@ import {
   HeartHandshake, CalendarDays, Settings as SettingsIcon, FileBadge, Sparkles,
   Briefcase, Receipt, Landmark, FolderOpen, ClipboardCheck, MapPin,
   History as HistoryIcon, UserCircle2, ChevronLeft, ChevronRight,
+  ShieldCheck, Building2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TopBar } from "@/components/TopBar";
@@ -55,8 +56,10 @@ const navGroups = [
     ],
   },
   {
-    label: "Settings",
+    label: "Admin",
     items: [
+      { to: "/app/companies", label: "Companies", icon: Building2 },
+      { to: "/app/audit", label: "Audit log", icon: ShieldCheck },
       { to: "/app/settings", label: "Company settings", icon: SettingsIcon },
     ],
   },
