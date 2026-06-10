@@ -25,6 +25,25 @@ interface Run {
 function ReportsPage() {
   const [runs, setRuns] = useState<Run[]>([]);
   const [empCount, setEmpCount] = useState(0);
+  const { currentId } = useCompany();
+  const [year, setYear] = useState<number>(new Date().getFullYear());
+  const w2Fn = useServerFn(exportW2Summary);
+  const f1099Fn = useServerFn(export1099Summary);
+  const glFn = useServerFn(exportGlForRun);
+  const auditFn = useServerFn(exportAuditLog);
+  const regFn = useServerFn(exportPayrollRegister);
+
+  function downloadCsv(filename: string, csv: string) {
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = filename; a.click();
+    URL.revokeObjectURL(url);
+  }
+  async function runExport(fn: () => Promise<{ filename: string; csv: string }>, label: string) {
+    try { const r = await fn(); downloadCsv(r.filename, r.csv); toast.success(`${label} downloaded`); }
+    catch (e: any) { toast.error(e.message || `${label} failed`); }
+  }
 
   useEffect(() => {
     (async () => {
@@ -36,6 +55,7 @@ function ReportsPage() {
       setEmpCount(count ?? 0);
     })();
   }, []);
+
 
   async function exportRun(id: string) {
     const { data } = await supabase.from("payroll_items").select("*").eq("run_id", id);
