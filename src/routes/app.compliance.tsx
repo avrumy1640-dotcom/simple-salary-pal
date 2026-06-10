@@ -38,7 +38,7 @@ type Alert = {
   created_at: string;
 };
 
-type Employee = { id: string; first_name: string; last_name: string; ssn_last4: string | null; status: string; hire_date: string | null };
+type Employee = { id: string; full_name: string; ssn_last4: string | null; status: string; start_date: string | null };
 
 const ALERT_TYPE_LABELS: Record<string, string> = {
   i9_missing: "Form I-9 missing",
@@ -75,7 +75,7 @@ function CompliancePage() {
 
     const [{ data: a }, { data: e }] = await Promise.all([
       supabase.from("compliance_alerts").select("*").eq("company_id", cid).order("severity", { ascending: false }).order("created_at", { ascending: false }),
-      supabase.from("employees").select("id,first_name,last_name,ssn_last4,status,hire_date").eq("company_id", cid),
+      supabase.from("employees").select("id,full_name,ssn_last4,status,start_date").eq("company_id", cid),
     ]);
     setAlerts((a as Alert[]) ?? []);
     setEmployees((e as Employee[]) ?? []);
@@ -97,7 +97,7 @@ function CompliancePage() {
     );
 
     for (const emp of active) {
-      const name = `${emp.first_name} ${emp.last_name}`;
+      const name = `${emp.full_name}`;
       const key = (t: string) => `${t}:${emp.id}`;
       if (!emp.ssn_last4 && !existing.has(key("i9_missing"))) {
         newAlerts.push({
@@ -505,7 +505,7 @@ function NewAlertDialog({ companyId, employees, onSaved }: { companyId: string |
               <SelectContent>
                 <SelectItem value="none">None</SelectItem>
                 {employees.map((e) => (
-                  <SelectItem key={e.id} value={e.id}>{e.first_name} {e.last_name}</SelectItem>
+                  <SelectItem key={e.id} value={e.id}>{e.full_name}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
