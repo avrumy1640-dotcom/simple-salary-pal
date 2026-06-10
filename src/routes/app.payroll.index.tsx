@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { useCompany } from "@/hooks/useCompany";
 
-export const Route = createFileRoute("/app/payroll")({
+export const Route = createFileRoute("/app/payroll/")({
   head: () => ({ meta: [{ title: "Payroll — Paylo" }] }),
   component: PayrollOverview,
 });
