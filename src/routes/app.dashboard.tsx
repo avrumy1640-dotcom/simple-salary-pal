@@ -223,7 +223,7 @@ function Dashboard() {
       });
       setLoading(false);
     })();
-  }, []);
+  }, [currentId]);
 
   const nextPayLabel = data.nextPayDate
     ? new Date(data.nextPayDate).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })
