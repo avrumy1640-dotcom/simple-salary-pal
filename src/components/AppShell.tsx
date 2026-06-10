@@ -10,30 +10,32 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TopBar } from "@/components/TopBar";
+import { ADMIN_ROLES, PAYROLL_ROLES, HR_ROLES, MANAGER_ROLES, ANY_ADMIN, isAdmin, isManager, type AppRole } from "@/lib/roles";
 
-type NavItem = { to: string; label: string; icon: typeof Users };
+type NavItem = { to: string; label: string; icon: typeof Users; roles: readonly AppRole[] };
 const nav: NavItem[] = [
-  { to: "/app/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/app/employees", label: "Employees", icon: Users },
-  { to: "/app/payroll", label: "Payroll", icon: Wallet },
-  { to: "/app/time", label: "Time tracking", icon: Clock },
-  { to: "/app/tracking", label: "Location & field", icon: MapPin },
-  { to: "/app/scheduling", label: "Scheduling", icon: CalendarDays },
-  { to: "/app/recruiting", label: "Recruiting", icon: UserPlus },
-  { to: "/app/onboarding", label: "Onboarding", icon: ShieldCheck },
-  { to: "/app/onboarding-templates", label: "Onboarding templates", icon: ShieldCheck },
-  { to: "/app/benefits", label: "Benefits", icon: HeartHandshake },
-  { to: "/app/performance", label: "Performance", icon: Target },
-  { to: "/app/compliance", label: "Compliance", icon: ShieldCheck },
-  { to: "/app/reports", label: "Reports", icon: BarChart3 },
-  { to: "/app/analytics", label: "Analytics", icon: BarChart3 },
-  { to: "/app/tax-filing", label: "Tax filing", icon: FileText },
-  { to: "/app/documents", label: "Documents", icon: FolderOpen },
-  { to: "/app/announcements", label: "Announcements", icon: Megaphone },
-  { to: "/app/ai-assistant", label: "AI Assistant", icon: Sparkles },
-  { to: "/app/integrations", label: "Integrations", icon: Plug },
-  { to: "/app/audit", label: "Audit log", icon: ShieldCheck },
-  { to: "/app/settings", label: "Settings", icon: SettingsIcon },
+  { to: "/app/dashboard", label: "Dashboard", icon: LayoutDashboard, roles: ANY_ADMIN },
+  { to: "/app/employees", label: "Employees", icon: Users, roles: HR_ROLES },
+  { to: "/app/payroll", label: "Payroll", icon: Wallet, roles: PAYROLL_ROLES },
+  { to: "/app/time", label: "Time tracking", icon: Clock, roles: [...MANAGER_ROLES] },
+  { to: "/app/tracking", label: "Location & field", icon: MapPin, roles: [...MANAGER_ROLES] },
+  { to: "/app/scheduling", label: "Scheduling", icon: CalendarDays, roles: [...MANAGER_ROLES] },
+  { to: "/app/recruiting", label: "Recruiting", icon: UserPlus, roles: HR_ROLES },
+  { to: "/app/onboarding", label: "Onboarding", icon: ShieldCheck, roles: HR_ROLES },
+  { to: "/app/onboarding-templates", label: "Onboarding templates", icon: ShieldCheck, roles: HR_ROLES },
+  { to: "/app/benefits", label: "Benefits", icon: HeartHandshake, roles: HR_ROLES },
+  { to: "/app/performance", label: "Performance", icon: Target, roles: [...HR_ROLES, "manager", "supervisor"] },
+  { to: "/app/compliance", label: "Compliance", icon: ShieldCheck, roles: HR_ROLES },
+  { to: "/app/reports", label: "Reports", icon: BarChart3, roles: ANY_ADMIN },
+  { to: "/app/analytics", label: "Analytics", icon: BarChart3, roles: ANY_ADMIN },
+  { to: "/app/tax-filing", label: "Tax filing", icon: FileText, roles: PAYROLL_ROLES },
+  { to: "/app/documents", label: "Documents", icon: FolderOpen, roles: HR_ROLES },
+  { to: "/app/announcements", label: "Announcements", icon: Megaphone, roles: HR_ROLES },
+  { to: "/app/ai-assistant", label: "AI Assistant", icon: Sparkles, roles: ANY_ADMIN },
+  { to: "/app/integrations", label: "Integrations", icon: Plug, roles: ADMIN_ROLES },
+  { to: "/app/users", label: "Users & roles", icon: Users, roles: ADMIN_ROLES },
+  { to: "/app/audit", label: "Audit log", icon: ShieldCheck, roles: ADMIN_ROLES },
+  { to: "/app/settings", label: "Settings", icon: SettingsIcon, roles: ADMIN_ROLES },
 ];
 
 export function AppShell() {
