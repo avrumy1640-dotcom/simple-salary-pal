@@ -10,7 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as EmployeeRouteImport } from './routes/employee'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/app'
@@ -64,9 +66,19 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EmployeeRoute = EmployeeRouteImport.update({
@@ -310,7 +322,9 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
   '/employee': typeof EmployeeRouteWithChildren
+  '/forgot-password': typeof ForgotPasswordRoute
   '/pricing': typeof PricingRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/app/ai-assistant': typeof AppAiAssistantRoute
   '/app/analytics': typeof AppAnalyticsRoute
@@ -361,7 +375,9 @@ export interface FileRoutesByTo {
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
   '/employee': typeof EmployeeRouteWithChildren
+  '/forgot-password': typeof ForgotPasswordRoute
   '/pricing': typeof PricingRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/app/ai-assistant': typeof AppAiAssistantRoute
   '/app/analytics': typeof AppAnalyticsRoute
@@ -413,7 +429,9 @@ export interface FileRoutesById {
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
   '/employee': typeof EmployeeRouteWithChildren
+  '/forgot-password': typeof ForgotPasswordRoute
   '/pricing': typeof PricingRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/app/ai-assistant': typeof AppAiAssistantRoute
   '/app/analytics': typeof AppAnalyticsRoute
@@ -466,7 +484,9 @@ export interface FileRouteTypes {
     | '/app'
     | '/auth'
     | '/employee'
+    | '/forgot-password'
     | '/pricing'
+    | '/reset-password'
     | '/sitemap.xml'
     | '/app/ai-assistant'
     | '/app/analytics'
@@ -517,7 +537,9 @@ export interface FileRouteTypes {
     | '/app'
     | '/auth'
     | '/employee'
+    | '/forgot-password'
     | '/pricing'
+    | '/reset-password'
     | '/sitemap.xml'
     | '/app/ai-assistant'
     | '/app/analytics'
@@ -568,7 +590,9 @@ export interface FileRouteTypes {
     | '/app'
     | '/auth'
     | '/employee'
+    | '/forgot-password'
     | '/pricing'
+    | '/reset-password'
     | '/sitemap.xml'
     | '/app/ai-assistant'
     | '/app/analytics'
@@ -620,7 +644,9 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRoute
   EmployeeRoute: typeof EmployeeRouteWithChildren
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
   PricingRoute: typeof PricingRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
 }
 
@@ -633,11 +659,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/pricing': {
       id: '/pricing'
       path: '/pricing'
       fullPath: '/pricing'
       preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/employee': {
@@ -1081,19 +1121,11 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRoute,
   EmployeeRoute: EmployeeRouteWithChildren,
+  ForgotPasswordRoute: ForgotPasswordRoute,
   PricingRoute: PricingRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
