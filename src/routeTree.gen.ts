@@ -60,6 +60,7 @@ import { Route as AppAuditRouteImport } from './routes/app.audit'
 import { Route as AppAnnouncementsRouteImport } from './routes/app.announcements'
 import { Route as AppAnalyticsRouteImport } from './routes/app.analytics'
 import { Route as AppAiAssistantRouteImport } from './routes/app.ai-assistant'
+import { Route as AppPayrollRunRouteImport } from './routes/app.payroll.run'
 import { Route as AppEmployeesIdRouteImport } from './routes/app.employees.$id'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -317,6 +318,11 @@ const AppAiAssistantRoute = AppAiAssistantRouteImport.update({
   path: '/ai-assistant',
   getParentRoute: () => AppRoute,
 } as any)
+const AppPayrollRunRoute = AppPayrollRunRouteImport.update({
+  id: '/run',
+  path: '/run',
+  getParentRoute: () => AppPayrollRoute,
+} as any)
 const AppEmployeesIdRoute = AppEmployeesIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -351,7 +357,7 @@ export interface FileRoutesByFullPath {
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/onboarding-templates': typeof AppOnboardingTemplatesRoute
   '/app/pay-history': typeof AppPayHistoryRoute
-  '/app/payroll': typeof AppPayrollRoute
+  '/app/payroll': typeof AppPayrollRouteWithChildren
   '/app/paystubs': typeof AppPaystubsRoute
   '/app/performance': typeof AppPerformanceRoute
   '/app/pto': typeof AppPtoRoute
@@ -376,6 +382,7 @@ export interface FileRoutesByFullPath {
   '/employee/schedule': typeof EmployeeScheduleRoute
   '/employee/time': typeof EmployeeTimeRoute
   '/app/employees/$id': typeof AppEmployeesIdRoute
+  '/app/payroll/run': typeof AppPayrollRunRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -405,7 +412,7 @@ export interface FileRoutesByTo {
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/onboarding-templates': typeof AppOnboardingTemplatesRoute
   '/app/pay-history': typeof AppPayHistoryRoute
-  '/app/payroll': typeof AppPayrollRoute
+  '/app/payroll': typeof AppPayrollRouteWithChildren
   '/app/paystubs': typeof AppPaystubsRoute
   '/app/performance': typeof AppPerformanceRoute
   '/app/pto': typeof AppPtoRoute
@@ -430,6 +437,7 @@ export interface FileRoutesByTo {
   '/employee/schedule': typeof EmployeeScheduleRoute
   '/employee/time': typeof EmployeeTimeRoute
   '/app/employees/$id': typeof AppEmployeesIdRoute
+  '/app/payroll/run': typeof AppPayrollRunRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -460,7 +468,7 @@ export interface FileRoutesById {
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/onboarding-templates': typeof AppOnboardingTemplatesRoute
   '/app/pay-history': typeof AppPayHistoryRoute
-  '/app/payroll': typeof AppPayrollRoute
+  '/app/payroll': typeof AppPayrollRouteWithChildren
   '/app/paystubs': typeof AppPaystubsRoute
   '/app/performance': typeof AppPerformanceRoute
   '/app/pto': typeof AppPtoRoute
@@ -485,6 +493,7 @@ export interface FileRoutesById {
   '/employee/schedule': typeof EmployeeScheduleRoute
   '/employee/time': typeof EmployeeTimeRoute
   '/app/employees/$id': typeof AppEmployeesIdRoute
+  '/app/payroll/run': typeof AppPayrollRunRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -541,6 +550,7 @@ export interface FileRouteTypes {
     | '/employee/schedule'
     | '/employee/time'
     | '/app/employees/$id'
+    | '/app/payroll/run'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -595,6 +605,7 @@ export interface FileRouteTypes {
     | '/employee/schedule'
     | '/employee/time'
     | '/app/employees/$id'
+    | '/app/payroll/run'
   id:
     | '__root__'
     | '/'
@@ -649,6 +660,7 @@ export interface FileRouteTypes {
     | '/employee/schedule'
     | '/employee/time'
     | '/app/employees/$id'
+    | '/app/payroll/run'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -1021,6 +1033,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAiAssistantRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/payroll/run': {
+      id: '/app/payroll/run'
+      path: '/run'
+      fullPath: '/app/payroll/run'
+      preLoaderRoute: typeof AppPayrollRunRouteImport
+      parentRoute: typeof AppPayrollRoute
+    }
     '/app/employees/$id': {
       id: '/app/employees/$id'
       path: '/$id'
@@ -1043,6 +1062,18 @@ const AppEmployeesRouteWithChildren = AppEmployeesRoute._addFileChildren(
   AppEmployeesRouteChildren,
 )
 
+interface AppPayrollRouteChildren {
+  AppPayrollRunRoute: typeof AppPayrollRunRoute
+}
+
+const AppPayrollRouteChildren: AppPayrollRouteChildren = {
+  AppPayrollRunRoute: AppPayrollRunRoute,
+}
+
+const AppPayrollRouteWithChildren = AppPayrollRoute._addFileChildren(
+  AppPayrollRouteChildren,
+)
+
 interface AppRouteChildren {
   AppAiAssistantRoute: typeof AppAiAssistantRoute
   AppAnalyticsRoute: typeof AppAnalyticsRoute
@@ -1063,7 +1094,7 @@ interface AppRouteChildren {
   AppOnboardingRoute: typeof AppOnboardingRoute
   AppOnboardingTemplatesRoute: typeof AppOnboardingTemplatesRoute
   AppPayHistoryRoute: typeof AppPayHistoryRoute
-  AppPayrollRoute: typeof AppPayrollRoute
+  AppPayrollRoute: typeof AppPayrollRouteWithChildren
   AppPaystubsRoute: typeof AppPaystubsRoute
   AppPerformanceRoute: typeof AppPerformanceRoute
   AppPtoRoute: typeof AppPtoRoute
@@ -1099,7 +1130,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppOnboardingRoute: AppOnboardingRoute,
   AppOnboardingTemplatesRoute: AppOnboardingTemplatesRoute,
   AppPayHistoryRoute: AppPayHistoryRoute,
-  AppPayrollRoute: AppPayrollRoute,
+  AppPayrollRoute: AppPayrollRouteWithChildren,
   AppPaystubsRoute: AppPaystubsRoute,
   AppPerformanceRoute: AppPerformanceRoute,
   AppPtoRoute: AppPtoRoute,
