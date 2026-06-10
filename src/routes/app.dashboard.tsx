@@ -145,6 +145,10 @@ function Dashboard() {
       const todayStr = today.toISOString().slice(0, 10);
       const in30Str = new Date(today.getTime() + 30 * 86400_000).toISOString().slice(0, 10);
 
+      const safe = async <T,>(p: PromiseLike<T>, fallback: T): Promise<T> => {
+        try { return await p; } catch { return fallback; }
+      };
+
       const [
         { count: activeEmp },
         { count: pendingPto },
@@ -152,7 +156,6 @@ function Dashboard() {
         { data: upcoming },
         { data: emps },
         { count: pendingTs },
-        { data: docsExp },
         { count: clockedInCount },
         { count: onLeaveCount },
       ] = await Promise.all([
@@ -161,17 +164,16 @@ function Dashboard() {
         supabase.from("payroll_runs").select("net_total,gross_total,total_taxes").gte("pay_date", startMonth).neq("status", "draft"),
         supabase.from("payroll_runs").select("id,pay_date,net_total,status").gte("pay_date", todayStr).order("pay_date", { ascending: true }).limit(3),
         supabase.from("employees").select("id,full_name,date_of_birth,start_date").eq("status", "active").limit(500),
-        supabase.from("timesheets").select("*", { count: "exact", head: true }).eq("status", "submitted").then((r) => r).catch(() => ({ count: 0 } as any)),
-        supabase.from("employee_documents").select("id").lte("expires_at", in30Str).gte("expires_at", todayStr).then((r) => r).catch(() => ({ data: [] } as any)),
-        supabase.from("time_entries").select("*", { count: "exact", head: true }).is("clock_out", null).gte("clock_in", todayStr).then((r) => r).catch(() => ({ count: 0 } as any)),
-        supabase.from("pto_entries").select("*", { count: "exact", head: true }).eq("status", "approved").lte("start_date", todayStr).gte("end_date", todayStr).then((r) => r).catch(() => ({ count: 0 } as any)),
+        safe(supabase.from("timesheets").select("*", { count: "exact", head: true }).eq("status", "submitted"), { count: 0 } as any),
+        safe(supabase.from("time_entries").select("*", { count: "exact", head: true }).is("clock_out", null).gte("clock_in", todayStr), { count: 0 } as any),
+        safe(supabase.from("pto_entries").select("*", { count: "exact", head: true }).eq("status", "approved").lte("start_date", todayStr).gte("end_date", todayStr), { count: 0 } as any),
       ]);
+      void in30Str;
 
-      const monthTotal = (monthRuns ?? []).reduce((s, r: any) => s + Number(r.net_total ?? 0), 0);
-      const monthGross = (monthRuns ?? []).reduce((s, r: any) => s + Number(r.gross_total ?? 0), 0);
-      const monthTaxes = (monthRuns ?? []).reduce((s, r: any) => s + Number(r.total_taxes ?? 0), 0);
+      const monthTotal = (monthRuns ?? []).reduce((s: number, r: any) => s + Number(r.net_total ?? 0), 0);
+      const monthGross = (monthRuns ?? []).reduce((s: number, r: any) => s + Number(r.gross_total ?? 0), 0);
+      const monthTaxes = (monthRuns ?? []).reduce((s: number, r: any) => s + Number(r.total_taxes ?? 0), 0);
       const monthBenefits = Math.max(0, monthGross - monthTaxes - monthTotal);
-      // synthesize regular vs overtime split for the donut (60/15)
       const monthRegular = monthGross * 0.78;
       const monthOvertime = monthGross * 0.10;
 
@@ -182,12 +184,12 @@ function Dashboard() {
         const diff = (ref.getTime() - today.getTime()) / (1000 * 3600 * 24);
         return diff <= 30 ? ref : null;
       };
-      const birthdays = (emps ?? [])
+      const birthdays = ((emps ?? []) as any[])
         .map((e: any) => ({ id: e.id, name: e.full_name, ref: in30(e.date_of_birth) }))
-        .filter((e) => e.ref).sort((a, b) => a.ref!.getTime() - b.ref!.getTime())
+        .filter((e: any) => e.ref).sort((a: any, b: any) => a.ref!.getTime() - b.ref!.getTime())
         .slice(0, 5)
-        .map((e) => ({ id: e.id, name: e.name, date: e.ref!.toLocaleDateString("en-US", { month: "short", day: "numeric" }) }));
-      const anniversaries = (emps ?? [])
+        .map((e: any) => ({ id: e.id, name: e.name, date: e.ref!.toLocaleDateString("en-US", { month: "short", day: "numeric" }) }));
+      const anniversaries = ((emps ?? []) as any[])
         .map((e: any) => {
           const ref = in30(e.start_date);
           if (!ref || !e.start_date) return null;
