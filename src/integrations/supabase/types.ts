@@ -4725,6 +4725,10 @@ export type Database = {
         }
         Returns: string
       }
+      can_access_hr_doc_object: {
+        Args: { _storage_path: string }
+        Returns: boolean
+      }
       current_employee_id: { Args: { _company_id: string }; Returns: string }
       employee_can_self_enroll: {
         Args: { _employee_id: string }
