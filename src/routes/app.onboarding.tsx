@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Link } from "@tanstack/react-router";
-import { CheckCircle2, Circle, Clock, ClipboardList, Sparkles, FileText, ArrowRight } from "lucide-react";
+import { CheckCircle2, Circle, Clock, ClipboardList, FileText, ArrowRight } from "lucide-react";
 import { useCompany } from "@/hooks/useCompany";
 
 export const Route = createFileRoute("/app/onboarding")({
@@ -189,7 +189,7 @@ function OnboardingPage() {
             </Select>
             {person && personTasks.length === 0 && (
               <Button onClick={seedDefaults} disabled={busy} className="gap-2 rounded-full bg-primary text-primary-foreground">
-                <Sparkles className="h-4 w-4" /> Use default checklist
+                Use default checklist
               </Button>
             )}
           </div>
@@ -220,7 +220,7 @@ function OnboardingPage() {
                   <ClipboardList className="mx-auto h-10 w-10 text-muted-foreground/50" />
                   <p className="text-sm text-muted-foreground">No tasks yet. Use the default checklist or add your own.</p>
                   <Button onClick={seedDefaults} disabled={busy} className="gap-2 rounded-full">
-                    <Sparkles className="h-4 w-4" /> Generate default checklist
+                    Generate default checklist
                   </Button>
                 </div>
               ) : (

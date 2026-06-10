@@ -10,7 +10,7 @@ import { calcPay, fmtUSD } from "@/lib/payroll";
 import { calculatePayrollRun, approvePayrollRun } from "@/lib/payroll-workflow.functions";
 import {
   CheckCircle2, ChevronLeft, ChevronRight, PlayCircle, CalendarDays, Users,
-  Clock, ClipboardCheck, Sparkles, AlertTriangle, Info,
+  Clock, ClipboardCheck, AlertTriangle, Info,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCompany } from "@/hooks/useCompany";
@@ -43,7 +43,7 @@ const STEPS = [
   { key: "employees", label: "Review employees", icon: Users },
   { key: "hours", label: "Review hours", icon: Clock },
   { key: "approve", label: "Approve", icon: ClipboardCheck },
-  { key: "confirm", label: "Confirm", icon: Sparkles },
+  { key: "confirm", label: "Confirm", icon: CheckCircle2 },
 ] as const;
 
 function PayrollWizard() {

@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useMyEmployee } from "@/lib/useMyEmployee";
-import { Wallet, CalendarDays, Clock, ArrowRight, Sparkles } from "lucide-react";
+import { Wallet, CalendarDays, Clock, ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/employee/home")({
   head: () => ({ meta: [{ title: "My workplace — Paylo" }] }),
@@ -42,7 +42,7 @@ function EmployeeHome() {
   if (!employee) {
     return (
       <div className="rounded-2xl border bg-card p-10 text-center">
-        <Sparkles className="mx-auto h-10 w-10 text-muted-foreground" />
+        <CalendarDays className="mx-auto h-10 w-10 text-muted-foreground" />
         <h1 className="mt-3 text-xl font-semibold">Welcome!</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           We couldn't find an employee record linked to your email. Ask your

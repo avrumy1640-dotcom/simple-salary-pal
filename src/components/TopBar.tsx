@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  Search, Bell, ChevronDown, LogOut, User, Settings as SettingsIcon, Sparkles,
+  Search, Bell, ChevronDown, LogOut, User, Settings as SettingsIcon,
   LayoutDashboard, Wallet, Users, Clock, Receipt, FileText, History as HistoryIcon,
   Briefcase, ClipboardCheck, FolderOpen, CalendarDays, HeartHandshake, FileBadge,
   Landmark, MapPin,
@@ -35,7 +35,7 @@ const searchTargets = [
   { to: "/app/tax-filing", label: "Tax filing", icon: Landmark },
   { to: "/app/reports", label: "Reports", icon: FileText },
   { to: "/app/settings", label: "Company settings", icon: SettingsIcon },
-  { to: "/app/getting-started", label: "Getting started", icon: Sparkles },
+  { to: "/app/getting-started", label: "Getting started", icon: ClipboardCheck },
 ] as const;
 
 interface Notification {
@@ -183,7 +183,7 @@ export function TopBar({ companyName, userEmail }: { companyName: string; userEm
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link to="/app/getting-started" className="cursor-pointer">
-                  <Sparkles className="h-4 w-4 mr-2" /> Getting started
+                  <ClipboardCheck className="h-4 w-4 mr-2" /> Getting started
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>

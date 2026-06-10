@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ArrowUpRight, ArrowRight, CheckCircle2, Users, Clock, Briefcase,
-  ShieldCheck, Wallet, CalendarDays, FileBadge, Sparkles,
+  ShieldCheck, Wallet, CalendarDays, FileBadge,
 } from "lucide-react";
 import { ScrollReveal, StaggerChildren, StaggerItem } from "@/components/motion/ScrollReveal";
 
@@ -199,7 +199,7 @@ function Landing() {
 
           <div className="relative z-10 text-center">
             <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[11px] font-bold uppercase text-primary">
-              <Sparkles className="h-3 w-3" /> From zero to first payroll in 10 minutes
+              From zero to first payroll in 10 minutes
             </div>
             <h2 className="mx-auto mt-6 max-w-2xl font-display text-4xl font-extrabold leading-tight md:text-5xl text-white">
               Your team deserves a company that gets payroll right
