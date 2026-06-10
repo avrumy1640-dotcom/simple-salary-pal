@@ -226,20 +226,17 @@ function EmployeesPage() {
   const totalSalary = items.filter((e) => e.pay_type === "salary").length;
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
+    <div className="space-y-8">
+      <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-4xl font-extrabold tracking-tight text-white flex items-center gap-3">
-            Employees
-            <span className="inline-flex items-center rounded-full bg-primary/15 border border-primary/40 px-3 py-1 text-base font-bold text-primary tabular">
-              {items.length}
-            </span>
+          <h1 className="font-display text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
+            Your team
           </h1>
-          <p className="mt-1 text-sm text-white/65">Manage your team — contact, tax setup, and direct deposit.</p>
+          <p className="mt-2 text-base text-slate-600">{items.length} {items.length === 1 ? "person" : "people"} · contact, pay, and tax setup all in one place.</p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button onClick={openNew} size="lg" className="gap-2 rounded-2xl bg-primary text-primary-foreground hover:shadow-glow font-bold"><Plus className="h-4 w-4" /> Add employee</Button>
+            <Button onClick={openNew} size="lg"><Plus className="mr-2 h-5 w-5" /> Add a person</Button>
           </DialogTrigger>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
