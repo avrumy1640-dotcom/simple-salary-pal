@@ -31,23 +31,20 @@ export const Route = createFileRoute("/auth")({
 type AccountType = "employer" | "employee";
 
 async function routeByRoleOrProfile(navigate: ReturnType<typeof useNavigate>, uid: string) {
-  const [{ data: roles }, { data: profile }] = await Promise.all([
-    supabase.from("user_roles").select("role").eq("user_id", uid).limit(1),
-    supabase.from("profiles").select("account_type").eq("id", uid).maybeSingle(),
-  ]);
-  const adminRoles = new Set(["owner","admin","payroll_admin","hr_admin","recruiter","benefits_admin","accountant","auditor","manager","supervisor"]);
-  const r = roles?.[0]?.role;
-  if (r && adminRoles.has(r)) {
-    navigate({ to: "/app/dashboard" });
-    return;
+  try {
+    const [{ data: roles }, { data: profile }] = await Promise.all([
+      supabase.from("user_roles").select("role").eq("user_id", uid).limit(1),
+      supabase.from("profiles").select("account_type").eq("id", uid).maybeSingle(),
+    ]);
+    const adminRoles = new Set(["owner","admin","payroll_admin","hr_admin","recruiter","benefits_admin","accountant","auditor","manager","supervisor"]);
+    const r = roles?.[0]?.role;
+    if (r && adminRoles.has(r)) { navigate({ to: "/app/dashboard" }); return; }
+    if ((profile as any)?.account_type === "employer") { navigate({ to: "/app/dashboard" }); return; }
+    navigate({ to: "/employee/home" });
+  } catch (e) {
+    console.error("[auth] post-signin routing error, falling back:", e);
+    navigate({ to: "/employee/home" });
   }
-  // No admin role — route by intent
-  if ((profile as any)?.account_type === "employer") {
-    // Employer that has no company yet (shouldn't happen, but route to dashboard to bootstrap)
-    navigate({ to: "/app/dashboard" });
-    return;
-  }
-  navigate({ to: "/employee/home" });
 }
 
 function AuthPage() {
