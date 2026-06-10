@@ -169,12 +169,12 @@ function AuthPage() {
                   >
                     <label className={`flex flex-col items-center justify-center cursor-pointer rounded-lg border p-3 text-sm text-center ${accountType==="employer" ? "border-primary bg-primary/5" : "border-border"}`}>
                       <RadioGroupItem value="employer" className="sr-only" />
-                      <div className="flex items-center gap-1.5 font-semibold"><Building2 className="h-3.5 w-3.5" />Employer / Admin</div>
+                      <div className="flex items-center gap-1.5 font-semibold">Employer / Admin</div>
                       <div className="text-xs text-muted-foreground">Run payroll & manage a team</div>
                     </label>
                     <label className={`flex flex-col items-center justify-center cursor-pointer rounded-lg border p-3 text-sm text-center ${accountType==="employee" ? "border-primary bg-primary/5" : "border-border"}`}>
                       <RadioGroupItem value="employee" className="sr-only" />
-                      <div className="flex items-center gap-1.5 font-semibold"><User className="h-3.5 w-3.5" />Employee</div>
+                      <div className="flex items-center gap-1.5 font-semibold">Employee</div>
                       <div className="text-xs text-muted-foreground">Access pay & time off</div>
                     </label>
                   </RadioGroup>
