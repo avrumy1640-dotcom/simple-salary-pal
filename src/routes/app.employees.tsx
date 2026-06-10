@@ -85,6 +85,20 @@ function EmployeesPage() {
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
   const { currentId } = useCompany();
 
+  const terminateFn = useServerFn(terminateEmployee);
+  const reactivateFn = useServerFn(reactivateEmployee);
+  const placeOnLeaveFn = useServerFn(placeOnLeave);
+  const returnFromLeaveFn = useServerFn(returnFromLeave);
+
+  const [terminateOpen, setTerminateOpen] = useState(false);
+  const [terminateForm, setTerminateForm] = useState({
+    termination_date: new Date().toISOString().slice(0, 10),
+    reason: "",
+    rehire_eligible: true,
+    payout_pto: false,
+  });
+  const [leaveOpen, setLeaveOpen] = useState(false);
+  const [leaveForm, setLeaveForm] = useState({ leave_start_date: new Date().toISOString().slice(0, 10), leave_end_date: "", reason: "" });
 
   async function refresh() {
     setLoading(true);
@@ -93,6 +107,52 @@ function EmployeesPage() {
     setLoading(false);
   }
   useEffect(() => { refresh(); }, []);
+
+  async function doTerminate() {
+    if (!detail) return;
+    if (terminateForm.reason.trim().length < 3) { toast.error("Reason is required"); return; }
+    try {
+      await terminateFn({ data: { employee_id: detail.id, ...terminateForm } });
+      toast.success(`${detail.full_name} terminated`);
+      setTerminateOpen(false);
+      setDetail(null);
+      refresh();
+    } catch (err: any) { toast.error(err?.message ?? "Termination failed"); }
+  }
+  async function doReactivate() {
+    if (!detail) return;
+    try {
+      await reactivateFn({ data: { employee_id: detail.id } });
+      toast.success(`${detail.full_name} reactivated`);
+      setDetail(null);
+      refresh();
+    } catch (err: any) { toast.error(err?.message ?? "Reactivation failed"); }
+  }
+  async function doPlaceOnLeave() {
+    if (!detail) return;
+    if (leaveForm.reason.trim().length < 3) { toast.error("Reason is required"); return; }
+    try {
+      await placeOnLeaveFn({ data: {
+        employee_id: detail.id,
+        leave_start_date: leaveForm.leave_start_date,
+        leave_end_date: leaveForm.leave_end_date || null,
+        reason: leaveForm.reason,
+      } });
+      toast.success(`${detail.full_name} placed on leave`);
+      setLeaveOpen(false);
+      setDetail(null);
+      refresh();
+    } catch (err: any) { toast.error(err?.message ?? "Failed"); }
+  }
+  async function doReturnFromLeave() {
+    if (!detail) return;
+    try {
+      await returnFromLeaveFn({ data: { employee_id: detail.id } });
+      toast.success(`${detail.full_name} returned from leave`);
+      setDetail(null);
+      refresh();
+    } catch (err: any) { toast.error(err?.message ?? "Failed"); }
+  }
 
   function openNew() { setEditing(null); setForm(empty); setOpen(true); }
   function openEdit(e: Employee) {
