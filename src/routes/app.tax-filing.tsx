@@ -145,21 +145,6 @@ function TaxFilingPage() {
         </div>
       </div>
 
-      <div className="grid gap-3 md:grid-cols-2">
-        <Card title="What Paylo files for you" icon={<Landmark className="h-4 w-4" />}>
-          <Bullet>Form 941 — quarterly federal payroll tax</Bullet>
-          <Bullet>Form 940 — annual FUTA</Bullet>
-          <Bullet>W-2 + W-3 for every W-2 employee</Bullet>
-          <Bullet>1099-NEC for every contractor paid $600+</Bullet>
-          <Bullet>State withholding & unemployment (varies by state)</Bullet>
-        </Card>
-        <Card title="What you still do" icon={<FileText className="h-4 w-4" />}>
-          <Bullet>Collect signed W-4 from each W-2 employee at hire</Bullet>
-          <Bullet>Collect signed W-9 from each contractor before paying $600+</Bullet>
-          <Bullet>Confirm company EIN and state IDs in Company settings</Bullet>
-          <Bullet>Approve each payroll run before pay date</Bullet>
-        </Card>
-      </div>
     </div>
   );
 }
