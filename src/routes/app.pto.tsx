@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Plus, CalendarDays, Check, X, Clock } from "lucide-react";
+import { useCompany } from "@/hooks/useCompany";
 
 export const Route = createFileRoute("/app/pto")({
   head: () => ({ meta: [{ title: "Time off — Paylo" }] }),
@@ -41,6 +42,8 @@ function PTOPage() {
   const [open, setOpen] = useState(false);
   const today = new Date().toISOString().slice(0, 10);
   const [form, setForm] = useState({ employee_id: "", pto_type: "vacation", start_date: today, end_date: today, hours: 8, notes: "" });
+  const { currentId } = useCompany();
+
 
   async function refresh() {
     const [{ data: e }, { data: p }] = await Promise.all([
@@ -56,7 +59,8 @@ function PTOPage() {
     if (!form.employee_id) { toast.error("Pick an employee"); return; }
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
-    const { error } = await supabase.from("pto_entries").insert({ ...form, hours: Number(form.hours) || 0, owner_id: user.id });
+    if (!currentId) { toast.error("No active company selected"); return; }
+    const { error } = await supabase.from("pto_entries").insert({ ...form, hours: Number(form.hours) || 0, owner_id: user.id, company_id: currentId });
     if (error) { toast.error(error.message); return; }
     toast.success("Time off requested");
     setOpen(false);

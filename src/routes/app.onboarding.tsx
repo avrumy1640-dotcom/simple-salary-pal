@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import { Link } from "@tanstack/react-router";
 import { CheckCircle2, Circle, Clock, ClipboardList, Sparkles, FileText, ArrowRight } from "lucide-react";
+import { useCompany } from "@/hooks/useCompany";
 
 export const Route = createFileRoute("/app/onboarding")({
   head: () => ({ meta: [{ title: "Onboarding checklist — Paylo" }] }),
@@ -52,6 +53,8 @@ function OnboardingPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [forms, setForms] = useState<Form[]>([]);
   const [busy, setBusy] = useState(false);
+  const { currentId } = useCompany();
+
 
   async function loadPeople() {
     const [{ data: emps }, { data: cons }] = await Promise.all([
@@ -118,6 +121,7 @@ function OnboardingPage() {
         .filter((tpl) => !personTasks.some((t) => t.category === tpl.category))
         .map((tpl) => ({
           owner_id: user.id,
+          company_id: currentId!,
           employee_id: person.kind === "employee" ? person.id : null,
           contractor_id: person.kind === "contractor" ? person.id : null,
           title: tpl.title,

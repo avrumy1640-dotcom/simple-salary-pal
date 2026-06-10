@@ -9,6 +9,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { Save, Info, Building2, Calendar, Bell, Palette, ShieldCheck } from "lucide-react";
+import { useCompany } from "@/hooks/useCompany";
 
 export const Route = createFileRoute("/app/settings")({
   head: () => ({ meta: [{ title: "Company settings — Paylo" }] }),
@@ -37,6 +38,8 @@ function SettingsPage() {
   const [form, setForm] = useState<Settings>(empty);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const { currentId } = useCompany();
+
 
   // Local-only preferences (notifications + branding)
   const [notif, setNotif] = useState({
@@ -78,8 +81,9 @@ function SettingsPage() {
         toast.error("You're signed out — please sign back in to save.");
         return;
       }
-      const payload = { ...form, owner_id: user.id, onboarding_complete: !!form.legal_name && !!form.ein, next_pay_date: form.next_pay_date || null };
-      const { error } = await supabase.from("company_settings").upsert(payload, { onConflict: "owner_id" });
+      if (!currentId) { toast.error("No active company selected"); return; }
+      const payload = { ...form, owner_id: user.id, company_id: currentId, onboarding_complete: !!form.legal_name && !!form.ein, next_pay_date: form.next_pay_date || null };
+      const { error } = await supabase.from("company_settings").upsert(payload, { onConflict: "company_id" });
       if (error) { toast.error(error.message); return; }
       localStorage.setItem("paylo_notif", JSON.stringify(notif));
       localStorage.setItem("paylo_brand", brandColor);

@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { fmtUSD } from "@/lib/payroll";
+import { useCompany } from "@/hooks/useCompany";
 import { Briefcase, Plus, DollarSign, Download, Trash2 } from "lucide-react";
 
 export const Route = createFileRoute("/app/contractors")({
@@ -49,6 +50,8 @@ function ContractorsPage() {
   const [payOpen, setPayOpen] = useState(false);
   const [editing, setEditing] = useState<Contractor | null>(null);
   const year = new Date().getFullYear();
+  const { currentId } = useCompany();
+
 
   async function load() {
     const [{ data: c }, { data: p }] = await Promise.all([
@@ -63,8 +66,10 @@ function ContractorsPage() {
   async function save(form: FormData) {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
+    if (!currentId) { toast.error("No active company selected"); return; }
     const payload = {
       owner_id: user.id,
+      company_id: currentId,
       full_name: String(form.get("full_name") || "").trim(),
       business_name: String(form.get("business_name") || "") || null,
       email: String(form.get("email") || "") || null,
@@ -93,6 +98,7 @@ function ContractorsPage() {
   async function pay(form: FormData) {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
+    if (!currentId) { toast.error("No active company selected"); return; }
     const cid = String(form.get("contractor_id") || "");
     const c = contractors.find((x) => x.id === cid);
     if (!c) { toast.error("Pick a contractor"); return; }
@@ -100,6 +106,7 @@ function ContractorsPage() {
     if (amount <= 0) { toast.error("Amount must be > 0"); return; }
     const { error } = await supabase.from("contractor_payments").insert({
       owner_id: user.id,
+      company_id: currentId,
       contractor_id: cid,
       contractor_name: c.full_name,
       amount,

@@ -17,6 +17,7 @@ import {
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2, Info, Building2, Banknote, FileText as FileIcon, Phone, Mail, MapPin, Calendar, DollarSign, Search } from "lucide-react";
 import { fmtUSD } from "@/lib/payroll";
+import { useCompany } from "@/hooks/useCompany";
 
 export const Route = createFileRoute("/app/employees")({
   head: () => ({ meta: [{ title: "Employees — Paylo" }] }),
@@ -73,6 +74,8 @@ function EmployeesPage() {
   const [confirmDelete, setConfirmDelete] = useState<Employee | null>(null);
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
+  const { currentId } = useCompany();
+
 
   async function refresh() {
     setLoading(true);
@@ -93,6 +96,7 @@ function EmployeesPage() {
     if (!form.full_name.trim()) { toast.error("Name is required"); return; }
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
+    if (!currentId) { toast.error("No active company selected"); return; }
     const payload = {
       ...form,
       pay_rate: Number(form.pay_rate) || 0,
@@ -106,6 +110,7 @@ function EmployeesPage() {
       bank_routing_last4: (form.bank_routing_last4 || "").slice(-4),
       bank_account_last4: (form.bank_account_last4 || "").slice(-4),
       owner_id: user.id,
+      company_id: currentId,
     };
     const { error } = editing
       ? await supabase.from("employees").update(payload).eq("id", editing.id)

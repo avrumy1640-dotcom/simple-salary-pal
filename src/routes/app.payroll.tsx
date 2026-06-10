@@ -11,6 +11,7 @@ import {
   Clock, ClipboardCheck, Sparkles, AlertTriangle, Info,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useCompany } from "@/hooks/useCompany";
 
 export const Route = createFileRoute("/app/payroll")({
   head: () => ({ meta: [{ title: "Run payroll — Paylo" }] }),
@@ -57,6 +58,8 @@ function PayrollWizard() {
   const [submitting, setSubmitting] = useState(false);
   const [showCancel, setShowCancel] = useState(false);
   const [runId, setRunId] = useState<string | null>(null);
+  const { currentId } = useCompany();
+
 
   async function loadPreview() {
     setLoading(true);
@@ -129,13 +132,16 @@ function PayrollWizard() {
     setSubmitting(true);
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { setSubmitting(false); return; }
+    if (!currentId) { setSubmitting(false); toast.error("No active company selected"); return; }
     const { data: run, error: e1 } = await supabase.from("payroll_runs").insert({
-      owner_id: user.id, period_start: periodStart, period_end: periodEnd, pay_date: payDate,
+      owner_id: user.id, company_id: currentId,
+      period_start: periodStart, period_end: periodEnd, pay_date: payDate,
       gross_total: totals.gross, tax_total: totals.tax, net_total: totals.net, status: "approved",
     }).select().single();
     if (e1 || !run) { setSubmitting(false); toast.error(e1?.message || "Failed"); return; }
     const items = calc.map((c) => ({
-      owner_id: user.id, run_id: run.id, employee_id: c.row.emp.id, employee_name: c.row.emp.full_name,
+      owner_id: user.id, company_id: currentId,
+      run_id: run.id, employee_id: c.row.emp.id, employee_name: c.row.emp.full_name,
       regular_hours: c.pay.regularHours, overtime_hours: c.pay.overtimeHours,
       gross_pay: c.pay.gross, federal_tax: c.pay.federalTax, social_security: c.pay.socialSecurity,
       medicare: c.pay.medicare, state_tax: c.pay.stateTax, net_pay: c.pay.net,

@@ -37,6 +37,7 @@ function Page() {
     if (!user) return;
     const { error } = await supabase.from("time_clock_punches").insert({
       employee_id: employee.id,
+      company_id: employee.company_id,
       user_id: user.id,
       punch_type: type,
       punched_at: new Date().toISOString(),

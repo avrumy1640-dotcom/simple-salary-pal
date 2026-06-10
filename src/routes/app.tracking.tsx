@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogT
 import { toast } from "sonner";
 import { MapPin, Navigation, LogIn, LogOut as LogOutIcon, Plus, Locate, Route as RouteIcon } from "lucide-react";
 import { GoogleMap, wazeUrl, googleMapsUrl } from "@/components/GoogleMap";
+import { useCompany } from "@/hooks/useCompany";
 
 export const Route = createFileRoute("/app/tracking")({
   head: () => ({ meta: [{ title: "Location tracking — Paylo" }] }),
@@ -63,6 +64,8 @@ function TrackingPage() {
   const [busy, setBusy] = useState(false);
   const [online, setOnline] = useState(typeof navigator !== "undefined" ? navigator.onLine : true);
   const [queued, setQueued] = useState<OfflinePunch[]>(loadOffline());
+  const { currentId } = useCompany();
+
 
   async function refresh() {
     const [{ data: e }, { data: c }, { data: p }, { data: v }] = await Promise.all([
@@ -83,7 +86,7 @@ function TrackingPage() {
     if (q.length === 0) return;
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
-    const rows = q.map((p) => ({ ...p, user_id: user.id, inside_geofence: true }));
+    const rows = q.map((p) => ({ ...p, user_id: user.id, company_id: currentId!, inside_geofence: true }));
     const { error } = await supabase.from("time_clock_punches").insert(rows);
     if (!error) {
       saveOffline([]);
@@ -126,6 +129,7 @@ function TrackingPage() {
       if (!user) { toast.error("Sign in again"); return; }
       const { error } = await supabase.from("time_clock_punches").insert({
         user_id: user.id,
+        company_id: currentId!,
         ...record,
         inside_geofence: true,
       });
@@ -273,6 +277,7 @@ function VisitsPanel({ contractors, employees, visits, onChange }: { contractors
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [form, setForm] = useState({ label: "", address: "", person: "", kind: "contractor" as "contractor" | "employee" });
+  const { currentId } = useCompany();
 
   async function create() {
     if (!form.address.trim()) { toast.error("Address is required"); return; }
@@ -280,9 +285,11 @@ function VisitsPanel({ contractors, employees, visits, onChange }: { contractors
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) { toast.error("Sign in again"); return; }
+      if (!currentId) { toast.error("No active company"); return; }
       const r = await geocode(form.address);
       const { error } = await supabase.from("field_visits").insert({
         user_id: user.id,
+        company_id: currentId,
         visit_label: form.label.trim() || null,
         address: r?.formatted ?? form.address.trim(),
         latitude: r?.lat ?? null,

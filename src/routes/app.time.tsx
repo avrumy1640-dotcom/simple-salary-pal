@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import {
   ChevronLeft, ChevronRight, Clock, Calendar as CalendarIcon, Check, X, CalendarDays, Plus, Trash2,
 } from "lucide-react";
+import { useCompany } from "@/hooks/useCompany";
 
 export const Route = createFileRoute("/app/time")({
   head: () => ({ meta: [{ title: "Time & attendance — Paylo" }] }),
@@ -78,6 +79,8 @@ function TimePage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [pto, setPto] = useState<Pto[]>([]);
+  const { currentId } = useCompany();
+
 
   const weekDays = useMemo(() => Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)), [weekStart]);
   const weekEnd = addDays(weekStart, 6);
@@ -142,6 +145,7 @@ function TimePage() {
           hours: regular,
           overtime_hours: ot,
           owner_id: user.id,
+          company_id: currentId!,
         });
       });
     });
