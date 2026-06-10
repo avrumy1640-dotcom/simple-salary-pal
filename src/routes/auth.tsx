@@ -138,6 +138,7 @@ function AuthPage() {
         if (data.user) await routeByRoleOrProfile(navigate, data.user.id);
       }
     } catch (err) {
+      console.error("[auth] submit error:", err);
       const raw = err instanceof Error ? err.message : "Something went wrong";
       toast.error(friendlyError(raw));
     } finally {
