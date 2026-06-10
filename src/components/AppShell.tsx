@@ -17,6 +17,7 @@ const nav: NavItem[] = [
   { to: "/app/employees", label: "Employees", icon: Users },
   { to: "/app/payroll", label: "Payroll", icon: Wallet },
   { to: "/app/time", label: "Time tracking", icon: Clock },
+  { to: "/app/tracking", label: "Location & field", icon: MapPin },
   { to: "/app/scheduling", label: "Scheduling", icon: CalendarDays },
   { to: "/app/recruiting", label: "Recruiting", icon: UserPlus },
   { to: "/app/onboarding", label: "Onboarding", icon: ShieldCheck },
