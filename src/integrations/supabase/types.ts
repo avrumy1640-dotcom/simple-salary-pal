@@ -3297,7 +3297,88 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      bank_connections_safe: {
+        Row: {
+          account_mask: string | null
+          account_name: string | null
+          account_subtype: string | null
+          account_type: string | null
+          company_id: string | null
+          contractor_id: string | null
+          created_at: string | null
+          employee_id: string | null
+          id: string | null
+          institution_name: string | null
+          is_company: boolean | null
+          linked_at: string | null
+          owner_id: string | null
+          provider: string | null
+          routing_number_last4: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          account_mask?: string | null
+          account_name?: string | null
+          account_subtype?: string | null
+          account_type?: string | null
+          company_id?: string | null
+          contractor_id?: string | null
+          created_at?: string | null
+          employee_id?: string | null
+          id?: string | null
+          institution_name?: string | null
+          is_company?: boolean | null
+          linked_at?: string | null
+          owner_id?: string | null
+          provider?: string | null
+          routing_number_last4?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          account_mask?: string | null
+          account_name?: string | null
+          account_subtype?: string | null
+          account_type?: string | null
+          company_id?: string | null
+          contractor_id?: string | null
+          created_at?: string | null
+          employee_id?: string | null
+          id?: string | null
+          institution_name?: string | null
+          is_company?: boolean | null
+          linked_at?: string | null
+          owner_id?: string | null
+          provider?: string | null
+          routing_number_last4?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bank_connections_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bank_connections_contractor_id_fkey"
+            columns: ["contractor_id"]
+            isOneToOne: false
+            referencedRelation: "contractors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bank_connections_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       has_any_role: {
