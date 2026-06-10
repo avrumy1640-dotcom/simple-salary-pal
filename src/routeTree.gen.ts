@@ -21,6 +21,7 @@ import { Route as EmployeePunchRouteImport } from './routes/employee.punch'
 import { Route as EmployeePtoRouteImport } from './routes/employee.pto'
 import { Route as EmployeeProfileRouteImport } from './routes/employee.profile'
 import { Route as EmployeePaystubsRouteImport } from './routes/employee.paystubs'
+import { Route as EmployeeNotificationsRouteImport } from './routes/employee.notifications'
 import { Route as EmployeeHomeRouteImport } from './routes/employee.home'
 import { Route as EmployeeDocumentsRouteImport } from './routes/employee.documents'
 import { Route as EmployeeBenefitsRouteImport } from './routes/employee.benefits'
@@ -116,6 +117,11 @@ const EmployeeProfileRoute = EmployeeProfileRouteImport.update({
 const EmployeePaystubsRoute = EmployeePaystubsRouteImport.update({
   id: '/paystubs',
   path: '/paystubs',
+  getParentRoute: () => EmployeeRoute,
+} as any)
+const EmployeeNotificationsRoute = EmployeeNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
   getParentRoute: () => EmployeeRoute,
 } as any)
 const EmployeeHomeRoute = EmployeeHomeRouteImport.update({
@@ -342,6 +348,7 @@ export interface FileRoutesByFullPath {
   '/employee/benefits': typeof EmployeeBenefitsRoute
   '/employee/documents': typeof EmployeeDocumentsRoute
   '/employee/home': typeof EmployeeHomeRoute
+  '/employee/notifications': typeof EmployeeNotificationsRoute
   '/employee/paystubs': typeof EmployeePaystubsRoute
   '/employee/profile': typeof EmployeeProfileRoute
   '/employee/pto': typeof EmployeePtoRoute
@@ -392,6 +399,7 @@ export interface FileRoutesByTo {
   '/employee/benefits': typeof EmployeeBenefitsRoute
   '/employee/documents': typeof EmployeeDocumentsRoute
   '/employee/home': typeof EmployeeHomeRoute
+  '/employee/notifications': typeof EmployeeNotificationsRoute
   '/employee/paystubs': typeof EmployeePaystubsRoute
   '/employee/profile': typeof EmployeeProfileRoute
   '/employee/pto': typeof EmployeePtoRoute
@@ -443,6 +451,7 @@ export interface FileRoutesById {
   '/employee/benefits': typeof EmployeeBenefitsRoute
   '/employee/documents': typeof EmployeeDocumentsRoute
   '/employee/home': typeof EmployeeHomeRoute
+  '/employee/notifications': typeof EmployeeNotificationsRoute
   '/employee/paystubs': typeof EmployeePaystubsRoute
   '/employee/profile': typeof EmployeeProfileRoute
   '/employee/pto': typeof EmployeePtoRoute
@@ -495,6 +504,7 @@ export interface FileRouteTypes {
     | '/employee/benefits'
     | '/employee/documents'
     | '/employee/home'
+    | '/employee/notifications'
     | '/employee/paystubs'
     | '/employee/profile'
     | '/employee/pto'
@@ -545,6 +555,7 @@ export interface FileRouteTypes {
     | '/employee/benefits'
     | '/employee/documents'
     | '/employee/home'
+    | '/employee/notifications'
     | '/employee/paystubs'
     | '/employee/profile'
     | '/employee/pto'
@@ -595,6 +606,7 @@ export interface FileRouteTypes {
     | '/employee/benefits'
     | '/employee/documents'
     | '/employee/home'
+    | '/employee/notifications'
     | '/employee/paystubs'
     | '/employee/profile'
     | '/employee/pto'
@@ -696,6 +708,13 @@ declare module '@tanstack/react-router' {
       path: '/paystubs'
       fullPath: '/employee/paystubs'
       preLoaderRoute: typeof EmployeePaystubsRouteImport
+      parentRoute: typeof EmployeeRoute
+    }
+    '/employee/notifications': {
+      id: '/employee/notifications'
+      path: '/notifications'
+      fullPath: '/employee/notifications'
+      preLoaderRoute: typeof EmployeeNotificationsRouteImport
       parentRoute: typeof EmployeeRoute
     }
     '/employee/home': {
@@ -1031,6 +1050,7 @@ interface EmployeeRouteChildren {
   EmployeeBenefitsRoute: typeof EmployeeBenefitsRoute
   EmployeeDocumentsRoute: typeof EmployeeDocumentsRoute
   EmployeeHomeRoute: typeof EmployeeHomeRoute
+  EmployeeNotificationsRoute: typeof EmployeeNotificationsRoute
   EmployeePaystubsRoute: typeof EmployeePaystubsRoute
   EmployeeProfileRoute: typeof EmployeeProfileRoute
   EmployeePtoRoute: typeof EmployeePtoRoute
@@ -1043,6 +1063,7 @@ const EmployeeRouteChildren: EmployeeRouteChildren = {
   EmployeeBenefitsRoute: EmployeeBenefitsRoute,
   EmployeeDocumentsRoute: EmployeeDocumentsRoute,
   EmployeeHomeRoute: EmployeeHomeRoute,
+  EmployeeNotificationsRoute: EmployeeNotificationsRoute,
   EmployeePaystubsRoute: EmployeePaystubsRoute,
   EmployeeProfileRoute: EmployeeProfileRoute,
   EmployeePtoRoute: EmployeePtoRoute,
