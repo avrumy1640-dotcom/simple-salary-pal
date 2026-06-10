@@ -20,6 +20,7 @@ const nav: NavItem[] = [
   { to: "/app/time", label: "Time tracking", icon: Clock, roles: [...MANAGER_ROLES] },
   { to: "/app/tracking", label: "Location & field", icon: MapPin, roles: [...MANAGER_ROLES] },
   { to: "/app/scheduling", label: "Scheduling", icon: CalendarDays, roles: [...MANAGER_ROLES] },
+  { to: "/app/locations", label: "Work locations", icon: MapPin, roles: [...MANAGER_ROLES] },
   { to: "/app/recruiting", label: "Recruiting", icon: UserPlus, roles: HR_ROLES },
   { to: "/app/onboarding", label: "Onboarding", icon: ShieldCheck, roles: HR_ROLES },
   { to: "/app/onboarding-templates", label: "Onboarding templates", icon: ShieldCheck, roles: HR_ROLES },
