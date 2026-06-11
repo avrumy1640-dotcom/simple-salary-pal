@@ -86,6 +86,7 @@ const ALL_NAV_LABELS: Record<string, string> = {
   "/app/pay-on-demand": "Pay On-Demand",
   "/app/shift-swaps": "Shift Swaps",
   "/app/live-map": "Live Map",
+  "/app/attendance": "Live Attendance",
   "/app/expense-requests": "Expenses",
   "/app/requests": "Requests",
   "/app/approvals": "Approvals",
