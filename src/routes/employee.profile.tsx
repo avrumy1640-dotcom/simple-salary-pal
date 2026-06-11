@@ -221,23 +221,9 @@ function Page() {
                 <div><Label>Confirm account number</Label><Input className="h-12" inputMode="numeric" value={bank.confirm} onChange={(e) => setBank({ ...bank, confirm: e.target.value.replace(/\D/g, "") })} /></div>
                 <div><Label>E-sign with your full legal name</Label><Input className="h-12" value={signedName} onChange={(e) => setSignedName(e.target.value)} placeholder="Type your full name" /></div>
               </div>
-                  <Label>Account type</Label>
-                  <div className="mt-1.5 grid grid-cols-2 gap-2">
-                    {(["checking", "savings"] as const).map(t => (
-                      <button key={t} type="button" onClick={() => setBank({ ...bank, account_type: t })}
-                        className={`rounded-xl border-2 p-3 text-sm font-semibold capitalize transition ${bank.account_type === t ? "border-primary bg-primary/5 text-slate-900" : "border-border bg-card text-slate-600"}`}>
-                        {t}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div><Label>Routing number</Label><Input className="h-12" inputMode="numeric" value={bank.routing} onChange={(e) => setBank({ ...bank, routing: e.target.value.replace(/\D/g, "") })} maxLength={9} /></div>
-                <div><Label>Account number</Label><Input className="h-12" inputMode="numeric" value={bank.account} onChange={(e) => setBank({ ...bank, account: e.target.value.replace(/\D/g, "") })} /></div>
-                <div><Label>Confirm account number</Label><Input className="h-12" inputMode="numeric" value={bank.confirm} onChange={(e) => setBank({ ...bank, confirm: e.target.value.replace(/\D/g, "") })} /></div>
-              </div>
               <DialogFooter className="gap-2">
                 <Button variant="ghost" onClick={() => setBankOpen(false)}>Cancel</Button>
-                <Button onClick={saveBank} disabled={busy}>{busy ? "Saving…" : "Save new account"}</Button>
+                <Button onClick={saveBank} disabled={busy}>{busy ? "Submitting…" : "Submit for HR review"}</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
