@@ -7,7 +7,6 @@ import {
   CalendarDays, Settings as SettingsIcon, UserPlus, Target, ShieldCheck,
   BarChart3, FolderOpen, ChevronLeft, ChevronRight, HelpCircle,
   HeartHandshake, LineChart, Landmark, ListChecks, Bell, Bug,
-
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TopBar } from "@/components/TopBar";
