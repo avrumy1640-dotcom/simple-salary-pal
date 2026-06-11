@@ -30,12 +30,13 @@ function elapsedFmt(ms: number) {
   return `${h}h ${m.toString().padStart(2, "0")}m`;
 }
 
-const PTO_TOTALS = {
-  vacation: { total: 120, color: "bg-emerald-500", tone: "text-emerald-700", bg: "bg-emerald-50" },
-  sick:     { total: 80,  color: "bg-sky-500",     tone: "text-sky-700",     bg: "bg-sky-50" },
-  personal: { total: 40,  color: "bg-violet-500",  tone: "text-violet-700",  bg: "bg-violet-50" },
+const PTO_TYPES = {
+  vacation: { color: "bg-emerald-500", tone: "text-emerald-700", bg: "bg-emerald-50" },
+  sick:     { color: "bg-sky-500",     tone: "text-sky-700",     bg: "bg-sky-50" },
+  personal: { color: "bg-violet-500",  tone: "text-violet-700",  bg: "bg-violet-50" },
 } as const;
-type PtoKind = keyof typeof PTO_TOTALS;
+type PtoKind = keyof typeof PTO_TYPES;
+
 
 function EmployeeHome() {
   const { employee, loading } = useMyEmployee();
