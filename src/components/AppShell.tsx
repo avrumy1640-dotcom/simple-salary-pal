@@ -6,7 +6,7 @@ import {
   LayoutDashboard, Users, Clock, Wallet, FileText, LogOut, Menu, X,
   CalendarDays, Settings as SettingsIcon, UserPlus, Target, ShieldCheck,
   BarChart3, FolderOpen, ChevronLeft, ChevronRight, HelpCircle,
-  HeartHandshake, LineChart, Landmark, ListChecks, Bell, ArrowLeftRight, MapPin,
+  HeartHandshake, LineChart, Landmark, ListChecks, Bell, ArrowLeftRight, MapPin, Receipt, MessageSquare,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TopBar } from "@/components/TopBar";
@@ -23,6 +23,8 @@ const navGroups: NavGroup[] = [
       { to: "/app/employees", label: "Employees", icon: Users, roles: HR_ROLES },
       { to: "/app/payroll", label: "Payroll", icon: Wallet, roles: PAYROLL_ROLES },
       { to: "/app/pay-on-demand", label: "Pay On-Demand", icon: Wallet, roles: PAYROLL_ROLES },
+      { to: "/app/expense-requests", label: "Expenses", icon: Receipt, roles: [...MANAGER_ROLES] },
+      { to: "/app/requests", label: "Requests", icon: MessageSquare, roles: [...MANAGER_ROLES] },
       { to: "/app/time", label: "Time Tracking", icon: Clock, roles: [...MANAGER_ROLES] },
       { to: "/app/live-map", label: "Live Map", icon: MapPin, roles: [...MANAGER_ROLES] },
     ],
@@ -82,6 +84,8 @@ const ALL_NAV_LABELS: Record<string, string> = {
   "/app/pay-on-demand": "Pay On-Demand",
   "/app/shift-swaps": "Shift Swaps",
   "/app/live-map": "Live Map",
+  "/app/expense-requests": "Expenses",
+  "/app/requests": "Requests",
 };
 
 export function AppShell() {

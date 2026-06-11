@@ -20,6 +20,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as HelpAccessDeniedRouteImport } from './routes/help.access-denied'
 import { Route as EmployeeTimeRouteImport } from './routes/employee.time'
 import { Route as EmployeeScheduleRouteImport } from './routes/employee.schedule'
+import { Route as EmployeeRequestsRouteImport } from './routes/employee.requests'
 import { Route as EmployeePunchRouteImport } from './routes/employee.punch'
 import { Route as EmployeePtoRouteImport } from './routes/employee.pto'
 import { Route as EmployeeProfileRouteImport } from './routes/employee.profile'
@@ -27,6 +28,7 @@ import { Route as EmployeePaystubsRouteImport } from './routes/employee.paystubs
 import { Route as EmployeePayOnDemandRouteImport } from './routes/employee.pay-on-demand'
 import { Route as EmployeeNotificationsRouteImport } from './routes/employee.notifications'
 import { Route as EmployeeHomeRouteImport } from './routes/employee.home'
+import { Route as EmployeeExpensesRouteImport } from './routes/employee.expenses'
 import { Route as EmployeeDocumentsRouteImport } from './routes/employee.documents'
 import { Route as EmployeeBenefitsRouteImport } from './routes/employee.benefits'
 import { Route as AppUsersRouteImport } from './routes/app.users'
@@ -38,6 +40,7 @@ import { Route as AppShiftSwapsRouteImport } from './routes/app.shift-swaps'
 import { Route as AppSettingsRouteImport } from './routes/app.settings'
 import { Route as AppSelfServiceRouteImport } from './routes/app.self-service'
 import { Route as AppSchedulingRouteImport } from './routes/app.scheduling'
+import { Route as AppRequestsRouteImport } from './routes/app.requests'
 import { Route as AppReportsRouteImport } from './routes/app.reports'
 import { Route as AppRecruitingRouteImport } from './routes/app.recruiting'
 import { Route as AppPtoRouteImport } from './routes/app.pto'
@@ -54,6 +57,7 @@ import { Route as AppLiveMapRouteImport } from './routes/app.live-map'
 import { Route as AppIntegrationsRouteImport } from './routes/app.integrations'
 import { Route as AppGettingStartedRouteImport } from './routes/app.getting-started'
 import { Route as AppForm1099RouteImport } from './routes/app.form-1099'
+import { Route as AppExpenseRequestsRouteImport } from './routes/app.expense-requests'
 import { Route as AppEmployeesRouteImport } from './routes/app.employees'
 import { Route as AppDocumentsRouteImport } from './routes/app.documents'
 import { Route as AppDashboardRouteImport } from './routes/app.dashboard'
@@ -125,6 +129,11 @@ const EmployeeScheduleRoute = EmployeeScheduleRouteImport.update({
   path: '/schedule',
   getParentRoute: () => EmployeeRoute,
 } as any)
+const EmployeeRequestsRoute = EmployeeRequestsRouteImport.update({
+  id: '/requests',
+  path: '/requests',
+  getParentRoute: () => EmployeeRoute,
+} as any)
 const EmployeePunchRoute = EmployeePunchRouteImport.update({
   id: '/punch',
   path: '/punch',
@@ -158,6 +167,11 @@ const EmployeeNotificationsRoute = EmployeeNotificationsRouteImport.update({
 const EmployeeHomeRoute = EmployeeHomeRouteImport.update({
   id: '/home',
   path: '/home',
+  getParentRoute: () => EmployeeRoute,
+} as any)
+const EmployeeExpensesRoute = EmployeeExpensesRouteImport.update({
+  id: '/expenses',
+  path: '/expenses',
   getParentRoute: () => EmployeeRoute,
 } as any)
 const EmployeeDocumentsRoute = EmployeeDocumentsRouteImport.update({
@@ -213,6 +227,11 @@ const AppSelfServiceRoute = AppSelfServiceRouteImport.update({
 const AppSchedulingRoute = AppSchedulingRouteImport.update({
   id: '/scheduling',
   path: '/scheduling',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppRequestsRoute = AppRequestsRouteImport.update({
+  id: '/requests',
+  path: '/requests',
   getParentRoute: () => AppRoute,
 } as any)
 const AppReportsRoute = AppReportsRouteImport.update({
@@ -293,6 +312,11 @@ const AppGettingStartedRoute = AppGettingStartedRouteImport.update({
 const AppForm1099Route = AppForm1099RouteImport.update({
   id: '/form-1099',
   path: '/form-1099',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppExpenseRequestsRoute = AppExpenseRequestsRouteImport.update({
+  id: '/expense-requests',
+  path: '/expense-requests',
   getParentRoute: () => AppRoute,
 } as any)
 const AppEmployeesRoute = AppEmployeesRouteImport.update({
@@ -392,6 +416,7 @@ export interface FileRoutesByFullPath {
   '/app/dashboard': typeof AppDashboardRoute
   '/app/documents': typeof AppDocumentsRoute
   '/app/employees': typeof AppEmployeesRouteWithChildren
+  '/app/expense-requests': typeof AppExpenseRequestsRoute
   '/app/form-1099': typeof AppForm1099Route
   '/app/getting-started': typeof AppGettingStartedRoute
   '/app/integrations': typeof AppIntegrationsRoute
@@ -408,6 +433,7 @@ export interface FileRoutesByFullPath {
   '/app/pto': typeof AppPtoRoute
   '/app/recruiting': typeof AppRecruitingRoute
   '/app/reports': typeof AppReportsRoute
+  '/app/requests': typeof AppRequestsRoute
   '/app/scheduling': typeof AppSchedulingRoute
   '/app/self-service': typeof AppSelfServiceRoute
   '/app/settings': typeof AppSettingsRoute
@@ -419,6 +445,7 @@ export interface FileRoutesByFullPath {
   '/app/users': typeof AppUsersRoute
   '/employee/benefits': typeof EmployeeBenefitsRoute
   '/employee/documents': typeof EmployeeDocumentsRoute
+  '/employee/expenses': typeof EmployeeExpensesRoute
   '/employee/home': typeof EmployeeHomeRoute
   '/employee/notifications': typeof EmployeeNotificationsRoute
   '/employee/pay-on-demand': typeof EmployeePayOnDemandRoute
@@ -426,6 +453,7 @@ export interface FileRoutesByFullPath {
   '/employee/profile': typeof EmployeeProfileRoute
   '/employee/pto': typeof EmployeePtoRoute
   '/employee/punch': typeof EmployeePunchRoute
+  '/employee/requests': typeof EmployeeRequestsRoute
   '/employee/schedule': typeof EmployeeScheduleRoute
   '/employee/time': typeof EmployeeTimeRoute
   '/help/access-denied': typeof HelpAccessDeniedRoute
@@ -454,6 +482,7 @@ export interface FileRoutesByTo {
   '/app/dashboard': typeof AppDashboardRoute
   '/app/documents': typeof AppDocumentsRoute
   '/app/employees': typeof AppEmployeesRouteWithChildren
+  '/app/expense-requests': typeof AppExpenseRequestsRoute
   '/app/form-1099': typeof AppForm1099Route
   '/app/getting-started': typeof AppGettingStartedRoute
   '/app/integrations': typeof AppIntegrationsRoute
@@ -469,6 +498,7 @@ export interface FileRoutesByTo {
   '/app/pto': typeof AppPtoRoute
   '/app/recruiting': typeof AppRecruitingRoute
   '/app/reports': typeof AppReportsRoute
+  '/app/requests': typeof AppRequestsRoute
   '/app/scheduling': typeof AppSchedulingRoute
   '/app/self-service': typeof AppSelfServiceRoute
   '/app/settings': typeof AppSettingsRoute
@@ -480,6 +510,7 @@ export interface FileRoutesByTo {
   '/app/users': typeof AppUsersRoute
   '/employee/benefits': typeof EmployeeBenefitsRoute
   '/employee/documents': typeof EmployeeDocumentsRoute
+  '/employee/expenses': typeof EmployeeExpensesRoute
   '/employee/home': typeof EmployeeHomeRoute
   '/employee/notifications': typeof EmployeeNotificationsRoute
   '/employee/pay-on-demand': typeof EmployeePayOnDemandRoute
@@ -487,6 +518,7 @@ export interface FileRoutesByTo {
   '/employee/profile': typeof EmployeeProfileRoute
   '/employee/pto': typeof EmployeePtoRoute
   '/employee/punch': typeof EmployeePunchRoute
+  '/employee/requests': typeof EmployeeRequestsRoute
   '/employee/schedule': typeof EmployeeScheduleRoute
   '/employee/time': typeof EmployeeTimeRoute
   '/help/access-denied': typeof HelpAccessDeniedRoute
@@ -516,6 +548,7 @@ export interface FileRoutesById {
   '/app/dashboard': typeof AppDashboardRoute
   '/app/documents': typeof AppDocumentsRoute
   '/app/employees': typeof AppEmployeesRouteWithChildren
+  '/app/expense-requests': typeof AppExpenseRequestsRoute
   '/app/form-1099': typeof AppForm1099Route
   '/app/getting-started': typeof AppGettingStartedRoute
   '/app/integrations': typeof AppIntegrationsRoute
@@ -532,6 +565,7 @@ export interface FileRoutesById {
   '/app/pto': typeof AppPtoRoute
   '/app/recruiting': typeof AppRecruitingRoute
   '/app/reports': typeof AppReportsRoute
+  '/app/requests': typeof AppRequestsRoute
   '/app/scheduling': typeof AppSchedulingRoute
   '/app/self-service': typeof AppSelfServiceRoute
   '/app/settings': typeof AppSettingsRoute
@@ -543,6 +577,7 @@ export interface FileRoutesById {
   '/app/users': typeof AppUsersRoute
   '/employee/benefits': typeof EmployeeBenefitsRoute
   '/employee/documents': typeof EmployeeDocumentsRoute
+  '/employee/expenses': typeof EmployeeExpensesRoute
   '/employee/home': typeof EmployeeHomeRoute
   '/employee/notifications': typeof EmployeeNotificationsRoute
   '/employee/pay-on-demand': typeof EmployeePayOnDemandRoute
@@ -550,6 +585,7 @@ export interface FileRoutesById {
   '/employee/profile': typeof EmployeeProfileRoute
   '/employee/pto': typeof EmployeePtoRoute
   '/employee/punch': typeof EmployeePunchRoute
+  '/employee/requests': typeof EmployeeRequestsRoute
   '/employee/schedule': typeof EmployeeScheduleRoute
   '/employee/time': typeof EmployeeTimeRoute
   '/help/access-denied': typeof HelpAccessDeniedRoute
@@ -580,6 +616,7 @@ export interface FileRouteTypes {
     | '/app/dashboard'
     | '/app/documents'
     | '/app/employees'
+    | '/app/expense-requests'
     | '/app/form-1099'
     | '/app/getting-started'
     | '/app/integrations'
@@ -596,6 +633,7 @@ export interface FileRouteTypes {
     | '/app/pto'
     | '/app/recruiting'
     | '/app/reports'
+    | '/app/requests'
     | '/app/scheduling'
     | '/app/self-service'
     | '/app/settings'
@@ -607,6 +645,7 @@ export interface FileRouteTypes {
     | '/app/users'
     | '/employee/benefits'
     | '/employee/documents'
+    | '/employee/expenses'
     | '/employee/home'
     | '/employee/notifications'
     | '/employee/pay-on-demand'
@@ -614,6 +653,7 @@ export interface FileRouteTypes {
     | '/employee/profile'
     | '/employee/pto'
     | '/employee/punch'
+    | '/employee/requests'
     | '/employee/schedule'
     | '/employee/time'
     | '/help/access-denied'
@@ -642,6 +682,7 @@ export interface FileRouteTypes {
     | '/app/dashboard'
     | '/app/documents'
     | '/app/employees'
+    | '/app/expense-requests'
     | '/app/form-1099'
     | '/app/getting-started'
     | '/app/integrations'
@@ -657,6 +698,7 @@ export interface FileRouteTypes {
     | '/app/pto'
     | '/app/recruiting'
     | '/app/reports'
+    | '/app/requests'
     | '/app/scheduling'
     | '/app/self-service'
     | '/app/settings'
@@ -668,6 +710,7 @@ export interface FileRouteTypes {
     | '/app/users'
     | '/employee/benefits'
     | '/employee/documents'
+    | '/employee/expenses'
     | '/employee/home'
     | '/employee/notifications'
     | '/employee/pay-on-demand'
@@ -675,6 +718,7 @@ export interface FileRouteTypes {
     | '/employee/profile'
     | '/employee/pto'
     | '/employee/punch'
+    | '/employee/requests'
     | '/employee/schedule'
     | '/employee/time'
     | '/help/access-denied'
@@ -703,6 +747,7 @@ export interface FileRouteTypes {
     | '/app/dashboard'
     | '/app/documents'
     | '/app/employees'
+    | '/app/expense-requests'
     | '/app/form-1099'
     | '/app/getting-started'
     | '/app/integrations'
@@ -719,6 +764,7 @@ export interface FileRouteTypes {
     | '/app/pto'
     | '/app/recruiting'
     | '/app/reports'
+    | '/app/requests'
     | '/app/scheduling'
     | '/app/self-service'
     | '/app/settings'
@@ -730,6 +776,7 @@ export interface FileRouteTypes {
     | '/app/users'
     | '/employee/benefits'
     | '/employee/documents'
+    | '/employee/expenses'
     | '/employee/home'
     | '/employee/notifications'
     | '/employee/pay-on-demand'
@@ -737,6 +784,7 @@ export interface FileRouteTypes {
     | '/employee/profile'
     | '/employee/pto'
     | '/employee/punch'
+    | '/employee/requests'
     | '/employee/schedule'
     | '/employee/time'
     | '/help/access-denied'
@@ -836,6 +884,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EmployeeScheduleRouteImport
       parentRoute: typeof EmployeeRoute
     }
+    '/employee/requests': {
+      id: '/employee/requests'
+      path: '/requests'
+      fullPath: '/employee/requests'
+      preLoaderRoute: typeof EmployeeRequestsRouteImport
+      parentRoute: typeof EmployeeRoute
+    }
     '/employee/punch': {
       id: '/employee/punch'
       path: '/punch'
@@ -883,6 +938,13 @@ declare module '@tanstack/react-router' {
       path: '/home'
       fullPath: '/employee/home'
       preLoaderRoute: typeof EmployeeHomeRouteImport
+      parentRoute: typeof EmployeeRoute
+    }
+    '/employee/expenses': {
+      id: '/employee/expenses'
+      path: '/expenses'
+      fullPath: '/employee/expenses'
+      preLoaderRoute: typeof EmployeeExpensesRouteImport
       parentRoute: typeof EmployeeRoute
     }
     '/employee/documents': {
@@ -960,6 +1022,13 @@ declare module '@tanstack/react-router' {
       path: '/scheduling'
       fullPath: '/app/scheduling'
       preLoaderRoute: typeof AppSchedulingRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/requests': {
+      id: '/app/requests'
+      path: '/requests'
+      fullPath: '/app/requests'
+      preLoaderRoute: typeof AppRequestsRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/reports': {
@@ -1072,6 +1141,13 @@ declare module '@tanstack/react-router' {
       path: '/form-1099'
       fullPath: '/app/form-1099'
       preLoaderRoute: typeof AppForm1099RouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/expense-requests': {
+      id: '/app/expense-requests'
+      path: '/expense-requests'
+      fullPath: '/app/expense-requests'
+      preLoaderRoute: typeof AppExpenseRequestsRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/employees': {
@@ -1221,6 +1297,7 @@ interface AppRouteChildren {
   AppDashboardRoute: typeof AppDashboardRoute
   AppDocumentsRoute: typeof AppDocumentsRoute
   AppEmployeesRoute: typeof AppEmployeesRouteWithChildren
+  AppExpenseRequestsRoute: typeof AppExpenseRequestsRoute
   AppForm1099Route: typeof AppForm1099Route
   AppGettingStartedRoute: typeof AppGettingStartedRoute
   AppIntegrationsRoute: typeof AppIntegrationsRoute
@@ -1237,6 +1314,7 @@ interface AppRouteChildren {
   AppPtoRoute: typeof AppPtoRoute
   AppRecruitingRoute: typeof AppRecruitingRoute
   AppReportsRoute: typeof AppReportsRoute
+  AppRequestsRoute: typeof AppRequestsRoute
   AppSchedulingRoute: typeof AppSchedulingRoute
   AppSelfServiceRoute: typeof AppSelfServiceRoute
   AppSettingsRoute: typeof AppSettingsRoute
@@ -1261,6 +1339,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppDashboardRoute: AppDashboardRoute,
   AppDocumentsRoute: AppDocumentsRoute,
   AppEmployeesRoute: AppEmployeesRouteWithChildren,
+  AppExpenseRequestsRoute: AppExpenseRequestsRoute,
   AppForm1099Route: AppForm1099Route,
   AppGettingStartedRoute: AppGettingStartedRoute,
   AppIntegrationsRoute: AppIntegrationsRoute,
@@ -1277,6 +1356,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppPtoRoute: AppPtoRoute,
   AppRecruitingRoute: AppRecruitingRoute,
   AppReportsRoute: AppReportsRoute,
+  AppRequestsRoute: AppRequestsRoute,
   AppSchedulingRoute: AppSchedulingRoute,
   AppSelfServiceRoute: AppSelfServiceRoute,
   AppSettingsRoute: AppSettingsRoute,
@@ -1293,6 +1373,7 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 interface EmployeeRouteChildren {
   EmployeeBenefitsRoute: typeof EmployeeBenefitsRoute
   EmployeeDocumentsRoute: typeof EmployeeDocumentsRoute
+  EmployeeExpensesRoute: typeof EmployeeExpensesRoute
   EmployeeHomeRoute: typeof EmployeeHomeRoute
   EmployeeNotificationsRoute: typeof EmployeeNotificationsRoute
   EmployeePayOnDemandRoute: typeof EmployeePayOnDemandRoute
@@ -1300,6 +1381,7 @@ interface EmployeeRouteChildren {
   EmployeeProfileRoute: typeof EmployeeProfileRoute
   EmployeePtoRoute: typeof EmployeePtoRoute
   EmployeePunchRoute: typeof EmployeePunchRoute
+  EmployeeRequestsRoute: typeof EmployeeRequestsRoute
   EmployeeScheduleRoute: typeof EmployeeScheduleRoute
   EmployeeTimeRoute: typeof EmployeeTimeRoute
 }
@@ -1307,6 +1389,7 @@ interface EmployeeRouteChildren {
 const EmployeeRouteChildren: EmployeeRouteChildren = {
   EmployeeBenefitsRoute: EmployeeBenefitsRoute,
   EmployeeDocumentsRoute: EmployeeDocumentsRoute,
+  EmployeeExpensesRoute: EmployeeExpensesRoute,
   EmployeeHomeRoute: EmployeeHomeRoute,
   EmployeeNotificationsRoute: EmployeeNotificationsRoute,
   EmployeePayOnDemandRoute: EmployeePayOnDemandRoute,
@@ -1314,6 +1397,7 @@ const EmployeeRouteChildren: EmployeeRouteChildren = {
   EmployeeProfileRoute: EmployeeProfileRoute,
   EmployeePtoRoute: EmployeePtoRoute,
   EmployeePunchRoute: EmployeePunchRoute,
+  EmployeeRequestsRoute: EmployeeRequestsRoute,
   EmployeeScheduleRoute: EmployeeScheduleRoute,
   EmployeeTimeRoute: EmployeeTimeRoute,
 }
