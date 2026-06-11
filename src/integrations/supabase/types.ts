@@ -4871,6 +4871,8 @@ export type Database = {
         | "temporary"
         | "intern"
         | "seasonal"
+        | "w2"
+        | "1099"
       garnishment_type:
         | "child_support"
         | "tax_levy"
@@ -5141,6 +5143,8 @@ export const Constants = {
         "temporary",
         "intern",
         "seasonal",
+        "w2",
+        "1099",
       ],
       garnishment_type: [
         "child_support",
