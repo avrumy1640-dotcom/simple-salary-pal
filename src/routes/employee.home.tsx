@@ -232,6 +232,26 @@ function EmployeeHome() {
         </div>
       </div>
 
+      {/* Pay On-Demand */}
+      <Link
+        to="/employee/pay-on-demand"
+        className="group flex items-center gap-4 rounded-3xl border border-border bg-card p-5 sm:p-6 shadow-soft transition hover:border-primary/40 hover:shadow-md active:translate-y-px"
+      >
+        <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-amber-50 text-amber-700">
+          <Zap className="h-6 w-6" />
+        </span>
+        <div className="min-w-0 flex-1">
+          <div className="font-display text-base font-bold text-slate-900">Pay On-Demand</div>
+          <div className="mt-0.5 text-sm text-slate-500">
+            Available now: <span className="font-display font-extrabold tabular text-slate-900">{fmt(podAvailable)}</span>
+          </div>
+        </div>
+        <span className="hidden sm:inline-flex items-center rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-soft">
+          Get Paid Early
+        </span>
+        <ChevronRight className="h-5 w-5 shrink-0 text-slate-300 transition group-hover:text-slate-500 sm:hidden" />
+      </Link>
+
       {/* Clock In/Out widget */}
       <div className="rounded-3xl border border-border bg-card p-6 shadow-soft text-center">
         <div className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Time clock</div>
