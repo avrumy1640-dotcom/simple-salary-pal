@@ -100,11 +100,13 @@ export const approveForm = createServerFn({ method: "POST" })
     if (stErr) throw new Error(stErr.message);
 
     // Notify employee
-    const { data: emp } = await supabaseAdmin
-      .from("employees")
-      .select("user_id, full_name")
-      .eq("id", form.employee_id)
-      .maybeSingle();
+    const { data: emp } = form.employee_id
+      ? await supabaseAdmin
+          .from("employees")
+          .select("user_id, full_name")
+          .eq("id", form.employee_id)
+          .maybeSingle()
+      : { data: null as any };
     if (emp?.user_id) {
       await supabaseAdmin.from("notifications").insert({
         company_id: form.company_id,
