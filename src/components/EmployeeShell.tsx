@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Home, Wallet, CalendarDays, User, HeartHandshake, LogOut, HelpCircle,
-  Receipt, MessageSquare, Sparkles, Menu, X, ChevronLeft, ChevronRight, Bell,
+  Receipt, MessageSquare, Sparkles, Menu, X, ChevronLeft, ChevronRight, Bell, ClipboardCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { EmployeeNotificationBanner } from "@/components/EmployeeNotificationBanner";
