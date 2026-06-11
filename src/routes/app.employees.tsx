@@ -167,6 +167,17 @@ function EmployeesPage() {
     } catch (err: any) { toast.error(err?.message ?? "Termination failed"); }
   }
 
+  async function reactivateEmployee(e: Employee) {
+    const { error } = await supabase
+      .from("employees")
+      .update({ status: "active", lifecycle_status: "active" })
+      .eq("id", e.id);
+    if (error) { toast.error(error.message); return; }
+    toast.success(`${e.full_name} reactivated`);
+    refresh();
+  }
+
+
   async function performDelete() {
     if (!confirmDelete) return;
     const { error } = await supabase.from("employees").delete().eq("id", confirmDelete.id);
@@ -348,7 +359,26 @@ function EmployeesPage() {
                         <div className="font-semibold text-slate-900 tabular-nums">{fmtUSD(e.pay_rate)}</div>
                         <div className="text-xs text-slate-500">{e.pay_type === "hourly" ? "per hour" : "per year"}</div>
                       </td>
-                      <td className="px-4 py-3"><StatusChip lifecycle={lifecycle} /></td>
+                      <td className="px-4 py-3" onClick={(ev) => ev.stopPropagation()}>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <button type="button" className="inline-flex items-center focus:outline-none">
+                              <StatusChip lifecycle={lifecycle} />
+                            </button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="start" className="w-44">
+                            {lifecycle === "active" ? (
+                              <DropdownMenuItem onClick={() => setTerminateTarget(e)}>
+                                <UserX className="mr-2 h-4 w-4" /> Deactivate
+                              </DropdownMenuItem>
+                            ) : (
+                              <DropdownMenuItem onClick={() => reactivateEmployee(e)}>
+                                <Zap className="mr-2 h-4 w-4" /> Reactivate
+                              </DropdownMenuItem>
+                            )}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </td>
                       <td className="px-4 py-3 text-slate-700 tabular-nums">
                         {e.start_date ? new Date(e.start_date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "—"}
                       </td>
@@ -363,10 +393,10 @@ function EmployeesPage() {
                             <DropdownMenuItem onClick={() => navigate({ to: "/app/employees/$id", params: { id: e.id } })}>
                               <Eye className="mr-2 h-4 w-4" /> View Profile
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => navigate({ to: "/app/employees/$id", params: { id: e.id } })}>
+                            <DropdownMenuItem onClick={() => navigate({ to: "/app/employees/$id", params: { id: e.id }, search: { edit: 1 } as any })}>
                               <Pencil className="mr-2 h-4 w-4" /> Edit
                             </DropdownMenuItem>
-                            <DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => navigate({ to: "/app/payroll/run", search: { employeeId: e.id, offCycle: 1 } as any })}>
                               <Zap className="mr-2 h-4 w-4" /> Run Off-Cycle Payroll
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
