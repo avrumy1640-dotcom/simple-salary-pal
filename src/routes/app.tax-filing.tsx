@@ -20,7 +20,10 @@ export const Route = createFileRoute("/app/tax-filing")({
 interface FilingRow { period: string; form: string; dueDate: string; amount: number; status: "upcoming" | "due_soon" | "overdue" | "filed" }
 
 function TaxFilingPage() {
-  const year = new Date().getFullYear();
+  const currentYear = new Date().getFullYear();
+  const [year, setYear] = useState<number>(currentYear);
+  const [quarter, setQuarter] = useState<1 | 2 | 3 | 4>(((Math.ceil((new Date().getMonth() + 1) / 3) || 1) as 1 | 2 | 3 | 4));
+  const [generating, setGenerating] = useState<string | null>(null);
   const [rows, setRows] = useState<FilingRow[]>([]);
   const [w2Count, setW2Count] = useState(0);
   const [n1099Count, setN1099Count] = useState(0);
