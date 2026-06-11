@@ -1,6 +1,8 @@
 import { Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { getEmployeePortalIdentity } from "@/lib/company-sync.functions";
 import {
   Home, Wallet, CalendarDays, User, HeartHandshake, LogOut, HelpCircle,
   Receipt, MessageSquare, Sparkles, Menu, X, ChevronLeft, ChevronRight, Bell, ClipboardCheck,
@@ -58,6 +60,7 @@ const PAGE_TITLES: Record<string, string> = {
 
 export function EmployeeShell() {
   const navigate = useNavigate();
+  const getIdentity = useServerFn(getEmployeePortalIdentity);
   const path = useRouterState({ select: (s) => s.location.pathname });
   const [checking, setChecking] = useState(true);
   const [email, setEmail] = useState("");
@@ -78,35 +81,21 @@ export function EmployeeShell() {
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
       if (!data.session) { navigate({ to: "/auth" }); return; }
-      const uid = data.session.user.id;
-      const userEmail = data.session.user.email ?? "";
-      setEmail(userEmail);
-      const [{ data: prof }, { data: emp }, { data: roles }] = await Promise.all([
-        supabase.from("profiles").select("company_name").eq("id", uid).maybeSingle(),
-        userEmail
-          ? supabase
-              .from("employees")
-              .select("full_name, company_id, companies:company_id(legal_name)")
-              .ilike("email", userEmail)
-              .maybeSingle()
-          : Promise.resolve({ data: null as any }),
-        supabase.from("user_roles").select("role").eq("user_id", uid).limit(1),
-      ]);
-      const role = roles?.[0]?.role;
-      if (role && role !== "employee") {
+      const identity = await getIdentity();
+      if (identity.destination === "admin") {
         navigate({ to: "/app/dashboard", replace: true });
         return;
       }
-      const companyFromEmployee = (emp as any)?.companies?.legal_name as string | undefined;
-      setCompanyName(companyFromEmployee || prof?.company_name || "Your workplace");
-      setFullName(emp?.full_name || userEmail.split("@")[0] || "Employee");
+      setEmail(identity.email);
+      setCompanyName(identity.companyName);
+      setFullName(identity.fullName);
       setChecking(false);
     });
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => {
       if (!s) navigate({ to: "/auth" });
     });
     return () => subscription.unsubscribe();
-  }, [navigate]);
+  }, [getIdentity, navigate]);
 
   async function signOut() {
     await supabase.auth.signOut();
