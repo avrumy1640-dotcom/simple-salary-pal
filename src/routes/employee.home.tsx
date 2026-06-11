@@ -96,6 +96,17 @@ function EmployeeHome() {
     }
     setPtoUsedByType(used);
 
+    // Accrual policy (if assigned)
+    const policyId = (employee as any).pto_policy_id;
+    if (policyId) {
+      const { data: pol } = await supabase.from("pto_accrual_policies")
+        .select("name, hours_per_period, frequency, max_balance_hours")
+        .eq("id", policyId).maybeSingle();
+      if (pol) setAccrualPolicy(pol as any);
+    } else {
+      setAccrualPolicy(null);
+    }
+
     // Recent activity
     const acts: { icon: "pay" | "pto" | "doc"; text: string; date: string }[] = [];
     for (const p of (items.data ?? []) as any[]) {
