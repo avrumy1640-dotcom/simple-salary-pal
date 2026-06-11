@@ -804,3 +804,195 @@ export function buildNewHireReportCSV(opts: {
 function round2(n: number) {
   return Math.round(n * 100) / 100;
 }
+
+/* ---------------- New-Hire: per-state CSV ---------------- */
+
+import { getStateRegistry, type StateNewHireRegistry } from "./new-hire-states";
+
+/**
+ * Build a per-state CSV scoped to that state's hires using the columns most
+ * state registries accept. Adds a state-specific header block (agency, fax,
+ * URL, mail) so the file is self-describing.
+ */
+export function buildStateNewHireCSV(opts: {
+  company: FilingCompany;
+  stateCode: string;
+  rows: NewHireRow[];
+}): string {
+  const { company, stateCode, rows } = opts;
+  const reg = getStateRegistry(stateCode);
+  const ein = digitsOnly(company.ein || "");
+  const cell = (s: string | null | undefined) => `"${(s ?? "").replace(/"/g, '""')}"`;
+  const stateRows = rows.filter((r) => upper(r.state_of_hire || r.state || "") === upper(stateCode));
+
+  const header = [
+    `# State New-Hire Report — ${reg?.name ?? stateCode}`,
+    `# Submit to: ${reg?.agency ?? "State New-Hire Registry"}`,
+    reg?.submitUrl ? `# Online: ${reg.submitUrl}` : null,
+    reg?.fax ? `# Fax: ${reg.fax}` : null,
+    reg?.mail ? `# Mail: ${reg.mail}` : null,
+    `# Employer: ${company.legal_name}  FEIN: ${ein || "(missing)"}`,
+    `# Employer address: ${company.address_line1 || ""}, ${company.city || ""}, ${upper(company.state || "")} ${digitsOnly(company.postal_code || "")}`,
+    `# Generated: ${new Date().toISOString().slice(0, 10)}`,
+    `# Records: ${stateRows.length}`,
+    [
+      "FEIN","Employer_Name","Employer_Address","Employer_City","Employer_State","Employer_Zip",
+      "Employee_SSN_Last4","Employee_First_Name","Employee_Last_Name","Employee_Address",
+      "Employee_City","Employee_State","Employee_Zip","Date_Of_Hire","Date_Of_Birth","State_Of_Hire",
+    ].join(","),
+  ].filter(Boolean).join("\n");
+
+  const lines = stateRows.map((r) => {
+    const [first, ...rest] = (r.full_name || "").split(" ");
+    const last = rest.join(" ") || "";
+    return [
+      ein,
+      cell(company.legal_name),
+      cell(company.address_line1 || ""),
+      cell(company.city || ""),
+      upper(company.state || ""),
+      digitsOnly(company.postal_code || "").slice(0, 5),
+      r.ssn_last4 || "",
+      cell(first || ""),
+      cell(last),
+      cell(r.address_line1 || ""),
+      cell(r.city || ""),
+      upper(r.state || ""),
+      digitsOnly(r.zip || "").slice(0, 5),
+      r.start_date || "",
+      r.date_of_birth || "",
+      upper(r.state_of_hire || r.state || stateCode),
+    ].join(",");
+  });
+  return [header, ...lines].join("\n") + "\n";
+}
+
+/**
+ * Build a PDF packet for a given state's filing: cover sheet (mailing /
+ * fax / URL info) + one per-employee report form. Returns a Blob.
+ */
+export async function buildNewHirePDFPacket(opts: {
+  company: FilingCompany;
+  stateCode: string;
+  rows: NewHireRow[];
+}): Promise<Blob> {
+  const { jsPDF } = await import("jspdf");
+  const { company, stateCode, rows } = opts;
+  const reg: StateNewHireRegistry | null = getStateRegistry(stateCode);
+  const stateRows = rows.filter((r) => upper(r.state_of_hire || r.state || "") === upper(stateCode));
+
+  const doc = new jsPDF({ unit: "pt", format: "letter" });
+  const M = 54; // 0.75" margin
+  const W = doc.internal.pageSize.getWidth();
+
+  /* ---------- Cover sheet ---------- */
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(18);
+  doc.text(`New-Hire Reporting Packet`, M, M);
+  doc.setFontSize(12);
+  doc.text(`${reg?.name ?? stateCode} — ${reg?.agency ?? "State New-Hire Registry"}`, M, M + 22);
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(10);
+  let y = M + 50;
+  const drawKV = (k: string, v: string) => {
+    doc.setFont("helvetica", "bold"); doc.text(k, M, y);
+    doc.setFont("helvetica", "normal"); doc.text(v, M + 110, y, { maxWidth: W - M - 110 });
+    y += 16;
+  };
+  drawKV("Employer:", company.legal_name || "(missing)");
+  drawKV("FEIN:", digitsOnly(company.ein || "") || "(missing)");
+  drawKV("Address:", `${company.address_line1 || ""}, ${company.city || ""}, ${upper(company.state || "")} ${digitsOnly(company.postal_code || "")}`);
+  drawKV("Phone:", company.phone || "—");
+  drawKV("Records:", `${stateRows.length} new hire${stateRows.length === 1 ? "" : "s"}`);
+  drawKV("Generated:", new Date().toLocaleString());
+
+  y += 12;
+  doc.setFont("helvetica", "bold"); doc.setFontSize(11);
+  doc.text("Submit this packet to:", M, y); y += 18;
+  doc.setFont("helvetica", "normal"); doc.setFontSize(10);
+  if (reg?.submitUrl) drawKV("Online:", reg.submitUrl);
+  if (reg?.fax) drawKV("Fax:", reg.fax);
+  if (reg?.mail) drawKV("Mail:", reg.mail);
+  if (reg?.acceptedFormats?.length) drawKV("Accepted:", reg.acceptedFormats.join(", "));
+  if (reg?.notes) drawKV("Notes:", reg.notes);
+
+  y += 10;
+  doc.setDrawColor(200); doc.line(M, y, W - M, y); y += 18;
+  doc.setFontSize(9); doc.setTextColor(110);
+  const legal =
+    "Federal law (PRWORA, 42 U.S.C. § 653a) requires employers to report newly hired and rehired " +
+    "employees to the state directory within 20 days of hire. Multistate employers may designate one " +
+    "state to receive all reports — notify the federal OCSE in writing.";
+  doc.text(doc.splitTextToSize(legal, W - M * 2), M, y);
+  doc.setTextColor(0);
+
+  /* ---------- One page per employee ---------- */
+  stateRows.forEach((r) => {
+    doc.addPage();
+    let py = M;
+    doc.setFont("helvetica", "bold"); doc.setFontSize(14);
+    doc.text("New-Hire Report — Employee Detail", M, py); py += 24;
+    doc.setFontSize(10);
+    doc.text(`${reg?.name ?? stateCode}  |  ${company.legal_name}`, M, py); py += 18;
+
+    doc.setDrawColor(220); doc.line(M, py, W - M, py); py += 16;
+
+    const field = (label: string, value: string) => {
+      doc.setFont("helvetica", "bold"); doc.setFontSize(9);
+      doc.setTextColor(110); doc.text(label.toUpperCase(), M, py);
+      doc.setTextColor(0); doc.setFont("helvetica", "normal"); doc.setFontSize(11);
+      doc.text(value || "—", M, py + 14, { maxWidth: W - M * 2 });
+      py += 36;
+    };
+
+    doc.setFont("helvetica", "bold"); doc.setFontSize(11);
+    doc.text("Employer", M, py); py += 16;
+    field("Legal name", company.legal_name);
+    field("FEIN", digitsOnly(company.ein || "") || "(missing)");
+    field("Address", `${company.address_line1 || ""}, ${company.city || ""}, ${upper(company.state || "")} ${digitsOnly(company.postal_code || "")}`);
+
+    if (py > 650) { doc.addPage(); py = M; }
+    doc.setFont("helvetica", "bold"); doc.setFontSize(11);
+    doc.text("Employee", M, py); py += 16;
+    const [first, ...rest] = (r.full_name || "").split(" ");
+    const last = rest.join(" ") || "";
+    field("Full name", `${first} ${last}`.trim() || r.full_name);
+    field("SSN (last 4)", r.ssn_last4 ? `XXX-XX-${r.ssn_last4}` : "(missing)");
+    field("Date of birth", r.date_of_birth || "(optional)");
+    field("Home address", `${r.address_line1 || ""}, ${r.city || ""}, ${upper(r.state || "")} ${digitsOnly(r.zip || "")}`);
+    field("Date of hire", r.start_date || "(missing)");
+    field("State of hire", upper(r.state_of_hire || r.state || stateCode));
+
+    // Signature block
+    if (py > 650) { doc.addPage(); py = M; }
+    py += 16;
+    doc.setDrawColor(180);
+    doc.line(M, py + 24, M + 220, py + 24);
+    doc.line(W - M - 180, py + 24, W - M, py + 24);
+    doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(110);
+    doc.text("Authorized signature", M, py + 36);
+    doc.text("Date", W - M - 180, py + 36);
+    doc.setTextColor(0);
+  });
+
+  // Page numbers
+  const total = doc.getNumberOfPages();
+  for (let i = 1; i <= total; i++) {
+    doc.setPage(i);
+    doc.setFont("helvetica", "normal"); doc.setFontSize(8); doc.setTextColor(140);
+    doc.text(`Page ${i} of ${total}`, W - M, doc.internal.pageSize.getHeight() - 24, { align: "right" });
+    doc.setTextColor(0);
+  }
+
+  return doc.output("blob");
+}
+
+export function triggerBlobDownload(filename: string, blob: Blob) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
