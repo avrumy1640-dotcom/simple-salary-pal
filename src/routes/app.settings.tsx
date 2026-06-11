@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,8 +7,9 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Save, Info, Building2, Calendar, Bell, Palette, ShieldCheck, Plug } from "lucide-react";
+import { Save, Info, Building2, Calendar, Bell, Palette, ShieldCheck, Plug, Upload, Trash2, ImageIcon, KeyRound } from "lucide-react";
 import { useCompany } from "@/hooks/useCompany";
 import { useServerFn } from "@tanstack/react-start";
 import { saveSyncedCompanySettings } from "@/lib/company-sync.functions";
@@ -55,6 +56,19 @@ function SettingsPage() {
   const [brandColor, setBrandColor] = useState("background");
   const [signInEmail, setSignInEmail] = useState("");
 
+  // Logo
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [logoSignedSrc, setLogoSignedSrc] = useState<string | null>(null);
+  const [logoBusy, setLogoBusy] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  // 2FA
+  const [mfaFactors, setMfaFactors] = useState<Array<{ id: string; friendly_name?: string | null; status: string }>>([]);
+  const [mfaLoading, setMfaLoading] = useState(false);
+  const [enrollOpen, setEnrollOpen] = useState(false);
+  const [enrollData, setEnrollData] = useState<{ factorId: string; qr: string; secret: string } | null>(null);
+  const [mfaCode, setMfaCode] = useState("");
+
   useEffect(() => {
     (async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -63,19 +77,32 @@ function SettingsPage() {
       if (localNotif) setNotif(JSON.parse(localNotif));
       const localBrand = localStorage.getItem("paylo_brand");
       if (localBrand) setBrandColor(localBrand);
+      await refreshMfa();
     })();
   }, []);
+
+  async function refreshMfa() {
+    setMfaLoading(true);
+    try {
+      const { data, error } = await supabase.auth.mfa.listFactors();
+      if (error) throw error;
+      setMfaFactors((data?.totp ?? []).map((f) => ({ id: f.id, friendly_name: f.friendly_name, status: f.status })));
+    } catch (e: any) {
+      console.error("[mfa] list", e);
+    } finally {
+      setMfaLoading(false);
+    }
+  }
 
   // Reload settings whenever the active company changes.
   useEffect(() => {
     if (!currentId) return;
     setLoading(true);
     (async () => {
-      const { data, error } = await supabase
-        .from("company_settings")
-        .select("*")
-        .eq("company_id", currentId)
-        .maybeSingle();
+      const [{ data, error }, { data: comp }] = await Promise.all([
+        supabase.from("company_settings").select("*").eq("company_id", currentId).maybeSingle(),
+        supabase.from("companies").select("logo_url").eq("id", currentId).maybeSingle(),
+      ]);
       if (error) {
         console.error("[settings] load error", error);
         toast.error(`Couldn't load settings: ${error.message}`);
@@ -90,9 +117,113 @@ function SettingsPage() {
       } else {
         setForm(empty);
       }
+      setLogoUrl((comp as any)?.logo_url ?? null);
       setLoading(false);
     })();
   }, [currentId]);
+
+  // Generate signed preview URL whenever logo path changes
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      if (!logoUrl) { setLogoSignedSrc(null); return; }
+      const { data } = await supabase.storage.from("company-logos").createSignedUrl(logoUrl, 3600);
+      if (!cancelled) setLogoSignedSrc(data?.signedUrl ?? null);
+    })();
+    return () => { cancelled = true; };
+  }, [logoUrl]);
+
+  async function uploadLogo(file: File) {
+    if (!currentId) { toast.error("No active company"); return; }
+    if (file.size > 2 * 1024 * 1024) { toast.error("Logo must be under 2MB"); return; }
+    if (!/^image\/(png|jpeg|jpg|svg\+xml|webp)$/i.test(file.type)) {
+      toast.error("Use PNG, JPG, SVG, or WebP"); return;
+    }
+    setLogoBusy(true);
+    try {
+      const ext = file.name.split(".").pop()?.toLowerCase() || "png";
+      const path = `${currentId}/logo-${Date.now()}.${ext}`;
+      const { error: upErr } = await supabase.storage
+        .from("company-logos").upload(path, file, { upsert: true, contentType: file.type });
+      if (upErr) throw upErr;
+      // Remove previous logo file if any
+      if (logoUrl && logoUrl !== path) {
+        await supabase.storage.from("company-logos").remove([logoUrl]).catch(() => {});
+      }
+      const { error: updErr } = await supabase
+        .from("companies").update({ logo_url: path }).eq("id", currentId);
+      if (updErr) throw updErr;
+      setLogoUrl(path);
+      toast.success("Logo uploaded");
+    } catch (e: any) {
+      console.error("[logo] upload", e);
+      toast.error(e?.message ?? "Couldn't upload logo");
+    } finally {
+      setLogoBusy(false);
+      if (fileRef.current) fileRef.current.value = "";
+    }
+  }
+
+  async function removeLogo() {
+    if (!currentId || !logoUrl) return;
+    setLogoBusy(true);
+    try {
+      await supabase.storage.from("company-logos").remove([logoUrl]);
+      const { error } = await supabase.from("companies").update({ logo_url: null }).eq("id", currentId);
+      if (error) throw error;
+      setLogoUrl(null);
+      toast.success("Logo removed");
+    } catch (e: any) {
+      toast.error(e?.message ?? "Couldn't remove logo");
+    } finally {
+      setLogoBusy(false);
+    }
+  }
+
+  async function startEnroll2FA() {
+    try {
+      const { data, error } = await supabase.auth.mfa.enroll({
+        factorType: "totp",
+        friendlyName: `Paylo (${new Date().toISOString().slice(0, 10)})`,
+      });
+      if (error) throw error;
+      setEnrollData({ factorId: data.id, qr: data.totp.qr_code, secret: data.totp.secret });
+      setMfaCode("");
+      setEnrollOpen(true);
+    } catch (e: any) {
+      toast.error(e?.message ?? "Couldn't start 2FA setup");
+    }
+  }
+
+  async function verifyEnroll2FA() {
+    if (!enrollData) return;
+    if (!/^\d{6}$/.test(mfaCode)) { toast.error("Enter the 6-digit code from your app"); return; }
+    try {
+      const { error } = await supabase.auth.mfa.challengeAndVerify({
+        factorId: enrollData.factorId, code: mfaCode,
+      });
+      if (error) throw error;
+      toast.success("Two-factor authentication enabled");
+      setEnrollOpen(false);
+      setEnrollData(null);
+      setMfaCode("");
+      await refreshMfa();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Invalid code — try again");
+    }
+  }
+
+  async function disable2FA(factorId: string) {
+    if (!confirm("Disable two-factor authentication on this account?")) return;
+    try {
+      const { error } = await supabase.auth.mfa.unenroll({ factorId });
+      if (error) throw error;
+      toast.success("Two-factor authentication disabled");
+      await refreshMfa();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Couldn't disable 2FA");
+    }
+  }
 
   async function save() {
     if (saving) return;
@@ -219,8 +350,33 @@ function SettingsPage() {
                 </div>
               </div>
             </Field>
-            <Field label="Logo upload" hint="Coming soon — upload a PNG/SVG to brand pay stubs.">
-              <Button variant="outline" disabled>Upload logo</Button>
+            <Field label="Company logo" hint="PNG, JPG, SVG, or WebP — up to 2MB. Shown on pay stubs and PDF exports.">
+              <input
+                ref={fileRef}
+                type="file"
+                accept="image/png,image/jpeg,image/svg+xml,image/webp"
+                className="hidden"
+                onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadLogo(f); }}
+              />
+              <div className="flex flex-wrap items-center gap-4">
+                <div className="flex h-20 w-20 items-center justify-center rounded-lg border bg-background/40 overflow-hidden">
+                  {logoSignedSrc ? (
+                    <img src={logoSignedSrc} alt="Company logo" className="h-full w-full object-contain" />
+                  ) : (
+                    <ImageIcon className="h-8 w-8 text-muted-foreground" />
+                  )}
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <Button variant="outline" disabled={logoBusy} onClick={() => fileRef.current?.click()} className="gap-2">
+                    <Upload className="h-4 w-4" />{logoUrl ? "Replace logo" : "Upload logo"}
+                  </Button>
+                  {logoUrl && (
+                    <Button variant="outline" disabled={logoBusy} onClick={removeLogo} className="gap-2 text-destructive">
+                      <Trash2 className="h-4 w-4" /> Remove
+                    </Button>
+                  )}
+                </div>
+              </div>
             </Field>
           </Section>
         </TabsContent>
@@ -230,8 +386,25 @@ function SettingsPage() {
             <Field label="Sign-in email"><Input disabled value={signInEmail} placeholder="Loaded from your account" /></Field>
             <div className="flex flex-wrap gap-3">
               <Button variant="outline" onClick={sendPasswordReset}>Send password reset email</Button>
-              <Button variant="outline" disabled>Enable 2FA (coming soon)</Button>
+              {mfaFactors.filter((f) => f.status === "verified").length === 0 ? (
+                <Button variant="outline" onClick={startEnroll2FA} disabled={mfaLoading} className="gap-2">
+                  <KeyRound className="h-4 w-4" /> Enable two-factor (TOTP)
+                </Button>
+              ) : null}
             </div>
+            {mfaFactors.filter((f) => f.status === "verified").length > 0 && (
+              <div className="rounded-xl border border-emerald-300/40 bg-emerald-50/40 p-4 space-y-2">
+                <div className="flex items-center gap-2 text-sm font-medium text-emerald-700">
+                  <ShieldCheck className="h-4 w-4" /> Two-factor authentication is on
+                </div>
+                {mfaFactors.filter((f) => f.status === "verified").map((f) => (
+                  <div key={f.id} className="flex items-center justify-between gap-3">
+                    <div className="text-xs text-muted-foreground">{f.friendly_name || "Authenticator app"}</div>
+                    <Button size="sm" variant="outline" onClick={() => disable2FA(f.id)} className="text-destructive">Disable</Button>
+                  </div>
+                ))}
+              </div>
+            )}
           </Section>
 
           {/* Danger Zone */}
@@ -272,6 +445,43 @@ function SettingsPage() {
           </Section>
         </TabsContent>
       </Tabs>
+
+      <Dialog open={enrollOpen} onOpenChange={(o) => { setEnrollOpen(o); if (!o) { setEnrollData(null); setMfaCode(""); } }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Set up two-factor authentication</DialogTitle>
+            <DialogDescription>
+              Scan the QR code with Google Authenticator, 1Password, Authy, or any TOTP app, then enter the 6-digit code to confirm.
+            </DialogDescription>
+          </DialogHeader>
+          {enrollData && (
+            <div className="space-y-4">
+              <div className="flex justify-center rounded-lg border bg-white p-4">
+                <img src={enrollData.qr} alt="2FA QR code" className="h-44 w-44" />
+              </div>
+              <div className="text-xs text-muted-foreground">
+                Can't scan? Enter this secret manually:
+                <code className="ml-1 break-all rounded bg-muted px-1.5 py-0.5 font-mono text-[11px]">{enrollData.secret}</code>
+              </div>
+              <div className="space-y-1.5">
+                <Label>6-digit code</Label>
+                <Input
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  maxLength={6}
+                  value={mfaCode}
+                  onChange={(e) => setMfaCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                  placeholder="123456"
+                />
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEnrollOpen(false)}>Cancel</Button>
+            <Button onClick={verifyEnroll2FA} disabled={mfaCode.length !== 6}>Verify & enable</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
