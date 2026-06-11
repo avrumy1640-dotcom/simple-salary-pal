@@ -36,6 +36,7 @@ export const completeAccountSetup = createServerFn({ method: "POST" })
     if (profileError) throw new Error(profileError.message);
 
     if (data.accountType === "employer") {
+      const employerCompanyName = companyName ?? "My Company";
       const { data: existingRole } = await supabaseAdmin
         .from("user_roles")
         .select("company_id")
@@ -46,11 +47,11 @@ export const completeAccountSetup = createServerFn({ method: "POST" })
 
       let companyId = existingRole?.company_id as string | undefined;
       if (companyId) {
-        await supabaseAdmin.from("companies").update({ legal_name: companyName }).eq("id", companyId);
+        await supabaseAdmin.from("companies").update({ legal_name: employerCompanyName }).eq("id", companyId);
       } else {
         const { data: company, error: companyError } = await supabaseAdmin
           .from("companies")
-          .insert({ owner_id: context.userId, legal_name: companyName })
+          .insert({ owner_id: context.userId, legal_name: employerCompanyName })
           .select("id")
           .single();
         if (companyError) throw new Error(companyError.message);
