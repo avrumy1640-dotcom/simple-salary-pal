@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { PageHeader } from "@/components/PageHeader";
 import { toast } from "sonner";
 import { CalendarDays, ArrowLeftRight, X } from "lucide-react";
-import { requestSwap, cancelSwap } from "@/lib/scheduling.functions";
+import { requestSwap, cancelSwap, declineSwapAsTarget } from "@/lib/scheduling.functions";
 
 export const Route = createFileRoute("/employee/schedule")({
   head: () => ({ meta: [{ title: "My schedule — Paylo" }] }),
@@ -28,10 +28,12 @@ interface Shift {
 interface Swap {
   id: string; shift_id: string; request_type: "drop" | "swap";
   status: "pending" | "approved" | "denied" | "cancelled";
-  target_employee_id: string | null; reason: string | null;
+  target_employee_id: string | null; requested_by_employee_id: string;
+  reason: string | null;
   created_at: string; decision_notes: string | null;
 }
 interface Coworker { id: string; full_name: string; }
+interface ShiftLite { id: string; start_at: string; end_at: string; role: string | null; location: string | null; }
 
 function startOfWeek(d: Date) { const x = new Date(d); x.setDate(x.getDate() - x.getDay()); x.setHours(0,0,0,0); return x; }
 function fmt(iso: string) {
@@ -45,9 +47,13 @@ function EmployeeSchedulePage() {
   const [myEmpId, setMyEmpId] = useState<string | null>(null);
   const [companyId, setCompanyId] = useState<string | null>(null);
   const [swapFor, setSwapFor] = useState<Shift | null>(null);
+  const [incoming, setIncoming] = useState<Swap[]>([]);
+  const [incomingShifts, setIncomingShifts] = useState<Record<string, ShiftLite>>({});
+  const [incomingNames, setIncomingNames] = useState<Record<string, string>>({});
 
   const reqSwap = useServerFn(requestSwap);
   const cancel = useServerFn(cancelSwap);
+  const declineIncoming = useServerFn(declineSwapAsTarget);
 
   async function load() {
     const { data: sess } = await supabase.auth.getSession();
@@ -62,7 +68,7 @@ function EmployeeSchedulePage() {
     const horizonStart = startOfWeek(new Date()).toISOString();
     const horizonEnd = new Date(Date.now() + 28 * 86400000).toISOString();
 
-    const [s, sw, cw] = await Promise.all([
+    const [s, sw, cw, inc] = await Promise.all([
       supabase.from("shifts").select("*")
         .eq("company_id", emp.company_id)
         .eq("employee_id", emp.id)
@@ -75,10 +81,28 @@ function EmployeeSchedulePage() {
       supabase.from("employees").select("id, full_name")
         .eq("company_id", emp.company_id).eq("status", "active").neq("id", emp.id)
         .order("full_name"),
+      supabase.from("shift_swap_requests").select("*")
+        .eq("target_employee_id", emp.id)
+        .eq("status", "pending")
+        .order("created_at", { ascending: false }),
     ]);
     setShifts((s.data ?? []) as Shift[]);
     setSwaps((sw.data ?? []) as Swap[]);
     setCoworkers((cw.data ?? []) as Coworker[]);
+    const incList = (inc.data ?? []) as Swap[];
+    setIncoming(incList);
+    if (incList.length) {
+      const sids = Array.from(new Set(incList.map((x) => x.shift_id)));
+      const eids = Array.from(new Set(incList.map((x) => x.requested_by_employee_id)));
+      const [sh, en] = await Promise.all([
+        supabase.from("shifts").select("id,start_at,end_at,role,location").in("id", sids),
+        supabase.from("employees").select("id,full_name").in("id", eids),
+      ]);
+      setIncomingShifts(Object.fromEntries((sh.data ?? []).map((x: any) => [x.id, x])));
+      setIncomingNames(Object.fromEntries((en.data ?? []).map((x: any) => [x.id, x.full_name])));
+    } else {
+      setIncomingShifts({}); setIncomingNames({});
+    }
   }
   useEffect(() => { load(); }, []);
 
@@ -88,6 +112,10 @@ function EmployeeSchedulePage() {
     try { await cancel({ data: { swapId: id } }); toast.success("Request cancelled"); load(); }
     catch (e: any) { toast.error(e.message); }
   }
+  async function handleDeclineIncoming(id: string) {
+    try { await declineIncoming({ data: { swapId: id } }); toast.success("Proposal declined"); load(); }
+    catch (e: any) { toast.error(e.message); }
+  }
 
   return (
     <div className="space-y-8 unit-in">
@@ -95,6 +123,36 @@ function EmployeeSchedulePage() {
         <h1 className="font-display text-[32px] sm:text-[40px] font-extrabold tracking-tight text-slate-900">My schedule</h1>
         <p className="mt-2 text-base text-slate-600">Upcoming published shifts and swap requests.</p>
       </div>
+
+      {incoming.length > 0 && (
+        <div className="rounded-xl border border-primary/30 bg-primary/5">
+          <div className="border-b border-primary/20 px-4 py-3 font-display text-sm font-semibold text-slate-900">
+            Incoming swap proposals ({incoming.length})
+          </div>
+          <ul className="divide-y divide-primary/10">
+            {incoming.map((sw) => {
+              const sh = incomingShifts[sw.shift_id];
+              const from = incomingNames[sw.requested_by_employee_id] || "A coworker";
+              return (
+                <li key={sw.id} className="flex flex-col gap-2 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <div className="font-semibold text-slate-900">{from} wants to swap a shift with you</div>
+                    <div className="text-xs text-slate-500">
+                      {sh ? `${fmt(sh.start_at)} – ${new Date(sh.end_at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}` : ""}
+                      {sh?.role || sh?.location ? ` · ${[sh?.role, sh?.location].filter(Boolean).join(" · ")}` : ""}
+                    </div>
+                    {sw.reason && <div className="mt-1 text-xs text-slate-600">Reason: {sw.reason}</div>}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline">Pending manager review</Badge>
+                    <Button size="sm" variant="outline" onClick={() => handleDeclineIncoming(sw.id)}>Decline</Button>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
 
       <div className="rounded-xl border border-border bg-card">
         <div className="border-b border-border px-4 py-3 font-display text-sm font-semibold text-slate-900">
