@@ -25,7 +25,11 @@ interface Punch {
   latitude: number | null;
   longitude: number | null;
   address: string | null;
+  work_location_id: string | null;
+  geofence_ok: boolean | null;
+  geofence_required: boolean;
 }
+interface WorkLoc { id: string; name: string; latitude: number | null; longitude: number | null; geofence_radius_m: number; }
 interface Row {
   employee: Employee;
   lastIn: Punch | null;
