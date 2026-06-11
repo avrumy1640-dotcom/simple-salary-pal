@@ -235,6 +235,27 @@ function EmployeeHome() {
         <p className="mt-1 text-sm sm:text-base text-slate-500">{todayStr}</p>
       </div>
 
+      {/* Open enrollment banner */}
+      {openEnrollment && (() => {
+        const daysLeft = Math.max(0, Math.ceil((+new Date(openEnrollment.ends_at) - +now) / 86400000));
+        return (
+          <Link to="/employee/benefits" className="block">
+            <div className="flex items-center gap-3 rounded-2xl border border-violet-200 bg-gradient-to-r from-violet-50 to-fuchsia-50 p-4 shadow-soft transition hover:shadow-md">
+              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-violet-600 text-white">
+                <HeartHandshakeIcon />
+              </span>
+              <div className="min-w-0 flex-1">
+                <div className="font-bold text-violet-900">{openEnrollment.name} is open</div>
+                <div className="text-xs text-violet-800">
+                  {daysLeft === 0 ? "Closes today" : daysLeft === 1 ? "Closes tomorrow" : `${daysLeft} days left`} · coverage starts {new Date(openEnrollment.coverage_effective_date + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                </div>
+              </div>
+              <ChevronRight className="h-5 w-5 text-violet-700" />
+            </div>
+          </Link>
+        );
+      })()}
+
       {/* Hero payday card */}
       <div className="relative overflow-hidden rounded-3xl border border-border p-6 sm:p-8 shadow-soft"
            style={{ background: "var(--gradient-primary, linear-gradient(135deg, oklch(0.94 0.05 250), oklch(0.96 0.03 280)))" }}>
