@@ -23,6 +23,8 @@ const navGroups: NavGroup[] = [
       { to: "/app/employees", label: "Employees", icon: Users, roles: HR_ROLES },
       { to: "/app/payroll", label: "Payroll", icon: Wallet, roles: PAYROLL_ROLES },
       { to: "/app/pay-on-demand", label: "Pay On-Demand", icon: Wallet, roles: PAYROLL_ROLES },
+      { to: "/app/expense-requests", label: "Expenses", icon: Receipt, roles: [...MANAGER_ROLES] },
+      { to: "/app/requests", label: "Requests", icon: MessageSquare, roles: [...MANAGER_ROLES] },
       { to: "/app/time", label: "Time Tracking", icon: Clock, roles: [...MANAGER_ROLES] },
       { to: "/app/live-map", label: "Live Map", icon: MapPin, roles: [...MANAGER_ROLES] },
     ],
