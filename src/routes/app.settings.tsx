@@ -350,8 +350,33 @@ function SettingsPage() {
                 </div>
               </div>
             </Field>
-            <Field label="Logo upload" hint="Coming soon — upload a PNG/SVG to brand pay stubs.">
-              <Button variant="outline" disabled>Upload logo</Button>
+            <Field label="Company logo" hint="PNG, JPG, SVG, or WebP — up to 2MB. Shown on pay stubs and PDF exports.">
+              <input
+                ref={fileRef}
+                type="file"
+                accept="image/png,image/jpeg,image/svg+xml,image/webp"
+                className="hidden"
+                onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadLogo(f); }}
+              />
+              <div className="flex flex-wrap items-center gap-4">
+                <div className="flex h-20 w-20 items-center justify-center rounded-lg border bg-background/40 overflow-hidden">
+                  {logoSignedSrc ? (
+                    <img src={logoSignedSrc} alt="Company logo" className="h-full w-full object-contain" />
+                  ) : (
+                    <ImageIcon className="h-8 w-8 text-muted-foreground" />
+                  )}
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <Button variant="outline" disabled={logoBusy} onClick={() => fileRef.current?.click()} className="gap-2">
+                    <Upload className="h-4 w-4" />{logoUrl ? "Replace logo" : "Upload logo"}
+                  </Button>
+                  {logoUrl && (
+                    <Button variant="outline" disabled={logoBusy} onClick={removeLogo} className="gap-2 text-destructive">
+                      <Trash2 className="h-4 w-4" /> Remove
+                    </Button>
+                  )}
+                </div>
+              </div>
             </Field>
           </Section>
         </TabsContent>
