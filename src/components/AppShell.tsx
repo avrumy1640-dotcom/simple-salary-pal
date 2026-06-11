@@ -70,6 +70,7 @@ const ALL_NAV_LABELS: Record<string, string> = {
   "/app/benefits": "Benefits",
   "/app/performance": "Performance",
   "/app/compliance": "Compliance",
+  "/app/form-review": "Form Review",
   "/app/tax-filing": "Tax Filing",
   "/app/reports": "Reports",
   "/app/analytics": "Analytics",
