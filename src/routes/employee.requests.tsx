@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useMyEmployee } from "@/lib/useMyEmployee";
+import { useRealtimeRefresh } from "@/lib/useRealtimeRefresh";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -68,6 +69,7 @@ function EmployeeRequestsPage() {
     setRows((data ?? []) as any);
   }
   useEffect(() => { load(); /* eslint-disable-next-line */ }, [employee?.id]);
+  useRealtimeRefresh(["general_requests"], load, { companyId: employee?.company_id ?? null });
 
   async function submit() {
     if (!employee) return;
