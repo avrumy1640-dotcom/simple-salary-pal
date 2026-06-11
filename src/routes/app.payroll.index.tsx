@@ -184,10 +184,13 @@ function PayrollOverview() {
 
   function statusPill(s: string) {
     const map: Record<string, string> = {
-      approved: "bg-emerald-50 text-emerald-700 ring-emerald-200",
+      paid: "bg-emerald-50 text-emerald-700 ring-emerald-200",
+      approved: "bg-sky-50 text-sky-700 ring-sky-200",
       completed: "bg-emerald-50 text-emerald-700 ring-emerald-200",
       draft: "bg-amber-50 text-amber-700 ring-amber-200",
+      calculating: "bg-slate-100 text-slate-700 ring-slate-200",
       pending: "bg-amber-50 text-amber-700 ring-amber-200",
+      reversed: "bg-rose-50 text-rose-700 ring-rose-200",
       failed: "bg-red-50 text-red-700 ring-red-200",
     };
     const cls = map[s] ?? "bg-slate-50 text-slate-700 ring-slate-200";
@@ -197,6 +200,44 @@ function PayrollOverview() {
         {s.charAt(0).toUpperCase() + s.slice(1)}
       </span>
     );
+  }
+
+  const markPaidFn = useServerFn(markRunPaid);
+  const reverseFn = useServerFn(reversePayrollRun);
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const [reverseFor, setReverseFor] = useState<Run | null>(null);
+  const [reverseReason, setReverseReason] = useState("");
+
+  async function handleMarkPaid(r: Run) {
+    if (busyId) return;
+    if (!confirm(`Mark this payroll as paid? This locks the run for ${fmtUSD(r.net_total)}.`)) return;
+    setBusyId(r.id);
+    try {
+      const res = await markPaidFn({ data: { run_id: r.id } });
+      setRuns((prev) => prev.map((x) => (x.id === r.id ? { ...x, ...(res.run as any) } : x)));
+      toast.success("Payroll marked as paid");
+    } catch (err: any) {
+      toast.error(err?.message || "Failed to mark paid");
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  async function handleReverse() {
+    if (!reverseFor) return;
+    if (reverseReason.trim().length < 3) { toast.error("Please describe the reason"); return; }
+    setBusyId(reverseFor.id);
+    try {
+      const res = await reverseFn({ data: { run_id: reverseFor.id, reason: reverseReason.trim() } });
+      setRuns((prev) => prev.map((x) => (x.id === reverseFor.id ? { ...x, ...(res.run as any) } : x)));
+      toast.success("Payroll reversed");
+      setReverseFor(null);
+      setReverseReason("");
+    } catch (err: any) {
+      toast.error(err?.message || "Failed to reverse");
+    } finally {
+      setBusyId(null);
+    }
   }
 
   return (
