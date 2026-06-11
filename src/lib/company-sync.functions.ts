@@ -1,9 +1,24 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import type { Database } from "@/integrations/supabase/types";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 const ADMIN_ROLES = ["owner", "admin"] as const;
-const EMPLOYEE_PORTAL_ADMIN_ROLES = new Set(["owner", "admin", "payroll_admin", "hr_admin", "recruiter", "benefits_admin", "accountant", "auditor", "manager", "supervisor"]);
+const EMPLOYEE_PORTAL_ADMIN_ROLES = new Set([
+  "owner",
+  "admin",
+  "payroll_admin",
+  "hr_admin",
+  "recruiter",
+  "benefits_admin",
+  "accountant",
+  "auditor",
+  "manager",
+  "supervisor",
+]);
+
+type DbClient = SupabaseClient<Database>;
 
 const settingsSchema = z.object({
   company_id: z.string().uuid(),
@@ -18,7 +33,7 @@ const settingsSchema = z.object({
   next_pay_date: z.string().nullable().optional(),
 });
 
-async function userCanManageCompany(supabase: any, userId: string, companyId: string) {
+async function userCanManageCompany(supabase: DbClient, userId: string, companyId: string) {
   const { data, error } = await supabase
     .from("user_roles")
     .select("role")
@@ -36,7 +51,7 @@ export const saveSyncedCompanySettings = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => settingsSchema.parse(data))
   .handler(async ({ data, context }) => {
-    const { supabase, userId } = context as { supabase: any; userId: string };
+    const { supabase, userId } = context as { supabase: DbClient; userId: string };
     const canManage = await userCanManageCompany(supabase, userId, data.company_id);
     if (!canManage) throw new Error("You don't have permission to update this company.");
 
