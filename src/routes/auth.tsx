@@ -87,7 +87,16 @@ async function getUserDestination(uid: string) {
   }
 }
 
-async function routeByCurrentUser(navigate: ReturnType<typeof useNavigate>, uid: string, setMode: (mode: AuthMode) => void) {
+async function routeByCurrentUser(
+  navigate: ReturnType<typeof useNavigate>,
+  uid: string,
+  setMode: (mode: AuthMode) => void,
+  claim: () => Promise<unknown>,
+) {
+  const { data: profile } = await supabase.from("profiles").select("account_type").eq("id", uid).maybeSingle();
+  if ((profile as any)?.account_type === "employee") {
+    try { await claim(); } catch (e) { console.error("[auth] claim error:", e); }
+  }
   const destination = await getUserDestination(uid);
   if (destination) navigate({ to: destination, replace: true });
   else setMode("setup");
