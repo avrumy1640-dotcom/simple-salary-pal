@@ -116,6 +116,7 @@ function PayrollWizard() {
       filingStatus: r.emp.filing_status ?? "single",
       dependents: Number(r.emp.dependents ?? 0),
       extraWithholding: Number(r.emp.extra_withholding ?? 0),
+      workState: (r.emp as any).state ?? undefined,
       deductions: r.deductions.map((d) => ({ name: d.name, pre_tax: d.pre_tax, amount: Number(d.amount), amount_type: d.amount_type })),
     }),
   })), [activeRows]);
