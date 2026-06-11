@@ -199,12 +199,28 @@ function Page() {
             </DialogTrigger>
             <DialogContent>
               <DialogHeader><DialogTitle>{employee.direct_deposit_enabled ? "Update" : "Add"} direct deposit</DialogTitle></DialogHeader>
-              <div className="rounded-lg bg-emerald-50 px-3 py-2.5 text-xs text-emerald-800 flex items-center gap-2">
-                <Lock className="h-3.5 w-3.5" /> Your banking information is encrypted and secure.
+              <div className="rounded-lg bg-amber-50 px-3 py-2.5 text-xs text-amber-900 flex items-start gap-2">
+                <Lock className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                <span>Submissions are reviewed by HR before they take effect. Your full account & routing numbers are stored securely and never shown back to you.</span>
               </div>
               <div className="space-y-3">
                 <div><Label>Bank name</Label><Input className="h-12" value={bank.bank_name} onChange={(e) => setBank({ ...bank, bank_name: e.target.value })} placeholder="e.g. Chase" /></div>
                 <div>
+                  <Label>Account type</Label>
+                  <div className="mt-1.5 grid grid-cols-2 gap-2">
+                    {(["checking", "savings"] as const).map(t => (
+                      <button key={t} type="button" onClick={() => setBank({ ...bank, account_type: t })}
+                        className={`rounded-xl border-2 p-3 text-sm font-semibold capitalize transition ${bank.account_type === t ? "border-primary bg-primary/5 text-slate-900" : "border-border bg-card text-slate-600"}`}>
+                        {t}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div><Label>Routing number (9 digits)</Label><Input className="h-12" inputMode="numeric" value={bank.routing} onChange={(e) => setBank({ ...bank, routing: e.target.value.replace(/\D/g, "") })} maxLength={9} /></div>
+                <div><Label>Account number</Label><Input className="h-12" inputMode="numeric" value={bank.account} onChange={(e) => setBank({ ...bank, account: e.target.value.replace(/\D/g, "") })} /></div>
+                <div><Label>Confirm account number</Label><Input className="h-12" inputMode="numeric" value={bank.confirm} onChange={(e) => setBank({ ...bank, confirm: e.target.value.replace(/\D/g, "") })} /></div>
+                <div><Label>E-sign with your full legal name</Label><Input className="h-12" value={signedName} onChange={(e) => setSignedName(e.target.value)} placeholder="Type your full name" /></div>
+              </div>
                   <Label>Account type</Label>
                   <div className="mt-1.5 grid grid-cols-2 gap-2">
                     {(["checking", "savings"] as const).map(t => (
