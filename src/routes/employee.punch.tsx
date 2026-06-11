@@ -315,7 +315,7 @@ function PunchPage() {
                 <Coffee className="mr-2 h-5 w-5" /> Start break
               </Button>
               <Button
-                onClick={() => punch("out")}
+                onClick={attemptClockOut}
                 disabled={busy}
                 className="h-16 rounded-2xl bg-rose-600 text-base font-bold text-white shadow-lg shadow-rose-600/25 hover:bg-rose-700"
               >
