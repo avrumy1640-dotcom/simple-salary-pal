@@ -286,9 +286,15 @@ function Page() {
                 </div>
               </div>
 
-              <Button className="w-full h-12" onClick={() => download(preview)}>
-                <Download className="mr-2 h-4 w-4" /> Download PDF
-              </Button>
+              <div className="flex gap-2">
+                <Button variant="outline" className="flex-1 h-12" onClick={() => downloadTxt(preview)}>
+                  Download summary (.txt)
+                </Button>
+                <Button className="flex-1 h-12" onClick={() => printPdf(preview)}>
+                  <Download className="mr-2 h-4 w-4" /> Save as PDF
+                </Button>
+              </div>
+
             </div>
           )}
         </DialogContent>
