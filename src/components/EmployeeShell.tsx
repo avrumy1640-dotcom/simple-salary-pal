@@ -31,12 +31,18 @@ export function EmployeeShell() {
       const uid = data.session.user.id;
       const userEmail = data.session.user.email ?? "";
       setEmail(userEmail);
-      const [{ data: prof }, { data: emp }] = await Promise.all([
+      const [{ data: prof }, { data: emp }, { data: roles }] = await Promise.all([
         supabase.from("profiles").select("company_name").eq("id", uid).maybeSingle(),
         userEmail
           ? supabase.from("employees").select("full_name").ilike("email", userEmail).maybeSingle()
           : Promise.resolve({ data: null }),
+        supabase.from("user_roles").select("role").eq("user_id", uid).limit(1),
       ]);
+      const role = roles?.[0]?.role;
+      if (role && role !== "employee") {
+        navigate({ to: "/app/dashboard", replace: true });
+        return;
+      }
       setCompanyName(prof?.company_name || "Your workplace");
       setFullName(emp?.full_name || userEmail.split("@")[0] || "Employee");
       setChecking(false);
@@ -57,7 +63,7 @@ export function EmployeeShell() {
 
   async function signOut() {
     await supabase.auth.signOut();
-    navigate({ to: "/auth" });
+    navigate({ to: "/auth", replace: true });
   }
 
   if (checking) {

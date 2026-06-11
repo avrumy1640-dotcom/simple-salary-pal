@@ -181,6 +181,9 @@ function AuthPage() {
           },
         });
         if (error) throw error;
+        if (data.user?.identities && data.user.identities.length === 0) {
+          throw new Error("An account with this email already exists. Please sign in instead.");
+        }
 
         let user = data.user ?? data.session?.user ?? null;
         if (!data.session || !user) {

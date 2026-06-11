@@ -103,7 +103,7 @@ export function TopBar({ companyName, userEmail, pageTitle }: { companyName: str
 
   async function signOut() {
     await supabase.auth.signOut();
-    navigate({ to: "/auth" });
+    navigate({ to: "/auth", replace: true });
   }
 
   const initials = (userEmail || "U").slice(0, 2).toUpperCase();
