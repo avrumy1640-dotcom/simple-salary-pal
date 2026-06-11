@@ -26,6 +26,7 @@ import { Route as EmployeePtoRouteImport } from './routes/employee.pto'
 import { Route as EmployeeProfileRouteImport } from './routes/employee.profile'
 import { Route as EmployeePaystubsRouteImport } from './routes/employee.paystubs'
 import { Route as EmployeePayOnDemandRouteImport } from './routes/employee.pay-on-demand'
+import { Route as EmployeeOnboardingRouteImport } from './routes/employee.onboarding'
 import { Route as EmployeeNotificationsRouteImport } from './routes/employee.notifications'
 import { Route as EmployeeHomeRouteImport } from './routes/employee.home'
 import { Route as EmployeeHelpRouteImport } from './routes/employee.help'
@@ -158,6 +159,11 @@ const EmployeePaystubsRoute = EmployeePaystubsRouteImport.update({
 const EmployeePayOnDemandRoute = EmployeePayOnDemandRouteImport.update({
   id: '/pay-on-demand',
   path: '/pay-on-demand',
+  getParentRoute: () => EmployeeRoute,
+} as any)
+const EmployeeOnboardingRoute = EmployeeOnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
   getParentRoute: () => EmployeeRoute,
 } as any)
 const EmployeeNotificationsRoute = EmployeeNotificationsRouteImport.update({
@@ -455,6 +461,7 @@ export interface FileRoutesByFullPath {
   '/employee/help': typeof EmployeeHelpRoute
   '/employee/home': typeof EmployeeHomeRoute
   '/employee/notifications': typeof EmployeeNotificationsRoute
+  '/employee/onboarding': typeof EmployeeOnboardingRoute
   '/employee/pay-on-demand': typeof EmployeePayOnDemandRoute
   '/employee/paystubs': typeof EmployeePaystubsRoute
   '/employee/profile': typeof EmployeeProfileRoute
@@ -521,6 +528,7 @@ export interface FileRoutesByTo {
   '/employee/help': typeof EmployeeHelpRoute
   '/employee/home': typeof EmployeeHomeRoute
   '/employee/notifications': typeof EmployeeNotificationsRoute
+  '/employee/onboarding': typeof EmployeeOnboardingRoute
   '/employee/pay-on-demand': typeof EmployeePayOnDemandRoute
   '/employee/paystubs': typeof EmployeePaystubsRoute
   '/employee/profile': typeof EmployeeProfileRoute
@@ -589,6 +597,7 @@ export interface FileRoutesById {
   '/employee/help': typeof EmployeeHelpRoute
   '/employee/home': typeof EmployeeHomeRoute
   '/employee/notifications': typeof EmployeeNotificationsRoute
+  '/employee/onboarding': typeof EmployeeOnboardingRoute
   '/employee/pay-on-demand': typeof EmployeePayOnDemandRoute
   '/employee/paystubs': typeof EmployeePaystubsRoute
   '/employee/profile': typeof EmployeeProfileRoute
@@ -658,6 +667,7 @@ export interface FileRouteTypes {
     | '/employee/help'
     | '/employee/home'
     | '/employee/notifications'
+    | '/employee/onboarding'
     | '/employee/pay-on-demand'
     | '/employee/paystubs'
     | '/employee/profile'
@@ -724,6 +734,7 @@ export interface FileRouteTypes {
     | '/employee/help'
     | '/employee/home'
     | '/employee/notifications'
+    | '/employee/onboarding'
     | '/employee/pay-on-demand'
     | '/employee/paystubs'
     | '/employee/profile'
@@ -791,6 +802,7 @@ export interface FileRouteTypes {
     | '/employee/help'
     | '/employee/home'
     | '/employee/notifications'
+    | '/employee/onboarding'
     | '/employee/pay-on-demand'
     | '/employee/paystubs'
     | '/employee/profile'
@@ -936,6 +948,13 @@ declare module '@tanstack/react-router' {
       path: '/pay-on-demand'
       fullPath: '/employee/pay-on-demand'
       preLoaderRoute: typeof EmployeePayOnDemandRouteImport
+      parentRoute: typeof EmployeeRoute
+    }
+    '/employee/onboarding': {
+      id: '/employee/onboarding'
+      path: '/onboarding'
+      fullPath: '/employee/onboarding'
+      preLoaderRoute: typeof EmployeeOnboardingRouteImport
       parentRoute: typeof EmployeeRoute
     }
     '/employee/notifications': {
@@ -1396,6 +1415,7 @@ interface EmployeeRouteChildren {
   EmployeeHelpRoute: typeof EmployeeHelpRoute
   EmployeeHomeRoute: typeof EmployeeHomeRoute
   EmployeeNotificationsRoute: typeof EmployeeNotificationsRoute
+  EmployeeOnboardingRoute: typeof EmployeeOnboardingRoute
   EmployeePayOnDemandRoute: typeof EmployeePayOnDemandRoute
   EmployeePaystubsRoute: typeof EmployeePaystubsRoute
   EmployeeProfileRoute: typeof EmployeeProfileRoute
@@ -1413,6 +1433,7 @@ const EmployeeRouteChildren: EmployeeRouteChildren = {
   EmployeeHelpRoute: EmployeeHelpRoute,
   EmployeeHomeRoute: EmployeeHomeRoute,
   EmployeeNotificationsRoute: EmployeeNotificationsRoute,
+  EmployeeOnboardingRoute: EmployeeOnboardingRoute,
   EmployeePayOnDemandRoute: EmployeePayOnDemandRoute,
   EmployeePaystubsRoute: EmployeePaystubsRoute,
   EmployeeProfileRoute: EmployeeProfileRoute,
