@@ -148,6 +148,15 @@ function EmployeeHome() {
       .in("status", ["pending", "approved"]);
     const pendingTotal = (podPending ?? []).reduce((a: number, r: any) => a + Number(r.requested_amount || 0), 0);
     setPodAvailable(Math.max(0, Math.round(earned * 0.5 * 100) / 100 - pendingTotal));
+
+    // Open enrollment window
+    const nowIso = new Date().toISOString();
+    const { data: oe } = await supabase.from("open_enrollment_windows")
+      .select("id, name, ends_at, coverage_effective_date, starts_at, is_active")
+      .eq("company_id", employee.company_id).eq("is_active", true)
+      .lte("starts_at", nowIso).gte("ends_at", nowIso)
+      .order("ends_at", { ascending: true }).limit(1);
+    setOpenEnrollment((oe?.[0] as any) ?? null);
   }
   useEffect(() => { load(); }, [employee?.id]);
   useRealtimeRefresh(
