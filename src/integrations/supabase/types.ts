@@ -756,6 +756,7 @@ export type Database = {
           holiday_pay_multiplier: number | null
           id: string
           legal_name: string
+          logo_url: string | null
           overtime_multiplier: number
           overtime_threshold_hours: number | null
           owner_id: string
@@ -787,6 +788,7 @@ export type Database = {
           holiday_pay_multiplier?: number | null
           id?: string
           legal_name: string
+          logo_url?: string | null
           overtime_multiplier?: number
           overtime_threshold_hours?: number | null
           owner_id: string
@@ -818,6 +820,7 @@ export type Database = {
           holiday_pay_multiplier?: number | null
           id?: string
           legal_name?: string
+          logo_url?: string | null
           overtime_multiplier?: number
           overtime_threshold_hours?: number | null
           owner_id?: string
