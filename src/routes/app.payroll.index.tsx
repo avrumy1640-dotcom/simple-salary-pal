@@ -504,6 +504,40 @@ function PayrollOverview() {
           </div>
         )}
       </div>
+
+      {/* Reverse modal */}
+      {reverseFor && (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-slate-900/40 p-4" onClick={() => setReverseFor(null)}>
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center gap-2 text-rose-700">
+              <Undo2 className="h-5 w-5" />
+              <div className="font-bold text-lg">Reverse this payroll?</div>
+            </div>
+            <p className="mt-2 text-sm text-slate-600">
+              This marks the run as reversed and records a reversal entry. Direct deposits already sent are NOT recalled — handle the bank side separately.
+            </p>
+            <div className="mt-4">
+              <label className="text-xs font-semibold text-slate-600">Reason</label>
+              <Textarea
+                placeholder="Why are you reversing this run?"
+                value={reverseReason}
+                onChange={(e) => setReverseReason(e.target.value)}
+                className="mt-1 min-h-[88px]"
+              />
+            </div>
+            <div className="mt-5 flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setReverseFor(null)}>Cancel</Button>
+              <Button
+                onClick={handleReverse}
+                disabled={busyId === reverseFor.id}
+                className="bg-rose-600 hover:bg-rose-700 text-white"
+              >
+                {busyId === reverseFor.id ? "Reversing…" : "Confirm reversal"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
