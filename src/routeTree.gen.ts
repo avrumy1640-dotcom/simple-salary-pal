@@ -28,6 +28,7 @@ import { Route as EmployeePaystubsRouteImport } from './routes/employee.paystubs
 import { Route as EmployeePayOnDemandRouteImport } from './routes/employee.pay-on-demand'
 import { Route as EmployeeNotificationsRouteImport } from './routes/employee.notifications'
 import { Route as EmployeeHomeRouteImport } from './routes/employee.home'
+import { Route as EmployeeHelpRouteImport } from './routes/employee.help'
 import { Route as EmployeeExpensesRouteImport } from './routes/employee.expenses'
 import { Route as EmployeeDocumentsRouteImport } from './routes/employee.documents'
 import { Route as EmployeeBenefitsRouteImport } from './routes/employee.benefits'
@@ -167,6 +168,11 @@ const EmployeeNotificationsRoute = EmployeeNotificationsRouteImport.update({
 const EmployeeHomeRoute = EmployeeHomeRouteImport.update({
   id: '/home',
   path: '/home',
+  getParentRoute: () => EmployeeRoute,
+} as any)
+const EmployeeHelpRoute = EmployeeHelpRouteImport.update({
+  id: '/help',
+  path: '/help',
   getParentRoute: () => EmployeeRoute,
 } as any)
 const EmployeeExpensesRoute = EmployeeExpensesRouteImport.update({
@@ -446,6 +452,7 @@ export interface FileRoutesByFullPath {
   '/employee/benefits': typeof EmployeeBenefitsRoute
   '/employee/documents': typeof EmployeeDocumentsRoute
   '/employee/expenses': typeof EmployeeExpensesRoute
+  '/employee/help': typeof EmployeeHelpRoute
   '/employee/home': typeof EmployeeHomeRoute
   '/employee/notifications': typeof EmployeeNotificationsRoute
   '/employee/pay-on-demand': typeof EmployeePayOnDemandRoute
@@ -511,6 +518,7 @@ export interface FileRoutesByTo {
   '/employee/benefits': typeof EmployeeBenefitsRoute
   '/employee/documents': typeof EmployeeDocumentsRoute
   '/employee/expenses': typeof EmployeeExpensesRoute
+  '/employee/help': typeof EmployeeHelpRoute
   '/employee/home': typeof EmployeeHomeRoute
   '/employee/notifications': typeof EmployeeNotificationsRoute
   '/employee/pay-on-demand': typeof EmployeePayOnDemandRoute
@@ -578,6 +586,7 @@ export interface FileRoutesById {
   '/employee/benefits': typeof EmployeeBenefitsRoute
   '/employee/documents': typeof EmployeeDocumentsRoute
   '/employee/expenses': typeof EmployeeExpensesRoute
+  '/employee/help': typeof EmployeeHelpRoute
   '/employee/home': typeof EmployeeHomeRoute
   '/employee/notifications': typeof EmployeeNotificationsRoute
   '/employee/pay-on-demand': typeof EmployeePayOnDemandRoute
@@ -646,6 +655,7 @@ export interface FileRouteTypes {
     | '/employee/benefits'
     | '/employee/documents'
     | '/employee/expenses'
+    | '/employee/help'
     | '/employee/home'
     | '/employee/notifications'
     | '/employee/pay-on-demand'
@@ -711,6 +721,7 @@ export interface FileRouteTypes {
     | '/employee/benefits'
     | '/employee/documents'
     | '/employee/expenses'
+    | '/employee/help'
     | '/employee/home'
     | '/employee/notifications'
     | '/employee/pay-on-demand'
@@ -777,6 +788,7 @@ export interface FileRouteTypes {
     | '/employee/benefits'
     | '/employee/documents'
     | '/employee/expenses'
+    | '/employee/help'
     | '/employee/home'
     | '/employee/notifications'
     | '/employee/pay-on-demand'
@@ -938,6 +950,13 @@ declare module '@tanstack/react-router' {
       path: '/home'
       fullPath: '/employee/home'
       preLoaderRoute: typeof EmployeeHomeRouteImport
+      parentRoute: typeof EmployeeRoute
+    }
+    '/employee/help': {
+      id: '/employee/help'
+      path: '/help'
+      fullPath: '/employee/help'
+      preLoaderRoute: typeof EmployeeHelpRouteImport
       parentRoute: typeof EmployeeRoute
     }
     '/employee/expenses': {
@@ -1374,6 +1393,7 @@ interface EmployeeRouteChildren {
   EmployeeBenefitsRoute: typeof EmployeeBenefitsRoute
   EmployeeDocumentsRoute: typeof EmployeeDocumentsRoute
   EmployeeExpensesRoute: typeof EmployeeExpensesRoute
+  EmployeeHelpRoute: typeof EmployeeHelpRoute
   EmployeeHomeRoute: typeof EmployeeHomeRoute
   EmployeeNotificationsRoute: typeof EmployeeNotificationsRoute
   EmployeePayOnDemandRoute: typeof EmployeePayOnDemandRoute
@@ -1390,6 +1410,7 @@ const EmployeeRouteChildren: EmployeeRouteChildren = {
   EmployeeBenefitsRoute: EmployeeBenefitsRoute,
   EmployeeDocumentsRoute: EmployeeDocumentsRoute,
   EmployeeExpensesRoute: EmployeeExpensesRoute,
+  EmployeeHelpRoute: EmployeeHelpRoute,
   EmployeeHomeRoute: EmployeeHomeRoute,
   EmployeeNotificationsRoute: EmployeeNotificationsRoute,
   EmployeePayOnDemandRoute: EmployeePayOnDemandRoute,
@@ -1420,13 +1441,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
