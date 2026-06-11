@@ -5,8 +5,10 @@ import { useMyEmployee } from "@/lib/useMyEmployee";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Clock, Play, Square, MapPin, AlertCircle, ShieldCheck, Coffee, Loader2 } from "lucide-react";
+import { Clock, Play, Square, MapPin, AlertCircle, ShieldCheck, Coffee, Loader2, Navigation } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { useLiveLocationTracking, hasLiveTrackingConsent, setLiveTrackingConsent } from "@/hooks/useLiveLocationTracking";
 
 export const Route = createFileRoute("/employee/punch")({
   head: () => ({ meta: [{ title: "Punch in / out — Paylo" }] }),
@@ -45,6 +47,10 @@ function PunchPage() {
   const [coords, setCoords] = useState<{ lat: number; lng: number; acc: number } | null>(null);
   const [geoError, setGeoError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [consentOpen, setConsentOpen] = useState(false);
+  const [pendingPunchIn, setPendingPunchIn] = useState(false);
+  useEffect(() => { supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? null)); }, []);
 
   const lastPunch = recent[0];
   const clockedIn = lastPunch?.punch_type === "in" || lastPunch?.punch_type === "break_end";
@@ -134,6 +140,23 @@ function PunchPage() {
     toast.success(`Punched ${type.replace("_", " ")}`);
     load();
   }
+
+  function attemptClockIn() {
+    if (!hasLiveTrackingConsent()) { setConsentOpen(true); setPendingPunchIn(true); return; }
+    punch("in");
+  }
+  function attemptClockOut() {
+    setLiveTrackingConsent(false); // turn off tracking on clock-out
+    punch("out");
+  }
+
+  // Live GPS tracking while clocked in
+  useLiveLocationTracking({
+    active: clockedIn && hasLiveTrackingConsent(),
+    employeeId: employee?.id ?? null,
+    companyId: employee?.company_id ?? null,
+    userId,
+  });
 
   // Live elapsed timer since last clock-in / break-end
   const [now, setNow] = useState(Date.now());
@@ -273,7 +296,7 @@ function PunchPage() {
         <div className="space-y-2">
           {!clockedIn && !onBreak && (
             <Button
-              onClick={() => punch("in")}
+              onClick={attemptClockIn}
               disabled={busy || geofenceBlocked || geofenceAcquiring}
               className="h-20 w-full rounded-2xl bg-emerald-600 text-lg font-bold text-white shadow-lg shadow-emerald-600/25 transition hover:bg-emerald-700 disabled:opacity-50"
             >
@@ -292,7 +315,7 @@ function PunchPage() {
                 <Coffee className="mr-2 h-5 w-5" /> Start break
               </Button>
               <Button
-                onClick={() => punch("out")}
+                onClick={attemptClockOut}
                 disabled={busy}
                 className="h-16 rounded-2xl bg-rose-600 text-base font-bold text-white shadow-lg shadow-rose-600/25 hover:bg-rose-700"
               >
@@ -342,6 +365,35 @@ function PunchPage() {
           </ul>
         )}
       </div>
+
+      {clockedIn && hasLiveTrackingConsent() && (
+        <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-xs text-emerald-800">
+          <Navigation className="h-4 w-4" />
+          <span>Live location sharing is on. Your manager can see your current position while you're clocked in. It stops automatically when you clock out.</span>
+        </div>
+      )}
+
+      <Dialog open={consentOpen} onOpenChange={setConsentOpen}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Share live location while clocked in?</DialogTitle></DialogHeader>
+          <div className="space-y-3 text-sm text-slate-700">
+            <p>To clock in, your employer requests permission to track your GPS location <strong>only while you are on the clock</strong>. Tracking stops the moment you clock out.</p>
+            <ul className="list-disc pl-5 text-xs text-slate-600 space-y-1">
+              <li>Used to verify on-site presence and respond to safety incidents.</li>
+              <li>Updates roughly every 20 seconds while clocked in.</li>
+              <li>You can clock out at any time to stop sharing.</li>
+            </ul>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => { setConsentOpen(false); setPendingPunchIn(false); }}>Cancel</Button>
+            <Button onClick={() => {
+              setLiveTrackingConsent(true);
+              setConsentOpen(false);
+              if (pendingPunchIn) { setPendingPunchIn(false); punch("in"); }
+            }}>I agree — Clock me in</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

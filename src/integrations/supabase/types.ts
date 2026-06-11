@@ -1332,6 +1332,83 @@ export type Database = {
           },
         ]
       }
+      employee_live_locations: {
+        Row: {
+          accuracy_m: number | null
+          company_id: string
+          created_at: string
+          employee_id: string
+          heading: number | null
+          id: string
+          is_clocked_in: boolean
+          last_punch_id: string | null
+          latitude: number
+          longitude: number
+          speed_mps: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          accuracy_m?: number | null
+          company_id: string
+          created_at?: string
+          employee_id: string
+          heading?: number | null
+          id?: string
+          is_clocked_in?: boolean
+          last_punch_id?: string | null
+          latitude: number
+          longitude: number
+          speed_mps?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          accuracy_m?: number | null
+          company_id?: string
+          created_at?: string
+          employee_id?: string
+          heading?: number | null
+          id?: string
+          is_clocked_in?: boolean
+          last_punch_id?: string | null
+          latitude?: number
+          longitude?: number
+          speed_mps?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employee_live_locations_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employee_live_locations_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: true
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "employee_live_locations_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: true
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employee_live_locations_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: true
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
+          },
+        ]
+      }
       employees: {
         Row: {
           address_line1: string | null
