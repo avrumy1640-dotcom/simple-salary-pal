@@ -48,6 +48,7 @@ function EmployeeHome() {
   const [accrualPolicy, setAccrualPolicy] = useState<{ name: string; hours_per_period: number; frequency: string; max_balance_hours: number | null } | null>(null);
   const [activity, setActivity] = useState<{ icon: "pay" | "pto" | "doc"; text: string; date: string }[]>([]);
   const [podAvailable, setPodAvailable] = useState(0);
+  const [openEnrollment, setOpenEnrollment] = useState<{ id: string; name: string; ends_at: string; coverage_effective_date: string } | null>(null);
   const [busy, setBusy] = useState(false);
   const [now, setNow] = useState(new Date());
 
