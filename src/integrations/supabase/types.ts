@@ -1653,6 +1653,98 @@ export type Database = {
           },
         ]
       }
+      expense_requests: {
+        Row: {
+          amount: number
+          category: string
+          company_id: string
+          created_at: string
+          currency: string
+          decided_at: string | null
+          decided_by: string | null
+          decline_reason: string | null
+          description: string | null
+          employee_id: string
+          expense_date: string
+          id: string
+          merchant: string | null
+          receipt_url: string | null
+          reimbursed_at: string | null
+          status: string
+          submitted_at: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          category: string
+          company_id: string
+          created_at?: string
+          currency?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          decline_reason?: string | null
+          description?: string | null
+          employee_id: string
+          expense_date: string
+          id?: string
+          merchant?: string | null
+          receipt_url?: string | null
+          reimbursed_at?: string | null
+          status?: string
+          submitted_at?: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          category?: string
+          company_id?: string
+          created_at?: string
+          currency?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          decline_reason?: string | null
+          description?: string | null
+          employee_id?: string
+          expense_date?: string
+          id?: string
+          merchant?: string | null
+          receipt_url?: string | null
+          reimbursed_at?: string | null
+          status?: string
+          submitted_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expense_requests_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expense_requests_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "expense_requests_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expense_requests_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
+          },
+        ]
+      }
       field_visits: {
         Row: {
           address: string | null
@@ -1838,6 +1930,86 @@ export type Database = {
           },
           {
             foreignKeyName: "garnishments_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
+          },
+        ]
+      }
+      general_requests: {
+        Row: {
+          company_id: string
+          created_at: string
+          decided_at: string | null
+          decided_by: string | null
+          details: string | null
+          employee_id: string
+          id: string
+          priority: string
+          request_type: string
+          response: string | null
+          status: string
+          subject: string
+          submitted_at: string
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          details?: string | null
+          employee_id: string
+          id?: string
+          priority?: string
+          request_type: string
+          response?: string | null
+          status?: string
+          subject: string
+          submitted_at?: string
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          details?: string | null
+          employee_id?: string
+          id?: string
+          priority?: string
+          request_type?: string
+          response?: string | null
+          status?: string
+          subject?: string
+          submitted_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "general_requests_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "general_requests_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "general_requests_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "general_requests_employee_id_fkey"
             columns: ["employee_id"]
             isOneToOne: false
             referencedRelation: "w2_annual_summary"
