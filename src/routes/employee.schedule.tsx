@@ -28,10 +28,12 @@ interface Shift {
 interface Swap {
   id: string; shift_id: string; request_type: "drop" | "swap";
   status: "pending" | "approved" | "denied" | "cancelled";
-  target_employee_id: string | null; reason: string | null;
+  target_employee_id: string | null; requested_by_employee_id: string;
+  reason: string | null;
   created_at: string; decision_notes: string | null;
 }
 interface Coworker { id: string; full_name: string; }
+interface ShiftLite { id: string; start_at: string; end_at: string; role: string | null; location: string | null; }
 
 function startOfWeek(d: Date) { const x = new Date(d); x.setDate(x.getDate() - x.getDay()); x.setHours(0,0,0,0); return x; }
 function fmt(iso: string) {
