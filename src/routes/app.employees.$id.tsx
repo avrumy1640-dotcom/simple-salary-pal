@@ -6,15 +6,21 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 import {
   ArrowLeft, Pencil, Check, X, Upload, Download, Trash2, FileText, Camera,
-  Calendar, Clock,
+  Calendar, Clock, ChevronDown,
 } from "lucide-react";
 import { fmtUSD } from "@/lib/payroll";
 
 export const Route = createFileRoute("/app/employees/$id")({
   head: () => ({ meta: [{ title: "Employee profile — Paylo" }] }),
+  validateSearch: (s: Record<string, unknown>) => ({
+    edit: s.edit === 1 || s.edit === "1" ? 1 : undefined,
+  }),
   component: EmployeeProfilePage,
 });
 
