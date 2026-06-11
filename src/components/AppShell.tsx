@@ -6,7 +6,7 @@ import {
   LayoutDashboard, Users, Clock, Wallet, FileText, LogOut, Menu, X,
   CalendarDays, Settings as SettingsIcon, UserPlus, Target, ShieldCheck,
   BarChart3, FolderOpen, ChevronLeft, ChevronRight, HelpCircle,
-  HeartHandshake, LineChart, Landmark, ListChecks, Bell, ArrowLeftRight, MapPin, Receipt, MessageSquare,
+  HeartHandshake, LineChart, Landmark, ListChecks, Bell, ArrowLeftRight, MapPin, Receipt, MessageSquare, Inbox,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TopBar } from "@/components/TopBar";
@@ -20,6 +20,7 @@ const navGroups: NavGroup[] = [
     label: "Main",
     items: [
       { to: "/app/dashboard", label: "Dashboard", icon: LayoutDashboard, roles: ANY_ADMIN },
+      { to: "/app/approvals", label: "Approvals", icon: Inbox, roles: [...MANAGER_ROLES] },
       { to: "/app/employees", label: "Employees", icon: Users, roles: HR_ROLES },
       { to: "/app/payroll", label: "Payroll", icon: Wallet, roles: PAYROLL_ROLES },
       { to: "/app/pay-on-demand", label: "Pay On-Demand", icon: Wallet, roles: PAYROLL_ROLES },
@@ -86,6 +87,7 @@ const ALL_NAV_LABELS: Record<string, string> = {
   "/app/live-map": "Live Map",
   "/app/expense-requests": "Expenses",
   "/app/requests": "Requests",
+  "/app/approvals": "Approvals",
 };
 
 export function AppShell() {
@@ -113,10 +115,13 @@ export function AppShell() {
       if (!data.session) { navigate({ to: "/auth" }); return; }
       const uid = data.session.user.id;
       setUserEmail(data.session.user.email ?? "");
-      const [{ data: prof }, { data: roles }, { count: draftRuns }] = await Promise.all([
+      const [{ data: prof }, { data: roles }, { count: draftRuns }, ptoP, expP, swapP] = await Promise.all([
         supabase.from("profiles").select("company_name").eq("id", uid).maybeSingle(),
         supabase.from("user_roles").select("role").eq("user_id", uid).limit(1),
         supabase.from("payroll_runs").select("*", { count: "exact", head: true }).eq("status", "draft"),
+        supabase.from("pto_entries").select("*", { count: "exact", head: true }).eq("status", "pending"),
+        supabase.from("expense_requests").select("*", { count: "exact", head: true }).eq("status", "pending"),
+        supabase.from("shift_swap_requests").select("*", { count: "exact", head: true }).eq("status", "pending"),
       ]);
       setCompanyName(prof?.company_name || "Your company");
       const r = (roles && roles[0]?.role) || "employee";
@@ -125,7 +130,8 @@ export function AppShell() {
         navigate({ to: "/employee/home", replace: true });
         return;
       }
-      setBadges({ "/app/payroll": draftRuns ?? 0 });
+      const pendingTotal = (ptoP.count ?? 0) + (expP.count ?? 0) + (swapP.count ?? 0);
+      setBadges({ "/app/payroll": draftRuns ?? 0, "/app/approvals": pendingTotal });
       setChecking(false);
     });
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => {
