@@ -200,6 +200,7 @@ export const calculatePayrollRun = createServerFn({ method: "POST" })
         })),
         stateUnemploymentRate: config.sutaRate,
         stateUnemploymentWageBase: config.sutaWageBase,
+        workState: (emp as any).state ?? config.state,
         ytdGrossBeforeRun: ytdRow.gross,
         ytdSocialSecurityWages: ytdRow.ss,
       });
