@@ -262,6 +262,69 @@ function TaxFilingPage() {
         </div>
       </section>
 
+      {/* E-file output generator */}
+      <section className="rounded-2xl border unit-hairline bg-white p-6 shadow-soft">
+        <div className="flex flex-wrap items-end justify-between gap-3 mb-4">
+          <div>
+            <h2 className="font-display text-xl font-bold text-slate-900">E-file ready outputs</h2>
+            <p className="text-sm text-slate-500">Generate IRS/SSA-compliant filings directly from your payroll runs.</p>
+          </div>
+          <div className="flex gap-2">
+            <Select value={String(year)} onValueChange={(v) => setYear(Number(v))}>
+              <SelectTrigger className="w-[110px]"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {[currentYear, currentYear - 1, currentYear - 2].map((y) => (
+                  <SelectItem key={y} value={String(y)}>{y}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={String(quarter)} onValueChange={(v) => setQuarter(Number(v) as 1 | 2 | 3 | 4)}>
+              <SelectTrigger className="w-[110px]"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {[1, 2, 3, 4].map((q) => <SelectItem key={q} value={String(q)}>Q{q}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <EFileCard
+            title="Form 941"
+            subtitle={`${year} Q${quarter} — Quarterly federal`}
+            spec="IRS line-numbered JSON + human summary"
+            icon={<FileCode2 className="h-5 w-5 text-primary" />}
+            loading={generating === "941"}
+            onClick={downloadForm941}
+          />
+          <EFileCard
+            title="W-2 / W-3 (EFW2)"
+            subtitle={`${year} annual — SSA submission`}
+            spec="SSA Pub 42-007 fixed-width (512 char)"
+            icon={<FileText className="h-5 w-5 text-primary" />}
+            loading={generating === "w2"}
+            onClick={downloadW2EFW2}
+          />
+          <EFileCard
+            title="1099-NEC"
+            subtitle={`${year} annual — IRS submission`}
+            spec="IRS Pub 1220 fixed-width (750 char)"
+            icon={<FileCode2 className="h-5 w-5 text-primary" />}
+            loading={generating === "1099"}
+            onClick={download1099NEC}
+          />
+          <EFileCard
+            title="State Quarterly"
+            subtitle={`${year} Q${quarter} — wages & withholding`}
+            spec="CSV with SUI taxable wages"
+            icon={<FileSpreadsheet className="h-5 w-5 text-primary" />}
+            loading={generating === "state"}
+            onClick={downloadStateQuarterly}
+          />
+        </div>
+        <p className="mt-4 text-xs text-slate-400">
+          Files are formatted per IRS / SSA specifications and import-ready for any registered transmitter (TCC / BSO / state DOR). EIN, SSN, and addresses are pulled from employee records.
+        </p>
+      </section>
+
       <div className="rounded-2xl border bg-card">
         <div className="border-b px-5 py-3 text-sm font-medium flex items-center gap-2"><Calendar className="h-4 w-4" /> Filing calendar</div>
         <div className="overflow-x-auto">
