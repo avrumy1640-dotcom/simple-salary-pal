@@ -13,6 +13,7 @@ import { PageHeader } from "@/components/PageHeader";
 import { toast } from "sonner";
 import { CalendarDays, ArrowLeftRight, X } from "lucide-react";
 import { requestSwap, cancelSwap, declineSwapAsTarget } from "@/lib/scheduling.functions";
+import { useRealtimeRefresh } from "@/lib/useRealtimeRefresh";
 
 export const Route = createFileRoute("/employee/schedule")({
   head: () => ({ meta: [{ title: "My schedule — Paylo" }] }),
@@ -105,6 +106,7 @@ function EmployeeSchedulePage() {
     }
   }
   useEffect(() => { load(); }, []);
+  useRealtimeRefresh(["shifts", "shift_swap_requests"], load, { companyId });
 
   const pendingShiftIds = useMemo(() => new Set(swaps.filter(s => s.status === "pending").map(s => s.shift_id)), [swaps]);
 
