@@ -34,14 +34,14 @@ function ResetPasswordPage() {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (password.length < 6) { toast.error("Password must be at least 6 characters."); return; }
+    if (password.length < 8) { toast.error("Password must be at least 8 characters."); return; }
     if (password !== confirm) { toast.error("Passwords do not match."); return; }
     setLoading(true);
     try {
       const { error } = await supabase.auth.updateUser({ password });
       if (error) throw error;
-      toast.success("Password updated. You're signed in.");
-      navigate({ to: "/auth" });
+      await supabase.auth.signOut();
+      navigate({ to: "/auth", search: { reset: "1" }, replace: true });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not update password");
     } finally {
@@ -62,11 +62,11 @@ function ResetPasswordPage() {
           <form onSubmit={onSubmit} className="mt-5 space-y-4">
             <div>
               <Label htmlFor="pwd">New password</Label>
-              <Input id="pwd" type="password" minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} required />
+              <Input id="pwd" type="password" minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} required />
             </div>
             <div>
               <Label htmlFor="pwd2">Confirm password</Label>
-              <Input id="pwd2" type="password" minLength={6} value={confirm} onChange={(e) => setConfirm(e.target.value)} required />
+              <Input id="pwd2" type="password" minLength={8} value={confirm} onChange={(e) => setConfirm(e.target.value)} required />
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Updating…" : "Update password"}

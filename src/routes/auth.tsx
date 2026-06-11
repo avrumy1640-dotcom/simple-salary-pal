@@ -1,8 +1,10 @@
 import { createFileRoute, useNavigate, Link, useSearch } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
+import { completeAccountSetup } from "@/lib/auth.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,6 +14,7 @@ import { toast } from "sonner";
 
 const authSearch = z.object({
   confirmed: z.string().optional(),
+  reset: z.string().optional(),
   mode: z.enum(["signin", "signup"]).optional(),
 });
 
@@ -29,77 +32,139 @@ export const Route = createFileRoute("/auth")({
 });
 
 type AccountType = "employer" | "employee";
+type AuthMode = "signin" | "signup" | "setup";
 
-async function routeByRoleOrProfile(navigate: ReturnType<typeof useNavigate>, uid: string) {
+type FieldErrors = Partial<Record<"fullName" | "email" | "password" | "confirmPassword" | "accountType" | "companyName", string>>;
+
+const ADMIN_ROLES = new Set(["owner", "admin", "payroll_admin", "hr_admin", "recruiter", "benefits_admin", "accountant", "auditor", "manager", "supervisor"]);
+
+function splitName(fullName: string) {
+  const parts = fullName.trim().split(/\s+/).filter(Boolean);
+  return {
+    firstName: parts[0] ?? "",
+    lastName: parts.slice(1).join(" "),
+  };
+}
+
+function isValidEmail(value: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+}
+
+function authErrorMessage(message: string, context: "signin" | "signup" | "reset" = "signup") {
+  const m = message.toLowerCase();
+  if (m.includes("already registered") || m.includes("user already") || m.includes("already exists") || m.includes("duplicate")) {
+    return "An account with this email already exists. Please sign in instead.";
+  }
+  if (m.includes("invalid email") || m.includes("email address is invalid")) {
+    return "Please enter a valid email address.";
+  }
+  if (m.includes("password") && (m.includes("short") || m.includes("weak") || m.includes("6 characters") || m.includes("8 characters"))) {
+    return "Password must be at least 8 characters.";
+  }
+  if (m.includes("invalid login") || m.includes("invalid credentials") || m.includes("wrong") || m.includes("email not confirmed")) {
+    return context === "signin" ? "Incorrect email or password. Please try again." : "Something went wrong. Please try again.";
+  }
+  if (m.includes("not found") || m.includes("user not found")) {
+    return "No account found with this email. Please create an account.";
+  }
+  return context === "signin" ? "Something went wrong. Please try again." : message || "Something went wrong. Please try again.";
+}
+
+async function getUserDestination(uid: string) {
   try {
     const [{ data: roles }, { data: profile }] = await Promise.all([
       supabase.from("user_roles").select("role").eq("user_id", uid).limit(1),
       supabase.from("profiles").select("account_type").eq("id", uid).maybeSingle(),
     ]);
-    const adminRoles = new Set(["owner","admin","payroll_admin","hr_admin","recruiter","benefits_admin","accountant","auditor","manager","supervisor"]);
     const r = roles?.[0]?.role;
-    if (r && adminRoles.has(r)) { navigate({ to: "/app/dashboard" }); return; }
-    if ((profile as any)?.account_type === "employer") { navigate({ to: "/app/dashboard" }); return; }
-    navigate({ to: "/employee/home" });
+    if (r && ADMIN_ROLES.has(r)) return "/app/dashboard" as const;
+    if ((profile as any)?.account_type === "employer") return "/app/dashboard" as const;
+    if ((profile as any)?.account_type === "employee" || r === "employee") return "/employee/home" as const;
+    return null;
   } catch (e) {
-    console.error("[auth] post-signin routing error, falling back:", e);
-    navigate({ to: "/employee/home" });
+    console.error("[auth] post-signin routing error:", e);
+    return null;
   }
+}
+
+async function routeByCurrentUser(navigate: ReturnType<typeof useNavigate>, uid: string, setMode: (mode: AuthMode) => void) {
+  const destination = await getUserDestination(uid);
+  if (destination) navigate({ to: destination, replace: true });
+  else setMode("setup");
 }
 
 function AuthPage() {
   const navigate = useNavigate();
   const search = useSearch({ from: "/auth" });
-  const [mode, setMode] = useState<"signin" | "signup">(search.mode ?? "signin");
+  const setupAccount = useServerFn(completeAccountSetup);
+  const [mode, setMode] = useState<AuthMode>(search.mode ?? "signin");
   const [accountType, setAccountType] = useState<AccountType>("employer");
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [companyName, setCompanyName] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [companyName, setCompanyName] = useState("My Company");
+  const [errors, setErrors] = useState<FieldErrors>({});
   const [loading, setLoading] = useState(false);
+
+  const title = useMemo(() => {
+    if (mode === "signup") return "Create your account";
+    if (mode === "setup") return "Finish account setup";
+    return "Sign in";
+  }, [mode]);
 
   useEffect(() => {
     if (search.confirmed === "1") {
       toast.success("Email confirmed! You can sign in now.");
     }
+    if (search.reset === "1") {
+      toast.success("Password updated. Please sign in.");
+    }
     supabase.auth.getSession().then(async ({ data }) => {
-      if (data.session) await routeByRoleOrProfile(navigate, data.session.user.id);
+      if (!data.session) return;
+      const user = data.session.user;
+      setEmail(user.email ?? "");
+      setFullName((user.user_metadata?.full_name as string | undefined) ?? (user.user_metadata?.name as string | undefined) ?? "");
+      await routeByCurrentUser(navigate, user.id, setMode);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  function friendlyError(msg: string): string {
-    const m = msg.toLowerCase();
-    if (m.includes("already registered") || m.includes("user already") || m.includes("already exists")) {
-      return "An account with this email already exists. Try signing in instead.";
-    }
-    if (m.includes("invalid login") || m.includes("invalid credentials")) {
-      return "Incorrect email or password. Please try again.";
-    }
-    if (m.includes("email not confirmed")) {
-      return "Please confirm your email first. Check your inbox for the verification link.";
-    }
-    if (m.includes("password") && (m.includes("short") || m.includes("weak") || m.includes("6 characters"))) {
-      return "Please choose a stronger password with at least 8 characters.";
-    }
-    if (m.includes("network") || m.includes("fetch")) {
-      return "Connection problem. Please check your internet and try again.";
-    }
-    if (m.includes("rate") || m.includes("too many")) {
-      return "Too many attempts. Please wait a moment and try again.";
-    }
-    return msg;
+  function validateSignup() {
+    const next: FieldErrors = {};
+    if (!fullName.trim()) next.fullName = "Enter your full name.";
+    if (!isValidEmail(email)) next.email = "Please enter a valid email address.";
+    if (password.length < 8) next.password = "Password must be at least 8 characters.";
+    if (confirmPassword !== password) next.confirmPassword = "Passwords must match.";
+    if (!accountType) next.accountType = "Choose Employer or Employee.";
+    setErrors(next);
+    return Object.keys(next).length === 0;
+  }
+
+  function validateSignin() {
+    const next: FieldErrors = {};
+    if (!email.trim()) next.email = "Enter your email address.";
+    else if (!isValidEmail(email)) next.email = "Please enter a valid email address.";
+    if (!password) next.password = "Enter your password.";
+    setErrors(next);
+    return Object.keys(next).length === 0;
+  }
+
+  function validateSetup() {
+    const next: FieldErrors = {};
+    if (accountType === "employer" && !companyName.trim()) next.companyName = "Enter your company name.";
+    setErrors(next);
+    return Object.keys(next).length === 0;
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setErrors({});
     setLoading(true);
     try {
       if (mode === "signup") {
-        if (!firstName.trim() || !lastName.trim()) throw new Error("Please enter your first and last name.");
-        if (accountType === "employer" && !companyName.trim()) throw new Error("Please enter your company name.");
-        if (password.length < 8) throw new Error("Please choose a stronger password with at least 8 characters.");
+        if (!validateSignup()) return;
+        const { firstName, lastName } = splitName(fullName);
 
         const { data, error } = await supabase.auth.signUp({
           email: email.trim(),
@@ -109,49 +174,80 @@ function AuthPage() {
             data: {
               first_name: firstName.trim(),
               last_name: lastName.trim(),
-              full_name: `${firstName.trim()} ${lastName.trim()}`,
-              company_name: accountType === "employer" ? companyName.trim() : null,
+              full_name: fullName.trim(),
+              company_name: accountType === "employer" ? "My Company" : null,
               account_type: accountType,
             },
           },
         });
         if (error) throw error;
+        if (data.user?.identities && data.user.identities.length === 0) {
+          throw new Error("An account with this email already exists. Please sign in instead.");
+        }
 
-        // With auto-confirm enabled, signUp returns a session. If not, sign in directly.
-        if (!data.session) {
+        let user = data.user ?? data.session?.user ?? null;
+        if (!data.session || !user) {
           const { data: signIn, error: signInError } = await supabase.auth.signInWithPassword({
             email: email.trim(),
             password,
           });
           if (signInError) throw signInError;
-          if (signIn.user) {
-            toast.success("Account created successfully. Welcome to the app.");
-            await routeByRoleOrProfile(navigate, signIn.user.id);
-          }
-        } else {
-          toast.success("Account created successfully. Welcome to the app.");
-          await routeByRoleOrProfile(navigate, data.session.user.id);
+          user = signIn.user;
         }
+        if (!user) throw new Error("Something went wrong. Please try again.");
+
+        const setup = await setupAccount({ data: { accountType, fullName: fullName.trim(), companyName: "My Company" } });
+        toast.success("Account created. Welcome.");
+        navigate({ to: setup.destination === "employer" ? "/app/dashboard" : "/employee/home", replace: true });
       } else {
+        if (!validateSignin()) return;
         const { data, error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
         if (error) throw error;
-        if (data.user) await routeByRoleOrProfile(navigate, data.user.id);
+        if (data.user) await routeByCurrentUser(navigate, data.user.id, setMode);
       }
     } catch (err) {
       console.error("[auth] submit error:", err);
       const raw = err instanceof Error ? err.message : "Something went wrong";
-      toast.error(friendlyError(raw));
+      toast.error(authErrorMessage(raw, mode === "signin" ? "signin" : "signup"));
     } finally {
       setLoading(false);
     }
   }
 
   async function handleGoogle() {
-    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: `${window.location.origin}/auth` });
-    if (result.error) { toast.error("Google sign-in failed"); return; }
+    setLoading(true);
+    const result = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: `${window.location.origin}/auth`,
+      extraParams: { prompt: "select_account" },
+    });
+    setLoading(false);
+    if (result.error) { toast.error("Something went wrong. Please try again."); return; }
     if (result.redirected) return;
     const { data: { user } } = await supabase.auth.getUser();
-    if (user) await routeByRoleOrProfile(navigate, user.id);
+    if (user) {
+      setEmail(user.email ?? "");
+      setFullName((user.user_metadata?.full_name as string | undefined) ?? (user.user_metadata?.name as string | undefined) ?? "");
+      await routeByCurrentUser(navigate, user.id, setMode);
+    }
+  }
+
+  async function handleSetup(e: React.FormEvent) {
+    e.preventDefault();
+    setErrors({});
+    if (!validateSetup()) return;
+    setLoading(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      const name = fullName.trim() || (user?.user_metadata?.full_name as string | undefined) || (user?.user_metadata?.name as string | undefined) || user?.email?.split("@")[0] || "User";
+      const setup = await setupAccount({ data: { accountType, fullName: name, companyName: accountType === "employer" ? companyName.trim() : undefined } });
+      toast.success("Account created. Welcome.");
+      navigate({ to: setup.destination === "employer" ? "/app/dashboard" : "/employee/home", replace: true });
+    } catch (err) {
+      console.error("[auth] setup error:", err);
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -167,80 +263,81 @@ function AuthPage() {
         </Link>
 
         <div className="surface-glass rounded-[2rem] p-6 shadow-float text-center md:p-7">
-          <h1 className="font-display text-3xl font-bold text-foreground">{mode === "signin" ? "Sign in" : "Create your account"}</h1>
+          <h1 className="font-display text-3xl font-bold text-foreground">{title}</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            {mode === "signin" ? "Pick up where you left off." : "Start running payroll in minutes."}
+            {mode === "signin" ? "Pick up where you left off." : mode === "setup" ? "Choose the workspace you need." : "Start with email and password."}
           </p>
 
-          <Button
-            variant="outline"
-            type="button"
-            className="mt-6 w-full border-border bg-card text-foreground hover:bg-muted hover:border-primary/30 transition-all"
-            onClick={handleGoogle}
-          >
-            Continue with Google
-          </Button>
+          {mode !== "setup" && (
+            <>
+              <Button
+                variant="outline"
+                type="button"
+                className="mt-6 w-full border-border bg-card text-foreground hover:bg-muted hover:border-primary/30 transition-all"
+                onClick={handleGoogle}
+                disabled={loading}
+              >
+                Continue with Google
+              </Button>
 
-          <div className="my-4 flex items-center gap-3 text-xs text-muted-foreground">
-            <div className="h-px flex-1 bg-border" /> OR <div className="h-px flex-1 bg-border" />
-          </div>
+              <div className="my-4 flex items-center gap-3 text-xs text-muted-foreground">
+                <div className="h-px flex-1 bg-border" /> OR <div className="h-px flex-1 bg-border" />
+              </div>
+            </>
+          )}
 
-          <form onSubmit={handleSubmit} className="space-y-4 text-center">
+          {mode === "setup" ? (
+            <form onSubmit={handleSetup} className="mt-6 space-y-4 text-left">
+              <AccountTypePicker accountType={accountType} setAccountType={setAccountType} />
+              {errors.accountType && <p className="text-xs font-medium text-destructive">{errors.accountType}</p>}
+              {accountType === "employer" && (
+                <div>
+                  <Label htmlFor="setupCompany" className="text-foreground">Company name</Label>
+                  <Input id="setupCompany" value={companyName} onChange={(e) => setCompanyName(e.target.value)} required maxLength={120} />
+                  {errors.companyName && <p className="mt-1 text-xs font-medium text-destructive">{errors.companyName}</p>}
+                </div>
+              )}
+              <Button type="submit" className="w-full bg-primary font-bold text-primary-foreground" disabled={loading}>
+                {loading ? "Saving…" : "Continue"}
+              </Button>
+            </form>
+          ) : (
+          <form onSubmit={handleSubmit} className="space-y-4 text-left">
             {mode === "signup" && (
               <>
+                <AccountTypePicker accountType={accountType} setAccountType={setAccountType} />
+                {errors.accountType && <p className="text-xs font-medium text-destructive">{errors.accountType}</p>}
+
                 <div>
-                  <Label className="text-foreground">I'm signing up as</Label>
-                  <RadioGroup
-                    value={accountType}
-                    onValueChange={(v) => setAccountType(v as AccountType)}
-                    className="mt-2 grid grid-cols-2 gap-2"
-                  >
-                    <label className={`flex flex-col items-center justify-center cursor-pointer rounded-lg border p-3 text-sm text-center ${accountType==="employer" ? "border-primary bg-primary/5" : "border-border"}`}>
-                      <RadioGroupItem value="employer" className="sr-only" />
-                      <div className="flex items-center gap-1.5 font-semibold">Employer / Admin</div>
-                      <div className="text-xs text-muted-foreground">Run payroll & manage a team</div>
-                    </label>
-                    <label className={`flex flex-col items-center justify-center cursor-pointer rounded-lg border p-3 text-sm text-center ${accountType==="employee" ? "border-primary bg-primary/5" : "border-border"}`}>
-                      <RadioGroupItem value="employee" className="sr-only" />
-                      <div className="flex items-center gap-1.5 font-semibold">Employee</div>
-                      <div className="text-xs text-muted-foreground">Access pay & time off</div>
-                    </label>
-                  </RadioGroup>
+                  <Label htmlFor="fullName" className="text-foreground">Full Name</Label>
+                  <Input id="fullName" autoComplete="name" value={fullName} onChange={(e) => setFullName(e.target.value)} required maxLength={120} />
+                  {errors.fullName && <p className="mt-1 text-xs font-medium text-destructive">{errors.fullName}</p>}
                 </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <Label htmlFor="firstName" className="text-foreground">First name</Label>
-                    <Input id="firstName" value={firstName} onChange={(e) => setFirstName(e.target.value)} required maxLength={60} />
-                  </div>
-                  <div>
-                    <Label htmlFor="lastName" className="text-foreground">Last name</Label>
-                    <Input id="lastName" value={lastName} onChange={(e) => setLastName(e.target.value)} required maxLength={60} />
-                  </div>
-                </div>
-
-                {accountType === "employer" && (
-                  <div>
-                    <Label htmlFor="company" className="text-foreground">Company name</Label>
-                    <Input id="company" value={companyName} onChange={(e) => setCompanyName(e.target.value)} required maxLength={120} />
-                  </div>
-                )}
               </>
             )}
 
             <div>
-              <Label htmlFor="email" className="text-foreground">Email</Label>
+              <Label htmlFor="email" className="text-foreground">Email Address</Label>
               <Input id="email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+              {errors.email && <p className="mt-1 text-xs font-medium text-destructive">{errors.email}</p>}
             </div>
             <div>
               <Label htmlFor="password" className="text-foreground">Password</Label>
-              <Input id="password" type="password" autoComplete={mode === "signin" ? "current-password" : "new-password"} value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
+              <Input id="password" type="password" autoComplete={mode === "signin" ? "current-password" : "new-password"} value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8} />
+              {errors.password && <p className="mt-1 text-xs font-medium text-destructive">{errors.password}</p>}
               {mode === "signin" && (
                 <div className="mt-1 text-center">
                   <Link to="/forgot-password" className="text-xs text-primary hover:underline">Forgot password?</Link>
                 </div>
               )}
             </div>
+            {mode === "signup" && (
+              <div>
+                <Label htmlFor="confirmPassword" className="text-foreground">Confirm Password</Label>
+                <Input id="confirmPassword" type="password" autoComplete="new-password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required minLength={8} />
+                {errors.confirmPassword && <p className="mt-1 text-xs font-medium text-destructive">{errors.confirmPassword}</p>}
+              </div>
+            )}
 
             <Button
               type="submit"
@@ -250,20 +347,47 @@ function AuthPage() {
               {loading ? "Please wait…" : mode === "signin" ? "Sign in" : "Create account"}
             </Button>
           </form>
+          )}
 
-          <button
-            type="button"
-            className="mt-4 w-full text-center text-sm text-muted-foreground hover:text-foreground transition-colors"
-            onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
-          >
-            {mode === "signin" ? "New here? Create an account" : "Already have an account? Sign in"}
-          </button>
+          {mode !== "setup" && (
+            <button
+              type="button"
+              className="mt-4 w-full text-center text-sm text-muted-foreground hover:text-foreground transition-colors"
+              onClick={() => { setErrors({}); setMode(mode === "signin" ? "signup" : "signin"); }}
+            >
+              {mode === "signin" ? "Create Account" : "Already have an account? Sign in"}
+            </button>
+          )}
           <Link to="/help/access-denied" className="mt-3 block text-center text-xs font-semibold text-muted-foreground hover:text-foreground hover:underline">
             Seeing access denied?
           </Link>
         </div>
 
       </div>
+    </div>
+  );
+}
+
+function AccountTypePicker({ accountType, setAccountType }: { accountType: AccountType; setAccountType: (value: AccountType) => void }) {
+  return (
+    <div>
+      <Label className="text-foreground">Account Type</Label>
+      <RadioGroup
+        value={accountType}
+        onValueChange={(v) => setAccountType(v as AccountType)}
+        className="mt-2 grid grid-cols-2 gap-2"
+      >
+        <label className={`flex min-h-28 cursor-pointer flex-col items-center justify-center rounded-lg border p-3 text-center text-sm transition ${accountType === "employer" ? "border-primary bg-primary/5" : "border-border hover:bg-muted/40"}`}>
+          <RadioGroupItem value="employer" className="sr-only" />
+          <div className="font-semibold text-foreground">Employer</div>
+          <div className="mt-1 text-xs text-muted-foreground">Run payroll and manage a team</div>
+        </label>
+        <label className={`flex min-h-28 cursor-pointer flex-col items-center justify-center rounded-lg border p-3 text-center text-sm transition ${accountType === "employee" ? "border-primary bg-primary/5" : "border-border hover:bg-muted/40"}`}>
+          <RadioGroupItem value="employee" className="sr-only" />
+          <div className="font-semibold text-foreground">Employee</div>
+          <div className="mt-1 text-xs text-muted-foreground">Access pay, time off, and profile</div>
+        </label>
+      </RadioGroup>
     </div>
   );
 }

@@ -111,7 +111,7 @@ export function AppShell() {
       const r = (roles && roles[0]?.role) || "employee";
       setRole(r);
       if (!isAdmin(r) && !isManager(r)) {
-        navigate({ to: "/employee/home" });
+        navigate({ to: "/employee/home", replace: true });
         return;
       }
       setBadges({ "/app/payroll": draftRuns ?? 0 });
@@ -125,7 +125,7 @@ export function AppShell() {
 
   async function signOut() {
     await supabase.auth.signOut();
-    navigate({ to: "/auth" });
+    navigate({ to: "/auth", replace: true });
   }
 
   if (checking) {
