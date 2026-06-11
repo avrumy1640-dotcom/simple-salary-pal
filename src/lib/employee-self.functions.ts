@@ -98,3 +98,53 @@ export const listMyForms = createServerFn({ method: "GET" })
       .limit(50);
     return { forms: data ?? [] };
   });
+
+/**
+ * Employee self-update — whitelist of safe contact/address columns only.
+ * Sensitive payroll fields (pay, tax, banking, status) require a reviewed
+ * hr_forms submission via submitEmployeeForm().
+ */
+export const updateMyProfile = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z
+      .object({
+        phone: z.string().max(40).optional().nullable(),
+        address_line1: z.string().max(200).optional().nullable(),
+        address_line2: z.string().max(200).optional().nullable(),
+        city: z.string().max(100).optional().nullable(),
+        state: z.string().max(40).optional().nullable(),
+        zip: z.string().max(20).optional().nullable(),
+        emergency_contact_name: z.string().max(200).optional().nullable(),
+        emergency_contact_phone: z.string().max(40).optional().nullable(),
+        emergency_contact_relationship: z.string().max(80).optional().nullable(),
+        preferred_name: z.string().max(120).optional().nullable(),
+        personal_email: z.string().email().max(200).optional().nullable(),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const { data: emp, error: empErr } = await supabase
+      .from("employees")
+      .select("id")
+      .eq("user_id", userId)
+      .limit(1)
+      .maybeSingle();
+    if (empErr) throw new Error(empErr.message);
+    if (!emp) throw new Error("No employee record found.");
+
+    // Strip undefined keys so we never null-out unrelated columns.
+    const patch: Record<string, any> = {};
+    for (const [k, v] of Object.entries(data)) if (v !== undefined) patch[k] = v;
+    if (Object.keys(patch).length === 0) return { ok: true, updated: 0 };
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
+      .from("employees")
+      .update(patch as any)
+      .eq("id", emp.id);
+    if (error) throw new Error(error.message);
+    return { ok: true, updated: Object.keys(patch).length };
+  });
+

@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useServerFn } from "@tanstack/react-start";
 import { useMyEmployee } from "@/lib/useMyEmployee";
+import { updateMyProfile, submitEmployeeForm } from "@/lib/employee-self.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,6 +26,8 @@ function Field({ label, value }: { label: string; value: string }) {
 
 function Page() {
   const { employee, loading, reload } = useMyEmployee();
+  const callUpdate = useServerFn(updateMyProfile);
+  const callSubmitForm = useServerFn(submitEmployeeForm);
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState({
     phone: "", address_line1: "", city: "", zip: "",
@@ -32,6 +35,7 @@ function Page() {
   });
   const [bankOpen, setBankOpen] = useState(false);
   const [bank, setBank] = useState({ bank_name: "", account_type: "checking", routing: "", account: "", confirm: "" });
+  const [signedName, setSignedName] = useState("");
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
@@ -44,38 +48,53 @@ function Page() {
       emergency_contact_name: employee.emergency_contact_name ?? "",
       emergency_contact_phone: employee.emergency_contact_phone ?? "",
     });
+    setSignedName(employee.full_name ?? "");
   }, [employee?.id]);
 
   async function save() {
     if (!employee) return;
     setBusy(true);
-    const { error } = await supabase.from("employees").update(form).eq("id", employee.id);
-    setBusy(false);
-    if (error) { toast.error(error.message); return; }
-    toast.success("Your information has been updated.");
-    setEditing(false);
-    reload();
+    try {
+      await callUpdate({ data: form });
+      toast.success("Your information has been updated.");
+      setEditing(false);
+      reload();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Could not save");
+    } finally {
+      setBusy(false);
+    }
   }
 
   async function saveBank() {
     if (!employee) return;
     if (bank.account !== bank.confirm) { toast.error("Account numbers do not match"); return; }
-    if (!bank.routing || bank.routing.length < 4 || !bank.account || bank.account.length < 4) {
-      toast.error("Please enter valid routing and account numbers"); return;
+    if (!bank.routing || bank.routing.length < 9 || !bank.account || bank.account.length < 4) {
+      toast.error("Please enter a valid 9-digit routing number and account number"); return;
     }
+    if (!signedName.trim()) { toast.error("Please sign with your full legal name"); return; }
     setBusy(true);
-    const { error } = await supabase.from("employees").update({
-      bank_account_type: bank.account_type,
-      bank_routing_last4: bank.routing.slice(-4),
-      bank_account_last4: bank.account.slice(-4),
-      direct_deposit_enabled: true,
-    }).eq("id", employee.id);
-    setBusy(false);
-    if (error) { toast.error(error.message); return; }
-    toast.success("Your direct deposit has been updated. Changes take effect on your next paycheck.");
-    setBankOpen(false);
-    setBank({ bank_name: "", account_type: "checking", routing: "", account: "", confirm: "" });
-    reload();
+    try {
+      await callSubmitForm({
+        data: {
+          form_type: "direct_deposit",
+          signed_name: signedName.trim(),
+          data: {
+            bank_name: bank.bank_name,
+            account_type: bank.account_type,
+            routing: bank.routing,
+            account: bank.account,
+          },
+        },
+      });
+      toast.success("Direct deposit submitted for HR review. You'll be notified once approved.");
+      setBankOpen(false);
+      setBank({ bank_name: "", account_type: "checking", routing: "", account: "", confirm: "" });
+    } catch (e: any) {
+      toast.error(e?.message ?? "Could not submit");
+    } finally {
+      setBusy(false);
+    }
   }
 
   if (loading) return null;
@@ -180,8 +199,9 @@ function Page() {
             </DialogTrigger>
             <DialogContent>
               <DialogHeader><DialogTitle>{employee.direct_deposit_enabled ? "Update" : "Add"} direct deposit</DialogTitle></DialogHeader>
-              <div className="rounded-lg bg-emerald-50 px-3 py-2.5 text-xs text-emerald-800 flex items-center gap-2">
-                <Lock className="h-3.5 w-3.5" /> Your banking information is encrypted and secure.
+              <div className="rounded-lg bg-amber-50 px-3 py-2.5 text-xs text-amber-900 flex items-start gap-2">
+                <Lock className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                <span>Submissions are reviewed by HR before they take effect. Your full account & routing numbers are stored securely and never shown back to you.</span>
               </div>
               <div className="space-y-3">
                 <div><Label>Bank name</Label><Input className="h-12" value={bank.bank_name} onChange={(e) => setBank({ ...bank, bank_name: e.target.value })} placeholder="e.g. Chase" /></div>
@@ -196,13 +216,14 @@ function Page() {
                     ))}
                   </div>
                 </div>
-                <div><Label>Routing number</Label><Input className="h-12" inputMode="numeric" value={bank.routing} onChange={(e) => setBank({ ...bank, routing: e.target.value.replace(/\D/g, "") })} maxLength={9} /></div>
+                <div><Label>Routing number (9 digits)</Label><Input className="h-12" inputMode="numeric" value={bank.routing} onChange={(e) => setBank({ ...bank, routing: e.target.value.replace(/\D/g, "") })} maxLength={9} /></div>
                 <div><Label>Account number</Label><Input className="h-12" inputMode="numeric" value={bank.account} onChange={(e) => setBank({ ...bank, account: e.target.value.replace(/\D/g, "") })} /></div>
                 <div><Label>Confirm account number</Label><Input className="h-12" inputMode="numeric" value={bank.confirm} onChange={(e) => setBank({ ...bank, confirm: e.target.value.replace(/\D/g, "") })} /></div>
+                <div><Label>E-sign with your full legal name</Label><Input className="h-12" value={signedName} onChange={(e) => setSignedName(e.target.value)} placeholder="Type your full name" /></div>
               </div>
               <DialogFooter className="gap-2">
                 <Button variant="ghost" onClick={() => setBankOpen(false)}>Cancel</Button>
-                <Button onClick={saveBank} disabled={busy}>{busy ? "Saving…" : "Save new account"}</Button>
+                <Button onClick={saveBank} disabled={busy}>{busy ? "Submitting…" : "Submit for HR review"}</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
