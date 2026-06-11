@@ -19,6 +19,10 @@ const EMPLOYEE_PORTAL_ADMIN_ROLES = new Set([
 ]);
 
 type DbClient = SupabaseClient<Database>;
+type ProfileSummary = { company_name: string | null; full_name: string | null; account_type: string | null } | null;
+type RoleSummary = { role: string; company_id: string | null };
+type EmployeeSummary = { id: string; company_id: string; user_id: string | null; full_name: string; email: string | null } | null;
+type CompanySummary = { legal_name: string | null; dba: string | null } | null;
 
 const settingsSchema = z.object({
   company_id: z.string().uuid(),
@@ -111,16 +115,27 @@ export const getEmployeePortalIdentity = createServerFn({ method: "GET" })
 
     const [{ data: authUser }, { data: profile }, { data: roles }] = await Promise.all([
       supabaseAdmin.auth.admin.getUserById(userId),
-      supabaseAdmin.from("profiles").select("company_name, full_name, account_type").eq("id", userId).maybeSingle(),
+      supabaseAdmin
+        .from("profiles")
+        .select("company_name, full_name, account_type")
+        .eq("id", userId)
+        .maybeSingle(),
       supabaseAdmin.from("user_roles").select("role, company_id").eq("user_id", userId),
     ]);
+    const userProfile = profile as ProfileSummary;
+    const userRoles = (roles ?? []) as RoleSummary[];
 
     const email = authUser?.user?.email ?? "";
-    const roleNames = (roles ?? []).map((r: any) => String(r.role));
-    const isEmployee = roleNames.includes("employee") || (profile as any)?.account_type === "employee";
+    const roleNames = userRoles.map((r) => String(r.role));
+    const isEmployee = roleNames.includes("employee") || userProfile?.account_type === "employee";
     const isAdmin = roleNames.some((role) => EMPLOYEE_PORTAL_ADMIN_ROLES.has(role));
     if (isAdmin && !isEmployee) {
-      return { destination: "admin" as const, email, fullName: (profile as any)?.full_name ?? "", companyName: (profile as any)?.company_name ?? "" };
+      return {
+        destination: "admin" as const,
+        email,
+        fullName: userProfile?.full_name ?? "",
+        companyName: userProfile?.company_name ?? "",
+      };
     }
 
     let { data: employee } = await supabaseAdmin
@@ -129,37 +144,47 @@ export const getEmployeePortalIdentity = createServerFn({ method: "GET" })
       .eq("user_id", userId)
       .limit(1)
       .maybeSingle();
+    let employeeRecord = employee as EmployeeSummary;
 
-    if (!employee && email) {
+    if (!employeeRecord && email) {
       const match = await supabaseAdmin
         .from("employees")
         .select("id, company_id, user_id, full_name, email")
         .ilike("email", email)
         .limit(1)
         .maybeSingle();
-      employee = match.data;
+      employeeRecord = match.data as EmployeeSummary;
     }
 
-    if (employee && !employee.user_id) {
-      await supabaseAdmin.from("employees").update({ user_id: userId }).eq("id", employee.id);
+    if (employeeRecord && !employeeRecord.user_id) {
+      await supabaseAdmin.from("employees").update({ user_id: userId }).eq("id", employeeRecord.id);
       await supabaseAdmin.from("company_users").upsert(
-        { company_id: employee.company_id, user_id: userId, accepted_at: new Date().toISOString() },
+        {
+          company_id: employeeRecord.company_id,
+          user_id: userId,
+          accepted_at: new Date().toISOString(),
+        },
         { onConflict: "company_id,user_id" },
       );
       await supabaseAdmin.from("user_roles").upsert(
-        { user_id: userId, company_id: employee.company_id, role: "employee" },
+        { user_id: userId, company_id: employeeRecord.company_id, role: "employee" },
         { onConflict: "user_id,company_id,role" },
       );
     }
 
-    const { data: company } = employee
-      ? await supabaseAdmin.from("companies").select("legal_name, dba").eq("id", employee.company_id).maybeSingle()
+    const { data: company } = employeeRecord
+      ? await supabaseAdmin
+          .from("companies")
+          .select("legal_name, dba")
+          .eq("id", employeeRecord.company_id)
+          .maybeSingle()
       : { data: null };
+    const companyRecord = company as CompanySummary;
 
     return {
       destination: "employee" as const,
       email,
-      fullName: employee?.full_name || (profile as any)?.full_name || email.split("@")[0] || "Employee",
-      companyName: (company as any)?.dba || (company as any)?.legal_name || (profile as any)?.company_name || "Your workplace",
+      fullName: employeeRecord?.full_name || userProfile?.full_name || email.split("@")[0] || "Employee",
+      companyName: companyRecord?.dba || companyRecord?.legal_name || userProfile?.company_name || "Your workplace",
     };
   });
