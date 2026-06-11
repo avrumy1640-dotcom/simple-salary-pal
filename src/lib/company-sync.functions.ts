@@ -176,10 +176,12 @@ export const getEmployeePortalIdentity = createServerFn({ method: "GET" })
         },
         { onConflict: "company_id,user_id" },
       );
-      await supabaseAdmin.from("user_roles").upsert(
-        { user_id: userId, company_id: employeeRecord.company_id, role: "employee" },
-        { onConflict: "user_id,company_id,role" },
-      );
+      await supabaseAdmin
+        .from("user_roles")
+        .upsert(
+          { user_id: userId, company_id: employeeRecord.company_id, role: "employee" },
+          { onConflict: "user_id,company_id,role" },
+        );
     }
 
     const { data: company } = employeeRecord
@@ -194,7 +196,12 @@ export const getEmployeePortalIdentity = createServerFn({ method: "GET" })
     return {
       destination: "employee" as const,
       email,
-      fullName: employeeRecord?.full_name || userProfile?.full_name || email.split("@")[0] || "Employee",
-      companyName: companyRecord?.dba || companyRecord?.legal_name || userProfile?.company_name || "Your workplace",
+      fullName:
+        employeeRecord?.full_name || userProfile?.full_name || email.split("@")[0] || "Employee",
+      companyName:
+        companyRecord?.dba ||
+        companyRecord?.legal_name ||
+        userProfile?.company_name ||
+        "Your workplace",
     };
   });
