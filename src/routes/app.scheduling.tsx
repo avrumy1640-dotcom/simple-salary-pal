@@ -18,6 +18,7 @@ import {
   Check, X, Copy, ClipboardPaste, Undo2, Search, MoreVertical,
 } from "lucide-react";
 import { publishWeek, decideSwap, cancelShift } from "@/lib/scheduling.functions";
+import { useRealtimeRefresh } from "@/lib/useRealtimeRefresh";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
   DropdownMenuSeparator,
@@ -106,6 +107,7 @@ function SchedulingPage() {
     setSwaps((sw.data ?? []) as Swap[]);
   }
   useEffect(() => { load(); }, [currentId, weekStart.getTime()]);
+  useRealtimeRefresh(["shifts", "shift_swap_requests"], load, { companyId: currentId });
 
   const days = useMemo(() => Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)), [weekStart]);
 
