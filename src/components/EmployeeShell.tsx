@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Home, Wallet, CalendarDays, User, HeartHandshake, LogOut, ChevronDown, HelpCircle,
-  Receipt, MessageSquare,
+  Receipt, MessageSquare, Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { EmployeeNotificationBanner } from "@/components/EmployeeNotificationBanner";
@@ -14,6 +14,7 @@ const nav = [
   { to: "/employee/pto", label: "Time Off", icon: CalendarDays },
   { to: "/employee/expenses", label: "Expenses", icon: Receipt },
   { to: "/employee/requests", label: "Requests", icon: MessageSquare },
+  { to: "/employee/help", label: "Assistant", icon: Sparkles },
   { to: "/employee/profile", label: "My Info", icon: User },
   { to: "/employee/benefits", label: "Benefits", icon: HeartHandshake },
 ];
