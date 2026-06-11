@@ -5056,6 +5056,10 @@ export type Database = {
       }
     }
     Functions: {
+      admin_shares_company_with_path_user: {
+        Args: { _path: string }
+        Returns: boolean
+      }
       assign_onboarding_template: {
         Args: {
           _company_id: string
