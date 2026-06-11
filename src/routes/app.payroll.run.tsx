@@ -66,7 +66,7 @@ function PayrollWizard() {
     setLoading(true);
     const [{ data: emps }, { data: te }, { data: deds }] = await Promise.all([
       supabase.from("employees")
-        .select("id, full_name, pay_type, pay_rate, filing_status, dependents, extra_withholding")
+        .select("id, full_name, pay_type, pay_rate, filing_status, dependents, extra_withholding, state")
         .eq("company_id", currentId).eq("status", "active"),
       supabase.from("time_entries")
         .select("employee_id, hours, overtime_hours")
@@ -116,6 +116,7 @@ function PayrollWizard() {
       filingStatus: r.emp.filing_status ?? "single",
       dependents: Number(r.emp.dependents ?? 0),
       extraWithholding: Number(r.emp.extra_withholding ?? 0),
+      workState: (r.emp as any).state ?? undefined,
       deductions: r.deductions.map((d) => ({ name: d.name, pre_tax: d.pre_tax, amount: Number(d.amount), amount_type: d.amount_type })),
     }),
   })), [activeRows]);
