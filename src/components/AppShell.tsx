@@ -30,6 +30,7 @@ const navGroups: NavGroup[] = [
     label: "People",
     items: [
       { to: "/app/scheduling", label: "Scheduling", icon: CalendarDays, roles: [...MANAGER_ROLES] },
+      { to: "/app/shift-swaps", label: "Shift Swaps", icon: ArrowLeftRight, roles: [...MANAGER_ROLES] },
       { to: "/app/recruiting", label: "Recruiting", icon: UserPlus, roles: HR_ROLES },
       { to: "/app/onboarding", label: "Onboarding", icon: ListChecks, roles: HR_ROLES },
       { to: "/app/benefits", label: "Benefits", icon: HeartHandshake, roles: HR_ROLES },
