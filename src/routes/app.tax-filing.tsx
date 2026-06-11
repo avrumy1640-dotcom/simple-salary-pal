@@ -228,7 +228,64 @@ function TaxFilingPage() {
       toast.error(`Failed: ${(e as Error).message}`);
     } finally {
       setGenerating(null);
-    }
+  }
+
+  async function downloadForm940() {
+    try {
+      setGenerating("940");
+      const ctx = await loadFilingContext();
+      const f940 = buildForm940({ company: ctx.company, year, items: ctx.items, runs: ctx.runs });
+      triggerDownload(`Form940-${year}.txt`, form940ToText(f940));
+      triggerDownload(`Form940-${year}.json`, JSON.stringify(f940, null, 2), "application/json");
+      toast.success(`Form 940 generated for ${year}`);
+    } catch (e: unknown) {
+      toast.error(`Failed: ${(e as Error).message}`);
+    } finally { setGenerating(null); }
+  }
+
+  async function downloadFormW3() {
+    try {
+      setGenerating("w3");
+      const ctx = await loadFilingContext();
+      const runMap = new Map(ctx.runs.map((r) => [r.id, r.pay_date]));
+      const totals = new Map<string, { wages: number; fedWH: number; ss: number; medicare: number; stateWH: number }>();
+      ctx.items.forEach((i) => {
+        const d = runMap.get(i.run_id);
+        if (!d || !d.startsWith(String(year))) return;
+        const cur = totals.get(i.employee_id) || { wages: 0, fedWH: 0, ss: 0, medicare: 0, stateWH: 0 };
+        cur.wages += Number(i.gross_pay);
+        cur.fedWH += Number(i.federal_tax);
+        cur.ss += Number(i.social_security);
+        cur.medicare += Number(i.medicare);
+        cur.stateWH += Number(i.state_tax);
+        totals.set(i.employee_id, cur);
+      });
+      const w3 = buildFormW3({ company: ctx.company, year, itemsByEmployee: totals });
+      triggerDownload(`FormW3-${year}.txt`, formW3ToText(w3));
+      triggerDownload(`FormW3-${year}.json`, JSON.stringify(w3, null, 2), "application/json");
+      toast.success(`Form W-3 generated (${w3.number_of_w2s} W-2s)`);
+    } catch (e: unknown) {
+      toast.error(`Failed: ${(e as Error).message}`);
+    } finally { setGenerating(null); }
+  }
+
+  async function downloadForm1096() {
+    try {
+      setGenerating("1096");
+      const ctx = await loadFilingContext();
+      const byC = new Map<string, number>();
+      ctx.payments.forEach((p) => {
+        if (!p.payment_date.startsWith(String(year))) return;
+        byC.set(p.contractor_id, (byC.get(p.contractor_id) || 0) + Number(p.amount));
+      });
+      const f1096 = buildForm1096({ company: ctx.company, year, contractors: ctx.contractors, paymentsByContractor: byC });
+      triggerDownload(`Form1096-${year}.txt`, form1096ToText(f1096));
+      triggerDownload(`Form1096-${year}.json`, JSON.stringify(f1096, null, 2), "application/json");
+      toast.success(`Form 1096 generated (${f1096.number_of_forms} forms)`);
+    } catch (e: unknown) {
+      toast.error(`Failed: ${(e as Error).message}`);
+    } finally { setGenerating(null); }
+  }
   }
 
   const totalLiability = q941.reduce((s, q) => s + q.fed + q.fica, 0);
