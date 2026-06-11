@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { CalendarDays, Receipt, ArrowLeftRight, Check, X, Loader2, Inbox } from "lucide-react";
 
 export const Route = createFileRoute("/app/approvals")({
