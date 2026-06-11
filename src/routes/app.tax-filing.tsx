@@ -107,6 +107,126 @@ function TaxFilingPage() {
     a.click(); URL.revokeObjectURL(url);
   }
 
+  async function loadFilingContext() {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error("Not signed in");
+    const { data: cu } = await supabase.from("company_users").select("company_id, is_default").eq("user_id", user.id).order("is_default", { ascending: false }).limit(1).maybeSingle();
+    const companyId = cu?.company_id;
+    if (!companyId) throw new Error("No company");
+    const yearStart = `${year}-01-01`;
+    const yearEnd = `${year}-12-31`;
+    const [{ data: company }, { data: employees }, { data: items }, { data: runs }, { data: contractors }, { data: payments }] = await Promise.all([
+      supabase.from("companies").select("legal_name, ein, address_line1, address_line2, city, state, postal_code, phone, email, state_unemployment_wage_base").eq("id", companyId).maybeSingle(),
+      supabase.from("employees").select("id, full_name, ssn_last4, address_line1, address_line2, city, state, zip").eq("company_id", companyId),
+      supabase.from("payroll_items").select("run_id, employee_id, gross_pay, federal_tax, social_security, medicare, state_tax").eq("company_id", companyId),
+      supabase.from("payroll_runs").select("id, pay_date").eq("company_id", companyId).gte("pay_date", yearStart).lte("pay_date", yearEnd),
+      supabase.from("contractors").select("id, full_name, business_name, tax_id_type, tax_id_last4, address_line1, city, state, zip").eq("company_id", companyId),
+      supabase.from("contractor_payments").select("contractor_id, amount, payment_date").eq("company_id", companyId).gte("payment_date", yearStart).lte("payment_date", yearEnd),
+    ]);
+    const runIds = new Set((runs ?? []).map((r) => r.id as string));
+    return {
+      company: company as FilingCompany & { state_unemployment_wage_base: number | null },
+      employees: (employees ?? []) as FilingEmployee[],
+      items: ((items ?? []) as FilingItem[]).filter((i) => runIds.has(i.run_id)),
+      runs: (runs ?? []) as FilingRun[],
+      contractors: (contractors ?? []) as FilingContractor[],
+      payments: (payments ?? []) as { contractor_id: string; amount: number; payment_date: string }[],
+    };
+  }
+
+  async function downloadForm941() {
+    try {
+      setGenerating("941");
+      const ctx = await loadFilingContext();
+      const empSet = new Set<string>();
+      const runMap = new Map(ctx.runs.map((r) => [r.id, r.pay_date]));
+      ctx.items.forEach((i) => {
+        const d = runMap.get(i.run_id);
+        if (!d) return;
+        const m = Number(d.slice(5, 7));
+        const q = Math.ceil(m / 3);
+        if (q === quarter && d.startsWith(String(year))) empSet.add(i.employee_id);
+      });
+      const f941 = buildForm941({ company: ctx.company, year, quarter, items: ctx.items, runs: ctx.runs, employeeIdsInQuarter: empSet.size });
+      triggerDownload(`Form941-${year}-Q${quarter}.txt`, form941ToText(f941));
+      triggerDownload(`Form941-${year}-Q${quarter}.json`, JSON.stringify(f941, null, 2), "application/json");
+      toast.success(`Form 941 generated for ${year} Q${quarter}`);
+    } catch (e: unknown) {
+      toast.error(`Failed: ${(e as Error).message}`);
+    } finally {
+      setGenerating(null);
+    }
+  }
+
+  async function downloadW2EFW2() {
+    try {
+      setGenerating("w2");
+      const ctx = await loadFilingContext();
+      const runMap = new Map(ctx.runs.map((r) => [r.id, r.pay_date]));
+      const totals = new Map<string, { wages: number; fedWH: number; ss: number; medicare: number; stateWH: number }>();
+      ctx.items.forEach((i) => {
+        const d = runMap.get(i.run_id);
+        if (!d || !d.startsWith(String(year))) return;
+        const cur = totals.get(i.employee_id) || { wages: 0, fedWH: 0, ss: 0, medicare: 0, stateWH: 0 };
+        cur.wages += Number(i.gross_pay);
+        cur.fedWH += Number(i.federal_tax);
+        cur.ss += Number(i.social_security);
+        cur.medicare += Number(i.medicare);
+        cur.stateWH += Number(i.state_tax);
+        totals.set(i.employee_id, cur);
+      });
+      const txt = buildEFW2({ company: ctx.company, year, employees: ctx.employees, itemsByEmployee: totals });
+      triggerDownload(`W2-EFW2-${year}.txt`, txt);
+      toast.success(`SSA EFW2 file generated (${totals.size} employees)`);
+    } catch (e: unknown) {
+      toast.error(`Failed: ${(e as Error).message}`);
+    } finally {
+      setGenerating(null);
+    }
+  }
+
+  async function download1099NEC() {
+    try {
+      setGenerating("1099");
+      const ctx = await loadFilingContext();
+      const byC = new Map<string, number>();
+      ctx.payments.forEach((p) => {
+        if (!p.payment_date.startsWith(String(year))) return;
+        byC.set(p.contractor_id, (byC.get(p.contractor_id) || 0) + Number(p.amount));
+      });
+      const txt = build1099NEC({ company: ctx.company, year, contractors: ctx.contractors, paymentsByContractor: byC });
+      triggerDownload(`1099NEC-IRSPub1220-${year}.txt`, txt);
+      const count = Array.from(byC.values()).filter((v) => v >= 600).length;
+      toast.success(`IRS Pub 1220 file generated (${count} payees)`);
+    } catch (e: unknown) {
+      toast.error(`Failed: ${(e as Error).message}`);
+    } finally {
+      setGenerating(null);
+    }
+  }
+
+  async function downloadStateQuarterly() {
+    try {
+      setGenerating("state");
+      const ctx = await loadFilingContext();
+      const csv = buildStateQuarterlyCSV({
+        company: ctx.company,
+        year,
+        quarter,
+        employees: ctx.employees,
+        items: ctx.items,
+        runs: ctx.runs,
+        suiWageBase: Number(ctx.company.state_unemployment_wage_base ?? 7000),
+      });
+      triggerDownload(`State-${ctx.company.state || "XX"}-Q${quarter}-${year}.csv`, csv, "text/csv");
+      toast.success(`State quarterly report generated`);
+    } catch (e: unknown) {
+      toast.error(`Failed: ${(e as Error).message}`);
+    } finally {
+      setGenerating(null);
+    }
+  }
+
   const totalLiability = q941.reduce((s, q) => s + q.fed + q.fica, 0);
   return (
     <div className="space-y-6 unit-scope">
