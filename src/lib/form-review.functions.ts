@@ -139,18 +139,20 @@ export const rejectForm = createServerFn({ method: "POST" })
     if (fErr || !form) throw new Error("Form not found.");
     await assertHr(supabase, userId, form.company_id);
 
-    const merged = { ...(form.data ?? {}), _rejection_reason: data.reason };
+    const merged = { ...((form.data as Record<string, any>) ?? {}), _rejection_reason: data.reason };
     const { error } = await supabaseAdmin
       .from("hr_forms")
       .update({ status: "rejected", data: merged })
       .eq("id", form.id);
     if (error) throw new Error(error.message);
 
-    const { data: emp } = await supabaseAdmin
-      .from("employees")
-      .select("user_id")
-      .eq("id", form.employee_id)
-      .maybeSingle();
+    const { data: emp } = form.employee_id
+      ? await supabaseAdmin
+          .from("employees")
+          .select("user_id")
+          .eq("id", form.employee_id)
+          .maybeSingle()
+      : { data: null as any };
     if (emp?.user_id) {
       await supabaseAdmin.from("notifications").insert({
         company_id: form.company_id,
