@@ -433,3 +433,20 @@ function Card({ title, icon, children }: { title: string; icon: React.ReactNode;
 function Bullet({ children }: { children: React.ReactNode }) {
   return <li className="flex items-start gap-2"><CheckCircle2 className="h-4 w-4 mt-0.5 flex-shrink-0" /><span>{children}</span></li>;
 }
+function EFileCard({ title, subtitle, spec, icon, loading, onClick }: { title: string; subtitle: string; spec: string; icon: React.ReactNode; loading: boolean; onClick: () => void }) {
+  return (
+    <div className="rounded-xl border unit-hairline bg-surface p-4 flex flex-col gap-3">
+      <div className="flex items-start justify-between">
+        <div className="rounded-lg bg-primary/10 p-2">{icon}</div>
+      </div>
+      <div>
+        <div className="font-semibold text-sm text-slate-900">{title}</div>
+        <div className="text-xs text-slate-500 mt-0.5">{subtitle}</div>
+        <div className="text-[10px] uppercase tracking-wider text-slate-400 mt-2">{spec}</div>
+      </div>
+      <Button size="sm" variant="outline" onClick={onClick} disabled={loading} className="gap-1.5 mt-auto">
+        <Download className="h-3.5 w-3.5" />{loading ? "Generating…" : "Generate"}
+      </Button>
+    </div>
+  );
+}
