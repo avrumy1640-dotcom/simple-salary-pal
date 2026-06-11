@@ -68,7 +68,7 @@ function EmployeeSchedulePage() {
     const horizonStart = startOfWeek(new Date()).toISOString();
     const horizonEnd = new Date(Date.now() + 28 * 86400000).toISOString();
 
-    const [s, sw, cw] = await Promise.all([
+    const [s, sw, cw, inc] = await Promise.all([
       supabase.from("shifts").select("*")
         .eq("company_id", emp.company_id)
         .eq("employee_id", emp.id)
@@ -81,10 +81,28 @@ function EmployeeSchedulePage() {
       supabase.from("employees").select("id, full_name")
         .eq("company_id", emp.company_id).eq("status", "active").neq("id", emp.id)
         .order("full_name"),
+      supabase.from("shift_swap_requests").select("*")
+        .eq("target_employee_id", emp.id)
+        .eq("status", "pending")
+        .order("created_at", { ascending: false }),
     ]);
     setShifts((s.data ?? []) as Shift[]);
     setSwaps((sw.data ?? []) as Swap[]);
     setCoworkers((cw.data ?? []) as Coworker[]);
+    const incList = (inc.data ?? []) as Swap[];
+    setIncoming(incList);
+    if (incList.length) {
+      const sids = Array.from(new Set(incList.map((x) => x.shift_id)));
+      const eids = Array.from(new Set(incList.map((x) => x.requested_by_employee_id)));
+      const [sh, en] = await Promise.all([
+        supabase.from("shifts").select("id,start_at,end_at,role,location").in("id", sids),
+        supabase.from("employees").select("id,full_name").in("id", eids),
+      ]);
+      setIncomingShifts(Object.fromEntries((sh.data ?? []).map((x: any) => [x.id, x])));
+      setIncomingNames(Object.fromEntries((en.data ?? []).map((x: any) => [x.id, x.full_name])));
+    } else {
+      setIncomingShifts({}); setIncomingNames({});
+    }
   }
   useEffect(() => { load(); }, []);
 
@@ -92,6 +110,10 @@ function EmployeeSchedulePage() {
 
   async function handleCancel(id: string) {
     try { await cancel({ data: { swapId: id } }); toast.success("Request cancelled"); load(); }
+    catch (e: any) { toast.error(e.message); }
+  }
+  async function handleDeclineIncoming(id: string) {
+    try { await declineIncoming({ data: { swapId: id } }); toast.success("Proposal declined"); load(); }
     catch (e: any) { toast.error(e.message); }
   }
 
