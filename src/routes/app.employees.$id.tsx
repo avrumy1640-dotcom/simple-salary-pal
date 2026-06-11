@@ -101,12 +101,14 @@ function tenureFrom(startDate?: string | null): string {
 
 function EmployeeProfilePage() {
   const { id } = Route.useParams();
+  const search = Route.useSearch();
   const navigate = useNavigate();
   const [emp, setEmp] = useState<Employee | null>(null);
   const [pto, setPto] = useState<PtoEntry[]>([]);
   const [audit, setAudit] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState("personal");
+  const [statusBusy, setStatusBusy] = useState(false);
 
   // edit modes
   const [editPersonal, setEditPersonal] = useState(false);
@@ -125,8 +127,36 @@ function EmployeeProfilePage() {
     setPto((p ?? []) as PtoEntry[]);
     setAudit((a ?? []) as any[]);
     setLoading(false);
+    // Auto-enter edit mode if requested via ?edit=1
+    if (e && search.edit === 1) {
+      setDraft({ ...(e as Employee) });
+      setEditPersonal(true);
+      setTab("personal");
+    }
   }
-  useEffect(() => { load(); /* eslint-disable-next-line */ }, [id]);
+  useEffect(() => { load(); /* eslint-disable-next-line */ }, [id, search.edit]);
+
+  async function toggleActive() {
+    if (!emp) return;
+    const isActive = (emp.lifecycle_status ?? emp.status) === "active";
+    const next = isActive ? "inactive" : "active";
+    setStatusBusy(true);
+    // Optimistic UI
+    const prev = emp;
+    setEmp({ ...emp, status: next as any, lifecycle_status: next });
+    const { error } = await supabase
+      .from("employees")
+      .update({ status: next, lifecycle_status: next })
+      .eq("id", emp.id);
+    setStatusBusy(false);
+    if (error) {
+      setEmp(prev);
+      toast.error(error.message);
+      return;
+    }
+    toast.success(isActive ? "Employee deactivated" : "Employee reactivated");
+  }
+
 
   function startEdit(section: "personal" | "job" | "pay") {
     if (!emp) return;
