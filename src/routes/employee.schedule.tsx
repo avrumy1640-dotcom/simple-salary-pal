@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { PageHeader } from "@/components/PageHeader";
 import { toast } from "sonner";
 import { CalendarDays, ArrowLeftRight, X } from "lucide-react";
-import { requestSwap, cancelSwap } from "@/lib/scheduling.functions";
+import { requestSwap, cancelSwap, declineSwapAsTarget } from "@/lib/scheduling.functions";
 
 export const Route = createFileRoute("/employee/schedule")({
   head: () => ({ meta: [{ title: "My schedule — Paylo" }] }),
