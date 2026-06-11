@@ -141,6 +141,23 @@ function PunchPage() {
     load();
   }
 
+  function attemptClockIn() {
+    if (!hasLiveTrackingConsent()) { setConsentOpen(true); setPendingPunchIn(true); return; }
+    punch("in");
+  }
+  function attemptClockOut() {
+    setLiveTrackingConsent(false); // turn off tracking on clock-out
+    punch("out");
+  }
+
+  // Live GPS tracking while clocked in
+  useLiveLocationTracking({
+    active: clockedIn && hasLiveTrackingConsent(),
+    employeeId: employee?.id ?? null,
+    companyId: employee?.company_id ?? null,
+    userId,
+  });
+
   // Live elapsed timer since last clock-in / break-end
   const [now, setNow] = useState(Date.now());
   useEffect(() => {
