@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import {
   Wallet, Play, Square, CalendarDays, FileText, CheckCircle2, Clock as ClockIcon,
-  MapPin, FolderOpen, ChevronRight, Zap,
+  MapPin, FolderOpen, ChevronRight, Zap, HeartHandshake,
 } from "lucide-react";
 
 export const Route = createFileRoute("/employee/home")({
