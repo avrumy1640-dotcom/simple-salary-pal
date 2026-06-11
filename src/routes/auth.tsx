@@ -106,6 +106,7 @@ function AuthPage() {
   const navigate = useNavigate();
   const search = useSearch({ from: "/auth" });
   const setupAccount = useServerFn(completeAccountSetup);
+  const claimAccounts = useServerFn(claimEmployeeAccounts);
   const [mode, setMode] = useState<AuthMode>(search.mode ?? "signin");
   const [accountType, setAccountType] = useState<AccountType>("employer");
   const [fullName, setFullName] = useState("");
