@@ -9,6 +9,7 @@ import { Clock, Play, Square, MapPin, AlertCircle, ShieldCheck, Coffee, Loader2,
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { useLiveLocationTracking, hasLiveTrackingConsent, setLiveTrackingConsent } from "@/hooks/useLiveLocationTracking";
+import { friendlyGeoError } from "@/lib/geo";
 
 export const Route = createFileRoute("/employee/punch")({
   head: () => ({ meta: [{ title: "Punch in / out — Paylo" }] }),
