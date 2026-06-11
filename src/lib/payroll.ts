@@ -232,7 +232,8 @@ export function calcPay(input: PayrollCalcInput): PayrollCalcResult {
 
   // ---------- Totals ----------
   const totalDeductions = r2(preTaxDeductions + postTaxDeductions + federalTax + socialSecurity + medicare + additionalMedicare + stateTax + totalGarnishments);
-  const net = r2(gross - totalDeductions + reimbursements);
+  // Net cannot go below zero — clamp and surface any shortfall via deductionLines if needed.
+  const net = r2(Math.max(0, gross - totalDeductions) + reimbursements);
 
   return {
     regularEarnings, overtimeEarnings, doubleOvertimeEarnings, holidayEarnings,
