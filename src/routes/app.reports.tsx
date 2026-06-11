@@ -331,6 +331,56 @@ function ReportsPage() {
         </div>
       </div>
 
+      {/* Workforce trends — Turnover & Headcount */}
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Workforce trends</h2>
+          <span className="text-[11px] text-muted-foreground inline-flex items-center gap-1">
+            <Activity className="h-3 w-3" /> Live
+          </span>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
+          <KpiTile icon={Users} label="Headcount" value={String(workforce.headcount)} />
+          <KpiTile icon={UserPlus} label="New hires (90d)" value={String(workforce.hires90)} />
+          <KpiTile icon={UserMinus} label="Departures (90d)" value={String(workforce.terms90)} />
+          <KpiTile icon={workforce.turnoverPct > 20 ? TrendingDown : TrendingUp} label="Turnover (12mo)" value={`${workforce.turnoverPct.toFixed(1)}%`} highlight={workforce.turnoverPct > 20} />
+        </div>
+        <div className="surface-glass rounded-2xl p-5">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <div className="text-sm font-semibold text-slate-900">Hires vs departures · last 6 months</div>
+              <div className="text-xs text-muted-foreground">
+                Avg tenure: <span className="font-semibold text-slate-700">{(workforce.avgTenureDays / 365).toFixed(1)} yrs</span>
+                {workforce.onLeave > 0 && <> · <span className="text-amber-600">{workforce.onLeave} on leave</span></>}
+              </div>
+            </div>
+          </div>
+          <div className="grid grid-cols-6 gap-2 items-end h-32">
+            {trend.map((t) => {
+              const max = Math.max(1, ...trend.flatMap((x) => [x.hires, x.terms]));
+              const hiresH = (t.hires / max) * 100;
+              const termsH = (t.terms / max) * 100;
+              return (
+                <div key={t.month} className="flex flex-col items-center gap-1">
+                  <div className="flex items-end gap-1 h-24 w-full justify-center">
+                    <div className="w-3 rounded-t bg-emerald-500/80 transition-all" style={{ height: `${hiresH}%`, minHeight: t.hires ? 4 : 0 }} title={`${t.hires} hires`} />
+                    <div className="w-3 rounded-t bg-rose-500/80 transition-all" style={{ height: `${termsH}%`, minHeight: t.terms ? 4 : 0 }} title={`${t.terms} departures`} />
+                  </div>
+                  <div className="text-[10px] text-muted-foreground tabular-nums">
+                    {new Date(t.month + "-02").toLocaleDateString("en-US", { month: "short" })}
+                  </div>
+                  <div className="text-[10px] tabular-nums text-slate-500">+{t.hires} / -{t.terms}</div>
+                </div>
+              );
+            })}
+          </div>
+          <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground">
+            <span className="inline-flex items-center gap-1.5"><span className="w-2 h-2 rounded-sm bg-emerald-500/80" /> Hires</span>
+            <span className="inline-flex items-center gap-1.5"><span className="w-2 h-2 rounded-sm bg-rose-500/80" /> Departures</span>
+          </div>
+        </div>
+      </div>
+
       {/* Recent runs quick export */}
       <div>
         <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">Recent payroll runs</h2>
