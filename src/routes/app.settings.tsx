@@ -445,6 +445,43 @@ function SettingsPage() {
           </Section>
         </TabsContent>
       </Tabs>
+
+      <Dialog open={enrollOpen} onOpenChange={(o) => { setEnrollOpen(o); if (!o) { setEnrollData(null); setMfaCode(""); } }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Set up two-factor authentication</DialogTitle>
+            <DialogDescription>
+              Scan the QR code with Google Authenticator, 1Password, Authy, or any TOTP app, then enter the 6-digit code to confirm.
+            </DialogDescription>
+          </DialogHeader>
+          {enrollData && (
+            <div className="space-y-4">
+              <div className="flex justify-center rounded-lg border bg-white p-4">
+                <img src={enrollData.qr} alt="2FA QR code" className="h-44 w-44" />
+              </div>
+              <div className="text-xs text-muted-foreground">
+                Can't scan? Enter this secret manually:
+                <code className="ml-1 break-all rounded bg-muted px-1.5 py-0.5 font-mono text-[11px]">{enrollData.secret}</code>
+              </div>
+              <div className="space-y-1.5">
+                <Label>6-digit code</Label>
+                <Input
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  maxLength={6}
+                  value={mfaCode}
+                  onChange={(e) => setMfaCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                  placeholder="123456"
+                />
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEnrollOpen(false)}>Cancel</Button>
+            <Button onClick={verifyEnroll2FA} disabled={mfaCode.length !== 6}>Verify & enable</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
