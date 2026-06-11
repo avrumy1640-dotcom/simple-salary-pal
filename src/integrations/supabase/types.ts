@@ -2827,6 +2827,92 @@ export type Database = {
           },
         ]
       }
+      pay_on_demand_requests: {
+        Row: {
+          available_at_request: number | null
+          company_id: string
+          created_at: string
+          decided_at: string | null
+          decided_by: string | null
+          decline_reason: string | null
+          employee_id: string
+          id: string
+          notes: string | null
+          payout_method: string | null
+          requested_amount: number
+          requested_at: string
+          service_fee: number
+          status: string
+          total_payout: number
+          updated_at: string
+        }
+        Insert: {
+          available_at_request?: number | null
+          company_id: string
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          decline_reason?: string | null
+          employee_id: string
+          id?: string
+          notes?: string | null
+          payout_method?: string | null
+          requested_amount: number
+          requested_at?: string
+          service_fee?: number
+          status?: string
+          total_payout: number
+          updated_at?: string
+        }
+        Update: {
+          available_at_request?: number | null
+          company_id?: string
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          decline_reason?: string | null
+          employee_id?: string
+          id?: string
+          notes?: string | null
+          payout_method?: string | null
+          requested_amount?: number
+          requested_at?: string
+          service_fee?: number
+          status?: string
+          total_payout?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pay_on_demand_requests_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pay_on_demand_requests_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "pay_on_demand_requests_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pay_on_demand_requests_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
+          },
+        ]
+      }
       pay_periods: {
         Row: {
           company_id: string

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import {
   Wallet, Play, Square, CalendarDays, FileText, CheckCircle2, Clock as ClockIcon,
-  MapPin, FolderOpen, ChevronRight,
+  MapPin, FolderOpen, ChevronRight, Zap,
 } from "lucide-react";
 
 export const Route = createFileRoute("/employee/home")({
@@ -44,6 +44,7 @@ function EmployeeHome() {
   const [punches, setPunches] = useState<{ punched_at: string; punch_type: string }[]>([]);
   const [ptoUsedByType, setPtoUsedByType] = useState<Record<PtoKind, number>>({ vacation: 0, sick: 0, personal: 0 });
   const [activity, setActivity] = useState<{ icon: "pay" | "pto" | "doc"; text: string; date: string }[]>([]);
+  const [podAvailable, setPodAvailable] = useState(0);
   const [busy, setBusy] = useState(false);
   const [now, setNow] = useState(new Date());
 
@@ -115,6 +116,23 @@ function EmployeeHome() {
     }
     acts.sort((a, b) => +new Date(b.date) - +new Date(a.date));
     setActivity(acts.slice(0, 5));
+
+    // Pay On-Demand available
+    const { data: lastRun } = await supabase.from("payroll_runs")
+      .select("period_end").eq("company_id", employee.company_id).eq("status", "paid")
+      .order("pay_date", { ascending: false }).limit(1);
+    const sinceDate = lastRun?.[0]?.period_end ?? new Date(Date.now() - 14 * 86400000).toISOString().slice(0, 10);
+    const { data: te } = await supabase.from("time_entries")
+      .select("hours, overtime_hours").eq("employee_id", employee.id).gt("work_date", sinceDate);
+    const totalHours = (te ?? []).reduce((acc: number, r: any) =>
+      acc + Number(r.hours || 0) + Number(r.overtime_hours || 0) * 1.5, 0);
+    const rate = Number((employee as any).pay_rate || 0);
+    const earned = (employee as any).pay_type === "salary" ? rate / 26 : rate * totalHours;
+    const { data: podPending } = await supabase.from("pay_on_demand_requests")
+      .select("requested_amount, status").eq("employee_id", employee.id)
+      .in("status", ["pending", "approved"]);
+    const pendingTotal = (podPending ?? []).reduce((a: number, r: any) => a + Number(r.requested_amount || 0), 0);
+    setPodAvailable(Math.max(0, Math.round(earned * 0.5 * 100) / 100 - pendingTotal));
   }
   useEffect(() => { load(); }, [employee?.id]);
 
@@ -213,6 +231,26 @@ function EmployeeHome() {
           </div>
         </div>
       </div>
+
+      {/* Pay On-Demand */}
+      <Link
+        to="/employee/pay-on-demand"
+        className="group flex items-center gap-4 rounded-3xl border border-border bg-card p-5 sm:p-6 shadow-soft transition hover:border-primary/40 hover:shadow-md active:translate-y-px"
+      >
+        <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-amber-50 text-amber-700">
+          <Zap className="h-6 w-6" />
+        </span>
+        <div className="min-w-0 flex-1">
+          <div className="font-display text-base font-bold text-slate-900">Pay On-Demand</div>
+          <div className="mt-0.5 text-sm text-slate-500">
+            Available now: <span className="font-display font-extrabold tabular text-slate-900">{fmt(podAvailable)}</span>
+          </div>
+        </div>
+        <span className="hidden sm:inline-flex items-center rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-soft">
+          Get Paid Early
+        </span>
+        <ChevronRight className="h-5 w-5 shrink-0 text-slate-300 transition group-hover:text-slate-500 sm:hidden" />
+      </Link>
 
       {/* Clock In/Out widget */}
       <div className="rounded-3xl border border-border bg-card p-6 shadow-soft text-center">

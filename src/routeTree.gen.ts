@@ -24,6 +24,7 @@ import { Route as EmployeePunchRouteImport } from './routes/employee.punch'
 import { Route as EmployeePtoRouteImport } from './routes/employee.pto'
 import { Route as EmployeeProfileRouteImport } from './routes/employee.profile'
 import { Route as EmployeePaystubsRouteImport } from './routes/employee.paystubs'
+import { Route as EmployeePayOnDemandRouteImport } from './routes/employee.pay-on-demand'
 import { Route as EmployeeNotificationsRouteImport } from './routes/employee.notifications'
 import { Route as EmployeeHomeRouteImport } from './routes/employee.home'
 import { Route as EmployeeDocumentsRouteImport } from './routes/employee.documents'
@@ -42,6 +43,7 @@ import { Route as AppPtoRouteImport } from './routes/app.pto'
 import { Route as AppPerformanceRouteImport } from './routes/app.performance'
 import { Route as AppPaystubsRouteImport } from './routes/app.paystubs'
 import { Route as AppPayrollRouteImport } from './routes/app.payroll'
+import { Route as AppPayOnDemandRouteImport } from './routes/app.pay-on-demand'
 import { Route as AppPayHistoryRouteImport } from './routes/app.pay-history'
 import { Route as AppOnboardingTemplatesRouteImport } from './routes/app.onboarding-templates'
 import { Route as AppOnboardingRouteImport } from './routes/app.onboarding'
@@ -141,6 +143,11 @@ const EmployeePaystubsRoute = EmployeePaystubsRouteImport.update({
   path: '/paystubs',
   getParentRoute: () => EmployeeRoute,
 } as any)
+const EmployeePayOnDemandRoute = EmployeePayOnDemandRouteImport.update({
+  id: '/pay-on-demand',
+  path: '/pay-on-demand',
+  getParentRoute: () => EmployeeRoute,
+} as any)
 const EmployeeNotificationsRoute = EmployeeNotificationsRouteImport.update({
   id: '/notifications',
   path: '/notifications',
@@ -229,6 +236,11 @@ const AppPaystubsRoute = AppPaystubsRouteImport.update({
 const AppPayrollRoute = AppPayrollRouteImport.update({
   id: '/payroll',
   path: '/payroll',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPayOnDemandRoute = AppPayOnDemandRouteImport.update({
+  id: '/pay-on-demand',
+  path: '/pay-on-demand',
   getParentRoute: () => AppRoute,
 } as any)
 const AppPayHistoryRoute = AppPayHistoryRouteImport.update({
@@ -376,6 +388,7 @@ export interface FileRoutesByFullPath {
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/onboarding-templates': typeof AppOnboardingTemplatesRoute
   '/app/pay-history': typeof AppPayHistoryRoute
+  '/app/pay-on-demand': typeof AppPayOnDemandRoute
   '/app/payroll': typeof AppPayrollRouteWithChildren
   '/app/paystubs': typeof AppPaystubsRoute
   '/app/performance': typeof AppPerformanceRoute
@@ -394,6 +407,7 @@ export interface FileRoutesByFullPath {
   '/employee/documents': typeof EmployeeDocumentsRoute
   '/employee/home': typeof EmployeeHomeRoute
   '/employee/notifications': typeof EmployeeNotificationsRoute
+  '/employee/pay-on-demand': typeof EmployeePayOnDemandRoute
   '/employee/paystubs': typeof EmployeePaystubsRoute
   '/employee/profile': typeof EmployeeProfileRoute
   '/employee/pto': typeof EmployeePtoRoute
@@ -434,6 +448,7 @@ export interface FileRoutesByTo {
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/onboarding-templates': typeof AppOnboardingTemplatesRoute
   '/app/pay-history': typeof AppPayHistoryRoute
+  '/app/pay-on-demand': typeof AppPayOnDemandRoute
   '/app/paystubs': typeof AppPaystubsRoute
   '/app/performance': typeof AppPerformanceRoute
   '/app/pto': typeof AppPtoRoute
@@ -451,6 +466,7 @@ export interface FileRoutesByTo {
   '/employee/documents': typeof EmployeeDocumentsRoute
   '/employee/home': typeof EmployeeHomeRoute
   '/employee/notifications': typeof EmployeeNotificationsRoute
+  '/employee/pay-on-demand': typeof EmployeePayOnDemandRoute
   '/employee/paystubs': typeof EmployeePaystubsRoute
   '/employee/profile': typeof EmployeeProfileRoute
   '/employee/pto': typeof EmployeePtoRoute
@@ -492,6 +508,7 @@ export interface FileRoutesById {
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/onboarding-templates': typeof AppOnboardingTemplatesRoute
   '/app/pay-history': typeof AppPayHistoryRoute
+  '/app/pay-on-demand': typeof AppPayOnDemandRoute
   '/app/payroll': typeof AppPayrollRouteWithChildren
   '/app/paystubs': typeof AppPaystubsRoute
   '/app/performance': typeof AppPerformanceRoute
@@ -510,6 +527,7 @@ export interface FileRoutesById {
   '/employee/documents': typeof EmployeeDocumentsRoute
   '/employee/home': typeof EmployeeHomeRoute
   '/employee/notifications': typeof EmployeeNotificationsRoute
+  '/employee/pay-on-demand': typeof EmployeePayOnDemandRoute
   '/employee/paystubs': typeof EmployeePaystubsRoute
   '/employee/profile': typeof EmployeeProfileRoute
   '/employee/pto': typeof EmployeePtoRoute
@@ -552,6 +570,7 @@ export interface FileRouteTypes {
     | '/app/onboarding'
     | '/app/onboarding-templates'
     | '/app/pay-history'
+    | '/app/pay-on-demand'
     | '/app/payroll'
     | '/app/paystubs'
     | '/app/performance'
@@ -570,6 +589,7 @@ export interface FileRouteTypes {
     | '/employee/documents'
     | '/employee/home'
     | '/employee/notifications'
+    | '/employee/pay-on-demand'
     | '/employee/paystubs'
     | '/employee/profile'
     | '/employee/pto'
@@ -610,6 +630,7 @@ export interface FileRouteTypes {
     | '/app/onboarding'
     | '/app/onboarding-templates'
     | '/app/pay-history'
+    | '/app/pay-on-demand'
     | '/app/paystubs'
     | '/app/performance'
     | '/app/pto'
@@ -627,6 +648,7 @@ export interface FileRouteTypes {
     | '/employee/documents'
     | '/employee/home'
     | '/employee/notifications'
+    | '/employee/pay-on-demand'
     | '/employee/paystubs'
     | '/employee/profile'
     | '/employee/pto'
@@ -667,6 +689,7 @@ export interface FileRouteTypes {
     | '/app/onboarding'
     | '/app/onboarding-templates'
     | '/app/pay-history'
+    | '/app/pay-on-demand'
     | '/app/payroll'
     | '/app/paystubs'
     | '/app/performance'
@@ -685,6 +708,7 @@ export interface FileRouteTypes {
     | '/employee/documents'
     | '/employee/home'
     | '/employee/notifications'
+    | '/employee/pay-on-demand'
     | '/employee/paystubs'
     | '/employee/profile'
     | '/employee/pto'
@@ -816,6 +840,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EmployeePaystubsRouteImport
       parentRoute: typeof EmployeeRoute
     }
+    '/employee/pay-on-demand': {
+      id: '/employee/pay-on-demand'
+      path: '/pay-on-demand'
+      fullPath: '/employee/pay-on-demand'
+      preLoaderRoute: typeof EmployeePayOnDemandRouteImport
+      parentRoute: typeof EmployeeRoute
+    }
     '/employee/notifications': {
       id: '/employee/notifications'
       path: '/notifications'
@@ -940,6 +971,13 @@ declare module '@tanstack/react-router' {
       path: '/payroll'
       fullPath: '/app/payroll'
       preLoaderRoute: typeof AppPayrollRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/pay-on-demand': {
+      id: '/app/pay-on-demand'
+      path: '/pay-on-demand'
+      fullPath: '/app/pay-on-demand'
+      preLoaderRoute: typeof AppPayOnDemandRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/pay-history': {
@@ -1153,6 +1191,7 @@ interface AppRouteChildren {
   AppOnboardingRoute: typeof AppOnboardingRoute
   AppOnboardingTemplatesRoute: typeof AppOnboardingTemplatesRoute
   AppPayHistoryRoute: typeof AppPayHistoryRoute
+  AppPayOnDemandRoute: typeof AppPayOnDemandRoute
   AppPayrollRoute: typeof AppPayrollRouteWithChildren
   AppPaystubsRoute: typeof AppPaystubsRoute
   AppPerformanceRoute: typeof AppPerformanceRoute
@@ -1190,6 +1229,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppOnboardingRoute: AppOnboardingRoute,
   AppOnboardingTemplatesRoute: AppOnboardingTemplatesRoute,
   AppPayHistoryRoute: AppPayHistoryRoute,
+  AppPayOnDemandRoute: AppPayOnDemandRoute,
   AppPayrollRoute: AppPayrollRouteWithChildren,
   AppPaystubsRoute: AppPaystubsRoute,
   AppPerformanceRoute: AppPerformanceRoute,
@@ -1213,6 +1253,7 @@ interface EmployeeRouteChildren {
   EmployeeDocumentsRoute: typeof EmployeeDocumentsRoute
   EmployeeHomeRoute: typeof EmployeeHomeRoute
   EmployeeNotificationsRoute: typeof EmployeeNotificationsRoute
+  EmployeePayOnDemandRoute: typeof EmployeePayOnDemandRoute
   EmployeePaystubsRoute: typeof EmployeePaystubsRoute
   EmployeeProfileRoute: typeof EmployeeProfileRoute
   EmployeePtoRoute: typeof EmployeePtoRoute
@@ -1226,6 +1267,7 @@ const EmployeeRouteChildren: EmployeeRouteChildren = {
   EmployeeDocumentsRoute: EmployeeDocumentsRoute,
   EmployeeHomeRoute: EmployeeHomeRoute,
   EmployeeNotificationsRoute: EmployeeNotificationsRoute,
+  EmployeePayOnDemandRoute: EmployeePayOnDemandRoute,
   EmployeePaystubsRoute: EmployeePaystubsRoute,
   EmployeeProfileRoute: EmployeeProfileRoute,
   EmployeePtoRoute: EmployeePtoRoute,
