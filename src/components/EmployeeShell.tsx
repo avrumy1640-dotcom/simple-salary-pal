@@ -84,8 +84,12 @@ export function EmployeeShell() {
       const [{ data: prof }, { data: emp }, { data: roles }] = await Promise.all([
         supabase.from("profiles").select("company_name").eq("id", uid).maybeSingle(),
         userEmail
-          ? supabase.from("employees").select("full_name").ilike("email", userEmail).maybeSingle()
-          : Promise.resolve({ data: null }),
+          ? supabase
+              .from("employees")
+              .select("full_name, company_id, companies:company_id(legal_name)")
+              .ilike("email", userEmail)
+              .maybeSingle()
+          : Promise.resolve({ data: null as any }),
         supabase.from("user_roles").select("role").eq("user_id", uid).limit(1),
       ]);
       const role = roles?.[0]?.role;
@@ -93,7 +97,8 @@ export function EmployeeShell() {
         navigate({ to: "/app/dashboard", replace: true });
         return;
       }
-      setCompanyName(prof?.company_name || "Your workplace");
+      const companyFromEmployee = (emp as any)?.companies?.legal_name as string | undefined;
+      setCompanyName(companyFromEmployee || prof?.company_name || "Your workplace");
       setFullName(emp?.full_name || userEmail.split("@")[0] || "Employee");
       setChecking(false);
     });
