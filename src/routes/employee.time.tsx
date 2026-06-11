@@ -117,10 +117,10 @@ function Page() {
   async function refreshGps() {
     setProbing(true);
     setPosErr(null);
-    const p = await getPosition();
+    const { position, error } = await getPosition();
     setProbing(false);
-    if (!p) { setPosErr("Couldn't read your GPS. Please enable location services."); return; }
-    setPos({ lat: p.coords.latitude, lng: p.coords.longitude, accuracy: p.coords.accuracy });
+    if (!position) { setPosErr(error ?? "Couldn't read your GPS. Please enable location services."); return; }
+    setPos({ lat: position.coords.latitude, lng: position.coords.longitude, accuracy: position.coords.accuracy });
   }
   useEffect(() => { refreshGps(); }, []);
 
