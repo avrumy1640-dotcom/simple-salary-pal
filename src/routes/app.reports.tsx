@@ -80,6 +80,51 @@ function ReportsPage() {
   }
 
 
+  async function loadWorkforce() {
+    if (!currentId) return;
+    const today = new Date();
+    const d90 = new Date(today); d90.setDate(d90.getDate() - 90);
+    const d365 = new Date(today); d365.setDate(d365.getDate() - 365);
+    const iso90 = d90.toISOString().slice(0,10);
+    const iso365 = d365.toISOString().slice(0,10);
+
+    const { data: emps } = await supabase.from("employees")
+      .select("id, start_date, termination_date, lifecycle_status, hire_date")
+      .eq("company_id", currentId);
+    const rows = emps ?? [];
+
+    const headcount = rows.filter((e: any) => e.lifecycle_status === "active" || e.lifecycle_status === "on_leave").length;
+    const onLeave = rows.filter((e: any) => e.lifecycle_status === "on_leave").length;
+    const hires90 = rows.filter((e: any) => (e.start_date || e.hire_date) && (e.start_date || e.hire_date) >= iso90).length;
+    const terms90 = rows.filter((e: any) => e.termination_date && e.termination_date >= iso90).length;
+    const hires12mo = rows.filter((e: any) => (e.start_date || e.hire_date) && (e.start_date || e.hire_date) >= iso365).length;
+    const terms12mo = rows.filter((e: any) => e.termination_date && e.termination_date >= iso365).length;
+    const avgHeadcount = Math.max(1, (headcount + terms12mo) / 2);
+    const turnoverPct = (terms12mo / avgHeadcount) * 100;
+
+    // Avg tenure (days) of active employees
+    const tenures = rows
+      .filter((e: any) => (e.lifecycle_status === "active" || e.lifecycle_status === "on_leave") && (e.start_date || e.hire_date))
+      .map((e: any) => Math.max(0, (today.getTime() - new Date(e.start_date || e.hire_date).getTime()) / 86400000));
+    const avgTenureDays = tenures.length ? tenures.reduce((a, b) => a + b, 0) / tenures.length : 0;
+
+    // 6-month hires/terms trend
+    const buckets: Record<string, { hires: number; terms: number }> = {};
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+      const k = d.toISOString().slice(0, 7);
+      buckets[k] = { hires: 0, terms: 0 };
+    }
+    for (const e of rows as any[]) {
+      const hireKey = (e.start_date || e.hire_date)?.slice(0, 7);
+      if (hireKey && buckets[hireKey]) buckets[hireKey].hires += 1;
+      const termKey = e.termination_date?.slice(0, 7);
+      if (termKey && buckets[termKey]) buckets[termKey].terms += 1;
+    }
+    setTrend(Object.entries(buckets).map(([month, v]) => ({ month, ...v })));
+    setWorkforce({ headcount, hires90, terms90, hires12mo, terms12mo, avgTenureDays, onLeave, turnoverPct });
+  }
+
   useEffect(() => {
     if (!currentId) return;
     (async () => {
@@ -90,6 +135,18 @@ function ReportsPage() {
       setRuns((r ?? []) as Run[]);
       setEmpCount(count ?? 0);
     })();
+    loadWorkforce();
+
+    // Realtime: refresh on employee + payroll run changes
+    const ch = supabase
+      .channel(`reports-${currentId}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "employees", filter: `company_id=eq.${currentId}` }, () => loadWorkforce())
+      .on("postgres_changes", { event: "*", schema: "public", table: "payroll_runs", filter: `company_id=eq.${currentId}` }, async () => {
+        const { data: r } = await supabase.from("payroll_runs").select("*").eq("company_id", currentId).order("created_at", { ascending: false }).limit(10);
+        setRuns((r ?? []) as Run[]);
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
   }, [currentId]);
 
 
