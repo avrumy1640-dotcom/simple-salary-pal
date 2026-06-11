@@ -316,6 +316,18 @@ export function AppShell() {
               <ShieldCheck className="h-[18px] w-[18px] shrink-0 text-slate-400" />
               {!collapsed && <span>Access help</span>}
             </Link>
+            <Link
+              to="/employee/home"
+              onClick={() => setOpen(false)}
+              title={collapsed ? "Employee view" : undefined}
+              className={cn(
+                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-[14px] font-medium text-slate-600 hover:bg-slate-50 hover:text-foreground transition",
+                collapsed && "justify-center px-2",
+              )}
+            >
+              <UserPlus className="h-[18px] w-[18px] shrink-0 text-slate-400" />
+              {!collapsed && <span>Switch to employee view</span>}
+            </Link>
 
             {!collapsed && (
               <div className="mt-2 flex items-center gap-3 rounded-lg bg-surface px-3 py-2">
