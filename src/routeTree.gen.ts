@@ -46,6 +46,7 @@ import { Route as AppRequestsRouteImport } from './routes/app.requests'
 import { Route as AppReportsRouteImport } from './routes/app.reports'
 import { Route as AppRecruitingRouteImport } from './routes/app.recruiting'
 import { Route as AppPtoRouteImport } from './routes/app.pto'
+import { Route as AppPoliciesRouteImport } from './routes/app.policies'
 import { Route as AppPerformanceRouteImport } from './routes/app.performance'
 import { Route as AppPaystubsRouteImport } from './routes/app.paystubs'
 import { Route as AppPayrollRouteImport } from './routes/app.payroll'
@@ -264,6 +265,11 @@ const AppPtoRoute = AppPtoRouteImport.update({
   path: '/pto',
   getParentRoute: () => AppRoute,
 } as any)
+const AppPoliciesRoute = AppPoliciesRouteImport.update({
+  id: '/policies',
+  path: '/policies',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppPerformanceRoute = AppPerformanceRouteImport.update({
   id: '/performance',
   path: '/performance',
@@ -463,6 +469,7 @@ export interface FileRoutesByFullPath {
   '/app/payroll': typeof AppPayrollRouteWithChildren
   '/app/paystubs': typeof AppPaystubsRoute
   '/app/performance': typeof AppPerformanceRoute
+  '/app/policies': typeof AppPoliciesRoute
   '/app/pto': typeof AppPtoRoute
   '/app/recruiting': typeof AppRecruitingRoute
   '/app/reports': typeof AppReportsRoute
@@ -533,6 +540,7 @@ export interface FileRoutesByTo {
   '/app/pay-on-demand': typeof AppPayOnDemandRoute
   '/app/paystubs': typeof AppPaystubsRoute
   '/app/performance': typeof AppPerformanceRoute
+  '/app/policies': typeof AppPoliciesRoute
   '/app/pto': typeof AppPtoRoute
   '/app/recruiting': typeof AppRecruitingRoute
   '/app/reports': typeof AppReportsRoute
@@ -605,6 +613,7 @@ export interface FileRoutesById {
   '/app/payroll': typeof AppPayrollRouteWithChildren
   '/app/paystubs': typeof AppPaystubsRoute
   '/app/performance': typeof AppPerformanceRoute
+  '/app/policies': typeof AppPoliciesRoute
   '/app/pto': typeof AppPtoRoute
   '/app/recruiting': typeof AppRecruitingRoute
   '/app/reports': typeof AppReportsRoute
@@ -678,6 +687,7 @@ export interface FileRouteTypes {
     | '/app/payroll'
     | '/app/paystubs'
     | '/app/performance'
+    | '/app/policies'
     | '/app/pto'
     | '/app/recruiting'
     | '/app/reports'
@@ -748,6 +758,7 @@ export interface FileRouteTypes {
     | '/app/pay-on-demand'
     | '/app/paystubs'
     | '/app/performance'
+    | '/app/policies'
     | '/app/pto'
     | '/app/recruiting'
     | '/app/reports'
@@ -819,6 +830,7 @@ export interface FileRouteTypes {
     | '/app/payroll'
     | '/app/paystubs'
     | '/app/performance'
+    | '/app/policies'
     | '/app/pto'
     | '/app/recruiting'
     | '/app/reports'
@@ -1126,6 +1138,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPtoRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/policies': {
+      id: '/app/policies'
+      path: '/policies'
+      fullPath: '/app/policies'
+      preLoaderRoute: typeof AppPoliciesRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/performance': {
       id: '/app/performance'
       path: '/performance'
@@ -1409,6 +1428,7 @@ interface AppRouteChildren {
   AppPayrollRoute: typeof AppPayrollRouteWithChildren
   AppPaystubsRoute: typeof AppPaystubsRoute
   AppPerformanceRoute: typeof AppPerformanceRoute
+  AppPoliciesRoute: typeof AppPoliciesRoute
   AppPtoRoute: typeof AppPtoRoute
   AppRecruitingRoute: typeof AppRecruitingRoute
   AppReportsRoute: typeof AppReportsRoute
@@ -1454,6 +1474,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppPayrollRoute: AppPayrollRouteWithChildren,
   AppPaystubsRoute: AppPaystubsRoute,
   AppPerformanceRoute: AppPerformanceRoute,
+  AppPoliciesRoute: AppPoliciesRoute,
   AppPtoRoute: AppPtoRoute,
   AppRecruitingRoute: AppRecruitingRoute,
   AppReportsRoute: AppReportsRoute,
