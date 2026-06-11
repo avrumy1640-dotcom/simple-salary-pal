@@ -92,6 +92,7 @@ function SettingsPage() {
   }, [currentId]);
 
   async function save() {
+    if (saving) return;
     setSaving(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -121,6 +122,18 @@ function SettingsPage() {
         toast.error(`Save failed: ${error.message}`);
         return;
       }
+
+      // Sync the legal company name onto the company record + owner profile so
+      // it shows up consistently in the employee portal and admin sidebar.
+      if (form.legal_name?.trim()) {
+        const [{ error: companyErr }, { error: profileErr }] = await Promise.all([
+          supabase.from("companies").update({ legal_name: form.legal_name.trim() }).eq("id", currentId),
+          supabase.from("profiles").update({ company_name: form.legal_name.trim() }).eq("id", user.id),
+        ]);
+        if (companyErr) console.warn("[settings] company sync warning", companyErr);
+        if (profileErr) console.warn("[settings] profile sync warning", profileErr);
+      }
+
       console.log("[settings] saved", data);
       localStorage.setItem("paylo_notif", JSON.stringify(notif));
       localStorage.setItem("paylo_brand", brandColor);
@@ -151,8 +164,8 @@ function SettingsPage() {
           <h1 className="font-display text-3xl font-bold tracking-tight text-slate-900 sm:text-[40px]">Settings</h1>
           <p className="mt-1 text-sm text-slate-500">Manage your company, team, and account preferences.</p>
         </div>
-        <Button onClick={save} disabled={saving} className="gap-2">
-          <Save className="h-4 w-4" /> {saving ? "Saving…" : "Save changes"}
+        <Button onClick={save} disabled={saving || !currentId} className="gap-2">
+          <Save className="h-4 w-4" /> {saving ? "Saving…" : !currentId ? "Loading…" : "Save changes"}
         </Button>
       </section>
 
