@@ -47,6 +47,10 @@ function PunchPage() {
   const [coords, setCoords] = useState<{ lat: number; lng: number; acc: number } | null>(null);
   const [geoError, setGeoError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [consentOpen, setConsentOpen] = useState(false);
+  const [pendingPunchIn, setPendingPunchIn] = useState(false);
+  useEffect(() => { supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? null)); }, []);
 
   const lastPunch = recent[0];
   const clockedIn = lastPunch?.punch_type === "in" || lastPunch?.punch_type === "break_end";
