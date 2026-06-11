@@ -112,17 +112,27 @@ const FUTA_RATE = 0.006;
 const FUTA_WAGE_BASE = 7000;
 const DEFAULT_STATE_RATE = 0.04;
 
-function fedRateFor(filing: string, taxable: number, periodsPerYear: number): number {
-  const annual = taxable * periodsPerYear;
-  const brackets =
+// 2025 federal tax brackets (annual taxable income). Progressive — each
+// bracket's rate applies ONLY to the income above its floor, not to the
+// whole amount. Returns the FULL ANNUAL federal income tax, which the
+// caller divides by periodsPerYear to get a per-paycheck withholding.
+function annualFederalTax(filing: string, annualTaxable: number): number {
+  if (annualTaxable <= 0) return 0;
+  const brackets: Array<[number, number]> =
     filing === "married"
-      ? [[0, 0.0], [23200, 0.10], [94300, 0.12], [201050, 0.22], [383900, 0.24], [487450, 0.32], [731200, 0.35], [731200, 0.37]]
+      ? [[0, 0.10], [23200, 0.12], [94300, 0.22], [201050, 0.24], [383900, 0.32], [487450, 0.35], [731200, 0.37]]
       : filing === "head"
-      ? [[0, 0.0], [16550, 0.10], [63100, 0.12], [100500, 0.22], [191950, 0.24], [243700, 0.32], [609350, 0.35]]
-      : [[0, 0.0], [11600, 0.10], [47150, 0.12], [100525, 0.22], [191950, 0.24], [243725, 0.32], [609350, 0.35]];
-  let rate = 0;
-  for (const [floor, r] of brackets) if (annual >= floor) rate = r;
-  return rate;
+      ? [[0, 0.10], [16550, 0.12], [63100, 0.22], [100500, 0.24], [191950, 0.32], [243700, 0.35], [609350, 0.37]]
+      : [[0, 0.10], [11600, 0.12], [47150, 0.22], [100525, 0.24], [191950, 0.32], [243725, 0.35], [609350, 0.37]];
+  let tax = 0;
+  for (let i = 0; i < brackets.length; i++) {
+    const [floor, rate] = brackets[i];
+    const ceiling = brackets[i + 1]?.[0] ?? Infinity;
+    if (annualTaxable <= floor) break;
+    const slice = Math.min(annualTaxable, ceiling) - floor;
+    tax += slice * rate;
+  }
+  return tax;
 }
 
 function r2(n: number) { return Math.round(n * 100) / 100; }
@@ -175,10 +185,12 @@ export function calcPay(input: PayrollCalcInput): PayrollCalcResult {
   const taxableIncome = r2(Math.max(0, regularGross - preTaxDeductions));
   const taxableSupplemental = r2(supplementalGross);
 
-  // ---------- Federal income tax ----------
-  const fedRate = fedRateFor(input.filingStatus || "single", taxableIncome, periodsPerYear);
-  const dependentCredit = Math.min(Number(input.dependents || 0) * 2000, taxableIncome * periodsPerYear) / periodsPerYear;
-  const federalRegular = Math.max(0, taxableIncome * fedRate - dependentCredit + Number(input.extraWithholding || 0));
+  // ---------- Federal income tax (progressive on annualized wages) ----------
+  const annualizedTaxable = taxableIncome * periodsPerYear;
+  const annualFed = annualFederalTax(input.filingStatus || "single", annualizedTaxable);
+  const perPeriodFed = annualFed / periodsPerYear;
+  const dependentCredit = Math.min(Number(input.dependents || 0) * 2000, annualFed) / periodsPerYear;
+  const federalRegular = Math.max(0, perPeriodFed - dependentCredit + Number(input.extraWithholding || 0));
   const federalSupplemental = taxableSupplemental * SUPPLEMENTAL_FED_RATE;
   const federalTax = r2(federalRegular + federalSupplemental);
 
