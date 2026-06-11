@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { ParallaxBackground } from "../components/ParallaxBackground";
 import { PageTransition } from "../components/motion/PageTransition";
+import { Toaster } from "../components/ui/sonner";
 
 function NotFoundComponent() {
   return (
@@ -136,6 +137,7 @@ function RootComponent() {
       <PageTransition>
         <Outlet />
       </PageTransition>
+      <Toaster />
     </QueryClientProvider>
   );
 }
