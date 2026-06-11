@@ -139,14 +139,14 @@ function EmployeeProfilePage() {
   async function toggleActive() {
     if (!emp) return;
     const isActive = (emp.lifecycle_status ?? emp.status) === "active";
-    const next = isActive ? "inactive" : "active";
+    const nextStatus = isActive ? "inactive" : "active";
+    const nextLifecycle = isActive ? "terminated" : "active";
     setStatusBusy(true);
-    // Optimistic UI
     const prev = emp;
-    setEmp({ ...emp, status: next as any, lifecycle_status: next });
+    setEmp({ ...emp, status: nextStatus, lifecycle_status: nextLifecycle });
     const { error } = await supabase
       .from("employees")
-      .update({ status: next, lifecycle_status: next })
+      .update({ status: nextStatus, lifecycle_status: nextLifecycle })
       .eq("id", emp.id);
     setStatusBusy(false);
     if (error) {
@@ -156,6 +156,7 @@ function EmployeeProfilePage() {
     }
     toast.success(isActive ? "Employee deactivated" : "Employee reactivated");
   }
+
 
 
   function startEdit(section: "personal" | "job" | "pay") {
