@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS employees_self_update_limited ON public.employees;
