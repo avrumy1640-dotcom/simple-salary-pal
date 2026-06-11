@@ -29,6 +29,7 @@ const navGroups: NavGroup[] = [
       { to: "/app/time", label: "Time Tracking", icon: Clock, roles: [...MANAGER_ROLES] },
       { to: "/app/attendance", label: "Live Attendance", icon: Clock, roles: [...MANAGER_ROLES] },
       { to: "/app/live-map", label: "Live Map", icon: MapPin, roles: [...MANAGER_ROLES] },
+      { to: "/app/locations", label: "Work Locations", icon: MapPin, roles: [...MANAGER_ROLES] },
     ],
   },
   {

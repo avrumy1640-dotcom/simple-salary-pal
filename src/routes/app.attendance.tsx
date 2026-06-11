@@ -25,7 +25,11 @@ interface Punch {
   latitude: number | null;
   longitude: number | null;
   address: string | null;
+  work_location_id: string | null;
+  geofence_ok: boolean | null;
+  geofence_required: boolean;
 }
+interface WorkLoc { id: string; name: string; latitude: number | null; longitude: number | null; geofence_radius_m: number; }
 interface Row {
   employee: Employee;
   lastIn: Punch | null;
@@ -67,6 +71,7 @@ function AttendancePage() {
   const { currentId } = useCompany();
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [punches, setPunches] = useState<Punch[]>([]);
+  const [locations, setLocations] = useState<WorkLoc[]>([]);
   const [q, setQ] = useState("");
   const [tick, setTick] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -86,15 +91,20 @@ function AttendancePage() {
       if (empRes.error) throw new Error(`Employees: ${empRes.error.message}`);
 
       const pRes = await supabase.from("time_clock_punches")
-        .select("id, employee_id, punch_type, punched_at, latitude, longitude, address")
+        .select("id, employee_id, punch_type, punched_at, latitude, longitude, address, work_location_id, geofence_ok, geofence_required")
         .eq("company_id", currentId)
         .gte("punched_at", new Date(Date.now() - 14 * 86400_000).toISOString())
         .order("punched_at", { ascending: false })
         .limit(500);
       if (pRes.error) throw new Error(`Punches: ${pRes.error.message}`);
 
+      const lRes = await supabase.from("work_locations")
+        .select("id, name, latitude, longitude, geofence_radius_m")
+        .eq("company_id", currentId);
+
       setEmployees((empRes.data ?? []) as Employee[]);
       setPunches((pRes.data ?? []) as Punch[]);
+      setLocations((lRes.data ?? []) as WorkLoc[]);
     } catch (e: any) {
       console.error("[attendance] load failed", e);
       setErr(e?.message || "Failed to load attendance");
@@ -123,6 +133,9 @@ function AttendancePage() {
               id: row.id, employee_id: row.employee_id, punch_type: row.punch_type,
               punched_at: row.punched_at, latitude: row.latitude ?? null,
               longitude: row.longitude ?? null, address: row.address ?? null,
+              work_location_id: row.work_location_id ?? null,
+              geofence_ok: row.geofence_ok ?? null,
+              geofence_required: row.geofence_required ?? false,
             };
             if (i >= 0) next[i] = norm; else next.unshift(norm);
             next.sort((a, b) => b.punched_at.localeCompare(a.punched_at));
@@ -237,8 +250,8 @@ function AttendancePage() {
                 </div>
 
                 <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                  <PunchCell label="Last clock-in" punch={r.lastIn} live={r.status === "in"} accent="emerald" />
-                  <PunchCell label="Last clock-out" punch={r.lastOut} accent="slate" />
+                  <PunchCell label="Last clock-in" punch={r.lastIn} live={r.status === "in"} accent="emerald" locations={locations} />
+                  <PunchCell label="Last clock-out" punch={r.lastOut} accent="slate" locations={locations} />
                 </div>
 
                 {r.history.length > 0 && (
@@ -274,25 +287,39 @@ function StatCard({ label, value, icon, tone }: { label: string; value: number; 
   );
 }
 
-function PunchCell({ label, punch, live, accent }: { label: string; punch: Punch | null; live?: boolean; accent: "emerald" | "slate" }) {
+function PunchCell({ label, punch, live, accent, locations }: { label: string; punch: Punch | null; live?: boolean; accent: "emerald" | "slate"; locations: WorkLoc[] }) {
   const accentCls = accent === "emerald" ? "border-emerald-200 bg-emerald-50/40" : "border-border bg-surface";
+  const loc = punch?.work_location_id ? locations.find((l) => l.id === punch.work_location_id) : null;
+  const mapHref = punch?.latitude != null && punch?.longitude != null
+    ? `https://www.google.com/maps?q=${punch.latitude},${punch.longitude}` : null;
   return (
     <div className={`rounded-xl border ${accentCls} p-3`}>
-      <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">{label}</div>
+      <div className="flex items-center justify-between gap-2">
+        <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">{label}</div>
+        {punch && (
+          punch.geofence_ok === true ? <span className="text-[10px] font-bold text-emerald-700">● ON SITE</span>
+          : punch.geofence_ok === false ? <span className="text-[10px] font-bold text-amber-700">● OUTSIDE GEOFENCE</span>
+          : null
+        )}
+      </div>
       {punch ? (
         <>
           <div className="mt-1 unit-num text-sm font-semibold text-slate-900">
             {fmt(punch.punched_at)} <span className="text-xs font-normal text-slate-500">· {new Date(punch.punched_at).toLocaleDateString()}</span>
             {live && <span className="ml-2 text-xs font-semibold text-emerald-700">· live</span>}
           </div>
+          {loc && (
+            <div className="mt-1 text-xs font-semibold text-slate-700">📍 {loc.name}</div>
+          )}
           {punch.address && (
             <div className="mt-1 flex items-center gap-1 text-xs text-slate-600">
               <MapPin className="h-3 w-3" /> <span className="truncate">{punch.address}</span>
             </div>
           )}
           {punch.latitude != null && punch.longitude != null && (
-            <div className="mt-0.5 text-[11px] text-slate-400 unit-num">
-              {punch.latitude.toFixed(5)}, {punch.longitude.toFixed(5)}
+            <div className="mt-0.5 flex items-center justify-between text-[11px] text-slate-400 unit-num">
+              <span>{punch.latitude.toFixed(5)}, {punch.longitude.toFixed(5)}</span>
+              {mapHref && <a href={mapHref} target="_blank" rel="noreferrer" className="font-semibold text-indigo-600 hover:underline">View on map ↗</a>}
             </div>
           )}
         </>
