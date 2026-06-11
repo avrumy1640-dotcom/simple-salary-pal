@@ -97,10 +97,10 @@ function ApprovalsInbox() {
     }
     setBusy(null);
     if (res.error) {
-      toast({ title: "Could not approve", description: res.error.message, variant: "destructive" });
+      toast.error("Could not approve: " + res.error.message);
       return;
     }
-    toast({ title: "Approved" });
+    toast.success("Approved");
     setRows((s) => ({ ...s, [row.kind]: s[row.kind].filter((r) => r.id !== row.id) }));
   }
 
@@ -120,10 +120,10 @@ function ApprovalsInbox() {
     setReasonFor(null);
     setReason("");
     if (res.error) {
-      toast({ title: "Could not decline", description: res.error.message, variant: "destructive" });
+      toast.error("Could not decline: " + res.error.message);
       return;
     }
-    toast({ title: "Declined" });
+    toast.success("Declined");
     setRows((s) => ({ ...s, [kind]: s[kind].filter((r) => r.id !== id) }));
   }
 
