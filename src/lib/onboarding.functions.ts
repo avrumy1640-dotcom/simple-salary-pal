@@ -68,8 +68,17 @@ export const submitOnboarding = createServerFn({ method: "POST" })
     const routing_last4 = data.direct_deposit.routing_full.slice(-4);
     const account_last4 = data.direct_deposit.account_full.slice(-4);
 
-    const update: Record<string, any> = {
-      ...data.personal,
+    const update = {
+      date_of_birth: data.personal.date_of_birth ?? null,
+      ssn_last4: data.personal.ssn_last4 ?? null,
+      phone: data.personal.phone ?? null,
+      address_line1: data.personal.address_line1 ?? null,
+      address_line2: data.personal.address_line2 ?? null,
+      city: data.personal.city ?? null,
+      state: data.personal.state ?? null,
+      zip: data.personal.zip ?? null,
+      emergency_contact_name: data.personal.emergency_contact_name ?? null,
+      emergency_contact_phone: data.personal.emergency_contact_phone ?? null,
       filing_status: data.w4.filing_status,
       dependents: data.w4.dependents,
       extra_withholding: data.w4.extra_withholding,
@@ -77,9 +86,8 @@ export const submitOnboarding = createServerFn({ method: "POST" })
       bank_routing_last4: routing_last4,
       bank_account_last4: account_last4,
       direct_deposit_enabled: data.direct_deposit.direct_deposit_enabled,
-      // Link auth user to employee if not yet linked
       user_id: emp.user_id ?? userId,
-      lifecycle_status: "active",
+      lifecycle_status: "active" as const,
     };
 
     const { error: upErr } = await supabaseAdmin
@@ -101,7 +109,7 @@ export const submitOnboarding = createServerFn({ method: "POST" })
       await supabaseAdmin.from("handbook_acknowledgments").insert({
         company_id: emp.company_id,
         employee_id: emp.id,
-        user_id: userId,
+        document_title: "Employee handbook (self-onboarding)",
         acknowledged_at: new Date().toISOString(),
       });
     }
@@ -112,7 +120,7 @@ export const submitOnboarding = createServerFn({ method: "POST" })
       actor_id: userId,
       entity_type: "employees",
       entity_id: emp.id,
-      action: "onboarding_completed",
+      action: "update",
       summary: "New hire completed self-onboarding",
     });
 
