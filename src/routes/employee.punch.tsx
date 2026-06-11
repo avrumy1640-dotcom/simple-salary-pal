@@ -365,6 +365,35 @@ function PunchPage() {
           </ul>
         )}
       </div>
+
+      {clockedIn && hasLiveTrackingConsent() && (
+        <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-xs text-emerald-800">
+          <Navigation className="h-4 w-4" />
+          <span>Live location sharing is on. Your manager can see your current position while you're clocked in. It stops automatically when you clock out.</span>
+        </div>
+      )}
+
+      <Dialog open={consentOpen} onOpenChange={setConsentOpen}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Share live location while clocked in?</DialogTitle></DialogHeader>
+          <div className="space-y-3 text-sm text-slate-700">
+            <p>To clock in, your employer requests permission to track your GPS location <strong>only while you are on the clock</strong>. Tracking stops the moment you clock out.</p>
+            <ul className="list-disc pl-5 text-xs text-slate-600 space-y-1">
+              <li>Used to verify on-site presence and respond to safety incidents.</li>
+              <li>Updates roughly every 20 seconds while clocked in.</li>
+              <li>You can clock out at any time to stop sharing.</li>
+            </ul>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => { setConsentOpen(false); setPendingPunchIn(false); }}>Cancel</Button>
+            <Button onClick={() => {
+              setLiveTrackingConsent(true);
+              setConsentOpen(false);
+              if (pendingPunchIn) { setPendingPunchIn(false); punch("in"); }
+            }}>I agree — Clock me in</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
