@@ -1335,6 +1335,68 @@ export type Database = {
           },
         ]
       }
+      departments: {
+        Row: {
+          code: string | null
+          company_id: string
+          created_at: string
+          id: string
+          is_active: boolean
+          manager_id: string | null
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          code?: string | null
+          company_id: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          manager_id?: string | null
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          code?: string | null
+          company_id?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          manager_id?: string | null
+          name?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "departments_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "departments_manager_id_fkey"
+            columns: ["manager_id"]
+            isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "departments_manager_id_fkey"
+            columns: ["manager_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "departments_manager_id_fkey"
+            columns: ["manager_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
+          },
+        ]
+      }
       employee_live_locations: {
         Row: {
           accuracy_m: number | null
@@ -1424,6 +1486,7 @@ export type Database = {
           created_at: string
           date_of_birth: string | null
           department: string | null
+          department_id: string | null
           dependents: number
           direct_deposit_enabled: boolean
           email: string | null
@@ -1461,6 +1524,7 @@ export type Database = {
           termination_reason: string | null
           updated_at: string
           user_id: string | null
+          work_location_id: string | null
           zip: string | null
         }
         Insert: {
@@ -1474,6 +1538,7 @@ export type Database = {
           created_at?: string
           date_of_birth?: string | null
           department?: string | null
+          department_id?: string | null
           dependents?: number
           direct_deposit_enabled?: boolean
           email?: string | null
@@ -1513,6 +1578,7 @@ export type Database = {
           termination_reason?: string | null
           updated_at?: string
           user_id?: string | null
+          work_location_id?: string | null
           zip?: string | null
         }
         Update: {
@@ -1526,6 +1592,7 @@ export type Database = {
           created_at?: string
           date_of_birth?: string | null
           department?: string | null
+          department_id?: string | null
           dependents?: number
           direct_deposit_enabled?: boolean
           email?: string | null
@@ -1565,6 +1632,7 @@ export type Database = {
           termination_reason?: string | null
           updated_at?: string
           user_id?: string | null
+          work_location_id?: string | null
           zip?: string | null
         }
         Relationships: [
@@ -1573,6 +1641,13 @@ export type Database = {
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employees_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
             referencedColumns: ["id"]
           },
           {
@@ -1601,6 +1676,13 @@ export type Database = {
             columns: ["pto_policy_id"]
             isOneToOne: false
             referencedRelation: "pto_accrual_policies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employees_work_location_id_fkey"
+            columns: ["work_location_id"]
+            isOneToOne: false
+            referencedRelation: "work_locations"
             referencedColumns: ["id"]
           },
         ]
