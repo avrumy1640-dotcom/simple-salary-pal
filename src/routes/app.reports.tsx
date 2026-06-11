@@ -54,7 +54,7 @@ function ReportsPage() {
     try {
       const weekStart = (() => {
         const d = new Date(); d.setDate(d.getDate() - d.getDay() - 21); d.setHours(0,0,0,0);
-        return d.toISOString();
+        return d.toISOString().slice(0, 10);
       })();
       const r = await attFn({ data: { companyId: currentId, weekStart, weeks: 4 } });
       setAttendance(r.rows);
