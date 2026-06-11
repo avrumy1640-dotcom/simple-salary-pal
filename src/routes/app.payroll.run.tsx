@@ -66,7 +66,7 @@ function PayrollWizard() {
     setLoading(true);
     const [{ data: emps }, { data: te }, { data: deds }] = await Promise.all([
       supabase.from("employees")
-        .select("id, full_name, pay_type, pay_rate, filing_status, dependents, extra_withholding")
+        .select("id, full_name, pay_type, pay_rate, filing_status, dependents, extra_withholding, state")
         .eq("company_id", currentId).eq("status", "active"),
       supabase.from("time_entries")
         .select("employee_id, hours, overtime_hours")
