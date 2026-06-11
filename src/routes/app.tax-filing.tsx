@@ -8,9 +8,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import {
   buildForm941, form941ToText, buildEFW2, build1099NEC, buildStateQuarterlyCSV,
+  buildForm940, form940ToText, buildFormW3, formW3ToText, buildForm1096, form1096ToText,
+  buildNewHireReportCSV,
   triggerDownload, type FilingCompany, type FilingEmployee, type FilingItem,
-  type FilingRun, type FilingContractor,
+  type FilingRun, type FilingContractor, type NewHireRow,
 } from "@/lib/efile-generators";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 
 export const Route = createFileRoute("/app/tax-filing")({
   head: () => ({ meta: [{ title: "Tax filing — Paylo" }] }),
