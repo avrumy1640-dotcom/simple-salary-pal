@@ -56,6 +56,19 @@ function SettingsPage() {
   const [brandColor, setBrandColor] = useState("background");
   const [signInEmail, setSignInEmail] = useState("");
 
+  // Logo
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [logoSignedSrc, setLogoSignedSrc] = useState<string | null>(null);
+  const [logoBusy, setLogoBusy] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  // 2FA
+  const [mfaFactors, setMfaFactors] = useState<Array<{ id: string; friendly_name?: string | null; status: string }>>([]);
+  const [mfaLoading, setMfaLoading] = useState(false);
+  const [enrollOpen, setEnrollOpen] = useState(false);
+  const [enrollData, setEnrollData] = useState<{ factorId: string; qr: string; secret: string } | null>(null);
+  const [mfaCode, setMfaCode] = useState("");
+
   useEffect(() => {
     (async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -64,8 +77,22 @@ function SettingsPage() {
       if (localNotif) setNotif(JSON.parse(localNotif));
       const localBrand = localStorage.getItem("paylo_brand");
       if (localBrand) setBrandColor(localBrand);
+      await refreshMfa();
     })();
   }, []);
+
+  async function refreshMfa() {
+    setMfaLoading(true);
+    try {
+      const { data, error } = await supabase.auth.mfa.listFactors();
+      if (error) throw error;
+      setMfaFactors((data?.totp ?? []).map((f) => ({ id: f.id, friendly_name: f.friendly_name, status: f.status })));
+    } catch (e: any) {
+      console.error("[mfa] list", e);
+    } finally {
+      setMfaLoading(false);
+    }
+  }
 
   // Reload settings whenever the active company changes.
   useEffect(() => {
