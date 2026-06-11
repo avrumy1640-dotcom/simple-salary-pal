@@ -23,7 +23,7 @@ type Row = {
 };
 
 function ApprovalsInbox() {
-  const { toast } = useToast();
+  
   const [tab, setTab] = useState<Tab>("pto");
   const [loading, setLoading] = useState(true);
   const [rows, setRows] = useState<Record<Tab, Row[]>>({ pto: [], expense: [], swap: [] });
