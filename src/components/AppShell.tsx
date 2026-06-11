@@ -93,6 +93,7 @@ const ALL_NAV_LABELS: Record<string, string> = {
   "/app/requests": "Requests",
   "/app/approvals": "Approvals",
   "/app/departments": "Departments",
+  "/app/policies": "Policies",
 };
 
 export function AppShell() {
