@@ -52,7 +52,7 @@ async function userCanManageCompany(supabase: DbClient, userId: string, companyI
     .from("user_roles")
     .select("role")
     .eq("user_id", userId)
-    .eq("company_id", companyId)
+      .eq("company_id", companyId)
       .in("role", ADMIN_ROLES)
     .limit(1)
     .maybeSingle();
