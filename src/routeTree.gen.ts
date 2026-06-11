@@ -62,6 +62,7 @@ import { Route as AppForm1099RouteImport } from './routes/app.form-1099'
 import { Route as AppExpenseRequestsRouteImport } from './routes/app.expense-requests'
 import { Route as AppEmployeesRouteImport } from './routes/app.employees'
 import { Route as AppDocumentsRouteImport } from './routes/app.documents'
+import { Route as AppDepartmentsRouteImport } from './routes/app.departments'
 import { Route as AppDashboardRouteImport } from './routes/app.dashboard'
 import { Route as AppContractorsRouteImport } from './routes/app.contractors'
 import { Route as AppComplianceRouteImport } from './routes/app.compliance'
@@ -343,6 +344,11 @@ const AppDocumentsRoute = AppDocumentsRouteImport.update({
   path: '/documents',
   getParentRoute: () => AppRoute,
 } as any)
+const AppDepartmentsRoute = AppDepartmentsRouteImport.update({
+  id: '/departments',
+  path: '/departments',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppDashboardRoute = AppDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -440,6 +446,7 @@ export interface FileRoutesByFullPath {
   '/app/compliance': typeof AppComplianceRoute
   '/app/contractors': typeof AppContractorsRoute
   '/app/dashboard': typeof AppDashboardRoute
+  '/app/departments': typeof AppDepartmentsRoute
   '/app/documents': typeof AppDocumentsRoute
   '/app/employees': typeof AppEmployeesRouteWithChildren
   '/app/expense-requests': typeof AppExpenseRequestsRoute
@@ -510,6 +517,7 @@ export interface FileRoutesByTo {
   '/app/compliance': typeof AppComplianceRoute
   '/app/contractors': typeof AppContractorsRoute
   '/app/dashboard': typeof AppDashboardRoute
+  '/app/departments': typeof AppDepartmentsRoute
   '/app/documents': typeof AppDocumentsRoute
   '/app/employees': typeof AppEmployeesRouteWithChildren
   '/app/expense-requests': typeof AppExpenseRequestsRoute
@@ -580,6 +588,7 @@ export interface FileRoutesById {
   '/app/compliance': typeof AppComplianceRoute
   '/app/contractors': typeof AppContractorsRoute
   '/app/dashboard': typeof AppDashboardRoute
+  '/app/departments': typeof AppDepartmentsRoute
   '/app/documents': typeof AppDocumentsRoute
   '/app/employees': typeof AppEmployeesRouteWithChildren
   '/app/expense-requests': typeof AppExpenseRequestsRoute
@@ -652,6 +661,7 @@ export interface FileRouteTypes {
     | '/app/compliance'
     | '/app/contractors'
     | '/app/dashboard'
+    | '/app/departments'
     | '/app/documents'
     | '/app/employees'
     | '/app/expense-requests'
@@ -722,6 +732,7 @@ export interface FileRouteTypes {
     | '/app/compliance'
     | '/app/contractors'
     | '/app/dashboard'
+    | '/app/departments'
     | '/app/documents'
     | '/app/employees'
     | '/app/expense-requests'
@@ -791,6 +802,7 @@ export interface FileRouteTypes {
     | '/app/compliance'
     | '/app/contractors'
     | '/app/dashboard'
+    | '/app/departments'
     | '/app/documents'
     | '/app/employees'
     | '/app/expense-requests'
@@ -1226,6 +1238,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDocumentsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/departments': {
+      id: '/app/departments'
+      path: '/departments'
+      fullPath: '/app/departments'
+      preLoaderRoute: typeof AppDepartmentsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/dashboard': {
       id: '/app/dashboard'
       path: '/dashboard'
@@ -1373,6 +1392,7 @@ interface AppRouteChildren {
   AppComplianceRoute: typeof AppComplianceRoute
   AppContractorsRoute: typeof AppContractorsRoute
   AppDashboardRoute: typeof AppDashboardRoute
+  AppDepartmentsRoute: typeof AppDepartmentsRoute
   AppDocumentsRoute: typeof AppDocumentsRoute
   AppEmployeesRoute: typeof AppEmployeesRouteWithChildren
   AppExpenseRequestsRoute: typeof AppExpenseRequestsRoute
@@ -1417,6 +1437,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppComplianceRoute: AppComplianceRoute,
   AppContractorsRoute: AppContractorsRoute,
   AppDashboardRoute: AppDashboardRoute,
+  AppDepartmentsRoute: AppDepartmentsRoute,
   AppDocumentsRoute: AppDocumentsRoute,
   AppEmployeesRoute: AppEmployeesRouteWithChildren,
   AppExpenseRequestsRoute: AppExpenseRequestsRoute,
