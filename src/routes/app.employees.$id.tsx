@@ -249,15 +249,37 @@ function EmployeeProfilePage() {
                 <span className="inline-flex items-center rounded-full bg-sky-50 px-2.5 py-1 text-xs font-medium text-sky-700 ring-1 ring-sky-200">{emp.department}</span>
               )}
               <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-semibold ring-1 ${fullType === "W-2" ? "bg-primary/5 text-primary ring-primary/25" : "bg-amber-50 text-amber-700 ring-amber-200"}`}>{fullType}</span>
-              {emp.status === "active" || emp.lifecycle_status === "active" ? (
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-200">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> Active
-                </span>
-              ) : (
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600 ring-1 ring-slate-200">
-                  <span className="h-1.5 w-1.5 rounded-full bg-slate-400" /> {emp.lifecycle_status ?? emp.status}
-                </span>
-              )}
+              {(() => {
+                const isActive = (emp.lifecycle_status ?? emp.status) === "active";
+                return (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild disabled={statusBusy}>
+                      <button
+                        type="button"
+                        className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ring-1 transition hover:brightness-95 disabled:opacity-60 ${
+                          isActive
+                            ? "bg-emerald-50 text-emerald-700 ring-emerald-200"
+                            : "bg-slate-100 text-slate-600 ring-slate-200"
+                        }`}
+                      >
+                        <span className={`h-1.5 w-1.5 rounded-full ${isActive ? "bg-emerald-500" : "bg-slate-400"}`} />
+                        {isActive ? "Active" : (emp.lifecycle_status ?? emp.status)}
+                        <ChevronDown className="h-3 w-3 opacity-70" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" className="w-44">
+                      <DropdownMenuItem onClick={toggleActive}>
+                        {isActive ? (
+                          <><X className="mr-2 h-4 w-4" /> Deactivate</>
+                        ) : (
+                          <><Check className="mr-2 h-4 w-4" /> Reactivate</>
+                        )}
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                );
+              })()}
+
             </div>
           </div>
 
