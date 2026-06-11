@@ -6,6 +6,7 @@ import { getEmployeePortalIdentity } from "@/lib/company-sync.functions";
 import {
   Home, Wallet, CalendarDays, User, HeartHandshake, LogOut, HelpCircle,
   Receipt, MessageSquare, Sparkles, Menu, X, ChevronLeft, ChevronRight, Bell, ClipboardCheck,
+  Clock, MapPin, FolderOpen,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { EmployeeNotificationBanner } from "@/components/EmployeeNotificationBanner";
@@ -23,6 +24,14 @@ const navGroups: NavGroup[] = [
     ],
   },
   {
+    label: "Work",
+    items: [
+      { to: "/employee/schedule", label: "Schedule", icon: CalendarDays },
+      { to: "/employee/punch", label: "Clock In / Out", icon: Clock },
+      { to: "/employee/pay-on-demand", label: "Pay On-Demand", icon: Wallet },
+    ],
+  },
+  {
     label: "Requests",
     items: [
       { to: "/employee/expenses", label: "Expenses", icon: Receipt },
@@ -35,10 +44,12 @@ const navGroups: NavGroup[] = [
     items: [
       { to: "/employee/profile", label: "My Info", icon: User },
       { to: "/employee/benefits", label: "Benefits", icon: HeartHandshake },
+      { to: "/employee/documents", label: "Documents", icon: FolderOpen },
       { to: "/employee/onboarding", label: "Get Started", icon: ClipboardCheck },
     ],
   },
 ];
+
 
 const PAGE_TITLES: Record<string, string> = {
   "/employee/home": "Home",
