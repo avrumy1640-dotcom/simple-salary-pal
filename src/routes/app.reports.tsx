@@ -9,7 +9,8 @@ import { useCompany } from "@/hooks/useCompany";
 import { toast } from "sonner";
 import {
   Download, FileText, Users, DollarSign, Calendar, Clock, FileBadge,
-  TrendingUp, PieChart, Briefcase, HeartHandshake, ChevronRight, BookOpen, ShieldCheck,
+  TrendingUp, TrendingDown, PieChart, Briefcase, HeartHandshake, ChevronRight, BookOpen, ShieldCheck,
+  UserMinus, UserPlus, Activity,
 } from "lucide-react";
 import { fmtUSD } from "@/lib/payroll";
 
