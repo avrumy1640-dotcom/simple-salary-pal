@@ -9,7 +9,8 @@ import { useCompany } from "@/hooks/useCompany";
 import { toast } from "sonner";
 import {
   Download, FileText, Users, DollarSign, Calendar, Clock, FileBadge,
-  TrendingUp, PieChart, Briefcase, HeartHandshake, ChevronRight, BookOpen, ShieldCheck,
+  TrendingUp, TrendingDown, PieChart, Briefcase, HeartHandshake, ChevronRight, BookOpen, ShieldCheck,
+  UserMinus, UserPlus, Activity,
 } from "lucide-react";
 import { fmtUSD } from "@/lib/payroll";
 
@@ -36,6 +37,11 @@ function ReportsPage() {
   const attFn = useServerFn(getAttendanceReport);
   const [attendance, setAttendance] = useState<any[]>([]);
   const [attLoading, setAttLoading] = useState(false);
+  const [workforce, setWorkforce] = useState({
+    headcount: 0, hires90: 0, terms90: 0, hires12mo: 0, terms12mo: 0,
+    avgTenureDays: 0, onLeave: 0, turnoverPct: 0,
+  });
+  const [trend, setTrend] = useState<{ month: string; hires: number; terms: number }[]>([]);
 
   function downloadCsv(filename: string, csv: string) {
     const blob = new Blob([csv], { type: "text/csv" });
@@ -74,6 +80,51 @@ function ReportsPage() {
   }
 
 
+  async function loadWorkforce() {
+    if (!currentId) return;
+    const today = new Date();
+    const d90 = new Date(today); d90.setDate(d90.getDate() - 90);
+    const d365 = new Date(today); d365.setDate(d365.getDate() - 365);
+    const iso90 = d90.toISOString().slice(0,10);
+    const iso365 = d365.toISOString().slice(0,10);
+
+    const { data: emps } = await supabase.from("employees")
+      .select("id, start_date, termination_date, lifecycle_status, hire_date")
+      .eq("company_id", currentId);
+    const rows = emps ?? [];
+
+    const headcount = rows.filter((e: any) => e.lifecycle_status === "active" || e.lifecycle_status === "on_leave").length;
+    const onLeave = rows.filter((e: any) => e.lifecycle_status === "on_leave").length;
+    const hires90 = rows.filter((e: any) => (e.start_date || e.hire_date) && (e.start_date || e.hire_date) >= iso90).length;
+    const terms90 = rows.filter((e: any) => e.termination_date && e.termination_date >= iso90).length;
+    const hires12mo = rows.filter((e: any) => (e.start_date || e.hire_date) && (e.start_date || e.hire_date) >= iso365).length;
+    const terms12mo = rows.filter((e: any) => e.termination_date && e.termination_date >= iso365).length;
+    const avgHeadcount = Math.max(1, (headcount + terms12mo) / 2);
+    const turnoverPct = (terms12mo / avgHeadcount) * 100;
+
+    // Avg tenure (days) of active employees
+    const tenures = rows
+      .filter((e: any) => (e.lifecycle_status === "active" || e.lifecycle_status === "on_leave") && (e.start_date || e.hire_date))
+      .map((e: any) => Math.max(0, (today.getTime() - new Date(e.start_date || e.hire_date).getTime()) / 86400000));
+    const avgTenureDays = tenures.length ? tenures.reduce((a, b) => a + b, 0) / tenures.length : 0;
+
+    // 6-month hires/terms trend
+    const buckets: Record<string, { hires: number; terms: number }> = {};
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+      const k = d.toISOString().slice(0, 7);
+      buckets[k] = { hires: 0, terms: 0 };
+    }
+    for (const e of rows as any[]) {
+      const hireKey = (e.start_date || e.hire_date)?.slice(0, 7);
+      if (hireKey && buckets[hireKey]) buckets[hireKey].hires += 1;
+      const termKey = e.termination_date?.slice(0, 7);
+      if (termKey && buckets[termKey]) buckets[termKey].terms += 1;
+    }
+    setTrend(Object.entries(buckets).map(([month, v]) => ({ month, ...v })));
+    setWorkforce({ headcount, hires90, terms90, hires12mo, terms12mo, avgTenureDays, onLeave, turnoverPct });
+  }
+
   useEffect(() => {
     if (!currentId) return;
     (async () => {
@@ -84,6 +135,18 @@ function ReportsPage() {
       setRuns((r ?? []) as Run[]);
       setEmpCount(count ?? 0);
     })();
+    loadWorkforce();
+
+    // Realtime: refresh on employee + payroll run changes
+    const ch = supabase
+      .channel(`reports-${currentId}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "employees", filter: `company_id=eq.${currentId}` }, () => loadWorkforce())
+      .on("postgres_changes", { event: "*", schema: "public", table: "payroll_runs", filter: `company_id=eq.${currentId}` }, async () => {
+        const { data: r } = await supabase.from("payroll_runs").select("*").eq("company_id", currentId).order("created_at", { ascending: false }).limit(10);
+        setRuns((r ?? []) as Run[]);
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
   }, [currentId]);
 
 
@@ -265,6 +328,56 @@ function ReportsPage() {
               </tbody>
             </table>
           )}
+        </div>
+      </div>
+
+      {/* Workforce trends — Turnover & Headcount */}
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Workforce trends</h2>
+          <span className="text-[11px] text-muted-foreground inline-flex items-center gap-1">
+            <Activity className="h-3 w-3" /> Live
+          </span>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
+          <KpiTile icon={Users} label="Headcount" value={String(workforce.headcount)} />
+          <KpiTile icon={UserPlus} label="New hires (90d)" value={String(workforce.hires90)} />
+          <KpiTile icon={UserMinus} label="Departures (90d)" value={String(workforce.terms90)} />
+          <KpiTile icon={workforce.turnoverPct > 20 ? TrendingDown : TrendingUp} label="Turnover (12mo)" value={`${workforce.turnoverPct.toFixed(1)}%`} highlight={workforce.turnoverPct > 20} />
+        </div>
+        <div className="surface-glass rounded-2xl p-5">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <div className="text-sm font-semibold text-slate-900">Hires vs departures · last 6 months</div>
+              <div className="text-xs text-muted-foreground">
+                Avg tenure: <span className="font-semibold text-slate-700">{(workforce.avgTenureDays / 365).toFixed(1)} yrs</span>
+                {workforce.onLeave > 0 && <> · <span className="text-amber-600">{workforce.onLeave} on leave</span></>}
+              </div>
+            </div>
+          </div>
+          <div className="grid grid-cols-6 gap-2 items-end h-32">
+            {trend.map((t) => {
+              const max = Math.max(1, ...trend.flatMap((x) => [x.hires, x.terms]));
+              const hiresH = (t.hires / max) * 100;
+              const termsH = (t.terms / max) * 100;
+              return (
+                <div key={t.month} className="flex flex-col items-center gap-1">
+                  <div className="flex items-end gap-1 h-24 w-full justify-center">
+                    <div className="w-3 rounded-t bg-emerald-500/80 transition-all" style={{ height: `${hiresH}%`, minHeight: t.hires ? 4 : 0 }} title={`${t.hires} hires`} />
+                    <div className="w-3 rounded-t bg-rose-500/80 transition-all" style={{ height: `${termsH}%`, minHeight: t.terms ? 4 : 0 }} title={`${t.terms} departures`} />
+                  </div>
+                  <div className="text-[10px] text-muted-foreground tabular-nums">
+                    {new Date(t.month + "-02").toLocaleDateString("en-US", { month: "short" })}
+                  </div>
+                  <div className="text-[10px] tabular-nums text-slate-500">+{t.hires} / -{t.terms}</div>
+                </div>
+              );
+            })}
+          </div>
+          <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground">
+            <span className="inline-flex items-center gap-1.5"><span className="w-2 h-2 rounded-sm bg-emerald-500/80" /> Hires</span>
+            <span className="inline-flex items-center gap-1.5"><span className="w-2 h-2 rounded-sm bg-rose-500/80" /> Departures</span>
+          </div>
         </div>
       </div>
 

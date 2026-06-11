@@ -47,6 +47,7 @@ const navGroups: NavGroup[] = [
     label: "Company",
     items: [
       { to: "/app/compliance", label: "Compliance", icon: ShieldCheck, roles: HR_ROLES },
+      { to: "/app/policies", label: "Policies", icon: FolderOpen, roles: HR_ROLES },
       { to: "/app/tax-filing", label: "Tax Filing", icon: Landmark, roles: PAYROLL_ROLES },
       { to: "/app/reports", label: "Reports", icon: BarChart3, roles: ANY_ADMIN },
       { to: "/app/analytics", label: "Analytics", icon: LineChart, roles: ANY_ADMIN },
@@ -92,6 +93,7 @@ const ALL_NAV_LABELS: Record<string, string> = {
   "/app/requests": "Requests",
   "/app/approvals": "Approvals",
   "/app/departments": "Departments",
+  "/app/policies": "Policies",
 };
 
 export function AppShell() {
