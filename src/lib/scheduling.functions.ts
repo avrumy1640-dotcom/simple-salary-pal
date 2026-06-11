@@ -131,3 +131,23 @@ export const cancelSwap = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+// Target employee declines an incoming swap proposal → cancels the request.
+export const declineSwapAsTarget = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ swapId: uuid, reason: z.string().max(500).optional() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { supabase } = context;
+    const { data: swap } = await supabase
+      .from("shift_swap_requests").select("id, company_id, target_employee_id, status").eq("id", data.swapId).maybeSingle();
+    if (!swap) throw new Error("Swap not found");
+    if (swap.status !== "pending") throw new Error("Already decided");
+    const { data: empId } = await supabase.rpc("current_employee_id", { _company_id: swap.company_id });
+    if (!empId || empId !== swap.target_employee_id) throw new Error("Not your proposal");
+    const { error } = await supabase.from("shift_swap_requests").update({
+      status: "cancelled",
+      decision_notes: data.reason ? `Declined by coworker: ${data.reason}` : "Declined by coworker",
+    }).eq("id", swap.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
