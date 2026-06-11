@@ -69,6 +69,7 @@ import { Route as AppCompaniesRouteImport } from './routes/app.companies'
 import { Route as AppBenefitsRouteImport } from './routes/app.benefits'
 import { Route as AppAuthDebugRouteImport } from './routes/app.auth-debug'
 import { Route as AppAuditRouteImport } from './routes/app.audit'
+import { Route as AppAttendanceRouteImport } from './routes/app.attendance'
 import { Route as AppApprovalsRouteImport } from './routes/app.approvals'
 import { Route as AppAnnouncementsRouteImport } from './routes/app.announcements'
 import { Route as AppAnalyticsRouteImport } from './routes/app.analytics'
@@ -377,6 +378,11 @@ const AppAuditRoute = AppAuditRouteImport.update({
   path: '/audit',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAttendanceRoute = AppAttendanceRouteImport.update({
+  id: '/attendance',
+  path: '/attendance',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppApprovalsRoute = AppApprovalsRouteImport.update({
   id: '/approvals',
   path: '/approvals',
@@ -426,6 +432,7 @@ export interface FileRoutesByFullPath {
   '/app/analytics': typeof AppAnalyticsRoute
   '/app/announcements': typeof AppAnnouncementsRoute
   '/app/approvals': typeof AppApprovalsRoute
+  '/app/attendance': typeof AppAttendanceRoute
   '/app/audit': typeof AppAuditRoute
   '/app/auth-debug': typeof AppAuthDebugRoute
   '/app/benefits': typeof AppBenefitsRoute
@@ -495,6 +502,7 @@ export interface FileRoutesByTo {
   '/app/analytics': typeof AppAnalyticsRoute
   '/app/announcements': typeof AppAnnouncementsRoute
   '/app/approvals': typeof AppApprovalsRoute
+  '/app/attendance': typeof AppAttendanceRoute
   '/app/audit': typeof AppAuditRoute
   '/app/auth-debug': typeof AppAuthDebugRoute
   '/app/benefits': typeof AppBenefitsRoute
@@ -564,6 +572,7 @@ export interface FileRoutesById {
   '/app/analytics': typeof AppAnalyticsRoute
   '/app/announcements': typeof AppAnnouncementsRoute
   '/app/approvals': typeof AppApprovalsRoute
+  '/app/attendance': typeof AppAttendanceRoute
   '/app/audit': typeof AppAuditRoute
   '/app/auth-debug': typeof AppAuthDebugRoute
   '/app/benefits': typeof AppBenefitsRoute
@@ -635,6 +644,7 @@ export interface FileRouteTypes {
     | '/app/analytics'
     | '/app/announcements'
     | '/app/approvals'
+    | '/app/attendance'
     | '/app/audit'
     | '/app/auth-debug'
     | '/app/benefits'
@@ -704,6 +714,7 @@ export interface FileRouteTypes {
     | '/app/analytics'
     | '/app/announcements'
     | '/app/approvals'
+    | '/app/attendance'
     | '/app/audit'
     | '/app/auth-debug'
     | '/app/benefits'
@@ -772,6 +783,7 @@ export interface FileRouteTypes {
     | '/app/analytics'
     | '/app/announcements'
     | '/app/approvals'
+    | '/app/attendance'
     | '/app/audit'
     | '/app/auth-debug'
     | '/app/benefits'
@@ -1263,6 +1275,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAuditRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/attendance': {
+      id: '/app/attendance'
+      path: '/attendance'
+      fullPath: '/app/attendance'
+      preLoaderRoute: typeof AppAttendanceRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/approvals': {
       id: '/app/approvals'
       path: '/approvals'
@@ -1346,6 +1365,7 @@ interface AppRouteChildren {
   AppAnalyticsRoute: typeof AppAnalyticsRoute
   AppAnnouncementsRoute: typeof AppAnnouncementsRoute
   AppApprovalsRoute: typeof AppApprovalsRoute
+  AppAttendanceRoute: typeof AppAttendanceRoute
   AppAuditRoute: typeof AppAuditRoute
   AppAuthDebugRoute: typeof AppAuthDebugRoute
   AppBenefitsRoute: typeof AppBenefitsRoute
@@ -1389,6 +1409,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAnalyticsRoute: AppAnalyticsRoute,
   AppAnnouncementsRoute: AppAnnouncementsRoute,
   AppApprovalsRoute: AppApprovalsRoute,
+  AppAttendanceRoute: AppAttendanceRoute,
   AppAuditRoute: AppAuditRoute,
   AppAuthDebugRoute: AppAuthDebugRoute,
   AppBenefitsRoute: AppBenefitsRoute,
