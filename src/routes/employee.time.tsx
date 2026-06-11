@@ -44,12 +44,16 @@ function haversineM(lat1: number, lon1: number, lat2: number, lon2: number) {
   return 2 * 6371000 * Math.asin(Math.sqrt(a));
 }
 
-function getPosition(): Promise<GeolocationPosition | null> {
+import { friendlyGeoError } from "@/lib/geo";
+
+function getPosition(): Promise<{ position: GeolocationPosition | null; error: string | null }> {
   return new Promise((resolve) => {
-    if (typeof navigator === "undefined" || !("geolocation" in navigator)) return resolve(null);
+    if (typeof navigator === "undefined" || !("geolocation" in navigator)) {
+      return resolve({ position: null, error: "Geolocation is not available on this device." });
+    }
     navigator.geolocation.getCurrentPosition(
-      (p) => resolve(p),
-      () => resolve(null),
+      (p) => resolve({ position: p, error: null }),
+      (e) => resolve({ position: null, error: friendlyGeoError(e) }),
       { enableHighAccuracy: true, timeout: 8000, maximumAge: 10000 },
     );
   });
