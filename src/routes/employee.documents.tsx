@@ -1,16 +1,39 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { useMyEmployee } from "@/lib/useMyEmployee";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { FolderOpen, FileText, Download, Eye, CheckCircle2, PenSquare } from "lucide-react";
+import { FolderOpen, FileText, Download, Eye, CheckCircle2, PenSquare, ClipboardList, Clock } from "lucide-react";
+import { submitEmployeeForm, listMyForms } from "@/lib/employee-self.functions";
 
 export const Route = createFileRoute("/employee/documents")({
   head: () => ({ meta: [{ title: "My documents — Paylo" }] }),
   component: Page,
 });
+
+type EmpForm = {
+  id: string;
+  form_type: string;
+  status: string;
+  signed_at: string | null;
+  signed_name: string | null;
+  tax_year: number | null;
+  created_at: string;
+};
+
+const FORM_LABELS: Record<string, { title: string; desc: string }> = {
+  w4: { title: "Federal W-4", desc: "Adjust federal income tax withholding." },
+  state_w4: { title: "State withholding", desc: "Update state income tax withholding." },
+  i9: { title: "Form I-9", desc: "Employment eligibility verification." },
+  direct_deposit: { title: "Direct deposit change", desc: "Request a change to your direct deposit." },
+  address_change: { title: "Address change", desc: "Update your mailing address on file." },
+};
 
 interface Doc {
   id: string;
