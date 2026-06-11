@@ -54,6 +54,7 @@ import { Route as AppLiveMapRouteImport } from './routes/app.live-map'
 import { Route as AppIntegrationsRouteImport } from './routes/app.integrations'
 import { Route as AppGettingStartedRouteImport } from './routes/app.getting-started'
 import { Route as AppForm1099RouteImport } from './routes/app.form-1099'
+import { Route as AppExpenseRequestsRouteImport } from './routes/app.expense-requests'
 import { Route as AppEmployeesRouteImport } from './routes/app.employees'
 import { Route as AppDocumentsRouteImport } from './routes/app.documents'
 import { Route as AppDashboardRouteImport } from './routes/app.dashboard'
@@ -295,6 +296,11 @@ const AppForm1099Route = AppForm1099RouteImport.update({
   path: '/form-1099',
   getParentRoute: () => AppRoute,
 } as any)
+const AppExpenseRequestsRoute = AppExpenseRequestsRouteImport.update({
+  id: '/expense-requests',
+  path: '/expense-requests',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppEmployeesRoute = AppEmployeesRouteImport.update({
   id: '/employees',
   path: '/employees',
@@ -392,6 +398,7 @@ export interface FileRoutesByFullPath {
   '/app/dashboard': typeof AppDashboardRoute
   '/app/documents': typeof AppDocumentsRoute
   '/app/employees': typeof AppEmployeesRouteWithChildren
+  '/app/expense-requests': typeof AppExpenseRequestsRoute
   '/app/form-1099': typeof AppForm1099Route
   '/app/getting-started': typeof AppGettingStartedRoute
   '/app/integrations': typeof AppIntegrationsRoute
@@ -454,6 +461,7 @@ export interface FileRoutesByTo {
   '/app/dashboard': typeof AppDashboardRoute
   '/app/documents': typeof AppDocumentsRoute
   '/app/employees': typeof AppEmployeesRouteWithChildren
+  '/app/expense-requests': typeof AppExpenseRequestsRoute
   '/app/form-1099': typeof AppForm1099Route
   '/app/getting-started': typeof AppGettingStartedRoute
   '/app/integrations': typeof AppIntegrationsRoute
@@ -516,6 +524,7 @@ export interface FileRoutesById {
   '/app/dashboard': typeof AppDashboardRoute
   '/app/documents': typeof AppDocumentsRoute
   '/app/employees': typeof AppEmployeesRouteWithChildren
+  '/app/expense-requests': typeof AppExpenseRequestsRoute
   '/app/form-1099': typeof AppForm1099Route
   '/app/getting-started': typeof AppGettingStartedRoute
   '/app/integrations': typeof AppIntegrationsRoute
@@ -580,6 +589,7 @@ export interface FileRouteTypes {
     | '/app/dashboard'
     | '/app/documents'
     | '/app/employees'
+    | '/app/expense-requests'
     | '/app/form-1099'
     | '/app/getting-started'
     | '/app/integrations'
@@ -642,6 +652,7 @@ export interface FileRouteTypes {
     | '/app/dashboard'
     | '/app/documents'
     | '/app/employees'
+    | '/app/expense-requests'
     | '/app/form-1099'
     | '/app/getting-started'
     | '/app/integrations'
@@ -703,6 +714,7 @@ export interface FileRouteTypes {
     | '/app/dashboard'
     | '/app/documents'
     | '/app/employees'
+    | '/app/expense-requests'
     | '/app/form-1099'
     | '/app/getting-started'
     | '/app/integrations'
@@ -1074,6 +1086,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppForm1099RouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/expense-requests': {
+      id: '/app/expense-requests'
+      path: '/expense-requests'
+      fullPath: '/app/expense-requests'
+      preLoaderRoute: typeof AppExpenseRequestsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/employees': {
       id: '/app/employees'
       path: '/employees'
@@ -1221,6 +1240,7 @@ interface AppRouteChildren {
   AppDashboardRoute: typeof AppDashboardRoute
   AppDocumentsRoute: typeof AppDocumentsRoute
   AppEmployeesRoute: typeof AppEmployeesRouteWithChildren
+  AppExpenseRequestsRoute: typeof AppExpenseRequestsRoute
   AppForm1099Route: typeof AppForm1099Route
   AppGettingStartedRoute: typeof AppGettingStartedRoute
   AppIntegrationsRoute: typeof AppIntegrationsRoute
@@ -1261,6 +1281,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppDashboardRoute: AppDashboardRoute,
   AppDocumentsRoute: AppDocumentsRoute,
   AppEmployeesRoute: AppEmployeesRouteWithChildren,
+  AppExpenseRequestsRoute: AppExpenseRequestsRoute,
   AppForm1099Route: AppForm1099Route,
   AppGettingStartedRoute: AppGettingStartedRoute,
   AppIntegrationsRoute: AppIntegrationsRoute,
