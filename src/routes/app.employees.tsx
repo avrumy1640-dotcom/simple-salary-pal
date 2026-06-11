@@ -187,11 +187,21 @@ function EmployeesPage() {
     refresh();
   }
 
-  const departments = useMemo(() => {
-    const s = new Set<string>();
-    items.forEach((e) => { if (e.department) s.add(e.department); });
-    return Array.from(s).sort();
-  }, [items]);
+  const [departments, setDepartments] = useState<string[]>([]);
+  useEffect(() => {
+    if (!currentId) { setDepartments([]); return; }
+    supabase.from("departments").select("name").eq("company_id", currentId).eq("is_active", true).order("name").then(({ data }) => {
+      setDepartments(((data ?? []) as { name: string }[]).map((d) => d.name));
+    });
+    const ch = supabase.channel(`depts-${currentId}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "departments", filter: `company_id=eq.${currentId}` }, () => {
+        supabase.from("departments").select("name").eq("company_id", currentId).eq("is_active", true).order("name").then(({ data }) => {
+          setDepartments(((data ?? []) as { name: string }[]).map((d) => d.name));
+        });
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [currentId]);
 
   const filtered = items.filter((e) => {
     if (statusFilter !== "all" && e.status !== statusFilter) return false;

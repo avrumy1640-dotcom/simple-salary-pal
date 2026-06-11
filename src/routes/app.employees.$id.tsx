@@ -30,6 +30,8 @@ interface Employee {
   email: string | null;
   job_title: string | null;
   department?: string | null;
+  department_id?: string | null;
+  work_location_id?: string | null;
   employment_type?: string | null;
   pay_type: "hourly" | "salary";
   pay_rate: number;
@@ -53,7 +55,11 @@ interface Employee {
   emergency_contact_phone?: string | null;
   start_date?: string | null;
   manager_id?: string | null;
+  company_id?: string | null;
 }
+
+interface DeptRow { id: string; name: string }
+interface LocRow { id: string; name: string }
 
 interface PtoEntry {
   id: string;
@@ -106,6 +112,8 @@ function EmployeeProfilePage() {
   const [emp, setEmp] = useState<Employee | null>(null);
   const [pto, setPto] = useState<PtoEntry[]>([]);
   const [audit, setAudit] = useState<any[]>([]);
+  const [departments, setDepartments] = useState<DeptRow[]>([]);
+  const [locations, setLocations] = useState<LocRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState("personal");
   const [statusBusy, setStatusBusy] = useState(false);
@@ -126,6 +134,14 @@ function EmployeeProfilePage() {
     setEmp(e as Employee | null);
     setPto((p ?? []) as PtoEntry[]);
     setAudit((a ?? []) as any[]);
+    if (e?.company_id) {
+      const [d, l] = await Promise.all([
+        supabase.from("departments").select("id, name").eq("company_id", e.company_id).eq("is_active", true).order("name"),
+        supabase.from("work_locations").select("id, name").eq("company_id", e.company_id).eq("is_active", true).order("name"),
+      ]);
+      setDepartments((d.data ?? []) as DeptRow[]);
+      setLocations((l.data ?? []) as LocRow[]);
+    }
     setLoading(false);
     // Auto-enter edit mode if requested via ?edit=1
     if (e && search.edit === 1) {
@@ -181,7 +197,10 @@ function EmployeeProfilePage() {
       };
     } else if (section === "job") {
       patch = {
-        job_title: draft.job_title, department: draft.department, start_date: draft.start_date,
+        job_title: draft.job_title,
+        department_id: draft.department_id ?? null,
+        work_location_id: draft.work_location_id ?? null,
+        start_date: draft.start_date,
         employment_type: draft.employment_type,
       };
     } else if (section === "pay") {
@@ -335,7 +354,12 @@ function EmployeeProfilePage() {
         <TabsContent value="job" className="mt-6">
           <SectionCard title="Job Information" editing={editJob} onEdit={() => startEdit("job")} onCancel={cancelEdit} onSave={() => saveSection("job")}>
             <Grid>
-              <PField label="Department" editing={editJob} value={e.department ?? ""} onChange={(v) => setDraft({ ...draft, department: v })} />
+              <PField
+                label="Department" editing={editJob}
+                value={editJob ? (e.department_id ?? "") : (e.department ?? "—")}
+                onChange={(v) => setDraft({ ...draft, department_id: v || null })}
+                options={[{ v: "", l: "— None —" }, ...departments.map((d) => ({ v: d.id, l: d.name }))]}
+              />
               <PField label="Job Title" editing={editJob} value={e.job_title ?? ""} onChange={(v) => setDraft({ ...draft, job_title: v })} />
               <PField label="Manager" editing={false} value="—" />
               <PField label="Start Date" editing={editJob} type="date" value={e.start_date ?? ""} onChange={(v) => setDraft({ ...draft, start_date: v })} />
@@ -345,7 +369,12 @@ function EmployeeProfilePage() {
                 onChange={(v) => setDraft({ ...draft, employment_type: v })}
                 options={[{ v: "w2", l: "W-2 Employee" }, { v: "1099", l: "1099 Contractor" }]}
               />
-              <PField label="Work Location" editing={false} value="—" />
+              <PField
+                label="Work Location" editing={editJob}
+                value={editJob ? (e.work_location_id ?? "") : (locations.find((l) => l.id === e.work_location_id)?.name ?? "—")}
+                onChange={(v) => setDraft({ ...draft, work_location_id: v || null })}
+                options={[{ v: "", l: "— None —" }, ...locations.map((l) => ({ v: l.id, l: l.name }))]}
+              />
               <PField label="Employee ID" editing={false} value={emp.id.slice(0, 8).toUpperCase()} />
             </Grid>
           </SectionCard>
