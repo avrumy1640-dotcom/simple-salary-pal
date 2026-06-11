@@ -47,9 +47,13 @@ function EmployeeSchedulePage() {
   const [myEmpId, setMyEmpId] = useState<string | null>(null);
   const [companyId, setCompanyId] = useState<string | null>(null);
   const [swapFor, setSwapFor] = useState<Shift | null>(null);
+  const [incoming, setIncoming] = useState<Swap[]>([]);
+  const [incomingShifts, setIncomingShifts] = useState<Record<string, ShiftLite>>({});
+  const [incomingNames, setIncomingNames] = useState<Record<string, string>>({});
 
   const reqSwap = useServerFn(requestSwap);
   const cancel = useServerFn(cancelSwap);
+  const declineIncoming = useServerFn(declineSwapAsTarget);
 
   async function load() {
     const { data: sess } = await supabase.auth.getSession();
