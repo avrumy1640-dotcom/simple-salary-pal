@@ -228,6 +228,7 @@ function TaxFilingPage() {
       toast.error(`Failed: ${(e as Error).message}`);
     } finally {
       setGenerating(null);
+    }
   }
 
   async function downloadForm940() {
@@ -286,7 +287,7 @@ function TaxFilingPage() {
       toast.error(`Failed: ${(e as Error).message}`);
     } finally { setGenerating(null); }
   }
-  }
+
 
   const totalLiability = q941.reduce((s, q) => s + q.fed + q.fica, 0);
   return (
