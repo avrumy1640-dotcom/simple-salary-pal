@@ -250,8 +250,8 @@ function AttendancePage() {
                 </div>
 
                 <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                  <PunchCell label="Last clock-in" punch={r.lastIn} live={r.status === "in"} accent="emerald" />
-                  <PunchCell label="Last clock-out" punch={r.lastOut} accent="slate" />
+                  <PunchCell label="Last clock-in" punch={r.lastIn} live={r.status === "in"} accent="emerald" locations={locations} />
+                  <PunchCell label="Last clock-out" punch={r.lastOut} accent="slate" locations={locations} />
                 </div>
 
                 {r.history.length > 0 && (
