@@ -71,6 +71,7 @@ function AttendancePage() {
   const { currentId } = useCompany();
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [punches, setPunches] = useState<Punch[]>([]);
+  const [locations, setLocations] = useState<WorkLoc[]>([]);
   const [q, setQ] = useState("");
   const [tick, setTick] = useState(0);
   const [loading, setLoading] = useState(true);
