@@ -35,7 +35,7 @@ function fmt(n: number) {
 }
 
 function PayOnDemandAdmin() {
-  const { companyId } = useCompany();
+  const { currentId: companyId } = useCompany();
   const [tab, setTab] = useState<"pending" | "history">("pending");
   const [rows, setRows] = useState<Req[]>([]);
   const [declineFor, setDeclineFor] = useState<Req | null>(null);
