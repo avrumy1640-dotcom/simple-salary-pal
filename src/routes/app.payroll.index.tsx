@@ -1,15 +1,20 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useServerFn } from "@tanstack/react-start";
 import { fmtUSD } from "@/lib/payroll";
+import { markRunPaid, reversePayrollRun } from "@/lib/payroll-workflow.functions";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import {
   PlayCircle, CalendarClock, Users, Wallet, TrendingUp, Search, Download,
   ChevronDown, ChevronRight, CheckCircle2, Clock, ArrowUpRight, FileText,
+  Banknote, Undo2,
 } from "lucide-react";
 import { useCompany } from "@/hooks/useCompany";
 
@@ -179,10 +184,13 @@ function PayrollOverview() {
 
   function statusPill(s: string) {
     const map: Record<string, string> = {
-      approved: "bg-emerald-50 text-emerald-700 ring-emerald-200",
+      paid: "bg-emerald-50 text-emerald-700 ring-emerald-200",
+      approved: "bg-sky-50 text-sky-700 ring-sky-200",
       completed: "bg-emerald-50 text-emerald-700 ring-emerald-200",
       draft: "bg-amber-50 text-amber-700 ring-amber-200",
+      calculating: "bg-slate-100 text-slate-700 ring-slate-200",
       pending: "bg-amber-50 text-amber-700 ring-amber-200",
+      reversed: "bg-rose-50 text-rose-700 ring-rose-200",
       failed: "bg-red-50 text-red-700 ring-red-200",
     };
     const cls = map[s] ?? "bg-slate-50 text-slate-700 ring-slate-200";
@@ -192,6 +200,44 @@ function PayrollOverview() {
         {s.charAt(0).toUpperCase() + s.slice(1)}
       </span>
     );
+  }
+
+  const markPaidFn = useServerFn(markRunPaid);
+  const reverseFn = useServerFn(reversePayrollRun);
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const [reverseFor, setReverseFor] = useState<Run | null>(null);
+  const [reverseReason, setReverseReason] = useState("");
+
+  async function handleMarkPaid(r: Run) {
+    if (busyId) return;
+    if (!confirm(`Mark this payroll as paid? This locks the run for ${fmtUSD(r.net_total)}.`)) return;
+    setBusyId(r.id);
+    try {
+      const res = await markPaidFn({ data: { run_id: r.id } });
+      setRuns((prev) => prev.map((x) => (x.id === r.id ? { ...x, ...(res.run as any) } : x)));
+      toast.success("Payroll marked as paid");
+    } catch (err: any) {
+      toast.error(err?.message || "Failed to mark paid");
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  async function handleReverse() {
+    if (!reverseFor) return;
+    if (reverseReason.trim().length < 3) { toast.error("Please describe the reason"); return; }
+    setBusyId(reverseFor.id);
+    try {
+      const res = await reverseFn({ data: { run_id: reverseFor.id, reason: reverseReason.trim() } });
+      setRuns((prev) => prev.map((x) => (x.id === reverseFor.id ? { ...x, ...(res.run as any) } : x)));
+      toast.success("Payroll reversed");
+      setReverseFor(null);
+      setReverseReason("");
+    } catch (err: any) {
+      toast.error(err?.message || "Failed to reverse");
+    } finally {
+      setBusyId(null);
+    }
   }
 
   return (
@@ -311,10 +357,10 @@ function PayrollOverview() {
           <SelectTrigger className="w-[160px] rounded-xl border-slate-200"><SelectValue placeholder="Status" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All statuses</SelectItem>
-            <SelectItem value="approved">Approved</SelectItem>
-            <SelectItem value="completed">Completed</SelectItem>
             <SelectItem value="draft">Draft</SelectItem>
-            <SelectItem value="pending">Pending</SelectItem>
+            <SelectItem value="approved">Approved</SelectItem>
+            <SelectItem value="paid">Paid</SelectItem>
+            <SelectItem value="reversed">Reversed</SelectItem>
             <SelectItem value="failed">Failed</SelectItem>
           </SelectContent>
         </Select>
@@ -421,7 +467,29 @@ function PayrollOverview() {
                           </table>
                         </div>
                       )}
-                      <div className="mt-4 flex justify-end">
+                      <div className="mt-4 flex flex-wrap justify-end gap-2">
+                        {r.status === "draft" && (
+                          <Button asChild variant="outline" size="sm" className="rounded-lg">
+                            <Link to="/app/payroll/run">Resume in wizard</Link>
+                          </Button>
+                        )}
+                        {r.status === "approved" && (
+                          <Button
+                            size="sm" className="rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white"
+                            onClick={() => handleMarkPaid(r)} disabled={busyId === r.id}
+                          >
+                            <Banknote className="h-3.5 w-3.5 mr-1.5" />
+                            {busyId === r.id ? "Working…" : "Mark as paid"}
+                          </Button>
+                        )}
+                        {(r.status === "approved" || r.status === "paid") && (
+                          <Button
+                            size="sm" variant="outline" className="rounded-lg border-rose-200 text-rose-700 hover:bg-rose-50"
+                            onClick={() => { setReverseFor(r); setReverseReason(""); }} disabled={busyId === r.id}
+                          >
+                            <Undo2 className="h-3.5 w-3.5 mr-1.5" /> Reverse
+                          </Button>
+                        )}
                         <Button asChild variant="outline" size="sm" className="rounded-lg">
                           <Link to="/app/pay-history">
                             Open in pay history <ArrowUpRight className="h-3.5 w-3.5 ml-1" />
@@ -436,6 +504,40 @@ function PayrollOverview() {
           </div>
         )}
       </div>
+
+      {/* Reverse modal */}
+      {reverseFor && (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-slate-900/40 p-4" onClick={() => setReverseFor(null)}>
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center gap-2 text-rose-700">
+              <Undo2 className="h-5 w-5" />
+              <div className="font-bold text-lg">Reverse this payroll?</div>
+            </div>
+            <p className="mt-2 text-sm text-slate-600">
+              This marks the run as reversed and records a reversal entry. Direct deposits already sent are NOT recalled — handle the bank side separately.
+            </p>
+            <div className="mt-4">
+              <label className="text-xs font-semibold text-slate-600">Reason</label>
+              <Textarea
+                placeholder="Why are you reversing this run?"
+                value={reverseReason}
+                onChange={(e) => setReverseReason(e.target.value)}
+                className="mt-1 min-h-[88px]"
+              />
+            </div>
+            <div className="mt-5 flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setReverseFor(null)}>Cancel</Button>
+              <Button
+                onClick={handleReverse}
+                disabled={busyId === reverseFor.id}
+                className="bg-rose-600 hover:bg-rose-700 text-white"
+              >
+                {busyId === reverseFor.id ? "Reversing…" : "Confirm reversal"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
