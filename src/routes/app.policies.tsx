@@ -18,9 +18,8 @@ export const Route = createFileRoute("/app/policies")({
 interface PolicyDoc {
   id: string;
   title: string;
-  version: string | null;
   category: string | null;
-  effective_date: string | null;
+  uploaded_at: string | null;
 }
 interface EmpRow {
   id: string;
