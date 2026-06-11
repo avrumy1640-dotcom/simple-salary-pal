@@ -2,8 +2,15 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { fmtUSD } from "@/lib/payroll";
-import { Landmark, CheckCircle2, AlertCircle, Calendar, Download, FileText } from "lucide-react";
+import { Landmark, CheckCircle2, AlertCircle, Calendar, Download, FileText, FileCode2, FileSpreadsheet } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toast } from "sonner";
+import {
+  buildForm941, form941ToText, buildEFW2, build1099NEC, buildStateQuarterlyCSV,
+  triggerDownload, type FilingCompany, type FilingEmployee, type FilingItem,
+  type FilingRun, type FilingContractor,
+} from "@/lib/efile-generators";
 
 export const Route = createFileRoute("/app/tax-filing")({
   head: () => ({ meta: [{ title: "Tax filing — Paylo" }] }),
