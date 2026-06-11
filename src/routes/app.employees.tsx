@@ -167,6 +167,17 @@ function EmployeesPage() {
     } catch (err: any) { toast.error(err?.message ?? "Termination failed"); }
   }
 
+  async function reactivateEmployee(e: Employee) {
+    const { error } = await supabase
+      .from("employees")
+      .update({ status: "active", lifecycle_status: "active" })
+      .eq("id", e.id);
+    if (error) { toast.error(error.message); return; }
+    toast.success(`${e.full_name} reactivated`);
+    refresh();
+  }
+
+
   async function performDelete() {
     if (!confirmDelete) return;
     const { error } = await supabase.from("employees").delete().eq("id", confirmDelete.id);
