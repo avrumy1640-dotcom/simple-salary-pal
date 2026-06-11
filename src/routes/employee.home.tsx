@@ -116,6 +116,23 @@ function EmployeeHome() {
     }
     acts.sort((a, b) => +new Date(b.date) - +new Date(a.date));
     setActivity(acts.slice(0, 5));
+
+    // Pay On-Demand available
+    const { data: lastRun } = await supabase.from("payroll_runs")
+      .select("period_end").eq("company_id", employee.company_id).eq("status", "paid")
+      .order("pay_date", { ascending: false }).limit(1);
+    const sinceDate = lastRun?.[0]?.period_end ?? new Date(Date.now() - 14 * 86400000).toISOString().slice(0, 10);
+    const { data: te } = await supabase.from("time_entries")
+      .select("hours, overtime_hours").eq("employee_id", employee.id).gt("work_date", sinceDate);
+    const totalHours = (te ?? []).reduce((acc: number, r: any) =>
+      acc + Number(r.hours || 0) + Number(r.overtime_hours || 0) * 1.5, 0);
+    const rate = Number((employee as any).pay_rate || 0);
+    const earned = (employee as any).pay_type === "salary" ? rate / 26 : rate * totalHours;
+    const { data: podPending } = await supabase.from("pay_on_demand_requests")
+      .select("requested_amount, status").eq("employee_id", employee.id)
+      .in("status", ["pending", "approved"]);
+    const pendingTotal = (podPending ?? []).reduce((a: number, r: any) => a + Number(r.requested_amount || 0), 0);
+    setPodAvailable(Math.max(0, Math.round(earned * 0.5 * 100) / 100 - pendingTotal));
   }
   useEffect(() => { load(); }, [employee?.id]);
 
