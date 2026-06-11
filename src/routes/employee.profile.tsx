@@ -26,6 +26,8 @@ function Field({ label, value }: { label: string; value: string }) {
 
 function Page() {
   const { employee, loading, reload } = useMyEmployee();
+  const callUpdate = useServerFn(updateMyProfile);
+  const callSubmitForm = useServerFn(submitEmployeeForm);
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState({
     phone: "", address_line1: "", city: "", zip: "",
@@ -33,6 +35,7 @@ function Page() {
   });
   const [bankOpen, setBankOpen] = useState(false);
   const [bank, setBank] = useState({ bank_name: "", account_type: "checking", routing: "", account: "", confirm: "" });
+  const [signedName, setSignedName] = useState("");
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
@@ -45,38 +48,53 @@ function Page() {
       emergency_contact_name: employee.emergency_contact_name ?? "",
       emergency_contact_phone: employee.emergency_contact_phone ?? "",
     });
+    setSignedName(employee.full_name ?? "");
   }, [employee?.id]);
 
   async function save() {
     if (!employee) return;
     setBusy(true);
-    const { error } = await supabase.from("employees").update(form).eq("id", employee.id);
-    setBusy(false);
-    if (error) { toast.error(error.message); return; }
-    toast.success("Your information has been updated.");
-    setEditing(false);
-    reload();
+    try {
+      await callUpdate({ data: form });
+      toast.success("Your information has been updated.");
+      setEditing(false);
+      reload();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Could not save");
+    } finally {
+      setBusy(false);
+    }
   }
 
   async function saveBank() {
     if (!employee) return;
     if (bank.account !== bank.confirm) { toast.error("Account numbers do not match"); return; }
-    if (!bank.routing || bank.routing.length < 4 || !bank.account || bank.account.length < 4) {
-      toast.error("Please enter valid routing and account numbers"); return;
+    if (!bank.routing || bank.routing.length < 9 || !bank.account || bank.account.length < 4) {
+      toast.error("Please enter a valid 9-digit routing number and account number"); return;
     }
+    if (!signedName.trim()) { toast.error("Please sign with your full legal name"); return; }
     setBusy(true);
-    const { error } = await supabase.from("employees").update({
-      bank_account_type: bank.account_type,
-      bank_routing_last4: bank.routing.slice(-4),
-      bank_account_last4: bank.account.slice(-4),
-      direct_deposit_enabled: true,
-    }).eq("id", employee.id);
-    setBusy(false);
-    if (error) { toast.error(error.message); return; }
-    toast.success("Your direct deposit has been updated. Changes take effect on your next paycheck.");
-    setBankOpen(false);
-    setBank({ bank_name: "", account_type: "checking", routing: "", account: "", confirm: "" });
-    reload();
+    try {
+      await callSubmitForm({
+        data: {
+          form_type: "direct_deposit",
+          signed_name: signedName.trim(),
+          data: {
+            bank_name: bank.bank_name,
+            account_type: bank.account_type,
+            routing: bank.routing,
+            account: bank.account,
+          },
+        },
+      });
+      toast.success("Direct deposit submitted for HR review. You'll be notified once approved.");
+      setBankOpen(false);
+      setBank({ bank_name: "", account_type: "checking", routing: "", account: "", confirm: "" });
+    } catch (e: any) {
+      toast.error(e?.message ?? "Could not submit");
+    } finally {
+      setBusy(false);
+    }
   }
 
   if (loading) return null;
