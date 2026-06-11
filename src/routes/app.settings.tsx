@@ -99,11 +99,10 @@ function SettingsPage() {
     if (!currentId) return;
     setLoading(true);
     (async () => {
-      const { data, error } = await supabase
-        .from("company_settings")
-        .select("*")
-        .eq("company_id", currentId)
-        .maybeSingle();
+      const [{ data, error }, { data: comp }] = await Promise.all([
+        supabase.from("company_settings").select("*").eq("company_id", currentId).maybeSingle(),
+        supabase.from("companies").select("logo_url").eq("id", currentId).maybeSingle(),
+      ]);
       if (error) {
         console.error("[settings] load error", error);
         toast.error(`Couldn't load settings: ${error.message}`);
@@ -118,9 +117,113 @@ function SettingsPage() {
       } else {
         setForm(empty);
       }
+      setLogoUrl((comp as any)?.logo_url ?? null);
       setLoading(false);
     })();
   }, [currentId]);
+
+  // Generate signed preview URL whenever logo path changes
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      if (!logoUrl) { setLogoSignedSrc(null); return; }
+      const { data } = await supabase.storage.from("company-logos").createSignedUrl(logoUrl, 3600);
+      if (!cancelled) setLogoSignedSrc(data?.signedUrl ?? null);
+    })();
+    return () => { cancelled = true; };
+  }, [logoUrl]);
+
+  async function uploadLogo(file: File) {
+    if (!currentId) { toast.error("No active company"); return; }
+    if (file.size > 2 * 1024 * 1024) { toast.error("Logo must be under 2MB"); return; }
+    if (!/^image\/(png|jpeg|jpg|svg\+xml|webp)$/i.test(file.type)) {
+      toast.error("Use PNG, JPG, SVG, or WebP"); return;
+    }
+    setLogoBusy(true);
+    try {
+      const ext = file.name.split(".").pop()?.toLowerCase() || "png";
+      const path = `${currentId}/logo-${Date.now()}.${ext}`;
+      const { error: upErr } = await supabase.storage
+        .from("company-logos").upload(path, file, { upsert: true, contentType: file.type });
+      if (upErr) throw upErr;
+      // Remove previous logo file if any
+      if (logoUrl && logoUrl !== path) {
+        await supabase.storage.from("company-logos").remove([logoUrl]).catch(() => {});
+      }
+      const { error: updErr } = await supabase
+        .from("companies").update({ logo_url: path }).eq("id", currentId);
+      if (updErr) throw updErr;
+      setLogoUrl(path);
+      toast.success("Logo uploaded");
+    } catch (e: any) {
+      console.error("[logo] upload", e);
+      toast.error(e?.message ?? "Couldn't upload logo");
+    } finally {
+      setLogoBusy(false);
+      if (fileRef.current) fileRef.current.value = "";
+    }
+  }
+
+  async function removeLogo() {
+    if (!currentId || !logoUrl) return;
+    setLogoBusy(true);
+    try {
+      await supabase.storage.from("company-logos").remove([logoUrl]);
+      const { error } = await supabase.from("companies").update({ logo_url: null }).eq("id", currentId);
+      if (error) throw error;
+      setLogoUrl(null);
+      toast.success("Logo removed");
+    } catch (e: any) {
+      toast.error(e?.message ?? "Couldn't remove logo");
+    } finally {
+      setLogoBusy(false);
+    }
+  }
+
+  async function startEnroll2FA() {
+    try {
+      const { data, error } = await supabase.auth.mfa.enroll({
+        factorType: "totp",
+        friendlyName: `Paylo (${new Date().toISOString().slice(0, 10)})`,
+      });
+      if (error) throw error;
+      setEnrollData({ factorId: data.id, qr: data.totp.qr_code, secret: data.totp.secret });
+      setMfaCode("");
+      setEnrollOpen(true);
+    } catch (e: any) {
+      toast.error(e?.message ?? "Couldn't start 2FA setup");
+    }
+  }
+
+  async function verifyEnroll2FA() {
+    if (!enrollData) return;
+    if (!/^\d{6}$/.test(mfaCode)) { toast.error("Enter the 6-digit code from your app"); return; }
+    try {
+      const { error } = await supabase.auth.mfa.challengeAndVerify({
+        factorId: enrollData.factorId, code: mfaCode,
+      });
+      if (error) throw error;
+      toast.success("Two-factor authentication enabled");
+      setEnrollOpen(false);
+      setEnrollData(null);
+      setMfaCode("");
+      await refreshMfa();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Invalid code — try again");
+    }
+  }
+
+  async function disable2FA(factorId: string) {
+    if (!confirm("Disable two-factor authentication on this account?")) return;
+    try {
+      const { error } = await supabase.auth.mfa.unenroll({ factorId });
+      if (error) throw error;
+      toast.success("Two-factor authentication disabled");
+      await refreshMfa();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Couldn't disable 2FA");
+    }
+  }
 
   async function save() {
     if (saving) return;
