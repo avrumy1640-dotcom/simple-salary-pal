@@ -124,6 +124,36 @@ function EmployeeSchedulePage() {
         <p className="mt-2 text-base text-slate-600">Upcoming published shifts and swap requests.</p>
       </div>
 
+      {incoming.length > 0 && (
+        <div className="rounded-xl border border-primary/30 bg-primary/5">
+          <div className="border-b border-primary/20 px-4 py-3 font-display text-sm font-semibold text-slate-900">
+            Incoming swap proposals ({incoming.length})
+          </div>
+          <ul className="divide-y divide-primary/10">
+            {incoming.map((sw) => {
+              const sh = incomingShifts[sw.shift_id];
+              const from = incomingNames[sw.requested_by_employee_id] || "A coworker";
+              return (
+                <li key={sw.id} className="flex flex-col gap-2 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <div className="font-semibold text-slate-900">{from} wants to swap a shift with you</div>
+                    <div className="text-xs text-slate-500">
+                      {sh ? `${fmt(sh.start_at)} – ${new Date(sh.end_at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}` : ""}
+                      {sh?.role || sh?.location ? ` · ${[sh?.role, sh?.location].filter(Boolean).join(" · ")}` : ""}
+                    </div>
+                    {sw.reason && <div className="mt-1 text-xs text-slate-600">Reason: {sw.reason}</div>}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline">Pending manager review</Badge>
+                    <Button size="sm" variant="outline" onClick={() => handleDeclineIncoming(sw.id)}>Decline</Button>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
+
       <div className="rounded-xl border border-border bg-card">
         <div className="border-b border-border px-4 py-3 font-display text-sm font-semibold text-slate-900">
           Upcoming shifts ({shifts.length})
