@@ -133,11 +133,17 @@ function Page() {
       .sort((a, b) => (a.distance ?? 0) - (b.distance ?? 0));
   }, [locations, pos]);
 
-  // Auto-select nearest when GPS arrives
+  // Auto-select: prefer employee's assigned work_location, otherwise nearest
   useEffect(() => {
     if (selectedId) return;
-    if (sorted.length > 0) setSelectedId(sorted[0].loc.id);
-  }, [sorted, selectedId]);
+    if (sorted.length === 0) return;
+    const assigned = employee?.work_location_id;
+    if (assigned && sorted.some((s) => s.loc.id === assigned)) {
+      setSelectedId(assigned);
+      return;
+    }
+    setSelectedId(sorted[0].loc.id);
+  }, [sorted, selectedId, employee?.work_location_id]);
 
   const selected = useMemo(
     () => sorted.find((s) => s.loc.id === selectedId) ?? null,

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,8 +18,8 @@ interface WizardData {
   first_name: string; last_name: string; personal_email: string; work_email: string;
   phone: string; address_line1: string; date_of_birth: string; ssn_last4: string;
   // Step 2
-  job_title: string; department: string; manager_id: string; start_date: string;
-  employment_type: "w2" | "1099"; work_location: string; employee_id: string;
+  job_title: string; department_id: string; manager_id: string; start_date: string;
+  employment_type: "w2" | "1099"; work_location_id: string; employee_id: string;
   // Step 3
   pay_type: "salary" | "hourly"; pay_rate: number; pay_frequency: string;
   filing_status: string; extra_withholding: number;
@@ -31,13 +31,16 @@ interface WizardData {
 const initial: WizardData = {
   first_name: "", last_name: "", personal_email: "", work_email: "", phone: "",
   address_line1: "", date_of_birth: "", ssn_last4: "",
-  job_title: "", department: "", manager_id: "", start_date: new Date().toISOString().slice(0, 10),
-  employment_type: "w2", work_location: "", employee_id: "",
+  job_title: "", department_id: "", manager_id: "", start_date: new Date().toISOString().slice(0, 10),
+  employment_type: "w2", work_location_id: "", employee_id: "",
   pay_type: "salary", pay_rate: 0, pay_frequency: "biweekly",
   filing_status: "single", extra_withholding: 0,
   bank_name: "", bank_account_type: "checking",
   bank_routing_last4: "", bank_account_last4: "", bank_account_confirm: "",
 };
+
+interface DeptRow { id: string; name: string }
+interface LocRow { id: string; name: string }
 
 const STEPS = [
   { id: 1, label: "Personal", icon: User },
@@ -56,10 +59,37 @@ export function AddEmployeeWizard({ open, onOpenChange, onCreated }: {
   const [data, setData] = useState<WizardData>(initial);
   const [submitting, setSubmitting] = useState(false);
   const [createdId, setCreatedId] = useState<string | null>(null);
+  const [departments, setDepartments] = useState<DeptRow[]>([]);
+  const [locations, setLocations] = useState<LocRow[]>([]);
+  const [newDeptName, setNewDeptName] = useState("");
   const { currentId } = useCompany();
   const navigate = useNavigate();
 
-  function reset() { setStep(1); setData(initial); setCreatedId(null); }
+  useEffect(() => {
+    if (!open || !currentId) return;
+    (async () => {
+      const [d, l] = await Promise.all([
+        supabase.from("departments").select("id, name").eq("company_id", currentId).eq("is_active", true).order("name"),
+        supabase.from("work_locations").select("id, name").eq("company_id", currentId).eq("is_active", true).order("name"),
+      ]);
+      setDepartments((d.data ?? []) as DeptRow[]);
+      setLocations((l.data ?? []) as LocRow[]);
+    })();
+  }, [open, currentId]);
+
+  async function addDepartment() {
+    const name = newDeptName.trim();
+    if (!name || !currentId) return;
+    const { data: row, error } = await supabase.from("departments")
+      .insert({ company_id: currentId, name })
+      .select("id, name").single();
+    if (error) { toast.error(error.message); return; }
+    setDepartments((arr) => [...arr, row as DeptRow].sort((a, b) => a.name.localeCompare(b.name)));
+    set("department_id", (row as DeptRow).id);
+    setNewDeptName("");
+  }
+
+  function reset() { setStep(1); setData(initial); setCreatedId(null); setNewDeptName(""); }
   function close() { onOpenChange(false); setTimeout(reset, 200); }
 
   function set<K extends keyof WizardData>(k: K, v: WizardData[K]) {
@@ -108,7 +138,8 @@ export function AddEmployeeWizard({ open, onOpenChange, onCreated }: {
       date_of_birth: data.date_of_birth || null,
       ssn_last4: (data.ssn_last4 || "").slice(-4),
       job_title: data.job_title || null,
-      department: data.department || null,
+      department_id: data.department_id || null,
+      work_location_id: data.work_location_id || null,
       start_date: data.start_date || null,
       employment_type: data.employment_type,
       pay_type: data.pay_type,
@@ -202,14 +233,30 @@ export function AddEmployeeWizard({ open, onOpenChange, onCreated }: {
                   <WField label="Job Title" required>
                     <Input className="h-12" value={data.job_title} onChange={(e) => set("job_title", e.target.value)} placeholder="Senior Engineer" />
                   </WField>
-                  <WField label="Department">
-                    <Input className="h-12" value={data.department} onChange={(e) => set("department", e.target.value)} placeholder="Engineering" />
+                  <WField label="Department" hint={departments.length === 0 ? "No departments yet — add one below." : undefined}>
+                    <Select value={data.department_id || "none"} onValueChange={(v) => set("department_id", v === "none" ? "" : v)}>
+                      <SelectTrigger className="h-12"><SelectValue placeholder="Select department" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">No department</SelectItem>
+                        {departments.map((d) => <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                    <div className="mt-2 flex gap-2">
+                      <Input className="h-10" placeholder="Or add new department…" value={newDeptName} onChange={(e) => setNewDeptName(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addDepartment(); } }} />
+                      <Button type="button" variant="outline" size="sm" className="h-10" onClick={addDepartment} disabled={!newDeptName.trim()}>Add</Button>
+                    </div>
                   </WField>
                   <WField label="Start Date" required>
                     <Input className="h-12" type="date" value={data.start_date} onChange={(e) => set("start_date", e.target.value)} />
                   </WField>
-                  <WField label="Work Location">
-                    <Input className="h-12" value={data.work_location} onChange={(e) => set("work_location", e.target.value)} placeholder="San Francisco HQ" />
+                  <WField label="Work Location" hint={locations.length === 0 ? "Add worksites under Work Locations." : "Primary site (used for geofenced clock-in)."}>
+                    <Select value={data.work_location_id || "none"} onValueChange={(v) => set("work_location_id", v === "none" ? "" : v)}>
+                      <SelectTrigger className="h-12"><SelectValue placeholder={locations.length ? "Select work location" : "No worksites yet"} /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">No primary location</SelectItem>
+                        {locations.map((l) => <SelectItem key={l.id} value={l.id}>{l.name}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
                   </WField>
                   <WField label="Employment Type" className="md:col-span-2">
                     <div className="grid grid-cols-2 gap-3">
@@ -341,10 +388,10 @@ export function AddEmployeeWizard({ open, onOpenChange, onCreated }: {
                   </ReviewSection>
                   <ReviewSection title="Job" onEdit={() => setStep(2)}>
                     <ReviewRow label="Job Title" value={data.job_title} />
-                    <ReviewRow label="Department" value={data.department || "—"} />
+                    <ReviewRow label="Department" value={departments.find((d) => d.id === data.department_id)?.name || "—"} />
                     <ReviewRow label="Start Date" value={data.start_date} />
                     <ReviewRow label="Type" value={data.employment_type === "w2" ? "W-2 Employee" : "1099 Contractor"} />
-                    <ReviewRow label="Work Location" value={data.work_location || "—"} />
+                    <ReviewRow label="Work Location" value={locations.find((l) => l.id === data.work_location_id)?.name || "—"} />
                   </ReviewSection>
                   <ReviewSection title="Pay" onEdit={() => setStep(3)}>
                     <ReviewRow label="Pay Type" value={data.pay_type === "salary" ? "Salary" : "Hourly"} />
