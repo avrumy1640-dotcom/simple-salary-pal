@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Receipt, CheckCircle2, XCircle, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
+import { useRealtimeRefresh } from "@/lib/useRealtimeRefresh";
 
 export const Route = createFileRoute("/app/expense-requests")({
   head: () => ({ meta: [{ title: "Expense Requests — Paylo" }] }),
@@ -56,6 +57,7 @@ function ExpenseRequestsAdmin() {
     setRows((data ?? []) as any);
   }
   useEffect(() => { load(); /* eslint-disable-next-line */ }, [companyId]);
+  useRealtimeRefresh(["expense_requests"], load, { companyId });
 
   const list = rows.filter((r) => {
     if (tab === "pending") return r.status === "pending";

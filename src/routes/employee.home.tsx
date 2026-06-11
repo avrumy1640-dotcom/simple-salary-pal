@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useMyEmployee } from "@/lib/useMyEmployee";
+import { useRealtimeRefresh } from "@/lib/useRealtimeRefresh";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import {
@@ -135,6 +136,11 @@ function EmployeeHome() {
     setPodAvailable(Math.max(0, Math.round(earned * 0.5 * 100) / 100 - pendingTotal));
   }
   useEffect(() => { load(); }, [employee?.id]);
+  useRealtimeRefresh(
+    ["pto_entries", "expense_requests", "general_requests", "pay_on_demand_requests", "notifications", "announcements", "payroll_runs"],
+    load,
+    { companyId: employee?.company_id ?? null }
+  );
 
   const clockedIn = lastPunch?.punch_type === "in" || lastPunch?.punch_type === "break_end";
 

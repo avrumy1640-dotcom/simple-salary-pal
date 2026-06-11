@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { CalendarDays, Receipt, ArrowLeftRight, Check, X, Loader2, Inbox } from "lucide-react";
+import { useRealtimeRefresh } from "@/lib/useRealtimeRefresh";
 
 export const Route = createFileRoute("/app/approvals")({
   ssr: false,
@@ -84,6 +85,7 @@ function ApprovalsInbox() {
   }
 
   useEffect(() => { load(); }, []);
+  useRealtimeRefresh(["pto_entries", "expense_requests", "shift_swap_requests"], load);
 
   async function approve(row: Row) {
     setBusy(row.id);

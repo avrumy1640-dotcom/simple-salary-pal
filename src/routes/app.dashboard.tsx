@@ -9,6 +9,7 @@ import {
 import { fmtUSD } from "@/lib/payroll";
 import { useCountUp } from "@/hooks/useCountUp";
 import { useCompany } from "@/hooks/useCompany";
+import { useRealtimeRefresh } from "@/lib/useRealtimeRefresh";
 
 export const Route = createFileRoute("/app/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — Paylo" }] }),
@@ -140,6 +141,7 @@ function Dashboard() {
   });
 
   const { currentId } = useCompany();
+  const [tick, setTick] = useState(0);
   useEffect(() => {
     if (!currentId) return;
     (async () => {
@@ -223,7 +225,12 @@ function Dashboard() {
       });
       setLoading(false);
     })();
-  }, [currentId]);
+  }, [currentId, tick]);
+  useRealtimeRefresh(
+    ["payroll_runs","pto_entries","expense_requests","employees","time_clock_punches","timesheets"],
+    () => setTick((t) => t + 1),
+    { companyId: currentId }
+  );
 
   const nextPayLabel = data.nextPayDate
     ? new Date(data.nextPayDate).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })

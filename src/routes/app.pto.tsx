@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { Plus, CalendarDays, Check, X, Clock, RefreshCw } from "lucide-react";
 import { useCompany } from "@/hooks/useCompany";
 import { approvePtoRequest, denyPtoRequest, runAccrual } from "@/lib/pto.functions";
+import { useRealtimeRefresh } from "@/lib/useRealtimeRefresh";
 
 export const Route = createFileRoute("/app/pto")({
   head: () => ({ meta: [{ title: "Time off — Paylo" }] }),
@@ -78,6 +79,7 @@ function PTOPage() {
     setPolicies((pols ?? []) as Policy[]);
   }
   useEffect(() => { refresh(); /* eslint-disable-next-line */ }, [currentId]);
+  useRealtimeRefresh(["pto_entries", "employees"], refresh, { companyId: currentId });
 
   async function add() {
     if (!form.employee_id) { toast.error("Pick an employee"); return; }

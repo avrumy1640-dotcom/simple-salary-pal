@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { ArrowLeftRight, CheckCircle2, XCircle } from "lucide-react";
 import { decideSwap } from "@/lib/scheduling.functions";
+import { useRealtimeRefresh } from "@/lib/useRealtimeRefresh";
 
 export const Route = createFileRoute("/app/shift-swaps")({
   head: () => ({ meta: [{ title: "Shift Swaps — Paylo" }] }),
@@ -60,6 +61,7 @@ function ShiftSwapsPage() {
     }
   }
   useEffect(() => { load(); }, []);
+  useRealtimeRefresh(["shift_swap_requests"], load, { companyId });
 
   const pending = useMemo(() => rows.filter((r) => r.status === "pending"), [rows]);
   const history = useMemo(() => rows.filter((r) => r.status !== "pending"), [rows]);

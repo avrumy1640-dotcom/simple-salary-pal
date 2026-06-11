@@ -17,6 +17,7 @@ import {
   Banknote, Undo2,
 } from "lucide-react";
 import { useCompany } from "@/hooks/useCompany";
+import { useRealtimeRefresh } from "@/lib/useRealtimeRefresh";
 
 export const Route = createFileRoute("/app/payroll/")({
   head: () => ({ meta: [{ title: "Payroll — Paylo" }] }),
@@ -80,6 +81,7 @@ function PayrollOverview() {
   const [activeEmps, setActiveEmps] = useState(0);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [itemsByRun, setItemsByRun] = useState<Record<string, Item[]>>({});
+  const [tick, setTick] = useState(0);
 
   useEffect(() => {
     if (!currentId) return;
@@ -93,7 +95,13 @@ function PayrollOverview() {
       setActiveEmps(empCount ?? 0);
       setLoading(false);
     })();
-  }, [currentId]);
+  }, [currentId, tick]);
+
+  useRealtimeRefresh(
+    ["payroll_runs", "payroll_items", "employees"],
+    () => setTick((t) => t + 1),
+    { companyId: currentId }
+  );
 
   const years = useMemo(() => {
     const set = new Set(runs.map((r) => new Date(r.pay_date).getFullYear().toString()));

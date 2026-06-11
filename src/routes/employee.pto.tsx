@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useMyEmployee } from "@/lib/useMyEmployee";
+import { useRealtimeRefresh } from "@/lib/useRealtimeRefresh";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -76,6 +77,7 @@ function Page() {
     setItems((entries ?? []) as PTO[]);
   }
   useEffect(() => { load(); }, [employee?.id]);
+  useRealtimeRefresh(["pto_entries", "employees"], load, { companyId: employee?.company_id ?? null });
 
   const usedByType = useMemo(() => {
     const u: Record<string, number> = {};
