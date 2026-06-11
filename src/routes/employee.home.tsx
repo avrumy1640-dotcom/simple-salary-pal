@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import {
   Wallet, Play, Square, CalendarDays, FileText, CheckCircle2, Clock as ClockIcon,
-  MapPin, FolderOpen, ChevronRight,
+  MapPin, FolderOpen, ChevronRight, Zap,
 } from "lucide-react";
 
 export const Route = createFileRoute("/employee/home")({
@@ -44,6 +44,7 @@ function EmployeeHome() {
   const [punches, setPunches] = useState<{ punched_at: string; punch_type: string }[]>([]);
   const [ptoUsedByType, setPtoUsedByType] = useState<Record<PtoKind, number>>({ vacation: 0, sick: 0, personal: 0 });
   const [activity, setActivity] = useState<{ icon: "pay" | "pto" | "doc"; text: string; date: string }[]>([]);
+  const [podAvailable, setPodAvailable] = useState(0);
   const [busy, setBusy] = useState(false);
   const [now, setNow] = useState(new Date());
 
