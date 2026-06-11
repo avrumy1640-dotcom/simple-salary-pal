@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { MapPin, Plus, Trash2, Pencil } from "lucide-react";
+import { friendlyGeoError } from "@/lib/geo";
 
 export const Route = createFileRoute("/app/locations")({
   head: () => ({ meta: [{ title: "Work locations — Paylo" }] }),
