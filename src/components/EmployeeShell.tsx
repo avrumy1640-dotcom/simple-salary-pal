@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Home, Wallet, CalendarDays, User, HeartHandshake, LogOut, HelpCircle,
-  Receipt, MessageSquare, Sparkles, Menu, X, ChevronLeft, ChevronRight, Bell,
+  Receipt, MessageSquare, Sparkles, Menu, X, ChevronLeft, ChevronRight, Bell, ClipboardCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { EmployeeNotificationBanner } from "@/components/EmployeeNotificationBanner";
@@ -33,6 +33,7 @@ const navGroups: NavGroup[] = [
     items: [
       { to: "/employee/profile", label: "My Info", icon: User },
       { to: "/employee/benefits", label: "Benefits", icon: HeartHandshake },
+      { to: "/employee/onboarding", label: "Get Started", icon: ClipboardCheck },
     ],
   },
 ];
@@ -46,6 +47,7 @@ const PAGE_TITLES: Record<string, string> = {
   "/employee/help": "Assistant",
   "/employee/profile": "My Info",
   "/employee/benefits": "Benefits",
+  "/employee/onboarding": "Get Started",
   "/employee/notifications": "Notifications",
   "/employee/documents": "Documents",
   "/employee/punch": "Clock in / out",
