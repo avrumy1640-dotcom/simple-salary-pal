@@ -277,21 +277,6 @@ export function AppShell() {
                 {!collapsed && <span>Settings</span>}
               </Link>
             )}
-            {(ADMIN_ROLES as readonly string[]).includes(role) && (
-              <Link
-                to="/app/auth-debug"
-                onClick={() => setOpen(false)}
-                title={collapsed ? "Auth Debug" : undefined}
-                className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-[14px] font-medium text-slate-600 hover:bg-slate-50 hover:text-foreground transition",
-                  collapsed && "justify-center px-2",
-                  path.startsWith("/app/auth-debug") && "bg-primary/10 text-foreground",
-                )}
-              >
-                <Bug className="h-[18px] w-[18px] shrink-0 text-slate-400" />
-                {!collapsed && <span>Auth Debug</span>}
-              </Link>
-            )}
             <Link
               to="/app/getting-started"
               onClick={() => setOpen(false)}
@@ -315,18 +300,6 @@ export function AppShell() {
             >
               <ShieldCheck className="h-[18px] w-[18px] shrink-0 text-slate-400" />
               {!collapsed && <span>Access help</span>}
-            </Link>
-            <Link
-              to="/employee/home"
-              onClick={() => setOpen(false)}
-              title={collapsed ? "Employee view" : undefined}
-              className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-[14px] font-medium text-slate-600 hover:bg-slate-50 hover:text-foreground transition",
-                collapsed && "justify-center px-2",
-              )}
-            >
-              <UserPlus className="h-[18px] w-[18px] shrink-0 text-slate-400" />
-              {!collapsed && <span>Switch to employee view</span>}
             </Link>
 
             {!collapsed && (
