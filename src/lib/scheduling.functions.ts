@@ -144,7 +144,8 @@ export const declineSwapAsTarget = createServerFn({ method: "POST" })
     if (swap.status !== "pending") throw new Error("Already decided");
     const { data: empId } = await supabase.rpc("current_employee_id", { _company_id: swap.company_id });
     if (!empId || empId !== swap.target_employee_id) throw new Error("Not your proposal");
-    const { error } = await supabase.from("shift_swap_requests").update({
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin.from("shift_swap_requests").update({
       status: "cancelled",
       decision_notes: data.reason ? `Declined by coworker: ${data.reason}` : "Declined by coworker",
     }).eq("id", swap.id);
