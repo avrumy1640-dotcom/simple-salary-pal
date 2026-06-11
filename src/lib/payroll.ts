@@ -111,7 +111,6 @@ const SS_WAGE_BASE_2025 = 168600;
 const SUPPLEMENTAL_FED_RATE = 0.22;
 const FUTA_RATE = 0.006;
 const FUTA_WAGE_BASE = 7000;
-const DEFAULT_STATE_RATE = 0.04;
 
 // 2025 federal tax brackets (annual taxable income). Progressive — each
 // bracket's rate applies ONLY to the income above its floor, not to the
@@ -125,6 +124,68 @@ function annualFederalTax(filing: string, annualTaxable: number): number {
       : filing === "head"
       ? [[0, 0.10], [16550, 0.12], [63100, 0.22], [100500, 0.24], [191950, 0.32], [243700, 0.35], [609350, 0.37]]
       : [[0, 0.10], [11600, 0.12], [47150, 0.22], [100525, 0.24], [191950, 0.32], [243725, 0.35], [609350, 0.37]];
+  let tax = 0;
+  for (let i = 0; i < brackets.length; i++) {
+    const [floor, rate] = brackets[i];
+    const ceiling = brackets[i + 1]?.[0] ?? Infinity;
+    if (annualTaxable <= floor) break;
+    const slice = Math.min(annualTaxable, ceiling) - floor;
+    tax += slice * rate;
+  }
+  return tax;
+}
+
+// ---------- State income tax (2025 approximations) ----------
+// Flat-rate states pay [rate]. No-income-tax states are explicitly 0.
+// Progressive states use simplified brackets keyed off annual taxable wages.
+// This is a fallback for when no Symmetry/Avalara provider is wired.
+const STATE_NO_TAX = new Set(["AK", "FL", "NV", "NH", "SD", "TN", "TX", "WA", "WY"]);
+const STATE_FLAT_RATE: Record<string, number> = {
+  AZ: 0.025, CO: 0.044, IL: 0.0495, IN: 0.0305, KY: 0.04,
+  MA: 0.05,  MI: 0.0425, NC: 0.045,  PA: 0.0307, UT: 0.0465,
+  ID: 0.058, GA: 0.0539, MS: 0.047,  IA: 0.038,
+};
+// Simplified progressive brackets [annualFloor, rate] (single filer approximation).
+const STATE_PROGRESSIVE: Record<string, Array<[number, number]>> = {
+  CA: [[0, 0.01], [10412, 0.02], [24684, 0.04], [38959, 0.06], [54081, 0.08], [68350, 0.093], [349137, 0.103], [418961, 0.113], [698271, 0.123]],
+  NY: [[0, 0.04], [8500, 0.045], [11700, 0.0525], [13900, 0.055], [80650, 0.06], [215400, 0.0685], [1077550, 0.0965], [5000000, 0.103], [25000000, 0.109]],
+  NJ: [[0, 0.014], [20000, 0.0175], [35000, 0.035], [40000, 0.0553], [75000, 0.0637], [500000, 0.0897], [1000000, 0.1075]],
+  OR: [[0, 0.0475], [4300, 0.0675], [10750, 0.0875], [125000, 0.099]],
+  MN: [[0, 0.0535], [31690, 0.068], [104090, 0.0785], [193240, 0.0985]],
+  HI: [[0, 0.014], [9600, 0.064], [14400, 0.068], [19200, 0.072], [24000, 0.076], [36000, 0.079], [48000, 0.0825], [150000, 0.09], [175000, 0.10], [200000, 0.11]],
+  VA: [[0, 0.02], [3000, 0.03], [5000, 0.05], [17000, 0.0575]],
+  MD: [[0, 0.02], [1000, 0.03], [2000, 0.04], [3000, 0.0475], [100000, 0.05], [125000, 0.0525], [150000, 0.055], [250000, 0.0575]],
+  OH: [[0, 0], [26050, 0.0275], [100000, 0.035]],
+  WI: [[0, 0.035], [14320, 0.044], [28640, 0.053], [315310, 0.0765]],
+  CT: [[0, 0.02], [10000, 0.045], [50000, 0.055], [100000, 0.06], [200000, 0.065], [250000, 0.069], [500000, 0.0699]],
+  ME: [[0, 0.058], [26050, 0.0675], [61600, 0.0715]],
+  DE: [[0, 0], [2000, 0.022], [5000, 0.039], [10000, 0.048], [20000, 0.052], [25000, 0.0555], [60000, 0.066]],
+  NM: [[0, 0.017], [5500, 0.032], [11000, 0.047], [16000, 0.049], [210000, 0.059]],
+  AR: [[0, 0], [5300, 0.02], [10600, 0.03], [15100, 0.034], [25000, 0.039], [89600, 0.044]],
+  WV: [[0, 0.0236], [10000, 0.0315], [25000, 0.0354], [40000, 0.0472], [60000, 0.0512]],
+  SC: [[0, 0], [3460, 0.03], [17330, 0.064]],
+  AL: [[0, 0.02], [500, 0.04], [3000, 0.05]],
+  MO: [[0, 0], [1273, 0.02], [2546, 0.025], [3819, 0.03], [5092, 0.035], [6365, 0.04], [7638, 0.045], [8911, 0.048]],
+  OK: [[0, 0.0025], [1000, 0.0075], [2500, 0.0175], [3750, 0.0275], [4900, 0.0375], [7200, 0.0475]],
+  ND: [[0, 0], [44725, 0.0195], [225975, 0.025]],
+  RI: [[0, 0.0375], [77450, 0.0475], [176050, 0.0599]],
+  VT: [[0, 0.0335], [45400, 0.066], [110050, 0.076], [229550, 0.0875]],
+  KS: [[0, 0.031], [15000, 0.0525], [30000, 0.057]],
+  LA: [[0, 0.0185], [12500, 0.035], [50000, 0.0425]],
+  NE: [[0, 0.0246], [3700, 0.0351], [22170, 0.0501], [35730, 0.0584]],
+  DC: [[0, 0.04], [10000, 0.06], [40000, 0.065], [60000, 0.085], [250000, 0.0925], [500000, 0.0975], [1000000, 0.1075]],
+  MT: [[0, 0.047], [20500, 0.059]],
+};
+
+function annualStateTax(stateCode: string | undefined, annualTaxable: number): number {
+  if (annualTaxable <= 0) return 0;
+  const code = (stateCode || "").toUpperCase();
+  if (!code) return annualTaxable * 0.04; // legacy fallback
+  if (STATE_NO_TAX.has(code)) return 0;
+  const flat = STATE_FLAT_RATE[code];
+  if (flat != null) return annualTaxable * flat;
+  const brackets = STATE_PROGRESSIVE[code];
+  if (!brackets) return annualTaxable * 0.04; // unknown jurisdiction fallback
   let tax = 0;
   for (let i = 0; i < brackets.length; i++) {
     const [floor, rate] = brackets[i];
