@@ -49,6 +49,7 @@ export interface PayrollCalcInput {
   stateUnemploymentWageBase?: number; // default 7000
   ytdGrossBeforeRun?: number;        // for FUTA/SUTA wage-base cap
   ytdSocialSecurityWages?: number;   // for SS wage base cap (2025: 168,600)
+  workState?: string;                // 2-letter postal code; drives state income tax
 }
 
 export interface PayrollCalcResult {
