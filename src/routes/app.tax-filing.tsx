@@ -603,19 +603,56 @@ function NewHireReporting() {
   };
   const selectAllOpen = () => setSelected(new Set(rows.filter((r) => !r.reported).map((r) => r.id)));
 
-  const downloadCSV = () => {
-    if (!company) return toast.error("Company missing");
-    const picked = rows.filter((r) => selected.has(r.id));
-    if (!picked.length) return toast.error("Pick at least one new hire");
-    const csvRows: NewHireRow[] = picked.map((r) => ({
+  const buildRows = (picked: typeof rows): NewHireRow[] =>
+    picked.map((r) => ({
       employee_id: r.id, full_name: r.full_name, ssn_last4: r.ssn_last4,
       date_of_birth: r.date_of_birth, address_line1: r.address_line1, city: r.city,
       state: r.state, zip: r.zip, start_date: r.start_date, state_of_hire: r.state,
     }));
-    const csv = buildNewHireReportCSV({ company, rows: csvRows });
+
+  const downloadCombinedCSV = () => {
+    if (!company) return toast.error("Company missing");
+    const picked = rows.filter((r) => selected.has(r.id));
+    if (!picked.length) return toast.error("Pick at least one new hire");
+    const csv = buildNewHireReportCSV({ company, rows: buildRows(picked) });
     triggerDownload(`NewHireReport-${new Date().toISOString().slice(0,10)}.csv`, csv, "text/csv");
-    toast.success(`New-hire report generated (${picked.length} employees)`);
+    toast.success(`Generated combined report (${picked.length} employees)`);
   };
+
+  const downloadStatePacket = async (kind: "csv" | "pdf" | "both") => {
+    if (!company) return toast.error("Company missing");
+    const picked = rows.filter((r) => selected.has(r.id));
+    if (!picked.length) return toast.error("Pick at least one new hire");
+    // Group by state
+    const byState = new Map<string, typeof picked>();
+    picked.forEach((r) => {
+      const code = (r.state || "XX").toUpperCase();
+      const arr = byState.get(code) ?? [];
+      arr.push(r);
+      byState.set(code, arr);
+    });
+    setBusy(true);
+    try {
+      for (const [code, group] of byState) {
+        const rowsForState = buildRows(group);
+        const stamp = new Date().toISOString().slice(0, 10);
+        if (kind === "csv" || kind === "both") {
+          const csv = buildStateNewHireCSV({ company, stateCode: code, rows: rowsForState });
+          triggerDownload(`NewHire-${code}-${stamp}.csv`, csv, "text/csv");
+        }
+        if (kind === "pdf" || kind === "both") {
+          const blob = await buildNewHirePDFPacket({ company, stateCode: code, rows: rowsForState });
+          triggerBlobDownload(`NewHire-${code}-${stamp}.pdf`, blob);
+        }
+      }
+      toast.success(`Generated ${byState.size} state packet${byState.size === 1 ? "" : "s"}`);
+    } catch (e: unknown) {
+      toast.error(`Failed: ${(e as Error).message}`);
+    } finally {
+      setBusy(false);
+    }
+  };
+
 
   const markReported = async () => {
     if (!companyId) return;
