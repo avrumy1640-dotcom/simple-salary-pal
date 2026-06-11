@@ -45,8 +45,9 @@ export const approvePtoRequest = createServerFn({ method: "POST" })
     if (entry.status === "approved") return { ok: true, entry };
     await assertPtoAdmin(supabase, userId, entry.company_id);
 
-    // Optional safety: prevent approving a request that would exceed available balance
-    // for paid PTO categories. Unpaid leave is exempt.
+    // Safety: terminated employees can't be approved. Insufficient balance is
+    // auto-converted to unpaid leave so managers aren't blocked.
+    let effectiveType = entry.pto_type;
     if (entry.pto_type !== "unpaid") {
       const { data: emp } = await supabase
         .from("employees").select("pto_balance_hours, lifecycle_status")
@@ -55,16 +56,13 @@ export const approvePtoRequest = createServerFn({ method: "POST" })
         throw new Error("Employee is terminated; cannot approve PTO.");
       }
       if (emp && Number(emp.pto_balance_hours) < Number(entry.hours)) {
-        throw new Error(
-          `Insufficient balance: employee has ${Number(emp.pto_balance_hours).toFixed(2)}h, ` +
-          `request is ${Number(entry.hours).toFixed(2)}h. Approve anyway by changing type to unpaid or reducing hours.`
-        );
+        effectiveType = "unpaid";
       }
     }
 
     const { data: updated, error: uErr } = await supabase
       .from("pto_entries")
-      .update({ status: "approved" })
+      .update({ status: "approved", pto_type: effectiveType })
       .eq("id", data.entry_id)
       .select().single();
     if (uErr) throw new Error(uErr.message);
