@@ -6,7 +6,7 @@ import {
   LayoutDashboard, Users, Clock, Wallet, FileText, LogOut, Menu, X,
   CalendarDays, Settings as SettingsIcon, UserPlus, Target, ShieldCheck,
   BarChart3, FolderOpen, ChevronLeft, ChevronRight, HelpCircle,
-  HeartHandshake, LineChart, Landmark, ListChecks, Bell, ArrowLeftRight, MapPin, Receipt, MessageSquare, Inbox,
+  HeartHandshake, LineChart, Landmark, ListChecks, Bell, ArrowLeftRight, MapPin, Receipt, MessageSquare, Inbox, Building2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TopBar } from "@/components/TopBar";
@@ -34,6 +34,7 @@ const navGroups: NavGroup[] = [
   {
     label: "People",
     items: [
+      { to: "/app/departments", label: "Departments", icon: Building2, roles: HR_ROLES },
       { to: "/app/scheduling", label: "Scheduling", icon: CalendarDays, roles: [...MANAGER_ROLES] },
       { to: "/app/shift-swaps", label: "Shift Swaps", icon: ArrowLeftRight, roles: [...MANAGER_ROLES] },
       { to: "/app/recruiting", label: "Recruiting", icon: UserPlus, roles: HR_ROLES },
@@ -90,6 +91,7 @@ const ALL_NAV_LABELS: Record<string, string> = {
   "/app/expense-requests": "Expenses",
   "/app/requests": "Requests",
   "/app/approvals": "Approvals",
+  "/app/departments": "Departments",
 };
 
 export function AppShell() {
