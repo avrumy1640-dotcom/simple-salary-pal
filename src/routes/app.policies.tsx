@@ -43,10 +43,10 @@ function PoliciesPage() {
     if (!currentId) return;
     const { data } = await supabase
       .from("hr_documents")
-      .select("id, title, version, category, effective_date")
+      .select("id, title, category, uploaded_at")
       .eq("company_id", currentId)
       .in("category", ["handbook", "policy"])
-      .order("created_at", { ascending: false });
+      .order("uploaded_at", { ascending: false });
     setDocs((data ?? []) as PolicyDoc[]);
     if (data && data.length > 0 && !selectedDocId) setSelectedDocId(data[0].id);
   }
