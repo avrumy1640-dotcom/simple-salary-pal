@@ -264,8 +264,9 @@ export function calcPay(input: PayrollCalcInput): PayrollCalcResult {
   const addlMedicareTaxable = Math.max(0, ytdGrossAfterRun - ADDITIONAL_MEDICARE_THRESHOLD) - Math.max(0, ytdGross - ADDITIONAL_MEDICARE_THRESHOLD);
   const additionalMedicare = r2(Math.max(0, addlMedicareTaxable) * ADDITIONAL_MEDICARE_RATE);
 
-  // ---------- State tax ----------
-  const stateTax = r2(taxableIncome * DEFAULT_STATE_RATE);
+  // ---------- State income tax (progressive on annualized wages) ----------
+  const annualState = annualStateTax(input.workState, annualizedTaxable);
+  const stateTax = r2(annualState / periodsPerYear);
 
   // ---------- Garnishments (CCPA cap on disposable earnings) ----------
   const disposable = r2(gross - federalTax - socialSecurity - medicare - additionalMedicare - stateTax);
