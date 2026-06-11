@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,8 +7,9 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Save, Info, Building2, Calendar, Bell, Palette, ShieldCheck, Plug } from "lucide-react";
+import { Save, Info, Building2, Calendar, Bell, Palette, ShieldCheck, Plug, Upload, Trash2, ImageIcon, KeyRound } from "lucide-react";
 import { useCompany } from "@/hooks/useCompany";
 import { useServerFn } from "@tanstack/react-start";
 import { saveSyncedCompanySettings } from "@/lib/company-sync.functions";
