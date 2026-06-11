@@ -15,12 +15,6 @@
 
 /* ---------------- shared helpers ---------------- */
 
-export const pad = (v: string | number, len: number, align: "L" | "R" = "L", fill = " ") => {
-  const s = String(v ?? "");
-  if (s.length >= len) return s.slice(0, len);
-  return align === "L" ? s + fill.repeat(len - s.length) : fill.repeat(len - s.length) * 1 ? "" : "";
-};
-// rewrite with cleaner impl
 export function padL(v: string | number, len: number) {
   const s = String(v ?? "");
   return s.length >= len ? s.slice(0, len) : s + " ".repeat(len - s.length);
