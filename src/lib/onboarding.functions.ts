@@ -121,7 +121,7 @@ export const submitOnboarding = createServerFn({ method: "POST" })
       entity_type: "employees",
       entity_id: emp.id,
       action: "update",
-      summary: "New hire completed self-onboarding",
+      after: { event: "onboarding_completed" },
     });
 
     return { ok: true, employee_id: emp.id };
