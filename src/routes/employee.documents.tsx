@@ -50,6 +50,19 @@ function Page() {
   const [docs, setDocs] = useState<Doc[]>([]);
   const [signedIds, setSignedIds] = useState<Set<string>>(new Set());
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [forms, setForms] = useState<EmpForm[]>([]);
+  const fetchForms = useServerFn(listMyForms);
+  const submitForm = useServerFn(submitEmployeeForm);
+  const [formDialog, setFormDialog] = useState<null | keyof typeof FORM_LABELS>(null);
+  const [formBusy, setFormBusy] = useState(false);
+
+  async function loadForms() {
+    try {
+      const res = await fetchForms();
+      setForms((res?.forms ?? []) as EmpForm[]);
+    } catch { /* noop */ }
+  }
+  useEffect(() => { if (employee?.id) loadForms(); }, [employee?.id]);
 
   async function load() {
     if (!employee) return;
