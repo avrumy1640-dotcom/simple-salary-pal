@@ -467,7 +467,29 @@ function PayrollOverview() {
                           </table>
                         </div>
                       )}
-                      <div className="mt-4 flex justify-end">
+                      <div className="mt-4 flex flex-wrap justify-end gap-2">
+                        {r.status === "draft" && (
+                          <Button asChild variant="outline" size="sm" className="rounded-lg">
+                            <Link to="/app/payroll/run">Resume in wizard</Link>
+                          </Button>
+                        )}
+                        {r.status === "approved" && (
+                          <Button
+                            size="sm" className="rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white"
+                            onClick={() => handleMarkPaid(r)} disabled={busyId === r.id}
+                          >
+                            <Banknote className="h-3.5 w-3.5 mr-1.5" />
+                            {busyId === r.id ? "Working…" : "Mark as paid"}
+                          </Button>
+                        )}
+                        {(r.status === "approved" || r.status === "paid") && (
+                          <Button
+                            size="sm" variant="outline" className="rounded-lg border-rose-200 text-rose-700 hover:bg-rose-50"
+                            onClick={() => { setReverseFor(r); setReverseReason(""); }} disabled={busyId === r.id}
+                          >
+                            <Undo2 className="h-3.5 w-3.5 mr-1.5" /> Reverse
+                          </Button>
+                        )}
                         <Button asChild variant="outline" size="sm" className="rounded-lg">
                           <Link to="/app/pay-history">
                             Open in pay history <ArrowUpRight className="h-3.5 w-3.5 ml-1" />
