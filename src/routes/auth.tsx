@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
-import { completeAccountSetup } from "@/lib/auth.functions";
+import { completeAccountSetup, claimEmployeeAccounts } from "@/lib/auth.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -87,7 +87,16 @@ async function getUserDestination(uid: string) {
   }
 }
 
-async function routeByCurrentUser(navigate: ReturnType<typeof useNavigate>, uid: string, setMode: (mode: AuthMode) => void) {
+async function routeByCurrentUser(
+  navigate: ReturnType<typeof useNavigate>,
+  uid: string,
+  setMode: (mode: AuthMode) => void,
+  claim: () => Promise<unknown>,
+) {
+  const { data: profile } = await supabase.from("profiles").select("account_type").eq("id", uid).maybeSingle();
+  if ((profile as any)?.account_type === "employee") {
+    try { await claim(); } catch (e) { console.error("[auth] claim error:", e); }
+  }
   const destination = await getUserDestination(uid);
   if (destination) navigate({ to: destination, replace: true });
   else setMode("setup");
@@ -97,6 +106,7 @@ function AuthPage() {
   const navigate = useNavigate();
   const search = useSearch({ from: "/auth" });
   const setupAccount = useServerFn(completeAccountSetup);
+  const claimAccounts = useServerFn(claimEmployeeAccounts);
   const [mode, setMode] = useState<AuthMode>(search.mode ?? "signin");
   const [accountType, setAccountType] = useState<AccountType>("employer");
   const [fullName, setFullName] = useState("");
@@ -125,7 +135,7 @@ function AuthPage() {
       const user = data.session.user;
       setEmail(user.email ?? "");
       setFullName((user.user_metadata?.full_name as string | undefined) ?? (user.user_metadata?.name as string | undefined) ?? "");
-      await routeByCurrentUser(navigate, user.id, setMode);
+      await routeByCurrentUser(navigate, user.id, setMode, claimAccounts);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -203,7 +213,7 @@ function AuthPage() {
         if (!validateSignin()) return;
         const { data, error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
         if (error) throw error;
-        if (data.user) await routeByCurrentUser(navigate, data.user.id, setMode);
+        if (data.user) await routeByCurrentUser(navigate, data.user.id, setMode, claimAccounts);
       }
     } catch (err) {
       console.error("[auth] submit error:", err);
@@ -227,7 +237,7 @@ function AuthPage() {
     if (user) {
       setEmail(user.email ?? "");
       setFullName((user.user_metadata?.full_name as string | undefined) ?? (user.user_metadata?.name as string | undefined) ?? "");
-      await routeByCurrentUser(navigate, user.id, setMode);
+      await routeByCurrentUser(navigate, user.id, setMode, claimAccounts);
     }
   }
 

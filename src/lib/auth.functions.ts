@@ -74,5 +74,49 @@ export const completeAccountSetup = createServerFn({ method: "POST" })
       }
     }
 
+    if (data.accountType === "employee") {
+      await linkEmployeeRecordsForUser(context.userId);
+    }
+
     return { ok: true, destination: data.accountType };
+  });
+
+async function linkEmployeeRecordsForUser(userId: string) {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data: userRes } = await supabaseAdmin.auth.admin.getUserById(userId);
+  const email = userRes?.user?.email?.toLowerCase();
+  if (!email) return { linked: 0, companies: 0 };
+
+  const { data: rows } = await supabaseAdmin
+    .from("employees")
+    .select("id, company_id")
+    .ilike("email", email)
+    .is("user_id", null);
+
+  if (!rows || rows.length === 0) return { linked: 0, companies: 0 };
+
+  await supabaseAdmin
+    .from("employees")
+    .update({ user_id: userId })
+    .ilike("email", email)
+    .is("user_id", null);
+
+  const companyIds = Array.from(new Set(rows.map((r: any) => r.company_id as string)));
+  for (const companyId of companyIds) {
+    await supabaseAdmin.from("company_users").upsert(
+      { company_id: companyId, user_id: userId, accepted_at: new Date().toISOString() },
+      { onConflict: "company_id,user_id" },
+    );
+    await supabaseAdmin.from("user_roles").upsert(
+      { user_id: userId, company_id: companyId, role: "employee" },
+      { onConflict: "user_id,company_id,role" },
+    );
+  }
+  return { linked: rows.length, companies: companyIds.length };
+}
+
+export const claimEmployeeAccounts = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    return await linkEmployeeRecordsForUser(context.userId);
   });
