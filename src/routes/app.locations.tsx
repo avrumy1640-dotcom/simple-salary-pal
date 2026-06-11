@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { MapPin, Plus, Trash2, Pencil } from "lucide-react";
+import { friendlyGeoError } from "@/lib/geo";
 
 export const Route = createFileRoute("/app/locations")({
   head: () => ({ meta: [{ title: "Work locations — Paylo" }] }),
@@ -157,8 +158,8 @@ function LocationDialog({ open, onClose, companyId, editing, onSaved }: {
     if (!("geolocation" in navigator)) return toast.error("Geolocation not available");
     navigator.geolocation.getCurrentPosition(
       (p) => setForm((f) => ({ ...f, latitude: p.coords.latitude.toFixed(6), longitude: p.coords.longitude.toFixed(6) })),
-      (e) => toast.error(e.message),
-      { enableHighAccuracy: true }
+      (e) => toast.error(friendlyGeoError(e)),
+      { enableHighAccuracy: true, timeout: 10000 }
     );
   }
 

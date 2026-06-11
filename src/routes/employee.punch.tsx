@@ -9,6 +9,7 @@ import { Clock, Play, Square, MapPin, AlertCircle, ShieldCheck, Coffee, Loader2,
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { useLiveLocationTracking, hasLiveTrackingConsent, setLiveTrackingConsent } from "@/hooks/useLiveLocationTracking";
+import { friendlyGeoError } from "@/lib/geo";
 
 export const Route = createFileRoute("/employee/punch")({
   head: () => ({ meta: [{ title: "Punch in / out — Paylo" }] }),
@@ -103,7 +104,7 @@ function PunchPage() {
     if (!("geolocation" in navigator)) { setGeoError("Geolocation is not available on this device."); return; }
     navigator.geolocation.getCurrentPosition(
       (p) => setCoords({ lat: p.coords.latitude, lng: p.coords.longitude, acc: p.coords.accuracy }),
-      (e) => setGeoError(e.message),
+      (e) => setGeoError(friendlyGeoError(e)),
       { enableHighAccuracy: true, timeout: 10000 }
     );
   }

@@ -44,12 +44,16 @@ function haversineM(lat1: number, lon1: number, lat2: number, lon2: number) {
   return 2 * 6371000 * Math.asin(Math.sqrt(a));
 }
 
-function getPosition(): Promise<GeolocationPosition | null> {
+import { friendlyGeoError } from "@/lib/geo";
+
+function getPosition(): Promise<{ position: GeolocationPosition | null; error: string | null }> {
   return new Promise((resolve) => {
-    if (typeof navigator === "undefined" || !("geolocation" in navigator)) return resolve(null);
+    if (typeof navigator === "undefined" || !("geolocation" in navigator)) {
+      return resolve({ position: null, error: "Geolocation is not available on this device." });
+    }
     navigator.geolocation.getCurrentPosition(
-      (p) => resolve(p),
-      () => resolve(null),
+      (p) => resolve({ position: p, error: null }),
+      (e) => resolve({ position: null, error: friendlyGeoError(e) }),
       { enableHighAccuracy: true, timeout: 8000, maximumAge: 10000 },
     );
   });
@@ -113,10 +117,10 @@ function Page() {
   async function refreshGps() {
     setProbing(true);
     setPosErr(null);
-    const p = await getPosition();
+    const { position, error } = await getPosition();
     setProbing(false);
-    if (!p) { setPosErr("Couldn't read your GPS. Please enable location services."); return; }
-    setPos({ lat: p.coords.latitude, lng: p.coords.longitude, accuracy: p.coords.accuracy });
+    if (!position) { setPosErr(error ?? "Couldn't read your GPS. Please enable location services."); return; }
+    setPos({ lat: position.coords.latitude, lng: position.coords.longitude, accuracy: position.coords.accuracy });
   }
   useEffect(() => { refreshGps(); }, []);
 
@@ -159,8 +163,8 @@ function Page() {
     if (type === "out" && !clockedIn) { toast.error("You need to clock in first."); return; }
 
     // Refresh GPS at punch time for accuracy
-    const p = await getPosition();
-    if (!p) { toast.error("GPS required. Please enable location services."); return; }
+    const { position: p, error: perr } = await getPosition();
+    if (!p) { toast.error(perr ?? "GPS required. Please enable location services."); return; }
     const lat = p.coords.latitude, lng = p.coords.longitude, accuracy = p.coords.accuracy;
 
     const loc = selected?.loc ?? null;
