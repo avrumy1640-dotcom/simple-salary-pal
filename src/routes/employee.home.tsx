@@ -303,33 +303,50 @@ function EmployeeHome() {
         <div className="flex items-end justify-between gap-3">
           <div>
             <div className="font-display text-lg font-bold text-slate-900">Time off available</div>
-            <p className="text-sm text-slate-500">Days remaining this year</p>
+            <p className="text-sm text-slate-500">Hours remaining and used this year</p>
           </div>
           <Link to="/employee/pto" className="text-sm font-semibold text-primary hover:underline">
             Request →
           </Link>
         </div>
-        <div className="mt-5 grid gap-5 sm:grid-cols-3">
-          {(Object.keys(PTO_TOTALS) as PtoKind[]).map((k) => {
-            const t = PTO_TOTALS[k];
-            const usedH = ptoUsedByType[k];
-            const remH = Math.max(0, t.total - usedH);
-            const pct = Math.min(100, Math.round((remH / t.total) * 100));
-            return (
-              <div key={k}>
-                <div className="flex items-baseline justify-between">
-                  <span className="text-sm font-semibold capitalize text-slate-700">{k} days</span>
-                  <span className="font-display text-base font-bold text-slate-900">{(remH / 8).toFixed(0)} of {(t.total / 8).toFixed(0)}</span>
-                </div>
-                <div className="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-slate-100">
-                  <div className={`h-full rounded-full ${t.color}`} style={{ width: `${pct}%` }} />
-                </div>
-                <div className="mt-1.5 text-xs text-slate-500">{(usedH / 8).toFixed(1)} days used</div>
-              </div>
-            );
-          })}
+        {(() => {
+          const balanceH = Number((employee as any).pto_balance_hours ?? 0);
+          const usedTotal = (Object.keys(PTO_TYPES) as PtoKind[]).reduce((s, k) => s + ptoUsedByType[k], 0);
+          const earnedTotal = balanceH + usedTotal; // best-effort yearly total
+          return (
+            <div className="mt-5 grid gap-5 sm:grid-cols-3">
+              {(Object.keys(PTO_TYPES) as PtoKind[]).map((k) => {
+                const t = PTO_TYPES[k];
+                const usedH = ptoUsedByType[k];
+                // Allocate the live balance proportionally by usage; if no usage yet, split evenly.
+                const share = usedTotal > 0 ? usedH / usedTotal : 1 / 3;
+                const totalH = Math.max(usedH, Math.round(earnedTotal * share));
+                const remH = Math.max(0, totalH - usedH);
+                const pct = totalH > 0 ? Math.min(100, Math.round((remH / totalH) * 100)) : 0;
+                return (
+                  <div key={k}>
+                    <div className="flex items-baseline justify-between">
+                      <span className="text-sm font-semibold capitalize text-slate-700">{k}</span>
+                      <span className="font-display text-base font-bold text-slate-900">{remH.toFixed(0)}h</span>
+                    </div>
+                    <div className="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-slate-100">
+                      <div className={`h-full rounded-full ${t.color}`} style={{ width: `${pct}%` }} />
+                    </div>
+                    <div className="mt-1.5 text-xs text-slate-500">{usedH.toFixed(0)}h used</div>
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })()}
+        <div className="mt-4 flex items-center justify-between rounded-xl bg-surface px-4 py-3 text-xs">
+          <span className="text-slate-500">Total bank balance</span>
+          <span className="font-display font-extrabold tabular text-slate-900">
+            {Number((employee as any).pto_balance_hours ?? 0).toFixed(1)} hours
+          </span>
         </div>
       </div>
+
 
       {/* More tools */}
       <div>
