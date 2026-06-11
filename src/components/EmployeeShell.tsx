@@ -33,6 +33,7 @@ const navGroups: NavGroup[] = [
     items: [
       { to: "/employee/profile", label: "My Info", icon: User },
       { to: "/employee/benefits", label: "Benefits", icon: HeartHandshake },
+      { to: "/employee/onboarding", label: "Get Started", icon: ClipboardCheck },
     ],
   },
 ];
