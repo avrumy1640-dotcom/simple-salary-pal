@@ -67,16 +67,21 @@ function Page() {
     setBusyId(d.id);
     const { error } = await supabase.from("hr_document_signatures").insert({
       document_id: d.id,
+      company_id: employee.company_id,
+      user_id: employee.user_id,
       signed_by_user_id: employee.user_id,
-      signature_method: "click_to_sign",
-      ip_address: null,
-      user_agent: navigator.userAgent.slice(0, 200),
+      signed_by_name: employee.full_name,
+      signed_by_email: (employee as any).email ?? null,
+      status: "signed",
+      signature_user_agent: navigator.userAgent.slice(0, 200),
+      consent_text: `I, ${employee.full_name}, acknowledge that I have read and agree to "${d.title}".`,
     });
     setBusyId(null);
     if (error) { toast.error(error.message); return; }
     toast.success("Acknowledged");
     setSignedIds((s) => new Set(s).add(d.id));
   }
+
 
   if (loading) return null;
   if (!employee) return <p className="text-sm text-muted-foreground">No employee record found.</p>;
