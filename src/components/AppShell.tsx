@@ -20,12 +20,11 @@ const navGroups: NavGroup[] = [
     label: "Main",
     items: [
       { to: "/app/dashboard", label: "Dashboard", icon: LayoutDashboard, roles: ANY_ADMIN },
-      { to: "/app/approvals", label: "Approvals", icon: Inbox, roles: [...MANAGER_ROLES] },
+      { to: "/app/approvals", label: "Inbox", icon: Inbox, roles: [...MANAGER_ROLES] },
       { to: "/app/employees", label: "Employees", icon: Users, roles: HR_ROLES },
       { to: "/app/payroll", label: "Payroll", icon: Wallet, roles: PAYROLL_ROLES },
       { to: "/app/pay-on-demand", label: "Pay On-Demand", icon: Wallet, roles: PAYROLL_ROLES },
       { to: "/app/expense-requests", label: "Expenses", icon: Receipt, roles: [...MANAGER_ROLES] },
-      { to: "/app/requests", label: "Requests", icon: MessageSquare, roles: [...MANAGER_ROLES] },
       { to: "/app/time", label: "Time Tracking", icon: Clock, roles: [...MANAGER_ROLES] },
       { to: "/app/attendance", label: "Live Attendance", icon: Clock, roles: [...MANAGER_ROLES] },
       { to: "/app/live-map", label: "Live Map", icon: MapPin, roles: [...MANAGER_ROLES] },
