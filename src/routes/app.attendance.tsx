@@ -90,15 +90,20 @@ function AttendancePage() {
       if (empRes.error) throw new Error(`Employees: ${empRes.error.message}`);
 
       const pRes = await supabase.from("time_clock_punches")
-        .select("id, employee_id, punch_type, punched_at, latitude, longitude, address")
+        .select("id, employee_id, punch_type, punched_at, latitude, longitude, address, work_location_id, geofence_ok, geofence_required")
         .eq("company_id", currentId)
         .gte("punched_at", new Date(Date.now() - 14 * 86400_000).toISOString())
         .order("punched_at", { ascending: false })
         .limit(500);
       if (pRes.error) throw new Error(`Punches: ${pRes.error.message}`);
 
+      const lRes = await supabase.from("work_locations")
+        .select("id, name, latitude, longitude, geofence_radius_m")
+        .eq("company_id", currentId);
+
       setEmployees((empRes.data ?? []) as Employee[]);
       setPunches((pRes.data ?? []) as Punch[]);
+      setLocations((lRes.data ?? []) as WorkLoc[]);
     } catch (e: any) {
       console.error("[attendance] load failed", e);
       setErr(e?.message || "Failed to load attendance");
