@@ -81,6 +81,7 @@ const ALL_NAV_LABELS: Record<string, string> = {
   "/app/auth-debug": "Auth Debug",
   "/app/pay-on-demand": "Pay On-Demand",
   "/app/shift-swaps": "Shift Swaps",
+  "/app/live-map": "Live Map",
 };
 
 export function AppShell() {
