@@ -382,10 +382,39 @@ function TaxFilingPage() {
             onClick={downloadStateQuarterly}
           />
         </div>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <EFileCard
+            title="Form 940 (FUTA)"
+            subtitle={`${year} annual — federal unemployment`}
+            spec="IRS line-numbered JSON + human summary"
+            icon={<FileCode2 className="h-5 w-5 text-primary" />}
+            loading={generating === "940"}
+            onClick={downloadForm940}
+          />
+          <EFileCard
+            title="Form W-3"
+            subtitle={`${year} W-2 transmittal totals`}
+            spec="SSA transmittal — pairs with EFW2"
+            icon={<FileText className="h-5 w-5 text-primary" />}
+            loading={generating === "w3"}
+            onClick={downloadFormW3}
+          />
+          <EFileCard
+            title="Form 1096"
+            subtitle={`${year} 1099-NEC transmittal`}
+            spec="IRS paper-filing summary"
+            icon={<FileCode2 className="h-5 w-5 text-primary" />}
+            loading={generating === "1096"}
+            onClick={downloadForm1096}
+          />
+        </div>
         <p className="mt-4 text-xs text-slate-400">
           Files are formatted per IRS / SSA specifications and import-ready for any registered transmitter (TCC / BSO / state DOR). EIN, SSN, and addresses are pulled from employee records.
         </p>
       </section>
+
+      <NewHireReporting />
+
 
       <div className="rounded-2xl border bg-card">
         <div className="border-b px-5 py-3 text-sm font-medium flex items-center gap-2"><Calendar className="h-4 w-4" /> Filing calendar</div>
