@@ -158,8 +158,8 @@ function LocationDialog({ open, onClose, companyId, editing, onSaved }: {
     if (!("geolocation" in navigator)) return toast.error("Geolocation not available");
     navigator.geolocation.getCurrentPosition(
       (p) => setForm((f) => ({ ...f, latitude: p.coords.latitude.toFixed(6), longitude: p.coords.longitude.toFixed(6) })),
-      (e) => toast.error(e.message),
-      { enableHighAccuracy: true }
+      (e) => toast.error(friendlyGeoError(e)),
+      { enableHighAccuracy: true, timeout: 10000 }
     );
   }
 
