@@ -45,6 +45,7 @@ function EmployeeHome() {
   const [lastPunch, setLastPunch] = useState<{ id: string; punched_at: string; punch_type: string } | null>(null);
   const [punches, setPunches] = useState<{ punched_at: string; punch_type: string }[]>([]);
   const [ptoUsedByType, setPtoUsedByType] = useState<Record<PtoKind, number>>({ vacation: 0, sick: 0, personal: 0 });
+  const [accrualPolicy, setAccrualPolicy] = useState<{ name: string; hours_per_period: number; frequency: string; max_balance_hours: number | null } | null>(null);
   const [activity, setActivity] = useState<{ icon: "pay" | "pto" | "doc"; text: string; date: string }[]>([]);
   const [podAvailable, setPodAvailable] = useState(0);
   const [busy, setBusy] = useState(false);
