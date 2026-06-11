@@ -287,25 +287,39 @@ function StatCard({ label, value, icon, tone }: { label: string; value: number; 
   );
 }
 
-function PunchCell({ label, punch, live, accent }: { label: string; punch: Punch | null; live?: boolean; accent: "emerald" | "slate" }) {
+function PunchCell({ label, punch, live, accent, locations }: { label: string; punch: Punch | null; live?: boolean; accent: "emerald" | "slate"; locations: WorkLoc[] }) {
   const accentCls = accent === "emerald" ? "border-emerald-200 bg-emerald-50/40" : "border-border bg-surface";
+  const loc = punch?.work_location_id ? locations.find((l) => l.id === punch.work_location_id) : null;
+  const mapHref = punch?.latitude != null && punch?.longitude != null
+    ? `https://www.google.com/maps?q=${punch.latitude},${punch.longitude}` : null;
   return (
     <div className={`rounded-xl border ${accentCls} p-3`}>
-      <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">{label}</div>
+      <div className="flex items-center justify-between gap-2">
+        <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">{label}</div>
+        {punch && (
+          punch.geofence_ok === true ? <span className="text-[10px] font-bold text-emerald-700">● ON SITE</span>
+          : punch.geofence_ok === false ? <span className="text-[10px] font-bold text-amber-700">● OUTSIDE GEOFENCE</span>
+          : null
+        )}
+      </div>
       {punch ? (
         <>
           <div className="mt-1 unit-num text-sm font-semibold text-slate-900">
             {fmt(punch.punched_at)} <span className="text-xs font-normal text-slate-500">· {new Date(punch.punched_at).toLocaleDateString()}</span>
             {live && <span className="ml-2 text-xs font-semibold text-emerald-700">· live</span>}
           </div>
+          {loc && (
+            <div className="mt-1 text-xs font-semibold text-slate-700">📍 {loc.name}</div>
+          )}
           {punch.address && (
             <div className="mt-1 flex items-center gap-1 text-xs text-slate-600">
               <MapPin className="h-3 w-3" /> <span className="truncate">{punch.address}</span>
             </div>
           )}
           {punch.latitude != null && punch.longitude != null && (
-            <div className="mt-0.5 text-[11px] text-slate-400 unit-num">
-              {punch.latitude.toFixed(5)}, {punch.longitude.toFixed(5)}
+            <div className="mt-0.5 flex items-center justify-between text-[11px] text-slate-400 unit-num">
+              <span>{punch.latitude.toFixed(5)}, {punch.longitude.toFixed(5)}</span>
+              {mapHref && <a href={mapHref} target="_blank" rel="noreferrer" className="font-semibold text-indigo-600 hover:underline">View on map ↗</a>}
             </div>
           )}
         </>
