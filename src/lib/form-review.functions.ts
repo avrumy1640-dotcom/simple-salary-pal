@@ -87,7 +87,7 @@ export const approveForm = createServerFn({ method: "POST" })
     if (form.employee_id && Object.keys(updates).length > 0) {
       const { error: uErr } = await supabaseAdmin
         .from("employees")
-        .update(updates)
+        .update(updates as any)
         .eq("id", form.employee_id);
       if (uErr) throw new Error(uErr.message);
     }
