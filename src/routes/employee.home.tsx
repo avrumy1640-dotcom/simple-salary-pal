@@ -357,6 +357,17 @@ function EmployeeHome() {
             {Number((employee as any).pto_balance_hours ?? 0).toFixed(1)} hours
           </span>
         </div>
+        {accrualPolicy && (
+          <div className="mt-2 flex items-center justify-between rounded-xl border border-emerald-100 bg-emerald-50/60 px-4 py-2.5 text-xs">
+            <span className="text-emerald-800">
+              <span className="font-semibold">{accrualPolicy.name}:</span> accrues{" "}
+              {Number(accrualPolicy.hours_per_period).toFixed(2)}h per {String(accrualPolicy.frequency).replace(/_/g, " ")}
+            </span>
+            {accrualPolicy.max_balance_hours != null && (
+              <span className="font-semibold text-emerald-900">cap {Number(accrualPolicy.max_balance_hours).toFixed(0)}h</span>
+            )}
+          </div>
+        )}
       </div>
 
 
