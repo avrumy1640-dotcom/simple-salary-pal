@@ -45,6 +45,7 @@ function EmployeeHome() {
   const [lastPunch, setLastPunch] = useState<{ id: string; punched_at: string; punch_type: string } | null>(null);
   const [punches, setPunches] = useState<{ punched_at: string; punch_type: string }[]>([]);
   const [ptoUsedByType, setPtoUsedByType] = useState<Record<PtoKind, number>>({ vacation: 0, sick: 0, personal: 0 });
+  const [accrualPolicy, setAccrualPolicy] = useState<{ name: string; hours_per_period: number; frequency: string; max_balance_hours: number | null } | null>(null);
   const [activity, setActivity] = useState<{ icon: "pay" | "pto" | "doc"; text: string; date: string }[]>([]);
   const [podAvailable, setPodAvailable] = useState(0);
   const [busy, setBusy] = useState(false);
@@ -94,6 +95,17 @@ function EmployeeHome() {
       }
     }
     setPtoUsedByType(used);
+
+    // Accrual policy (if assigned)
+    const policyId = (employee as any).pto_policy_id;
+    if (policyId) {
+      const { data: pol } = await supabase.from("pto_accrual_policies")
+        .select("name, hours_per_period, frequency, max_balance_hours")
+        .eq("id", policyId).maybeSingle();
+      if (pol) setAccrualPolicy(pol as any);
+    } else {
+      setAccrualPolicy(null);
+    }
 
     // Recent activity
     const acts: { icon: "pay" | "pto" | "doc"; text: string; date: string }[] = [];
@@ -345,6 +357,17 @@ function EmployeeHome() {
             {Number((employee as any).pto_balance_hours ?? 0).toFixed(1)} hours
           </span>
         </div>
+        {accrualPolicy && (
+          <div className="mt-2 flex items-center justify-between rounded-xl border border-emerald-100 bg-emerald-50/60 px-4 py-2.5 text-xs">
+            <span className="text-emerald-800">
+              <span className="font-semibold">{accrualPolicy.name}:</span> accrues{" "}
+              {Number(accrualPolicy.hours_per_period).toFixed(2)}h per {String(accrualPolicy.frequency).replace(/_/g, " ")}
+            </span>
+            {accrualPolicy.max_balance_hours != null && (
+              <span className="font-semibold text-emerald-900">cap {Number(accrualPolicy.max_balance_hours).toFixed(0)}h</span>
+            )}
+          </div>
+        )}
       </div>
 
 
