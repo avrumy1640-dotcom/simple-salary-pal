@@ -8,9 +8,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import {
   buildForm941, form941ToText, buildEFW2, build1099NEC, buildStateQuarterlyCSV,
+  buildForm940, form940ToText, buildFormW3, formW3ToText, buildForm1096, form1096ToText,
+  buildNewHireReportCSV,
   triggerDownload, type FilingCompany, type FilingEmployee, type FilingItem,
-  type FilingRun, type FilingContractor,
+  type FilingRun, type FilingContractor, type NewHireRow,
 } from "@/lib/efile-generators";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 
 export const Route = createFileRoute("/app/tax-filing")({
   head: () => ({ meta: [{ title: "Tax filing — Paylo" }] }),
@@ -227,6 +231,64 @@ function TaxFilingPage() {
     }
   }
 
+  async function downloadForm940() {
+    try {
+      setGenerating("940");
+      const ctx = await loadFilingContext();
+      const f940 = buildForm940({ company: ctx.company, year, items: ctx.items, runs: ctx.runs });
+      triggerDownload(`Form940-${year}.txt`, form940ToText(f940));
+      triggerDownload(`Form940-${year}.json`, JSON.stringify(f940, null, 2), "application/json");
+      toast.success(`Form 940 generated for ${year}`);
+    } catch (e: unknown) {
+      toast.error(`Failed: ${(e as Error).message}`);
+    } finally { setGenerating(null); }
+  }
+
+  async function downloadFormW3() {
+    try {
+      setGenerating("w3");
+      const ctx = await loadFilingContext();
+      const runMap = new Map(ctx.runs.map((r) => [r.id, r.pay_date]));
+      const totals = new Map<string, { wages: number; fedWH: number; ss: number; medicare: number; stateWH: number }>();
+      ctx.items.forEach((i) => {
+        const d = runMap.get(i.run_id);
+        if (!d || !d.startsWith(String(year))) return;
+        const cur = totals.get(i.employee_id) || { wages: 0, fedWH: 0, ss: 0, medicare: 0, stateWH: 0 };
+        cur.wages += Number(i.gross_pay);
+        cur.fedWH += Number(i.federal_tax);
+        cur.ss += Number(i.social_security);
+        cur.medicare += Number(i.medicare);
+        cur.stateWH += Number(i.state_tax);
+        totals.set(i.employee_id, cur);
+      });
+      const w3 = buildFormW3({ company: ctx.company, year, itemsByEmployee: totals });
+      triggerDownload(`FormW3-${year}.txt`, formW3ToText(w3));
+      triggerDownload(`FormW3-${year}.json`, JSON.stringify(w3, null, 2), "application/json");
+      toast.success(`Form W-3 generated (${w3.number_of_w2s} W-2s)`);
+    } catch (e: unknown) {
+      toast.error(`Failed: ${(e as Error).message}`);
+    } finally { setGenerating(null); }
+  }
+
+  async function downloadForm1096() {
+    try {
+      setGenerating("1096");
+      const ctx = await loadFilingContext();
+      const byC = new Map<string, number>();
+      ctx.payments.forEach((p) => {
+        if (!p.payment_date.startsWith(String(year))) return;
+        byC.set(p.contractor_id, (byC.get(p.contractor_id) || 0) + Number(p.amount));
+      });
+      const f1096 = buildForm1096({ company: ctx.company, year, contractors: ctx.contractors, paymentsByContractor: byC });
+      triggerDownload(`Form1096-${year}.txt`, form1096ToText(f1096));
+      triggerDownload(`Form1096-${year}.json`, JSON.stringify(f1096, null, 2), "application/json");
+      toast.success(`Form 1096 generated (${f1096.number_of_forms} forms)`);
+    } catch (e: unknown) {
+      toast.error(`Failed: ${(e as Error).message}`);
+    } finally { setGenerating(null); }
+  }
+
+
   const totalLiability = q941.reduce((s, q) => s + q.fed + q.fica, 0);
   return (
     <div className="space-y-6 unit-scope">
@@ -320,10 +382,39 @@ function TaxFilingPage() {
             onClick={downloadStateQuarterly}
           />
         </div>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <EFileCard
+            title="Form 940 (FUTA)"
+            subtitle={`${year} annual — federal unemployment`}
+            spec="IRS line-numbered JSON + human summary"
+            icon={<FileCode2 className="h-5 w-5 text-primary" />}
+            loading={generating === "940"}
+            onClick={downloadForm940}
+          />
+          <EFileCard
+            title="Form W-3"
+            subtitle={`${year} W-2 transmittal totals`}
+            spec="SSA transmittal — pairs with EFW2"
+            icon={<FileText className="h-5 w-5 text-primary" />}
+            loading={generating === "w3"}
+            onClick={downloadFormW3}
+          />
+          <EFileCard
+            title="Form 1096"
+            subtitle={`${year} 1099-NEC transmittal`}
+            spec="IRS paper-filing summary"
+            icon={<FileCode2 className="h-5 w-5 text-primary" />}
+            loading={generating === "1096"}
+            onClick={downloadForm1096}
+          />
+        </div>
         <p className="mt-4 text-xs text-slate-400">
           Files are formatted per IRS / SSA specifications and import-ready for any registered transmitter (TCC / BSO / state DOR). EIN, SSN, and addresses are pulled from employee records.
         </p>
       </section>
+
+      <NewHireReporting />
+
 
       <div className="rounded-2xl border bg-card">
         <div className="border-b px-5 py-3 text-sm font-medium flex items-center gap-2"><Calendar className="h-4 w-4" /> Filing calendar</div>
@@ -448,5 +539,169 @@ function EFileCard({ title, subtitle, spec, icon, loading, onClick }: { title: s
         <Download className="h-3.5 w-3.5" />{loading ? "Generating…" : "Generate"}
       </Button>
     </div>
+  );
+}
+
+/* ------------------------- New-Hire State Reporting ------------------------- */
+
+type NewHireEmployee = {
+  id: string; full_name: string; ssn_last4: string | null; date_of_birth: string | null;
+  address_line1: string | null; city: string | null; state: string | null; zip: string | null;
+  start_date: string | null; created_at: string;
+};
+type ExistingReport = { employee_id: string; reported_state: string; report_date: string; status: string; confirmation_number: string | null };
+
+function NewHireReporting() {
+  const [companyId, setCompanyId] = useState<string | null>(null);
+  const [company, setCompany] = useState<FilingCompany | null>(null);
+  const [hires, setHires] = useState<NewHireEmployee[]>([]);
+  const [reports, setReports] = useState<ExistingReport[]>([]);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [busy, setBusy] = useState(false);
+  const [confirmation, setConfirmation] = useState<string>("");
+
+  const load = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const { data: cu } = await supabase.from("company_users").select("company_id, is_default").eq("user_id", user.id).order("is_default", { ascending: false }).limit(1).maybeSingle();
+    const cid = cu?.company_id as string | undefined;
+    if (!cid) return;
+    setCompanyId(cid);
+
+    const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 60);
+    const cutoffISO = cutoff.toISOString().slice(0, 10);
+    const [{ data: comp }, { data: emps }, { data: rep }] = await Promise.all([
+      supabase.from("companies").select("legal_name, ein, address_line1, address_line2, city, state, postal_code, phone, email").eq("id", cid).maybeSingle(),
+      supabase.from("employees")
+        .select("id, full_name, ssn_last4, date_of_birth, address_line1, city, state, zip, start_date, created_at")
+        .eq("company_id", cid)
+        .gte("start_date", cutoffISO)
+        .order("start_date", { ascending: false }),
+      supabase.from("new_hire_reports").select("employee_id, reported_state, report_date, status, confirmation_number").eq("company_id", cid),
+    ]);
+    setCompany((comp ?? null) as FilingCompany | null);
+    setHires((emps ?? []) as NewHireEmployee[]);
+    setReports((rep ?? []) as ExistingReport[]);
+  };
+
+  useEffect(() => { load(); }, []);
+
+  const reportedSet = new Set(reports.map((r) => r.employee_id));
+  const today = new Date();
+  const rows = hires.map((h) => {
+    const start = h.start_date ? new Date(h.start_date) : null;
+    const dueDate = start ? new Date(start.getTime() + 20 * 86400000) : null;
+    const daysLeft = dueDate ? Math.ceil((dueDate.getTime() - today.getTime()) / 86400000) : null;
+    const reported = reportedSet.has(h.id);
+    return { ...h, dueDate, daysLeft, reported };
+  });
+
+  const toggle = (id: string) => {
+    const next = new Set(selected);
+    next.has(id) ? next.delete(id) : next.add(id);
+    setSelected(next);
+  };
+  const selectAllOpen = () => setSelected(new Set(rows.filter((r) => !r.reported).map((r) => r.id)));
+
+  const downloadCSV = () => {
+    if (!company) return toast.error("Company missing");
+    const picked = rows.filter((r) => selected.has(r.id));
+    if (!picked.length) return toast.error("Pick at least one new hire");
+    const csvRows: NewHireRow[] = picked.map((r) => ({
+      employee_id: r.id, full_name: r.full_name, ssn_last4: r.ssn_last4,
+      date_of_birth: r.date_of_birth, address_line1: r.address_line1, city: r.city,
+      state: r.state, zip: r.zip, start_date: r.start_date, state_of_hire: r.state,
+    }));
+    const csv = buildNewHireReportCSV({ company, rows: csvRows });
+    triggerDownload(`NewHireReport-${new Date().toISOString().slice(0,10)}.csv`, csv, "text/csv");
+    toast.success(`New-hire report generated (${picked.length} employees)`);
+  };
+
+  const markReported = async () => {
+    if (!companyId) return;
+    const picked = rows.filter((r) => selected.has(r.id) && !r.reported);
+    if (!picked.length) return toast.error("Nothing to mark");
+    setBusy(true);
+    const inserts = picked.map((r) => ({
+      company_id: companyId, employee_id: r.id,
+      reported_state: (r.state || "").toUpperCase() || "XX",
+      report_date: new Date().toISOString().slice(0, 10),
+      due_date: r.dueDate ? r.dueDate.toISOString().slice(0, 10) : null,
+      status: "reported", confirmation_number: confirmation || null,
+    }));
+    const { error } = await supabase.from("new_hire_reports").insert(inserts);
+    setBusy(false);
+    if (error) return toast.error(error.message);
+    toast.success(`Marked ${picked.length} reported`);
+    setSelected(new Set()); setConfirmation("");
+    load();
+  };
+
+  const overdueCount = rows.filter((r) => !r.reported && r.daysLeft !== null && r.daysLeft < 0).length;
+  const dueSoonCount = rows.filter((r) => !r.reported && r.daysLeft !== null && r.daysLeft >= 0 && r.daysLeft <= 7).length;
+
+  return (
+    <section className="rounded-2xl border unit-hairline bg-white p-6 shadow-soft">
+      <div className="flex flex-wrap items-end justify-between gap-3 mb-4">
+        <div>
+          <h2 className="font-display text-xl font-bold text-slate-900">New-hire state reporting</h2>
+          <p className="text-sm text-slate-500">Federal law requires reporting new hires to the state directory within 20 days (PRWORA § 453A).</p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {overdueCount > 0 && <Badge variant="destructive">{overdueCount} overdue</Badge>}
+          {dueSoonCount > 0 && <Badge className="bg-warning text-warning-foreground">{dueSoonCount} due soon</Badge>}
+          <Button variant="outline" size="sm" onClick={selectAllOpen}>Select unreported</Button>
+          <Button variant="outline" size="sm" onClick={downloadCSV} className="gap-1.5"><Download className="h-3.5 w-3.5" />Download CSV</Button>
+        </div>
+      </div>
+
+      <div className="overflow-x-auto rounded-xl border unit-hairline">
+        <table className="w-full text-sm">
+          <thead className="bg-slate-50 text-left text-xs uppercase tracking-wider text-slate-500">
+            <tr>
+              <th className="px-4 py-3 w-10"></th>
+              <th className="px-3 py-3">Employee</th>
+              <th className="px-3 py-3">State</th>
+              <th className="px-3 py-3">Start date</th>
+              <th className="px-3 py-3">Due by</th>
+              <th className="px-3 py-3 text-right">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.length === 0 && (
+              <tr><td colSpan={6} className="px-4 py-8 text-center text-sm text-slate-400">No hires in the last 60 days.</td></tr>
+            )}
+            {rows.map((r) => (
+              <tr key={r.id} className="border-t">
+                <td className="px-4 py-3">
+                  <input type="checkbox" disabled={r.reported} checked={selected.has(r.id)} onChange={() => toggle(r.id)} />
+                </td>
+                <td className="px-3 py-3 font-medium text-slate-900">{r.full_name}</td>
+                <td className="px-3 py-3">{r.state || "—"}</td>
+                <td className="px-3 py-3 tabular-nums">{r.start_date || "—"}</td>
+                <td className="px-3 py-3 tabular-nums">{r.dueDate ? r.dueDate.toISOString().slice(0,10) : "—"}</td>
+                <td className="px-3 py-3 text-right">
+                  {r.reported
+                    ? <Badge className="bg-success/15 text-success border-success/30">Reported</Badge>
+                    : r.daysLeft !== null && r.daysLeft < 0
+                      ? <Badge variant="destructive">Overdue {Math.abs(r.daysLeft)}d</Badge>
+                      : r.daysLeft !== null && r.daysLeft <= 7
+                        ? <Badge className="bg-warning text-warning-foreground">{r.daysLeft}d left</Badge>
+                        : <Badge variant="secondary">{r.daysLeft ?? "—"}d left</Badge>}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="mt-4 flex flex-wrap items-center gap-2">
+        <Input placeholder="Confirmation # (optional)" value={confirmation} onChange={(e) => setConfirmation(e.target.value)} className="max-w-[260px]" />
+        <Button size="sm" onClick={markReported} disabled={busy || selected.size === 0}>
+          {busy ? "Saving…" : `Mark ${selected.size || ""} reported`.trim()}
+        </Button>
+        <p className="text-xs text-slate-400 ml-auto">Submit the CSV to your state new-hire registry, then mark the rows reported here to keep audit history.</p>
+      </div>
+    </section>
   );
 }
