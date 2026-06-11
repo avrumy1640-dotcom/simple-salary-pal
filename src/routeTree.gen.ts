@@ -27,6 +27,7 @@ import { Route as EmployeePaystubsRouteImport } from './routes/employee.paystubs
 import { Route as EmployeePayOnDemandRouteImport } from './routes/employee.pay-on-demand'
 import { Route as EmployeeNotificationsRouteImport } from './routes/employee.notifications'
 import { Route as EmployeeHomeRouteImport } from './routes/employee.home'
+import { Route as EmployeeExpensesRouteImport } from './routes/employee.expenses'
 import { Route as EmployeeDocumentsRouteImport } from './routes/employee.documents'
 import { Route as EmployeeBenefitsRouteImport } from './routes/employee.benefits'
 import { Route as AppUsersRouteImport } from './routes/app.users'
@@ -160,6 +161,11 @@ const EmployeeNotificationsRoute = EmployeeNotificationsRouteImport.update({
 const EmployeeHomeRoute = EmployeeHomeRouteImport.update({
   id: '/home',
   path: '/home',
+  getParentRoute: () => EmployeeRoute,
+} as any)
+const EmployeeExpensesRoute = EmployeeExpensesRouteImport.update({
+  id: '/expenses',
+  path: '/expenses',
   getParentRoute: () => EmployeeRoute,
 } as any)
 const EmployeeDocumentsRoute = EmployeeDocumentsRouteImport.update({
@@ -433,6 +439,7 @@ export interface FileRoutesByFullPath {
   '/app/users': typeof AppUsersRoute
   '/employee/benefits': typeof EmployeeBenefitsRoute
   '/employee/documents': typeof EmployeeDocumentsRoute
+  '/employee/expenses': typeof EmployeeExpensesRoute
   '/employee/home': typeof EmployeeHomeRoute
   '/employee/notifications': typeof EmployeeNotificationsRoute
   '/employee/pay-on-demand': typeof EmployeePayOnDemandRoute
@@ -496,6 +503,7 @@ export interface FileRoutesByTo {
   '/app/users': typeof AppUsersRoute
   '/employee/benefits': typeof EmployeeBenefitsRoute
   '/employee/documents': typeof EmployeeDocumentsRoute
+  '/employee/expenses': typeof EmployeeExpensesRoute
   '/employee/home': typeof EmployeeHomeRoute
   '/employee/notifications': typeof EmployeeNotificationsRoute
   '/employee/pay-on-demand': typeof EmployeePayOnDemandRoute
@@ -561,6 +569,7 @@ export interface FileRoutesById {
   '/app/users': typeof AppUsersRoute
   '/employee/benefits': typeof EmployeeBenefitsRoute
   '/employee/documents': typeof EmployeeDocumentsRoute
+  '/employee/expenses': typeof EmployeeExpensesRoute
   '/employee/home': typeof EmployeeHomeRoute
   '/employee/notifications': typeof EmployeeNotificationsRoute
   '/employee/pay-on-demand': typeof EmployeePayOnDemandRoute
@@ -627,6 +636,7 @@ export interface FileRouteTypes {
     | '/app/users'
     | '/employee/benefits'
     | '/employee/documents'
+    | '/employee/expenses'
     | '/employee/home'
     | '/employee/notifications'
     | '/employee/pay-on-demand'
@@ -690,6 +700,7 @@ export interface FileRouteTypes {
     | '/app/users'
     | '/employee/benefits'
     | '/employee/documents'
+    | '/employee/expenses'
     | '/employee/home'
     | '/employee/notifications'
     | '/employee/pay-on-demand'
@@ -754,6 +765,7 @@ export interface FileRouteTypes {
     | '/app/users'
     | '/employee/benefits'
     | '/employee/documents'
+    | '/employee/expenses'
     | '/employee/home'
     | '/employee/notifications'
     | '/employee/pay-on-demand'
@@ -907,6 +919,13 @@ declare module '@tanstack/react-router' {
       path: '/home'
       fullPath: '/employee/home'
       preLoaderRoute: typeof EmployeeHomeRouteImport
+      parentRoute: typeof EmployeeRoute
+    }
+    '/employee/expenses': {
+      id: '/employee/expenses'
+      path: '/expenses'
+      fullPath: '/employee/expenses'
+      preLoaderRoute: typeof EmployeeExpensesRouteImport
       parentRoute: typeof EmployeeRoute
     }
     '/employee/documents': {
@@ -1335,6 +1354,7 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 interface EmployeeRouteChildren {
   EmployeeBenefitsRoute: typeof EmployeeBenefitsRoute
   EmployeeDocumentsRoute: typeof EmployeeDocumentsRoute
+  EmployeeExpensesRoute: typeof EmployeeExpensesRoute
   EmployeeHomeRoute: typeof EmployeeHomeRoute
   EmployeeNotificationsRoute: typeof EmployeeNotificationsRoute
   EmployeePayOnDemandRoute: typeof EmployeePayOnDemandRoute
@@ -1349,6 +1369,7 @@ interface EmployeeRouteChildren {
 const EmployeeRouteChildren: EmployeeRouteChildren = {
   EmployeeBenefitsRoute: EmployeeBenefitsRoute,
   EmployeeDocumentsRoute: EmployeeDocumentsRoute,
+  EmployeeExpensesRoute: EmployeeExpensesRoute,
   EmployeeHomeRoute: EmployeeHomeRoute,
   EmployeeNotificationsRoute: EmployeeNotificationsRoute,
   EmployeePayOnDemandRoute: EmployeePayOnDemandRoute,
