@@ -121,9 +121,8 @@ function FormReviewPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        icon={ClipboardCheck}
         title="Form Review"
-        subtitle="Approve or reject employee-submitted tax & employment forms"
+        description="Approve or reject employee-submitted tax & employment forms"
         actions={
           <Button variant="outline" size="sm" onClick={load} disabled={loading}>
             <RefreshCw className={`mr-1.5 h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} /> Refresh
