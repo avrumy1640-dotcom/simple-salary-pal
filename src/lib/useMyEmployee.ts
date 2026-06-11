@@ -23,6 +23,8 @@ export interface EmployeeRecord {
   pto_balance_hours: number;
   emergency_contact_name: string | null;
   emergency_contact_phone: string | null;
+  work_location_id: string | null;
+  department_id: string | null;
 }
 
 /**
