@@ -70,26 +70,37 @@ function AttendancePage() {
   const [q, setQ] = useState("");
   const [tick, setTick] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [err, setErr] = useState<string | null>(null);
 
   async function loadAll() {
     if (!currentId) return;
     setLoading(true);
-    const [empRes, pRes] = await Promise.all([
-      supabase.from("employees")
+    setErr(null);
+    try {
+      // Sequential — parallel fetches occasionally get dropped in the preview sandbox.
+      const empRes = await supabase.from("employees")
         .select("id, full_name, job_title, department")
         .eq("company_id", currentId)
-        .eq("status", "active")
-        .order("full_name"),
-      supabase.from("time_clock_punches")
+        .neq("lifecycle_status", "terminated")
+        .order("full_name");
+      if (empRes.error) throw new Error(`Employees: ${empRes.error.message}`);
+
+      const pRes = await supabase.from("time_clock_punches")
         .select("id, employee_id, punch_type, punched_at, latitude, longitude, address")
         .eq("company_id", currentId)
         .gte("punched_at", new Date(Date.now() - 14 * 86400_000).toISOString())
         .order("punched_at", { ascending: false })
-        .limit(500),
-    ]);
-    setEmployees((empRes.data ?? []) as Employee[]);
-    setPunches((pRes.data ?? []) as Punch[]);
-    setLoading(false);
+        .limit(500);
+      if (pRes.error) throw new Error(`Punches: ${pRes.error.message}`);
+
+      setEmployees((empRes.data ?? []) as Employee[]);
+      setPunches((pRes.data ?? []) as Punch[]);
+    } catch (e: any) {
+      console.error("[attendance] load failed", e);
+      setErr(e?.message || "Failed to load attendance");
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => { loadAll(); }, [currentId]);
@@ -191,6 +202,11 @@ function AttendancePage() {
 
         {loading ? (
           <div className="p-8 text-sm text-slate-500">Loading attendance…</div>
+        ) : err ? (
+          <div className="p-8 text-sm text-rose-600">
+            Couldn't load attendance: {err}
+            <button onClick={loadAll} className="ml-3 inline-flex items-center gap-1 rounded-md border border-rose-200 bg-white px-2 py-1 text-xs font-medium text-rose-700 hover:bg-rose-50"><RefreshCw className="h-3 w-3" /> Retry</button>
+          </div>
         ) : filtered.length === 0 ? (
           <div className="p-8 text-sm text-slate-500">No employees match.</div>
         ) : (
