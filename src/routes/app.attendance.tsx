@@ -202,6 +202,11 @@ function AttendancePage() {
 
         {loading ? (
           <div className="p-8 text-sm text-slate-500">Loading attendance…</div>
+        ) : err ? (
+          <div className="p-8 text-sm text-rose-600">
+            Couldn't load attendance: {err}
+            <button onClick={loadAll} className="ml-3 inline-flex items-center gap-1 rounded-md border border-rose-200 bg-white px-2 py-1 text-xs font-medium text-rose-700 hover:bg-rose-50"><RefreshCw className="h-3 w-3" /> Retry</button>
+          </div>
         ) : filtered.length === 0 ? (
           <div className="p-8 text-sm text-slate-500">No employees match.</div>
         ) : (
