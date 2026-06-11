@@ -22,14 +22,14 @@ export const completeAccountSetup = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { firstName, lastName } = splitName(data.fullName);
-    const companyName = data.accountType === "employer" ? (data.companyName?.trim() || "My Company") : null;
+    const companyName = data.accountType === "employer" ? (data.companyName?.trim() || "My Company") : undefined;
 
     const { error: profileError } = await supabaseAdmin.from("profiles").upsert({
       id: context.userId,
       full_name: data.fullName.trim(),
       first_name: firstName,
       last_name: lastName,
-      company_name: companyName,
+      company_name: companyName ?? null,
       account_type: data.accountType,
       updated_at: new Date().toISOString(),
     }, { onConflict: "id" });
