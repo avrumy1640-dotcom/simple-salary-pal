@@ -15,7 +15,7 @@ declare global {
   }
 }
 
-function loadMaps(): Promise<void> {
+export function loadMaps(): Promise<void> {
   if (typeof window === "undefined") return Promise.reject(new Error("no window"));
   if (window.google?.maps) return Promise.resolve();
   if (window.__gmapsLoading) return window.__gmapsLoading;
