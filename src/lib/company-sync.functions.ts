@@ -19,9 +19,19 @@ const EMPLOYEE_PORTAL_ADMIN_ROLES = new Set([
 ]);
 
 type DbClient = SupabaseClient<Database>;
-type ProfileSummary = { company_name: string | null; full_name: string | null; account_type: string | null } | null;
+type ProfileSummary = {
+  company_name: string | null;
+  full_name: string | null;
+  account_type: string | null;
+} | null;
 type RoleSummary = { role: string; company_id: string | null };
-type EmployeeSummary = { id: string; company_id: string; user_id: string | null; full_name: string; email: string | null } | null;
+type EmployeeSummary = {
+  id: string;
+  company_id: string;
+  user_id: string | null;
+  full_name: string;
+  email: string | null;
+} | null;
 type CompanySummary = { legal_name: string | null; dba: string | null } | null;
 
 const settingsSchema = z.object({
@@ -138,7 +148,7 @@ export const getEmployeePortalIdentity = createServerFn({ method: "GET" })
       };
     }
 
-    let { data: employee } = await supabaseAdmin
+    const { data: employee } = await supabaseAdmin
       .from("employees")
       .select("id, company_id, user_id, full_name, email")
       .eq("user_id", userId)
