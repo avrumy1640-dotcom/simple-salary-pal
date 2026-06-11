@@ -56,7 +56,27 @@ function SettingsPage() {
     (async () => {
       const { data: { user } } = await supabase.auth.getUser();
       setSignInEmail(user?.email ?? "");
-      const { data } = await supabase.from("company_settings").select("*").maybeSingle();
+      const localNotif = localStorage.getItem("paylo_notif");
+      if (localNotif) setNotif(JSON.parse(localNotif));
+      const localBrand = localStorage.getItem("paylo_brand");
+      if (localBrand) setBrandColor(localBrand);
+    })();
+  }, []);
+
+  // Reload settings whenever the active company changes.
+  useEffect(() => {
+    if (!currentId) return;
+    setLoading(true);
+    (async () => {
+      const { data, error } = await supabase
+        .from("company_settings")
+        .select("*")
+        .eq("company_id", currentId)
+        .maybeSingle();
+      if (error) {
+        console.error("[settings] load error", error);
+        toast.error(`Couldn't load settings: ${error.message}`);
+      }
       if (data) {
         setForm({
           legal_name: data.legal_name ?? "", ein: data.ein ?? "", state_tax_id: data.state_tax_id ?? "",
@@ -64,14 +84,12 @@ function SettingsPage() {
           business_state: data.business_state ?? "CA", business_zip: data.business_zip ?? "",
           pay_frequency: data.pay_frequency ?? "biweekly", next_pay_date: data.next_pay_date ?? "",
         });
+      } else {
+        setForm(empty);
       }
-      const localNotif = localStorage.getItem("paylo_notif");
-      if (localNotif) setNotif(JSON.parse(localNotif));
-      const localBrand = localStorage.getItem("paylo_brand");
-      if (localBrand) setBrandColor(localBrand);
       setLoading(false);
     })();
-  }, []);
+  }, [currentId]);
 
   async function save() {
     setSaving(true);
@@ -81,14 +99,34 @@ function SettingsPage() {
         toast.error("You're signed out — please sign back in to save.");
         return;
       }
-      if (!currentId) { toast.error("No active company selected"); return; }
-      const payload = { ...form, owner_id: user.id, company_id: currentId, onboarding_complete: !!form.legal_name && !!form.ein, next_pay_date: form.next_pay_date || null };
-      const { error } = await supabase.from("company_settings").upsert(payload, { onConflict: "company_id" });
-      if (error) { toast.error(error.message); return; }
+      if (!currentId) {
+        toast.error("Still loading your company — try again in a second.");
+        return;
+      }
+      const payload = {
+        ...form,
+        owner_id: user.id,
+        company_id: currentId,
+        onboarding_complete: !!form.legal_name && !!form.ein,
+        next_pay_date: form.next_pay_date || null,
+      };
+      console.log("[settings] saving", payload);
+      const { data, error } = await supabase
+        .from("company_settings")
+        .upsert(payload, { onConflict: "company_id" })
+        .select()
+        .maybeSingle();
+      if (error) {
+        console.error("[settings] save error", error);
+        toast.error(`Save failed: ${error.message}`);
+        return;
+      }
+      console.log("[settings] saved", data);
       localStorage.setItem("paylo_notif", JSON.stringify(notif));
       localStorage.setItem("paylo_brand", brandColor);
       toast.success("Settings saved");
     } catch (e: any) {
+      console.error("[settings] save exception", e);
       toast.error(e?.message ?? "Could not save settings");
     } finally {
       setSaving(false);
