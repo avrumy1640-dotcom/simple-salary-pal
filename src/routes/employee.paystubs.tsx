@@ -209,10 +209,11 @@ function Page() {
                 </div>
                 <div className="col-span-2 mt-1 flex gap-2 sm:col-span-1 sm:mt-0 sm:ml-3">
                   <Button size="sm" variant="outline" className="flex-1 sm:flex-none" onClick={() => setPreview(p)}>View</Button>
-                  <Button size="sm" variant="outline" className="flex-1 sm:flex-none gap-1" onClick={() => download(p)}>
-                    <Download className="h-3.5 w-3.5" /> Download
+                  <Button size="sm" variant="outline" className="flex-1 sm:flex-none gap-1" onClick={() => printPdf(p)}>
+                    <Download className="h-3.5 w-3.5" /> PDF
                   </Button>
                 </div>
+
               </li>
             ))}
           </ul>
