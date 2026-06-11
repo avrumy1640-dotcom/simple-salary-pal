@@ -26,7 +26,7 @@ export const submitEmployeeForm = createServerFn({ method: "POST" })
     // Find the employee record for the caller (RLS-scoped)
     const { data: emp, error: empErr } = await supabase
       .from("employees")
-      .select("id, company_id, owner_id:company_id")
+      .select("id, company_id")
       .eq("user_id", userId)
       .limit(1)
       .maybeSingle();
