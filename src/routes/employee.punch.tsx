@@ -5,8 +5,10 @@ import { useMyEmployee } from "@/lib/useMyEmployee";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Clock, Play, Square, MapPin, AlertCircle, ShieldCheck, Coffee, Loader2 } from "lucide-react";
+import { Clock, Play, Square, MapPin, AlertCircle, ShieldCheck, Coffee, Loader2, Navigation } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { useLiveLocationTracking, hasLiveTrackingConsent, setLiveTrackingConsent } from "@/hooks/useLiveLocationTracking";
 
 export const Route = createFileRoute("/employee/punch")({
   head: () => ({ meta: [{ title: "Punch in / out — Paylo" }] }),
