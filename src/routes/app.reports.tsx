@@ -37,6 +37,11 @@ function ReportsPage() {
   const attFn = useServerFn(getAttendanceReport);
   const [attendance, setAttendance] = useState<any[]>([]);
   const [attLoading, setAttLoading] = useState(false);
+  const [workforce, setWorkforce] = useState({
+    headcount: 0, hires90: 0, terms90: 0, hires12mo: 0, terms12mo: 0,
+    avgTenureDays: 0, onLeave: 0, turnoverPct: 0,
+  });
+  const [trend, setTrend] = useState<{ month: string; hires: number; terms: number }[]>([]);
 
   function downloadCsv(filename: string, csv: string) {
     const blob = new Blob([csv], { type: "text/csv" });
