@@ -161,16 +161,16 @@ function PoliciesPage() {
                 <SelectContent>
                   {docs.map((d) => (
                     <SelectItem key={d.id} value={d.id}>
-                      {d.title}{d.version ? ` · v${d.version}` : ""}
+                      {d.title}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
               {selectedDocId && (() => {
                 const d = docs.find((x) => x.id === selectedDocId);
-                return d?.effective_date ? (
+                return d?.uploaded_at ? (
                   <p className="text-xs text-muted-foreground mt-2">
-                    Effective {new Date(d.effective_date).toLocaleDateString()}
+                    Uploaded {new Date(d.uploaded_at).toLocaleDateString()}
                   </p>
                 ) : null;
               })()}
