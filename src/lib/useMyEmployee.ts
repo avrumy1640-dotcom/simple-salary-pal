@@ -38,18 +38,32 @@ export function useMyEmployee() {
     let alive = true;
     (async () => {
       setLoading(true);
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user?.email) { if (alive) { setEmployee(null); setLoading(false); } return; }
-      const { data } = await supabase
-        .from("employees")
-        .select("*")
-        .ilike("email", user.email)
-        .limit(1);
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) {
+        if (alive) {
+          setEmployee(null);
+          setLoading(false);
+        }
+        return;
+      }
+      let { data } = await supabase.from("employees").select("*").eq("user_id", user.id).limit(1);
+      if ((!data || data.length === 0) && user.email) {
+        const fallback = await supabase
+          .from("employees")
+          .select("*")
+          .ilike("email", user.email)
+          .limit(1);
+        data = fallback.data;
+      }
       if (!alive) return;
       setEmployee((data && (data[0] as EmployeeRecord)) || null);
       setLoading(false);
     })();
-    return () => { alive = false; };
+    return () => {
+      alive = false;
+    };
   }, [refresh]);
 
   return { employee, loading, reload: () => setRefresh((r) => r + 1) };
