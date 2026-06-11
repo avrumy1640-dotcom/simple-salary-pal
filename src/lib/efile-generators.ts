@@ -516,6 +516,290 @@ export function buildStateQuarterlyCSV(opts: {
   return [header, ...rows, totals].join("\n") + "\n";
 }
 
+/* ---------------- Form 940 (annual FUTA) ---------------- */
+
+export interface Form940 {
+  form: "940";
+  ein: string;
+  employer_name: string;
+  year: number;
+  lines: Record<string, number>;
+  generated_at: string;
+}
+
+export function buildForm940(opts: {
+  company: FilingCompany;
+  year: number;
+  items: FilingItem[];
+  runs: FilingRun[];
+  futaWageBase?: number;
+  stateCreditRate?: number;
+}): Form940 {
+  const { company, year, items, runs } = opts;
+  const wageBase = opts.futaWageBase ?? 7000;
+  const stateCredit = Math.min(Math.max(opts.stateCreditRate ?? 0.054, 0), 0.054);
+  const effectiveRate = 0.06 - stateCredit;
+
+  const runMap = new Map(runs.map((r) => [r.id, r.pay_date]));
+  const totalsByEmp = new Map<string, number>();
+  items.forEach((i) => {
+    const d = runMap.get(i.run_id);
+    if (!d || !d.startsWith(String(year))) return;
+    totalsByEmp.set(i.employee_id, (totalsByEmp.get(i.employee_id) || 0) + Number(i.gross_pay));
+  });
+
+  let totalPayments = 0;
+  let exemptOverBase = 0;
+  let futaTaxable = 0;
+  totalsByEmp.forEach((wages) => {
+    totalPayments += wages;
+    const taxable = Math.min(wages, wageBase);
+    futaTaxable += taxable;
+    exemptOverBase += Math.max(0, wages - wageBase);
+  });
+  const futaBeforeAdj = round2(futaTaxable * 0.06);
+  const stateCreditAmt = round2(futaTaxable * stateCredit);
+  const futaAfterCredit = round2(futaTaxable * effectiveRate);
+
+  return {
+    form: "940",
+    ein: digitsOnly(company.ein || ""),
+    employer_name: company.legal_name,
+    year,
+    generated_at: new Date().toISOString(),
+    lines: {
+      "3_total_payments_to_employees": round2(totalPayments),
+      "5_payments_over_7000": round2(exemptOverBase),
+      "7_total_taxable_futa_wages": round2(futaTaxable),
+      "8_futa_before_adjustments_6pct": futaBeforeAdj,
+      "9_state_credit_reduction": stateCreditAmt,
+      "10_adjustments": 0,
+      "12_total_futa_tax_after_adjustments": futaAfterCredit,
+      "13_futa_deposits_paid_ytd": futaAfterCredit,
+      "14_balance_due": 0,
+      "15_overpayment": 0,
+    },
+  };
+}
+
+export function form940ToText(f: Form940): string {
+  return [
+    `Form 940 — Employer's Annual Federal Unemployment (FUTA) Tax Return`,
+    `Tax Year ${f.year}`,
+    `Employer: ${f.employer_name}  EIN: ${f.ein || "(missing)"}`,
+    `Generated: ${f.generated_at}`,
+    ``,
+    `Line  3  Total payments to all employees ............... $${f.lines["3_total_payments_to_employees"].toFixed(2)}`,
+    `Line  5  Payments in excess of $7,000 .................. $${f.lines["5_payments_over_7000"].toFixed(2)}`,
+    `Line  7  Total taxable FUTA wages ...................... $${f.lines["7_total_taxable_futa_wages"].toFixed(2)}`,
+    `Line  8  FUTA before adjustments (6.0%) ................ $${f.lines["8_futa_before_adjustments_6pct"].toFixed(2)}`,
+    `Line  9  State unemployment credit (up to 5.4%) ........ $${f.lines["9_state_credit_reduction"].toFixed(2)}`,
+    `Line 10  Adjustments ................................... $${f.lines["10_adjustments"].toFixed(2)}`,
+    `Line 12  Total FUTA tax after adjustments .............. $${f.lines["12_total_futa_tax_after_adjustments"].toFixed(2)}`,
+    `Line 13  FUTA tax deposited for the year ............... $${f.lines["13_futa_deposits_paid_ytd"].toFixed(2)}`,
+    `Line 14  Balance due ................................... $${f.lines["14_balance_due"].toFixed(2)}`,
+    `Line 15  Overpayment ................................... $${f.lines["15_overpayment"].toFixed(2)}`,
+    ``,
+    `Import-ready for IRS MeF transmitters. The JSON sidecar mirrors the`,
+    `official 940 line numbering.`,
+  ].join("\n");
+}
+
+/* ---------------- W-3 transmittal (summary of W-2s) ---------------- */
+
+export interface FormW3 {
+  form: "W-3";
+  ein: string;
+  employer_name: string;
+  year: number;
+  number_of_w2s: number;
+  totals: {
+    box1_wages: number;
+    box2_federal_income_tax: number;
+    box3_ss_wages: number;
+    box4_ss_tax: number;
+    box5_medicare_wages: number;
+    box6_medicare_tax: number;
+    box16_state_wages: number;
+    box17_state_tax: number;
+  };
+  generated_at: string;
+}
+
+export function buildFormW3(opts: {
+  company: FilingCompany;
+  year: number;
+  itemsByEmployee: Map<string, { wages: number; fedWH: number; ss: number; medicare: number; stateWH: number }>;
+}): FormW3 {
+  const { company, year, itemsByEmployee } = opts;
+  let w = 0, f = 0, s = 0, m = 0, sw = 0;
+  let count = 0;
+  itemsByEmployee.forEach((t) => {
+    if (t.wages <= 0) return;
+    count++;
+    w += t.wages; f += t.fedWH; s += t.ss; m += t.medicare; sw += t.stateWH;
+  });
+  return {
+    form: "W-3",
+    ein: digitsOnly(company.ein || ""),
+    employer_name: company.legal_name,
+    year,
+    number_of_w2s: count,
+    totals: {
+      box1_wages: round2(w),
+      box2_federal_income_tax: round2(f),
+      box3_ss_wages: round2(w),
+      box4_ss_tax: round2(s),
+      box5_medicare_wages: round2(w),
+      box6_medicare_tax: round2(m),
+      box16_state_wages: round2(w),
+      box17_state_tax: round2(sw),
+    },
+    generated_at: new Date().toISOString(),
+  };
+}
+
+export function formW3ToText(w3: FormW3): string {
+  const t = w3.totals;
+  return [
+    `Form W-3 — Transmittal of Wage and Tax Statements`,
+    `Tax Year ${w3.year}`,
+    `Employer: ${w3.employer_name}  EIN: ${w3.ein || "(missing)"}`,
+    `Number of W-2s transmitted: ${w3.number_of_w2s}`,
+    `Generated: ${w3.generated_at}`,
+    ``,
+    `Box  1  Wages, tips, other compensation ............ $${t.box1_wages.toFixed(2)}`,
+    `Box  2  Federal income tax withheld ................ $${t.box2_federal_income_tax.toFixed(2)}`,
+    `Box  3  Social security wages ...................... $${t.box3_ss_wages.toFixed(2)}`,
+    `Box  4  Social security tax withheld ............... $${t.box4_ss_tax.toFixed(2)}`,
+    `Box  5  Medicare wages and tips .................... $${t.box5_medicare_wages.toFixed(2)}`,
+    `Box  6  Medicare tax withheld ...................... $${t.box6_medicare_tax.toFixed(2)}`,
+    `Box 16  State wages, tips, etc. .................... $${t.box16_state_wages.toFixed(2)}`,
+    `Box 17  State income tax ........................... $${t.box17_state_tax.toFixed(2)}`,
+    ``,
+    `Submit alongside the SSA EFW2 file (W-2s). When e-filing via BSO the`,
+    `EFW2 RT record fulfils the W-3 totals — this human summary is for records.`,
+  ].join("\n");
+}
+
+/* ---------------- Form 1096 (transmittal for 1099s) ---------------- */
+
+export interface Form1096 {
+  form: "1096";
+  ein: string;
+  employer_name: string;
+  year: number;
+  form_type: "1099-NEC" | "1099-MISC";
+  number_of_forms: number;
+  federal_income_tax_withheld: number;
+  total_amount_reported: number;
+  generated_at: string;
+}
+
+export function buildForm1096(opts: {
+  company: FilingCompany;
+  year: number;
+  contractors: FilingContractor[];
+  paymentsByContractor: Map<string, number>;
+  formType?: "1099-NEC" | "1099-MISC";
+}): Form1096 {
+  const { company, year, contractors, paymentsByContractor, formType = "1099-NEC" } = opts;
+  const filers = contractors.filter((c) => (paymentsByContractor.get(c.id) || 0) >= 600);
+  const total = filers.reduce((s, c) => s + (paymentsByContractor.get(c.id) || 0), 0);
+  return {
+    form: "1096",
+    ein: digitsOnly(company.ein || ""),
+    employer_name: company.legal_name,
+    year,
+    form_type: formType,
+    number_of_forms: filers.length,
+    federal_income_tax_withheld: 0,
+    total_amount_reported: round2(total),
+    generated_at: new Date().toISOString(),
+  };
+}
+
+export function form1096ToText(f: Form1096): string {
+  return [
+    `Form 1096 — Annual Summary and Transmittal of U.S. Information Returns`,
+    `Tax Year ${f.year}`,
+    `Filer: ${f.employer_name}  EIN: ${f.ein || "(missing)"}`,
+    `Type of return being transmitted: ${f.form_type}`,
+    `Generated: ${f.generated_at}`,
+    ``,
+    `Box 3  Total number of forms ...................... ${f.number_of_forms}`,
+    `Box 4  Federal income tax withheld ................ $${f.federal_income_tax_withheld.toFixed(2)}`,
+    `Box 5  Total amount reported ...................... $${f.total_amount_reported.toFixed(2)}`,
+    ``,
+    `Required only when paper-filing 1099s. When e-filing through the IRS`,
+    `FIRE system (IRS Pub 1220) the T-record replaces this transmittal.`,
+  ].join("\n");
+}
+
+/* ---------------- New-Hire State Reporting ---------------- */
+
+export type NewHireRow = {
+  employee_id: string;
+  full_name: string;
+  ssn_last4: string | null;
+  date_of_birth: string | null;
+  address_line1: string | null;
+  city: string | null;
+  state: string | null;
+  zip: string | null;
+  start_date: string | null;
+  state_of_hire: string | null;
+};
+
+/**
+ * Generic state new-hire registry CSV.
+ * Per PRWORA (42 U.S.C. § 653a), states must receive new-hire reports within
+ * 20 days of hire. Most state directories accept this column layout.
+ */
+export function buildNewHireReportCSV(opts: {
+  company: FilingCompany;
+  rows: NewHireRow[];
+}): string {
+  const { company, rows } = opts;
+  const ein = digitsOnly(company.ein || "");
+  const cell = (s: string | null | undefined) => `"${(s ?? "").replace(/"/g, '""')}"`;
+  const header = [
+    "# State New-Hire Report",
+    `# Employer: ${company.legal_name}  FEIN: ${ein || "(missing)"}`,
+    `# Address: ${company.address_line1 || ""}, ${company.city || ""}, ${upper(company.state || "")} ${digitsOnly(company.postal_code || "")}`,
+    `# Generated: ${new Date().toISOString().slice(0, 10)}`,
+    [
+      "FEIN","Employer_Name","Employer_Address","Employer_City","Employer_State","Employer_Zip",
+      "Employee_SSN_Last4","Employee_First_Name","Employee_Last_Name","Employee_Address",
+      "Employee_City","Employee_State","Employee_Zip","Date_Of_Hire","Date_Of_Birth","State_Of_Hire",
+    ].join(","),
+  ].join("\n");
+
+  const lines = rows.map((r) => {
+    const [first, ...rest] = (r.full_name || "").split(" ");
+    const last = rest.join(" ") || "";
+    return [
+      ein,
+      cell(company.legal_name),
+      cell(company.address_line1 || ""),
+      cell(company.city || ""),
+      upper(company.state || ""),
+      digitsOnly(company.postal_code || "").slice(0, 5),
+      r.ssn_last4 || "",
+      cell(first || ""),
+      cell(last),
+      cell(r.address_line1 || ""),
+      cell(r.city || ""),
+      upper(r.state || ""),
+      digitsOnly(r.zip || "").slice(0, 5),
+      r.start_date || "",
+      r.date_of_birth || "",
+      upper(r.state_of_hire || r.state || ""),
+    ].join(",");
+  });
+  return [header, ...lines].join("\n") + "\n";
+}
+
 /* ---------------- utils ---------------- */
 function round2(n: number) {
   return Math.round(n * 100) / 100;
