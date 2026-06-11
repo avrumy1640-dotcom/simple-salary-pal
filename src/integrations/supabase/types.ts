@@ -5240,6 +5240,12 @@ export type Database = {
         | "shift_cancelled"
         | "pto_decided"
         | "generic"
+        | "pto_approved"
+        | "pto_denied"
+        | "expense_approved"
+        | "expense_denied"
+        | "request_answered"
+        | "payroll_paid"
       pay_frequency: "weekly" | "biweekly" | "semimonthly" | "monthly"
       payroll_status:
         | "draft"
@@ -5515,6 +5521,12 @@ export const Constants = {
         "shift_cancelled",
         "pto_decided",
         "generic",
+        "pto_approved",
+        "pto_denied",
+        "expense_approved",
+        "expense_denied",
+        "request_answered",
+        "payroll_paid",
       ],
       pay_frequency: ["weekly", "biweekly", "semimonthly", "monthly"],
       payroll_status: [
