@@ -687,8 +687,10 @@ function NewHireReporting() {
         <div className="flex flex-wrap gap-2">
           {overdueCount > 0 && <Badge variant="destructive">{overdueCount} overdue</Badge>}
           {dueSoonCount > 0 && <Badge className="bg-warning text-warning-foreground">{dueSoonCount} due soon</Badge>}
-          <Button variant="outline" size="sm" onClick={selectAllOpen}>Select unreported</Button>
-          <Button variant="outline" size="sm" onClick={downloadCSV} className="gap-1.5"><Download className="h-3.5 w-3.5" />Download CSV</Button>
+          <Button variant="outline" size="sm" onClick={selectAllOpen} disabled={busy}>Select unreported</Button>
+          <Button variant="outline" size="sm" onClick={downloadCombinedCSV} disabled={busy} className="gap-1.5"><Download className="h-3.5 w-3.5" />Combined CSV</Button>
+          <Button variant="outline" size="sm" onClick={() => downloadStatePacket("csv")} disabled={busy} className="gap-1.5"><Download className="h-3.5 w-3.5" />Per-state CSV</Button>
+          <Button size="sm" onClick={() => downloadStatePacket("pdf")} disabled={busy} className="gap-1.5"><Download className="h-3.5 w-3.5" />{busy ? "Building…" : "PDF packet"}</Button>
         </div>
       </div>
 
