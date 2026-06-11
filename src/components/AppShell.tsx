@@ -22,6 +22,7 @@ const navGroups: NavGroup[] = [
       { to: "/app/dashboard", label: "Dashboard", icon: LayoutDashboard, roles: ANY_ADMIN },
       { to: "/app/employees", label: "Employees", icon: Users, roles: HR_ROLES },
       { to: "/app/payroll", label: "Payroll", icon: Wallet, roles: PAYROLL_ROLES },
+      { to: "/app/pay-on-demand", label: "Pay On-Demand", icon: Wallet, roles: PAYROLL_ROLES },
       { to: "/app/time", label: "Time Tracking", icon: Clock, roles: [...MANAGER_ROLES] },
     ],
   },
@@ -76,6 +77,7 @@ const ALL_NAV_LABELS: Record<string, string> = {
   "/app/pto": "Time Off",
   "/app/locations": "Work Locations",
   "/app/auth-debug": "Auth Debug",
+  "/app/pay-on-demand": "Pay On-Demand",
 };
 
 export function AppShell() {
