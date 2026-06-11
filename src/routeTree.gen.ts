@@ -50,6 +50,7 @@ import { Route as AppOnboardingTemplatesRouteImport } from './routes/app.onboard
 import { Route as AppOnboardingRouteImport } from './routes/app.onboarding'
 import { Route as AppNotificationsRouteImport } from './routes/app.notifications'
 import { Route as AppLocationsRouteImport } from './routes/app.locations'
+import { Route as AppLiveMapRouteImport } from './routes/app.live-map'
 import { Route as AppIntegrationsRouteImport } from './routes/app.integrations'
 import { Route as AppGettingStartedRouteImport } from './routes/app.getting-started'
 import { Route as AppForm1099RouteImport } from './routes/app.form-1099'
@@ -274,6 +275,11 @@ const AppLocationsRoute = AppLocationsRouteImport.update({
   path: '/locations',
   getParentRoute: () => AppRoute,
 } as any)
+const AppLiveMapRoute = AppLiveMapRouteImport.update({
+  id: '/live-map',
+  path: '/live-map',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppIntegrationsRoute = AppIntegrationsRouteImport.update({
   id: '/integrations',
   path: '/integrations',
@@ -389,6 +395,7 @@ export interface FileRoutesByFullPath {
   '/app/form-1099': typeof AppForm1099Route
   '/app/getting-started': typeof AppGettingStartedRoute
   '/app/integrations': typeof AppIntegrationsRoute
+  '/app/live-map': typeof AppLiveMapRoute
   '/app/locations': typeof AppLocationsRoute
   '/app/notifications': typeof AppNotificationsRoute
   '/app/onboarding': typeof AppOnboardingRoute
@@ -450,6 +457,7 @@ export interface FileRoutesByTo {
   '/app/form-1099': typeof AppForm1099Route
   '/app/getting-started': typeof AppGettingStartedRoute
   '/app/integrations': typeof AppIntegrationsRoute
+  '/app/live-map': typeof AppLiveMapRoute
   '/app/locations': typeof AppLocationsRoute
   '/app/notifications': typeof AppNotificationsRoute
   '/app/onboarding': typeof AppOnboardingRoute
@@ -511,6 +519,7 @@ export interface FileRoutesById {
   '/app/form-1099': typeof AppForm1099Route
   '/app/getting-started': typeof AppGettingStartedRoute
   '/app/integrations': typeof AppIntegrationsRoute
+  '/app/live-map': typeof AppLiveMapRoute
   '/app/locations': typeof AppLocationsRoute
   '/app/notifications': typeof AppNotificationsRoute
   '/app/onboarding': typeof AppOnboardingRoute
@@ -574,6 +583,7 @@ export interface FileRouteTypes {
     | '/app/form-1099'
     | '/app/getting-started'
     | '/app/integrations'
+    | '/app/live-map'
     | '/app/locations'
     | '/app/notifications'
     | '/app/onboarding'
@@ -635,6 +645,7 @@ export interface FileRouteTypes {
     | '/app/form-1099'
     | '/app/getting-started'
     | '/app/integrations'
+    | '/app/live-map'
     | '/app/locations'
     | '/app/notifications'
     | '/app/onboarding'
@@ -695,6 +706,7 @@ export interface FileRouteTypes {
     | '/app/form-1099'
     | '/app/getting-started'
     | '/app/integrations'
+    | '/app/live-map'
     | '/app/locations'
     | '/app/notifications'
     | '/app/onboarding'
@@ -1034,6 +1046,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppLocationsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/live-map': {
+      id: '/app/live-map'
+      path: '/live-map'
+      fullPath: '/app/live-map'
+      preLoaderRoute: typeof AppLiveMapRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/integrations': {
       id: '/app/integrations'
       path: '/integrations'
@@ -1205,6 +1224,7 @@ interface AppRouteChildren {
   AppForm1099Route: typeof AppForm1099Route
   AppGettingStartedRoute: typeof AppGettingStartedRoute
   AppIntegrationsRoute: typeof AppIntegrationsRoute
+  AppLiveMapRoute: typeof AppLiveMapRoute
   AppLocationsRoute: typeof AppLocationsRoute
   AppNotificationsRoute: typeof AppNotificationsRoute
   AppOnboardingRoute: typeof AppOnboardingRoute
@@ -1244,6 +1264,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppForm1099Route: AppForm1099Route,
   AppGettingStartedRoute: AppGettingStartedRoute,
   AppIntegrationsRoute: AppIntegrationsRoute,
+  AppLiveMapRoute: AppLiveMapRoute,
   AppLocationsRoute: AppLocationsRoute,
   AppNotificationsRoute: AppNotificationsRoute,
   AppOnboardingRoute: AppOnboardingRoute,
