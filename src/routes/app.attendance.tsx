@@ -133,6 +133,9 @@ function AttendancePage() {
               id: row.id, employee_id: row.employee_id, punch_type: row.punch_type,
               punched_at: row.punched_at, latitude: row.latitude ?? null,
               longitude: row.longitude ?? null, address: row.address ?? null,
+              work_location_id: row.work_location_id ?? null,
+              geofence_ok: row.geofence_ok ?? null,
+              geofence_required: row.geofence_required ?? false,
             };
             if (i >= 0) next[i] = norm; else next.unshift(norm);
             next.sort((a, b) => b.punched_at.localeCompare(a.punched_at));
