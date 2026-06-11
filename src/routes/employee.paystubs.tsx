@@ -67,7 +67,7 @@ function Page() {
       med: s.med + Number(p.medicare_tax),
     }), { gross: 0, net: 0, fed: 0, st: 0, fica: 0, med: 0 });
 
-  function download(p: PayItem) {
+  function downloadTxt(p: PayItem) {
     const pd = p.payroll_runs?.pay_date ?? "";
     const lines = [
       `${companyName || "Pay stub"}`,
@@ -89,6 +89,82 @@ function Page() {
     a.href = url; a.download = `paystub-${pd}.txt`; a.click();
     URL.revokeObjectURL(url);
   }
+
+  function printPdf(p: PayItem) {
+    const pd = p.payroll_runs?.pay_date ?? "";
+    const empAddr = [employee!.address_line1, [employee!.city, employee!.state, employee!.zip].filter(Boolean).join(" ")].filter(Boolean).join("<br/>");
+    const rows = (label: string, v: string) => `<tr><td style="padding:6px 0;color:#475569">${label}</td><td style="text-align:right;font-weight:600">${v}</td></tr>`;
+    const html = `<!doctype html><html><head><meta charset="utf-8"/><title>Pay stub ${pd}</title>
+      <style>
+        @page { size: letter; margin: 0.6in; }
+        body { font-family: -apple-system, Segoe UI, Inter, Arial, sans-serif; color:#0f172a; }
+        h1 { font-size: 22px; margin: 0 0 4px; }
+        .muted { color:#64748b; font-size:12px; }
+        .grid { display:flex; gap:24px; margin-top: 16px; }
+        .card { flex:1; border:1px solid #e2e8f0; border-radius:12px; padding:16px; }
+        .net { background:#ecfdf5; border-color:#a7f3d0; }
+        table { width:100%; font-size:13px; border-collapse:collapse; }
+        .label { font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:#475569; font-weight:700; margin-bottom:6px; }
+        .big { font-size:32px; font-weight:800; }
+      </style></head><body>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <h1>${companyName || "Pay stub"}</h1>
+          <div class="muted">Pay stub</div>
+        </div>
+        <div style="text-align:right" class="muted">
+          <div>Pay date</div>
+          <div style="color:#0f172a;font-weight:700">${fmtDate(pd)}</div>
+        </div>
+      </div>
+      <div class="grid">
+        <div class="card">
+          <div class="label">Employee</div>
+          <div style="font-weight:700">${employee!.full_name}</div>
+          <div class="muted" style="margin-top:4px">${empAddr || ""}</div>
+        </div>
+        <div class="card">
+          <div class="label">Pay period</div>
+          <div style="font-weight:700">${fmtRange(p.payroll_runs?.period_start, p.payroll_runs?.period_end)}</div>
+          <div class="muted" style="margin-top:4px">Status: ${p.payroll_runs?.status ?? "—"}</div>
+        </div>
+      </div>
+      <div class="grid">
+        <div class="card">
+          <div class="label" style="color:#065f46">Earnings</div>
+          <table>
+            ${rows("Regular hours", String(Number(p.regular_hours ?? 0)) + "h")}
+            ${rows("Overtime hours", String(Number(p.overtime_hours ?? 0)) + "h")}
+            ${rows("Gross pay", fmt(Number(p.gross_pay)))}
+          </table>
+        </div>
+        <div class="card">
+          <div class="label" style="color:#9f1239">Taxes & deductions</div>
+          <table>
+            ${rows("Federal tax", fmt(Number(p.federal_tax)))}
+            ${rows("State tax", fmt(Number(p.state_tax)))}
+            ${rows("Social Security", fmt(Number(p.fica_tax)))}
+            ${rows("Medicare", fmt(Number(p.medicare_tax)))}
+          </table>
+        </div>
+      </div>
+      <div class="card net" style="margin-top:16px;display:flex;justify-content:space-between;align-items:flex-end">
+        <div>
+          <div class="label" style="color:#065f46">Net pay</div>
+          <div class="big">${fmt(Number(p.net_pay))}</div>
+        </div>
+        <div style="text-align:right" class="muted">
+          <div>YTD net</div>
+          <div style="color:#0f172a;font-weight:700">${fmt(ytd.net)}</div>
+        </div>
+      </div>
+      <script>window.onload=()=>{setTimeout(()=>window.print(),100);};</script>
+      </body></html>`;
+    const w = window.open("", "_blank", "noopener");
+    if (!w) return;
+    w.document.write(html); w.document.close();
+  }
+
 
   return (
     <div className="space-y-8 unit-in">
@@ -133,10 +209,11 @@ function Page() {
                 </div>
                 <div className="col-span-2 mt-1 flex gap-2 sm:col-span-1 sm:mt-0 sm:ml-3">
                   <Button size="sm" variant="outline" className="flex-1 sm:flex-none" onClick={() => setPreview(p)}>View</Button>
-                  <Button size="sm" variant="outline" className="flex-1 sm:flex-none gap-1" onClick={() => download(p)}>
-                    <Download className="h-3.5 w-3.5" /> Download
+                  <Button size="sm" variant="outline" className="flex-1 sm:flex-none gap-1" onClick={() => printPdf(p)}>
+                    <Download className="h-3.5 w-3.5" /> PDF
                   </Button>
                 </div>
+
               </li>
             ))}
           </ul>
@@ -209,9 +286,15 @@ function Page() {
                 </div>
               </div>
 
-              <Button className="w-full h-12" onClick={() => download(preview)}>
-                <Download className="mr-2 h-4 w-4" /> Download PDF
-              </Button>
+              <div className="flex gap-2">
+                <Button variant="outline" className="flex-1 h-12" onClick={() => downloadTxt(preview)}>
+                  Download summary (.txt)
+                </Button>
+                <Button className="flex-1 h-12" onClick={() => printPdf(preview)}>
+                  <Download className="mr-2 h-4 w-4" /> Save as PDF
+                </Button>
+              </div>
+
             </div>
           )}
         </DialogContent>
