@@ -2751,6 +2751,80 @@ export type Database = {
           },
         ]
       }
+      new_hire_reports: {
+        Row: {
+          company_id: string
+          confirmation_number: string | null
+          created_at: string
+          due_date: string | null
+          employee_id: string
+          id: string
+          notes: string | null
+          report_date: string
+          reported_by: string | null
+          reported_state: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          confirmation_number?: string | null
+          created_at?: string
+          due_date?: string | null
+          employee_id: string
+          id?: string
+          notes?: string | null
+          report_date?: string
+          reported_by?: string | null
+          reported_state: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          confirmation_number?: string | null
+          created_at?: string
+          due_date?: string | null
+          employee_id?: string
+          id?: string
+          notes?: string | null
+          report_date?: string
+          reported_by?: string | null
+          reported_state?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "new_hire_reports_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "new_hire_reports_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "new_hire_reports_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "new_hire_reports_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           body: string | null
