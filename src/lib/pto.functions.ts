@@ -62,7 +62,7 @@ export const approvePtoRequest = createServerFn({ method: "POST" })
 
     const { data: updated, error: uErr } = await supabase
       .from("pto_entries")
-      .update({ status: "approved" })
+      .update({ status: "approved", pto_type: effectiveType })
       .eq("id", data.entry_id)
       .select().single();
     if (uErr) throw new Error(uErr.message);
