@@ -386,8 +386,25 @@ function SettingsPage() {
             <Field label="Sign-in email"><Input disabled value={signInEmail} placeholder="Loaded from your account" /></Field>
             <div className="flex flex-wrap gap-3">
               <Button variant="outline" onClick={sendPasswordReset}>Send password reset email</Button>
-              <Button variant="outline" disabled>Enable 2FA (coming soon)</Button>
+              {mfaFactors.filter((f) => f.status === "verified").length === 0 ? (
+                <Button variant="outline" onClick={startEnroll2FA} disabled={mfaLoading} className="gap-2">
+                  <KeyRound className="h-4 w-4" /> Enable two-factor (TOTP)
+                </Button>
+              ) : null}
             </div>
+            {mfaFactors.filter((f) => f.status === "verified").length > 0 && (
+              <div className="rounded-xl border border-emerald-300/40 bg-emerald-50/40 p-4 space-y-2">
+                <div className="flex items-center gap-2 text-sm font-medium text-emerald-700">
+                  <ShieldCheck className="h-4 w-4" /> Two-factor authentication is on
+                </div>
+                {mfaFactors.filter((f) => f.status === "verified").map((f) => (
+                  <div key={f.id} className="flex items-center justify-between gap-3">
+                    <div className="text-xs text-muted-foreground">{f.friendly_name || "Authenticator app"}</div>
+                    <Button size="sm" variant="outline" onClick={() => disable2FA(f.id)} className="text-destructive">Disable</Button>
+                  </div>
+                ))}
+              </div>
+            )}
           </Section>
 
           {/* Danger Zone */}
