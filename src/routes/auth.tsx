@@ -135,7 +135,7 @@ function AuthPage() {
       const user = data.session.user;
       setEmail(user.email ?? "");
       setFullName((user.user_metadata?.full_name as string | undefined) ?? (user.user_metadata?.name as string | undefined) ?? "");
-      await routeByCurrentUser(navigate, user.id, setMode);
+      await routeByCurrentUser(navigate, user.id, setMode, claimAccounts);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -213,7 +213,7 @@ function AuthPage() {
         if (!validateSignin()) return;
         const { data, error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
         if (error) throw error;
-        if (data.user) await routeByCurrentUser(navigate, data.user.id, setMode);
+        if (data.user) await routeByCurrentUser(navigate, data.user.id, setMode, claimAccounts);
       }
     } catch (err) {
       console.error("[auth] submit error:", err);
@@ -237,7 +237,7 @@ function AuthPage() {
     if (user) {
       setEmail(user.email ?? "");
       setFullName((user.user_metadata?.full_name as string | undefined) ?? (user.user_metadata?.name as string | undefined) ?? "");
-      await routeByCurrentUser(navigate, user.id, setMode);
+      await routeByCurrentUser(navigate, user.id, setMode, claimAccounts);
     }
   }
 
