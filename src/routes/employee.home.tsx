@@ -242,7 +242,7 @@ function EmployeeHome() {
           <Link to="/employee/benefits" className="block">
             <div className="flex items-center gap-3 rounded-2xl border border-violet-200 bg-gradient-to-r from-violet-50 to-fuchsia-50 p-4 shadow-soft transition hover:shadow-md">
               <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-violet-600 text-white">
-                <HeartHandshakeIcon />
+                <HeartHandshake className="h-5 w-5" />
               </span>
               <div className="min-w-0 flex-1">
                 <div className="font-bold text-violet-900">{openEnrollment.name} is open</div>
