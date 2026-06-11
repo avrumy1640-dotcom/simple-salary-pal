@@ -59,6 +59,7 @@ import { Route as AppLocationsRouteImport } from './routes/app.locations'
 import { Route as AppLiveMapRouteImport } from './routes/app.live-map'
 import { Route as AppIntegrationsRouteImport } from './routes/app.integrations'
 import { Route as AppGettingStartedRouteImport } from './routes/app.getting-started'
+import { Route as AppFormReviewRouteImport } from './routes/app.form-review'
 import { Route as AppForm1099RouteImport } from './routes/app.form-1099'
 import { Route as AppExpenseRequestsRouteImport } from './routes/app.expense-requests'
 import { Route as AppEmployeesRouteImport } from './routes/app.employees'
@@ -330,6 +331,11 @@ const AppGettingStartedRoute = AppGettingStartedRouteImport.update({
   path: '/getting-started',
   getParentRoute: () => AppRoute,
 } as any)
+const AppFormReviewRoute = AppFormReviewRouteImport.update({
+  id: '/form-review',
+  path: '/form-review',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppForm1099Route = AppForm1099RouteImport.update({
   id: '/form-1099',
   path: '/form-1099',
@@ -457,6 +463,7 @@ export interface FileRoutesByFullPath {
   '/app/employees': typeof AppEmployeesRouteWithChildren
   '/app/expense-requests': typeof AppExpenseRequestsRoute
   '/app/form-1099': typeof AppForm1099Route
+  '/app/form-review': typeof AppFormReviewRoute
   '/app/getting-started': typeof AppGettingStartedRoute
   '/app/integrations': typeof AppIntegrationsRoute
   '/app/live-map': typeof AppLiveMapRoute
@@ -529,6 +536,7 @@ export interface FileRoutesByTo {
   '/app/employees': typeof AppEmployeesRouteWithChildren
   '/app/expense-requests': typeof AppExpenseRequestsRoute
   '/app/form-1099': typeof AppForm1099Route
+  '/app/form-review': typeof AppFormReviewRoute
   '/app/getting-started': typeof AppGettingStartedRoute
   '/app/integrations': typeof AppIntegrationsRoute
   '/app/live-map': typeof AppLiveMapRoute
@@ -601,6 +609,7 @@ export interface FileRoutesById {
   '/app/employees': typeof AppEmployeesRouteWithChildren
   '/app/expense-requests': typeof AppExpenseRequestsRoute
   '/app/form-1099': typeof AppForm1099Route
+  '/app/form-review': typeof AppFormReviewRoute
   '/app/getting-started': typeof AppGettingStartedRoute
   '/app/integrations': typeof AppIntegrationsRoute
   '/app/live-map': typeof AppLiveMapRoute
@@ -675,6 +684,7 @@ export interface FileRouteTypes {
     | '/app/employees'
     | '/app/expense-requests'
     | '/app/form-1099'
+    | '/app/form-review'
     | '/app/getting-started'
     | '/app/integrations'
     | '/app/live-map'
@@ -747,6 +757,7 @@ export interface FileRouteTypes {
     | '/app/employees'
     | '/app/expense-requests'
     | '/app/form-1099'
+    | '/app/form-review'
     | '/app/getting-started'
     | '/app/integrations'
     | '/app/live-map'
@@ -818,6 +829,7 @@ export interface FileRouteTypes {
     | '/app/employees'
     | '/app/expense-requests'
     | '/app/form-1099'
+    | '/app/form-review'
     | '/app/getting-started'
     | '/app/integrations'
     | '/app/live-map'
@@ -1229,6 +1241,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppGettingStartedRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/form-review': {
+      id: '/app/form-review'
+      path: '/form-review'
+      fullPath: '/app/form-review'
+      preLoaderRoute: typeof AppFormReviewRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/form-1099': {
       id: '/app/form-1099'
       path: '/form-1099'
@@ -1416,6 +1435,7 @@ interface AppRouteChildren {
   AppEmployeesRoute: typeof AppEmployeesRouteWithChildren
   AppExpenseRequestsRoute: typeof AppExpenseRequestsRoute
   AppForm1099Route: typeof AppForm1099Route
+  AppFormReviewRoute: typeof AppFormReviewRoute
   AppGettingStartedRoute: typeof AppGettingStartedRoute
   AppIntegrationsRoute: typeof AppIntegrationsRoute
   AppLiveMapRoute: typeof AppLiveMapRoute
@@ -1462,6 +1482,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppEmployeesRoute: AppEmployeesRouteWithChildren,
   AppExpenseRequestsRoute: AppExpenseRequestsRoute,
   AppForm1099Route: AppForm1099Route,
+  AppFormReviewRoute: AppFormReviewRoute,
   AppGettingStartedRoute: AppGettingStartedRoute,
   AppIntegrationsRoute: AppIntegrationsRoute,
   AppLiveMapRoute: AppLiveMapRoute,

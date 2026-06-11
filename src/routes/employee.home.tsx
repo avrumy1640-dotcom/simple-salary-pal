@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import {
   Wallet, Play, Square, CalendarDays, FileText, CheckCircle2, Clock as ClockIcon,
-  MapPin, FolderOpen, ChevronRight, Zap,
+  MapPin, FolderOpen, ChevronRight, Zap, HeartHandshake,
 } from "lucide-react";
 
 export const Route = createFileRoute("/employee/home")({
@@ -48,6 +48,7 @@ function EmployeeHome() {
   const [accrualPolicy, setAccrualPolicy] = useState<{ name: string; hours_per_period: number; frequency: string; max_balance_hours: number | null } | null>(null);
   const [activity, setActivity] = useState<{ icon: "pay" | "pto" | "doc"; text: string; date: string }[]>([]);
   const [podAvailable, setPodAvailable] = useState(0);
+  const [openEnrollment, setOpenEnrollment] = useState<{ id: string; name: string; ends_at: string; coverage_effective_date: string } | null>(null);
   const [busy, setBusy] = useState(false);
   const [now, setNow] = useState(new Date());
 
@@ -147,6 +148,15 @@ function EmployeeHome() {
       .in("status", ["pending", "approved"]);
     const pendingTotal = (podPending ?? []).reduce((a: number, r: any) => a + Number(r.requested_amount || 0), 0);
     setPodAvailable(Math.max(0, Math.round(earned * 0.5 * 100) / 100 - pendingTotal));
+
+    // Open enrollment window
+    const nowIso = new Date().toISOString();
+    const { data: oe } = await supabase.from("open_enrollment_windows")
+      .select("id, name, ends_at, coverage_effective_date, starts_at, is_active")
+      .eq("company_id", employee.company_id).eq("is_active", true)
+      .lte("starts_at", nowIso).gte("ends_at", nowIso)
+      .order("ends_at", { ascending: true }).limit(1);
+    setOpenEnrollment((oe?.[0] as any) ?? null);
   }
   useEffect(() => { load(); }, [employee?.id]);
   useRealtimeRefresh(
@@ -224,6 +234,27 @@ function EmployeeHome() {
         </h1>
         <p className="mt-1 text-sm sm:text-base text-slate-500">{todayStr}</p>
       </div>
+
+      {/* Open enrollment banner */}
+      {openEnrollment && (() => {
+        const daysLeft = Math.max(0, Math.ceil((+new Date(openEnrollment.ends_at) - +now) / 86400000));
+        return (
+          <Link to="/employee/benefits" className="block">
+            <div className="flex items-center gap-3 rounded-2xl border border-violet-200 bg-gradient-to-r from-violet-50 to-fuchsia-50 p-4 shadow-soft transition hover:shadow-md">
+              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-violet-600 text-white">
+                <HeartHandshake className="h-5 w-5" />
+              </span>
+              <div className="min-w-0 flex-1">
+                <div className="font-bold text-violet-900">{openEnrollment.name} is open</div>
+                <div className="text-xs text-violet-800">
+                  {daysLeft === 0 ? "Closes today" : daysLeft === 1 ? "Closes tomorrow" : `${daysLeft} days left`} · coverage starts {new Date(openEnrollment.coverage_effective_date + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                </div>
+              </div>
+              <ChevronRight className="h-5 w-5 text-violet-700" />
+            </div>
+          </Link>
+        );
+      })()}
 
       {/* Hero payday card */}
       <div className="relative overflow-hidden rounded-3xl border border-border p-6 sm:p-8 shadow-soft"

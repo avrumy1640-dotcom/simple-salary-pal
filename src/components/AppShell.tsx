@@ -6,7 +6,7 @@ import {
   LayoutDashboard, Users, Clock, Wallet, FileText, LogOut, Menu, X,
   CalendarDays, Settings as SettingsIcon, UserPlus, Target, ShieldCheck,
   BarChart3, FolderOpen, ChevronLeft, ChevronRight, HelpCircle,
-  HeartHandshake, LineChart, Landmark, ListChecks, Bell, ArrowLeftRight, MapPin, Receipt, MessageSquare, Inbox, Building2,
+  HeartHandshake, LineChart, Landmark, ListChecks, Bell, ArrowLeftRight, MapPin, Receipt, MessageSquare, Inbox, Building2, ClipboardCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TopBar } from "@/components/TopBar";
@@ -47,6 +47,7 @@ const navGroups: NavGroup[] = [
     label: "Company",
     items: [
       { to: "/app/compliance", label: "Compliance", icon: ShieldCheck, roles: HR_ROLES },
+      { to: "/app/form-review", label: "Form Review", icon: ClipboardCheck, roles: HR_ROLES },
       { to: "/app/policies", label: "Policies", icon: FolderOpen, roles: HR_ROLES },
       { to: "/app/tax-filing", label: "Tax Filing", icon: Landmark, roles: PAYROLL_ROLES },
       { to: "/app/reports", label: "Reports", icon: BarChart3, roles: ANY_ADMIN },
@@ -69,6 +70,7 @@ const ALL_NAV_LABELS: Record<string, string> = {
   "/app/benefits": "Benefits",
   "/app/performance": "Performance",
   "/app/compliance": "Compliance",
+  "/app/form-review": "Form Review",
   "/app/tax-filing": "Tax Filing",
   "/app/reports": "Reports",
   "/app/analytics": "Analytics",
