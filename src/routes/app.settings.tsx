@@ -10,6 +10,8 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { Save, Info, Building2, Calendar, Bell, Palette, ShieldCheck, Plug } from "lucide-react";
 import { useCompany } from "@/hooks/useCompany";
+import { useServerFn } from "@tanstack/react-start";
+import { saveSyncedCompanySettings } from "@/lib/company-sync.functions";
 
 export const Route = createFileRoute("/app/settings")({
   head: () => ({ meta: [{ title: "Company settings — Paylo" }] }),
@@ -39,6 +41,7 @@ function SettingsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const { currentId } = useCompany();
+  const saveSettings = useServerFn(saveSyncedCompanySettings);
 
 
   // Local-only preferences (notifications + branding)
@@ -104,37 +107,7 @@ function SettingsPage() {
         toast.error("Still loading your company — try again in a second.");
         return;
       }
-      const payload = {
-        ...form,
-        owner_id: user.id,
-        company_id: currentId,
-        onboarding_complete: !!form.legal_name && !!form.ein,
-        next_pay_date: form.next_pay_date || null,
-      };
-      console.log("[settings] saving", payload);
-      const { data, error } = await supabase
-        .from("company_settings")
-        .upsert(payload, { onConflict: "company_id" })
-        .select()
-        .maybeSingle();
-      if (error) {
-        console.error("[settings] save error", error);
-        toast.error(`Save failed: ${error.message}`);
-        return;
-      }
-
-      // Sync the legal company name onto the company record + owner profile so
-      // it shows up consistently in the employee portal and admin sidebar.
-      if (form.legal_name?.trim()) {
-        const [{ error: companyErr }, { error: profileErr }] = await Promise.all([
-          supabase.from("companies").update({ legal_name: form.legal_name.trim() }).eq("id", currentId),
-          supabase.from("profiles").update({ company_name: form.legal_name.trim() }).eq("id", user.id),
-        ]);
-        if (companyErr) console.warn("[settings] company sync warning", companyErr);
-        if (profileErr) console.warn("[settings] profile sync warning", profileErr);
-      }
-
-      console.log("[settings] saved", data);
+      await saveSettings({ data: { ...form, company_id: currentId, next_pay_date: form.next_pay_date || null } });
       localStorage.setItem("paylo_notif", JSON.stringify(notif));
       localStorage.setItem("paylo_brand", brandColor);
       toast.success("Settings saved");
