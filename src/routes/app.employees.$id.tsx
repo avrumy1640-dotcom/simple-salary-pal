@@ -356,9 +356,9 @@ function EmployeeProfilePage() {
             <Grid>
               <PField
                 label="Department" editing={editJob}
-                value={editJob ? (e.department_id ?? "") : (e.department ?? "—")}
-                onChange={(v) => setDraft({ ...draft, department_id: v || null })}
-                options={[{ v: "", l: "— None —" }, ...departments.map((d) => ({ v: d.id, l: d.name }))]}
+                value={editJob ? (e.department_id ?? "__none__") : (e.department ?? "—")}
+                onChange={(v) => setDraft({ ...draft, department_id: v === "__none__" ? null : v })}
+                options={[{ v: "__none__", l: "— None —" }, ...departments.map((d) => ({ v: d.id, l: d.name }))]}
               />
               <PField label="Job Title" editing={editJob} value={e.job_title ?? ""} onChange={(v) => setDraft({ ...draft, job_title: v })} />
               <PField label="Manager" editing={false} value="—" />
@@ -371,9 +371,9 @@ function EmployeeProfilePage() {
               />
               <PField
                 label="Work Location" editing={editJob}
-                value={editJob ? (e.work_location_id ?? "") : (locations.find((l) => l.id === e.work_location_id)?.name ?? "—")}
-                onChange={(v) => setDraft({ ...draft, work_location_id: v || null })}
-                options={[{ v: "", l: "— None —" }, ...locations.map((l) => ({ v: l.id, l: l.name }))]}
+                value={editJob ? (e.work_location_id ?? "__none__") : (locations.find((l) => l.id === e.work_location_id)?.name ?? "—")}
+                onChange={(v) => setDraft({ ...draft, work_location_id: v === "__none__" ? null : v })}
+                options={[{ v: "__none__", l: "— None —" }, ...locations.map((l) => ({ v: l.id, l: l.name }))]}
               />
               <PField label="Employee ID" editing={false} value={emp.id.slice(0, 8).toUpperCase()} />
             </Grid>
