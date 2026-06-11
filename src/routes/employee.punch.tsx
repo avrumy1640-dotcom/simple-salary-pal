@@ -296,7 +296,7 @@ function PunchPage() {
         <div className="space-y-2">
           {!clockedIn && !onBreak && (
             <Button
-              onClick={() => punch("in")}
+              onClick={attemptClockIn}
               disabled={busy || geofenceBlocked || geofenceAcquiring}
               className="h-20 w-full rounded-2xl bg-emerald-600 text-lg font-bold text-white shadow-lg shadow-emerald-600/25 transition hover:bg-emerald-700 disabled:opacity-50"
             >
