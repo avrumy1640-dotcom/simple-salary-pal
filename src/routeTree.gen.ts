@@ -57,6 +57,7 @@ import { Route as AppContractorsRouteImport } from './routes/app.contractors'
 import { Route as AppComplianceRouteImport } from './routes/app.compliance'
 import { Route as AppCompaniesRouteImport } from './routes/app.companies'
 import { Route as AppBenefitsRouteImport } from './routes/app.benefits'
+import { Route as AppAuthDebugRouteImport } from './routes/app.auth-debug'
 import { Route as AppAuditRouteImport } from './routes/app.audit'
 import { Route as AppAnnouncementsRouteImport } from './routes/app.announcements'
 import { Route as AppAnalyticsRouteImport } from './routes/app.analytics'
@@ -305,6 +306,11 @@ const AppBenefitsRoute = AppBenefitsRouteImport.update({
   path: '/benefits',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAuthDebugRoute = AppAuthDebugRouteImport.update({
+  id: '/auth-debug',
+  path: '/auth-debug',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAuditRoute = AppAuditRouteImport.update({
   id: '/audit',
   path: '/audit',
@@ -354,6 +360,7 @@ export interface FileRoutesByFullPath {
   '/app/analytics': typeof AppAnalyticsRoute
   '/app/announcements': typeof AppAnnouncementsRoute
   '/app/audit': typeof AppAuditRoute
+  '/app/auth-debug': typeof AppAuthDebugRoute
   '/app/benefits': typeof AppBenefitsRoute
   '/app/companies': typeof AppCompaniesRoute
   '/app/compliance': typeof AppComplianceRoute
@@ -411,6 +418,7 @@ export interface FileRoutesByTo {
   '/app/analytics': typeof AppAnalyticsRoute
   '/app/announcements': typeof AppAnnouncementsRoute
   '/app/audit': typeof AppAuditRoute
+  '/app/auth-debug': typeof AppAuthDebugRoute
   '/app/benefits': typeof AppBenefitsRoute
   '/app/companies': typeof AppCompaniesRoute
   '/app/compliance': typeof AppComplianceRoute
@@ -468,6 +476,7 @@ export interface FileRoutesById {
   '/app/analytics': typeof AppAnalyticsRoute
   '/app/announcements': typeof AppAnnouncementsRoute
   '/app/audit': typeof AppAuditRoute
+  '/app/auth-debug': typeof AppAuthDebugRoute
   '/app/benefits': typeof AppBenefitsRoute
   '/app/companies': typeof AppCompaniesRoute
   '/app/compliance': typeof AppComplianceRoute
@@ -527,6 +536,7 @@ export interface FileRouteTypes {
     | '/app/analytics'
     | '/app/announcements'
     | '/app/audit'
+    | '/app/auth-debug'
     | '/app/benefits'
     | '/app/companies'
     | '/app/compliance'
@@ -584,6 +594,7 @@ export interface FileRouteTypes {
     | '/app/analytics'
     | '/app/announcements'
     | '/app/audit'
+    | '/app/auth-debug'
     | '/app/benefits'
     | '/app/companies'
     | '/app/compliance'
@@ -640,6 +651,7 @@ export interface FileRouteTypes {
     | '/app/analytics'
     | '/app/announcements'
     | '/app/audit'
+    | '/app/auth-debug'
     | '/app/benefits'
     | '/app/companies'
     | '/app/compliance'
@@ -1035,6 +1047,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppBenefitsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/auth-debug': {
+      id: '/app/auth-debug'
+      path: '/auth-debug'
+      fullPath: '/app/auth-debug'
+      preLoaderRoute: typeof AppAuthDebugRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/audit': {
       id: '/app/audit'
       path: '/audit'
@@ -1118,6 +1137,7 @@ interface AppRouteChildren {
   AppAnalyticsRoute: typeof AppAnalyticsRoute
   AppAnnouncementsRoute: typeof AppAnnouncementsRoute
   AppAuditRoute: typeof AppAuditRoute
+  AppAuthDebugRoute: typeof AppAuthDebugRoute
   AppBenefitsRoute: typeof AppBenefitsRoute
   AppCompaniesRoute: typeof AppCompaniesRoute
   AppComplianceRoute: typeof AppComplianceRoute
@@ -1154,6 +1174,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAnalyticsRoute: AppAnalyticsRoute,
   AppAnnouncementsRoute: AppAnnouncementsRoute,
   AppAuditRoute: AppAuditRoute,
+  AppAuthDebugRoute: AppAuthDebugRoute,
   AppBenefitsRoute: AppBenefitsRoute,
   AppCompaniesRoute: AppCompaniesRoute,
   AppComplianceRoute: AppComplianceRoute,
@@ -1231,13 +1252,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

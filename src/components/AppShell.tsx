@@ -6,7 +6,8 @@ import {
   LayoutDashboard, Users, Clock, Wallet, FileText, LogOut, Menu, X,
   CalendarDays, Settings as SettingsIcon, UserPlus, Target, ShieldCheck,
   BarChart3, FolderOpen, ChevronLeft, ChevronRight, HelpCircle,
-  HeartHandshake, LineChart, Landmark, ListChecks, Bell,
+  HeartHandshake, LineChart, Landmark, ListChecks, Bell, Bug,
+
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TopBar } from "@/components/TopBar";
@@ -75,6 +76,7 @@ const ALL_NAV_LABELS: Record<string, string> = {
   "/app/paystubs": "Pay Stubs",
   "/app/pto": "Time Off",
   "/app/locations": "Work Locations",
+  "/app/auth-debug": "Auth Debug",
 };
 
 export function AppShell() {
