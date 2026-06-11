@@ -141,6 +141,7 @@ function Dashboard() {
   });
 
   const { currentId } = useCompany();
+  const [tick, setTick] = useState(0);
   useEffect(() => {
     if (!currentId) return;
     (async () => {
@@ -225,7 +226,6 @@ function Dashboard() {
       setLoading(false);
     })();
   }, [currentId, tick]);
-  const [tick, setTick] = useState(0);
   useRealtimeRefresh(
     ["payroll_runs","pto_entries","expense_requests","employees","time_clock_punches","timesheets"],
     () => setTick((t) => t + 1),
