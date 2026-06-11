@@ -6,7 +6,7 @@ import {
   LayoutDashboard, Users, Clock, Wallet, FileText, LogOut, Menu, X,
   CalendarDays, Settings as SettingsIcon, UserPlus, Target, ShieldCheck,
   BarChart3, FolderOpen, ChevronLeft, ChevronRight, HelpCircle,
-  HeartHandshake, LineChart, Landmark, ListChecks, Bell,
+  HeartHandshake, LineChart, Landmark, ListChecks, Bell, Bug,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TopBar } from "@/components/TopBar";
@@ -75,6 +75,7 @@ const ALL_NAV_LABELS: Record<string, string> = {
   "/app/paystubs": "Pay Stubs",
   "/app/pto": "Time Off",
   "/app/locations": "Work Locations",
+  "/app/auth-debug": "Auth Debug",
 };
 
 export function AppShell() {
@@ -274,6 +275,21 @@ export function AppShell() {
               >
                 <SettingsIcon className="h-[18px] w-[18px] shrink-0 text-slate-400" />
                 {!collapsed && <span>Settings</span>}
+              </Link>
+            )}
+            {(ADMIN_ROLES as readonly string[]).includes(role) && (
+              <Link
+                to="/app/auth-debug"
+                onClick={() => setOpen(false)}
+                title={collapsed ? "Auth Debug" : undefined}
+                className={cn(
+                  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-[14px] font-medium text-slate-600 hover:bg-slate-50 hover:text-foreground transition",
+                  collapsed && "justify-center px-2",
+                  path.startsWith("/app/auth-debug") && "bg-primary/10 text-foreground",
+                )}
+              >
+                <Bug className="h-[18px] w-[18px] shrink-0 text-slate-400" />
+                {!collapsed && <span>Auth Debug</span>}
               </Link>
             )}
             <Link
