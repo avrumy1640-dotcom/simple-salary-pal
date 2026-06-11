@@ -38,6 +38,7 @@ import { Route as AppShiftSwapsRouteImport } from './routes/app.shift-swaps'
 import { Route as AppSettingsRouteImport } from './routes/app.settings'
 import { Route as AppSelfServiceRouteImport } from './routes/app.self-service'
 import { Route as AppSchedulingRouteImport } from './routes/app.scheduling'
+import { Route as AppRequestsRouteImport } from './routes/app.requests'
 import { Route as AppReportsRouteImport } from './routes/app.reports'
 import { Route as AppRecruitingRouteImport } from './routes/app.recruiting'
 import { Route as AppPtoRouteImport } from './routes/app.pto'
@@ -214,6 +215,11 @@ const AppSelfServiceRoute = AppSelfServiceRouteImport.update({
 const AppSchedulingRoute = AppSchedulingRouteImport.update({
   id: '/scheduling',
   path: '/scheduling',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppRequestsRoute = AppRequestsRouteImport.update({
+  id: '/requests',
+  path: '/requests',
   getParentRoute: () => AppRoute,
 } as any)
 const AppReportsRoute = AppReportsRouteImport.update({
@@ -415,6 +421,7 @@ export interface FileRoutesByFullPath {
   '/app/pto': typeof AppPtoRoute
   '/app/recruiting': typeof AppRecruitingRoute
   '/app/reports': typeof AppReportsRoute
+  '/app/requests': typeof AppRequestsRoute
   '/app/scheduling': typeof AppSchedulingRoute
   '/app/self-service': typeof AppSelfServiceRoute
   '/app/settings': typeof AppSettingsRoute
@@ -477,6 +484,7 @@ export interface FileRoutesByTo {
   '/app/pto': typeof AppPtoRoute
   '/app/recruiting': typeof AppRecruitingRoute
   '/app/reports': typeof AppReportsRoute
+  '/app/requests': typeof AppRequestsRoute
   '/app/scheduling': typeof AppSchedulingRoute
   '/app/self-service': typeof AppSelfServiceRoute
   '/app/settings': typeof AppSettingsRoute
@@ -541,6 +549,7 @@ export interface FileRoutesById {
   '/app/pto': typeof AppPtoRoute
   '/app/recruiting': typeof AppRecruitingRoute
   '/app/reports': typeof AppReportsRoute
+  '/app/requests': typeof AppRequestsRoute
   '/app/scheduling': typeof AppSchedulingRoute
   '/app/self-service': typeof AppSelfServiceRoute
   '/app/settings': typeof AppSettingsRoute
@@ -606,6 +615,7 @@ export interface FileRouteTypes {
     | '/app/pto'
     | '/app/recruiting'
     | '/app/reports'
+    | '/app/requests'
     | '/app/scheduling'
     | '/app/self-service'
     | '/app/settings'
@@ -668,6 +678,7 @@ export interface FileRouteTypes {
     | '/app/pto'
     | '/app/recruiting'
     | '/app/reports'
+    | '/app/requests'
     | '/app/scheduling'
     | '/app/self-service'
     | '/app/settings'
@@ -731,6 +742,7 @@ export interface FileRouteTypes {
     | '/app/pto'
     | '/app/recruiting'
     | '/app/reports'
+    | '/app/requests'
     | '/app/scheduling'
     | '/app/self-service'
     | '/app/settings'
@@ -972,6 +984,13 @@ declare module '@tanstack/react-router' {
       path: '/scheduling'
       fullPath: '/app/scheduling'
       preLoaderRoute: typeof AppSchedulingRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/requests': {
+      id: '/app/requests'
+      path: '/requests'
+      fullPath: '/app/requests'
+      preLoaderRoute: typeof AppRequestsRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/reports': {
@@ -1257,6 +1276,7 @@ interface AppRouteChildren {
   AppPtoRoute: typeof AppPtoRoute
   AppRecruitingRoute: typeof AppRecruitingRoute
   AppReportsRoute: typeof AppReportsRoute
+  AppRequestsRoute: typeof AppRequestsRoute
   AppSchedulingRoute: typeof AppSchedulingRoute
   AppSelfServiceRoute: typeof AppSelfServiceRoute
   AppSettingsRoute: typeof AppSettingsRoute
@@ -1298,6 +1318,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppPtoRoute: AppPtoRoute,
   AppRecruitingRoute: AppRecruitingRoute,
   AppReportsRoute: AppReportsRoute,
+  AppRequestsRoute: AppRequestsRoute,
   AppSchedulingRoute: AppSchedulingRoute,
   AppSelfServiceRoute: AppSelfServiceRoute,
   AppSettingsRoute: AppSettingsRoute,
