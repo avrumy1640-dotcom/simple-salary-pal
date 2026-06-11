@@ -117,6 +117,7 @@ export const saveSyncedCompanySettings = createServerFn({ method: "POST" })
     return { ok: true, settings: saved, legal_name: legalName };
   });
 
+
 export const getEmployeePortalIdentity = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
