@@ -163,8 +163,8 @@ function Page() {
     if (type === "out" && !clockedIn) { toast.error("You need to clock in first."); return; }
 
     // Refresh GPS at punch time for accuracy
-    const p = await getPosition();
-    if (!p) { toast.error("GPS required. Please enable location services."); return; }
+    const { position: p, error: perr } = await getPosition();
+    if (!p) { toast.error(perr ?? "GPS required. Please enable location services."); return; }
     const lat = p.coords.latitude, lng = p.coords.longitude, accuracy = p.coords.accuracy;
 
     const loc = selected?.loc ?? null;
