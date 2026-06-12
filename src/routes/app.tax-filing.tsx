@@ -299,7 +299,14 @@ function TaxFilingPage() {
         </div>
         <div className="flex flex-wrap gap-2">
           <Button variant="outline" onClick={downloadFilingPacket} className="gap-1.5"><Download className="h-4 w-4" />Download all forms</Button>
-          <Button className="gap-1.5"><FileText className="h-4 w-4" />File now</Button>
+          <Button
+            className="gap-1.5"
+            onClick={() => {
+              downloadFilingPacket();
+              window.open("https://www.irs.gov/e-file-providers/modernized-e-file-mef-overview", "_blank", "noopener,noreferrer");
+              toast.message("Filing packet downloaded", { description: "Upload the generated forms to the IRS e-file portal that just opened in a new tab." });
+            }}
+          ><FileText className="h-4 w-4" />File now</Button>
         </div>
       </section>
 
