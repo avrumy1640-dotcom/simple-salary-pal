@@ -396,28 +396,8 @@ function Dashboard() {
         </div>
       </section>
 
-      {/* ===== Section 5: Quick actions ===== */}
-      <section className="grid grid-cols-2 gap-4 md:grid-cols-4">
-        {[
-          { to: "/app/payroll", icon: Wallet, color: "bg-cyan-100 text-cyan-700", label: "Run Payroll", desc: "Process this pay period" },
-          { to: "/app/employees", icon: UserPlus, color: "bg-violet-100 text-violet-700", label: "Add Employee", desc: "Onboard a new team member" },
-          { to: "/app/time", icon: Clock, color: "bg-emerald-100 text-emerald-700", label: "Approve Timesheets", desc: "Review pending hours" },
-          { to: "/app/reports", icon: BarChart3, color: "bg-amber-100 text-amber-700", label: "View Reports", desc: "See payroll analytics" },
-        ].map((a) => (
-          <Link
-            key={a.label}
-            to={a.to}
-            className="group flex flex-col rounded-xl border border-border bg-white p-5 shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-card"
-          >
-            <div className={`mb-4 grid h-10 w-10 place-items-center rounded-lg ${a.color}`}>
-              <a.icon className="h-5 w-5" />
-            </div>
-            <div className="text-[15px] font-bold text-foreground">{a.label}</div>
-            <div className="mt-1 text-[12px] text-slate-500">{a.desc}</div>
-            <ArrowRight className="mt-3 h-4 w-4 text-slate-300 transition group-hover:text-foreground group-hover:translate-x-1" />
-          </Link>
-        ))}
-      </section>
+
+
 
       {/* ===== Section 6: Upcoming paydays + Celebrations ===== */}
       <section className="grid gap-4 lg:grid-cols-2">
