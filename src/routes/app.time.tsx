@@ -119,6 +119,7 @@ function TimePage() {
     setLoading(false);
   }
   useEffect(() => { load(); /* eslint-disable-next-line */ }, [weekStart]);
+  useRealtimeRefresh(["time_entries", "pto_entries", "employees"], load, { companyId: currentId });
 
   function setCell(empId: string, dateIso: string, value: string) {
     const n = value === "" ? 0 : Number(value);
