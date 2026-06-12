@@ -167,29 +167,22 @@ function Page() {
 
 
   return (
-    <div className="space-y-8 unit-in">
-      <div>
-        <h1 className="font-display text-[28px] sm:text-[40px] font-extrabold tracking-tight text-slate-900">Pay Stubs</h1>
-        <p className="mt-1 text-sm sm:text-base text-slate-500">All your paychecks, ready to view or download.</p>
+    <div className="space-y-5 unit-in">
+      <h1 className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">Pay Stubs</h1>
+
+      <div className="flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50/60 px-3 py-2 text-xs text-amber-800">
+        <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-600" />
+        <p>Estimates only — verify with your accountant before filing.</p>
       </div>
 
-      <div className="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50/60 px-5 py-3 text-sm text-amber-800">
-        <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
-        <p>Taxes and net pay shown are <strong>estimates for reference only</strong> and not certified by a CPA or tax professional. Please verify all figures with your accountant or tax advisor before filing.</p>
-      </div>
-
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-        <div className="rounded-2xl border border-border bg-card p-4 shadow-soft">
-          <div className="text-xs uppercase tracking-wider text-slate-500">YTD Net</div>
-          <div className="mt-1.5 font-display text-xl sm:text-2xl font-bold text-slate-900">{fmt(ytd.net)}</div>
+      <div className="grid grid-cols-2 gap-2">
+        <div className="rounded-2xl border border-border bg-card p-3.5 shadow-soft">
+          <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">YTD Net</div>
+          <div className="mt-1 font-display text-lg font-extrabold tabular text-slate-900">{fmt(ytd.net)}</div>
         </div>
-        <div className="rounded-2xl border border-border bg-card p-4 shadow-soft">
-          <div className="text-xs uppercase tracking-wider text-slate-500">YTD Gross</div>
-          <div className="mt-1.5 font-display text-xl sm:text-2xl font-bold text-slate-900">{fmt(ytd.gross)}</div>
-        </div>
-        <div className="col-span-2 rounded-2xl border border-border bg-card p-4 shadow-soft sm:col-span-1">
-          <div className="text-xs uppercase tracking-wider text-slate-500">Stubs available</div>
-          <div className="mt-1.5 font-display text-xl sm:text-2xl font-bold text-slate-900">{items.length}</div>
+        <div className="rounded-2xl border border-border bg-card p-3.5 shadow-soft">
+          <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">YTD Gross</div>
+          <div className="mt-1 font-display text-lg font-extrabold tabular text-slate-900">{fmt(ytd.gross)}</div>
         </div>
       </div>
 
