@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { EmergencyContactsCard } from "@/components/EmergencyContactsCard";
 import { DirectDepositAccountsCard } from "@/components/DirectDepositAccountsCard";
+import { TaxProfileCard } from "@/routes/employee.tax-profile";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
