@@ -418,6 +418,11 @@ function EmployeeProfilePage() {
           </div>
         </TabsContent>
 
+        {/* TAX (Phase B multi-state) */}
+        <TabsContent value="tax" className="mt-6 space-y-5">
+          <TaxProfileCard employeeId={emp.id} companyId={emp.company_id} canEdit={true} />
+        </TabsContent>
+
         {/* DOCUMENTS */}
         <TabsContent value="documents" className="mt-6">
           <div className="rounded-2xl border border-[color:var(--unit-hairline)] bg-white p-6">
