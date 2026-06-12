@@ -186,7 +186,7 @@ and notifies the recipient.
 
 ---
 
-## Phase D — Year-round prerequisites for clean year-end
+## Phase D — Year-round prerequisites for clean year-end ✅
 
 These already exist or partially exist. Year-end correctness depends on
 them being enforced every run:

@@ -47,6 +47,7 @@ import { Route as AppTeamsRouteImport } from './routes/app.teams'
 import { Route as AppTaxesRouteImport } from './routes/app.taxes'
 import { Route as AppTaxYearRouteImport } from './routes/app.tax-year'
 import { Route as AppTaxTablesRouteImport } from './routes/app.tax-tables'
+import { Route as AppTaxReconciliationRouteImport } from './routes/app.tax-reconciliation'
 import { Route as AppTaxFilingRouteImport } from './routes/app.tax-filing'
 import { Route as AppShiftSwapsRouteImport } from './routes/app.shift-swaps'
 import { Route as AppSettingsRouteImport } from './routes/app.settings'
@@ -280,6 +281,11 @@ const AppTaxYearRoute = AppTaxYearRouteImport.update({
 const AppTaxTablesRoute = AppTaxTablesRouteImport.update({
   id: '/tax-tables',
   path: '/tax-tables',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTaxReconciliationRoute = AppTaxReconciliationRouteImport.update({
+  id: '/tax-reconciliation',
+  path: '/tax-reconciliation',
   getParentRoute: () => AppRoute,
 } as any)
 const AppTaxFilingRoute = AppTaxFilingRouteImport.update({
@@ -558,6 +564,7 @@ export interface FileRoutesByFullPath {
   '/app/settings': typeof AppSettingsRoute
   '/app/shift-swaps': typeof AppShiftSwapsRoute
   '/app/tax-filing': typeof AppTaxFilingRoute
+  '/app/tax-reconciliation': typeof AppTaxReconciliationRoute
   '/app/tax-tables': typeof AppTaxTablesRoute
   '/app/tax-year': typeof AppTaxYearRoute
   '/app/taxes': typeof AppTaxesRoute
@@ -641,6 +648,7 @@ export interface FileRoutesByTo {
   '/app/settings': typeof AppSettingsRoute
   '/app/shift-swaps': typeof AppShiftSwapsRoute
   '/app/tax-filing': typeof AppTaxFilingRoute
+  '/app/tax-reconciliation': typeof AppTaxReconciliationRoute
   '/app/tax-tables': typeof AppTaxTablesRoute
   '/app/tax-year': typeof AppTaxYearRoute
   '/app/taxes': typeof AppTaxesRoute
@@ -726,6 +734,7 @@ export interface FileRoutesById {
   '/app/settings': typeof AppSettingsRoute
   '/app/shift-swaps': typeof AppShiftSwapsRoute
   '/app/tax-filing': typeof AppTaxFilingRoute
+  '/app/tax-reconciliation': typeof AppTaxReconciliationRoute
   '/app/tax-tables': typeof AppTaxTablesRoute
   '/app/tax-year': typeof AppTaxYearRoute
   '/app/taxes': typeof AppTaxesRoute
@@ -812,6 +821,7 @@ export interface FileRouteTypes {
     | '/app/settings'
     | '/app/shift-swaps'
     | '/app/tax-filing'
+    | '/app/tax-reconciliation'
     | '/app/tax-tables'
     | '/app/tax-year'
     | '/app/taxes'
@@ -895,6 +905,7 @@ export interface FileRouteTypes {
     | '/app/settings'
     | '/app/shift-swaps'
     | '/app/tax-filing'
+    | '/app/tax-reconciliation'
     | '/app/tax-tables'
     | '/app/tax-year'
     | '/app/taxes'
@@ -979,6 +990,7 @@ export interface FileRouteTypes {
     | '/app/settings'
     | '/app/shift-swaps'
     | '/app/tax-filing'
+    | '/app/tax-reconciliation'
     | '/app/tax-tables'
     | '/app/tax-year'
     | '/app/taxes'
@@ -1292,6 +1304,13 @@ declare module '@tanstack/react-router' {
       path: '/tax-tables'
       fullPath: '/app/tax-tables'
       preLoaderRoute: typeof AppTaxTablesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/tax-reconciliation': {
+      id: '/app/tax-reconciliation'
+      path: '/tax-reconciliation'
+      fullPath: '/app/tax-reconciliation'
+      preLoaderRoute: typeof AppTaxReconciliationRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/tax-filing': {
@@ -1673,6 +1692,7 @@ interface AppRouteChildren {
   AppSettingsRoute: typeof AppSettingsRoute
   AppShiftSwapsRoute: typeof AppShiftSwapsRoute
   AppTaxFilingRoute: typeof AppTaxFilingRoute
+  AppTaxReconciliationRoute: typeof AppTaxReconciliationRoute
   AppTaxTablesRoute: typeof AppTaxTablesRoute
   AppTaxYearRoute: typeof AppTaxYearRoute
   AppTaxesRoute: typeof AppTaxesRoute
@@ -1724,6 +1744,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppSettingsRoute: AppSettingsRoute,
   AppShiftSwapsRoute: AppShiftSwapsRoute,
   AppTaxFilingRoute: AppTaxFilingRoute,
+  AppTaxReconciliationRoute: AppTaxReconciliationRoute,
   AppTaxTablesRoute: AppTaxTablesRoute,
   AppTaxYearRoute: AppTaxYearRoute,
   AppTaxesRoute: AppTaxesRoute,

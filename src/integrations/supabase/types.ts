@@ -2074,6 +2074,75 @@ export type Database = {
           },
         ]
       }
+      employer_tax_payments: {
+        Row: {
+          agency: string
+          amount: number
+          company_id: string
+          confirmation_ref: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          liability_id: string | null
+          notes: string | null
+          paid_on: string
+          period_end: string
+          period_start: string
+          status: string
+          tax_kind: string
+          updated_at: string
+        }
+        Insert: {
+          agency: string
+          amount: number
+          company_id: string
+          confirmation_ref?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          liability_id?: string | null
+          notes?: string | null
+          paid_on: string
+          period_end: string
+          period_start: string
+          status?: string
+          tax_kind: string
+          updated_at?: string
+        }
+        Update: {
+          agency?: string
+          amount?: number
+          company_id?: string
+          confirmation_ref?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          liability_id?: string | null
+          notes?: string | null
+          paid_on?: string
+          period_end?: string
+          period_start?: string
+          status?: string
+          tax_kind?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employer_tax_payments_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employer_tax_payments_liability_id_fkey"
+            columns: ["liability_id"]
+            isOneToOne: false
+            referencedRelation: "employer_tax_liabilities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       expense_requests: {
         Row: {
           amount: number
@@ -4095,6 +4164,7 @@ export type Database = {
           rate: number | null
           run_id: string
           taxable: boolean
+          taxable_wages_basis: number | null
         }
         Insert: {
           amount?: number
@@ -4110,6 +4180,7 @@ export type Database = {
           rate?: number | null
           run_id: string
           taxable?: boolean
+          taxable_wages_basis?: number | null
         }
         Update: {
           amount?: number
@@ -4125,6 +4196,7 @@ export type Database = {
           rate?: number | null
           run_id?: string
           taxable?: boolean
+          taxable_wages_basis?: number | null
         }
         Relationships: [
           {
@@ -4357,6 +4429,105 @@ export type Database = {
           {
             foreignKeyName: "payroll_runs_correction_of_fkey"
             columns: ["correction_of"]
+            isOneToOne: false
+            referencedRelation: "payroll_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payroll_ytd_snapshots: {
+        Row: {
+          company_id: string
+          created_at: string
+          employee_id: string
+          id: string
+          pay_date: string
+          run_id: string | null
+          tax_year: number
+          updated_at: string
+          ytd_fed_tax: number
+          ytd_gross: number
+          ytd_medicare_tax: number
+          ytd_medicare_wages: number
+          ytd_net: number
+          ytd_posttax_deductions: number
+          ytd_pretax_deductions: number
+          ytd_ss_tax: number
+          ytd_ss_wages: number
+          ytd_state_tax: number
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          employee_id: string
+          id?: string
+          pay_date: string
+          run_id?: string | null
+          tax_year: number
+          updated_at?: string
+          ytd_fed_tax?: number
+          ytd_gross?: number
+          ytd_medicare_tax?: number
+          ytd_medicare_wages?: number
+          ytd_net?: number
+          ytd_posttax_deductions?: number
+          ytd_pretax_deductions?: number
+          ytd_ss_tax?: number
+          ytd_ss_wages?: number
+          ytd_state_tax?: number
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          employee_id?: string
+          id?: string
+          pay_date?: string
+          run_id?: string | null
+          tax_year?: number
+          updated_at?: string
+          ytd_fed_tax?: number
+          ytd_gross?: number
+          ytd_medicare_tax?: number
+          ytd_medicare_wages?: number
+          ytd_net?: number
+          ytd_posttax_deductions?: number
+          ytd_pretax_deductions?: number
+          ytd_ss_tax?: number
+          ytd_ss_wages?: number
+          ytd_state_tax?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payroll_ytd_snapshots_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payroll_ytd_snapshots_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "payroll_ytd_snapshots_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payroll_ytd_snapshots_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "payroll_ytd_snapshots_run_id_fkey"
+            columns: ["run_id"]
             isOneToOne: false
             referencedRelation: "payroll_runs"
             referencedColumns: ["id"]
@@ -6912,6 +7083,15 @@ export type Database = {
       publish_shifts: {
         Args: { _company_id: string; _end: string; _start: string }
         Returns: number
+      }
+      reconcile_employer_tax: {
+        Args: { _company_id: string; _year: number }
+        Returns: {
+          accrued: number
+          paid: number
+          tax_kind: string
+          variance: number
+        }[]
       }
       resolve_tax_version: {
         Args: { _jurisdiction: string; _on: string; _tax_type: string }
