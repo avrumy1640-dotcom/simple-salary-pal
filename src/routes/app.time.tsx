@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { useCompany } from "@/hooks/useCompany";
 import { TimesheetApprovals } from "@/components/TimesheetApprovals";
+import { useRealtimeRefresh } from "@/lib/useRealtimeRefresh";
 
 export const Route = createFileRoute("/app/time")({
   head: () => ({ meta: [{ title: "Time & attendance — Paylo" }] }),
