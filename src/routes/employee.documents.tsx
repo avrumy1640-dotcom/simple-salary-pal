@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogT
 import { toast } from "sonner";
 import { FolderOpen, FileText, Download, Eye, CheckCircle2, PenSquare, ClipboardList, Clock } from "lucide-react";
 import { submitEmployeeForm, listMyForms } from "@/lib/employee-self.functions";
+import { useRealtimeRefresh } from "@/lib/useRealtimeRefresh";
 
 export const Route = createFileRoute("/employee/documents")({
   head: () => ({ meta: [{ title: "My documents — Paylo" }] }),
@@ -82,6 +83,7 @@ function Page() {
     setSignedIds(new Set(((sigs ?? []) as any[]).map((s) => s.document_id)));
   }
   useEffect(() => { load(); }, [employee?.id]);
+  useRealtimeRefresh(["hr_documents", "hr_document_signatures", "hr_forms"], () => { load(); loadForms(); }, { companyId: employee?.company_id ?? null });
 
   async function openDoc(d: Doc, action: "view" | "download") {
     if (!d.storage_path) { toast.error("No file attached"); return; }

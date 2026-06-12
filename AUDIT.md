@@ -182,3 +182,26 @@ Pick up these phases in a future engagement with vendor credentials and a compli
 - A7 "resend confirmation email" branch on the auth page.
 - Payroll engine, certified tax engine, Plaid, Modern Treasury, W-2/1099 production output, ACH origination — all still gated behind sandbox and require vendor contracts + compliance sign-off.
 
+
+## Resolved this pass (continuation, 2026-06-12)
+
+### Batch D — Realtime sync (remaining)
+- `app.employees` now subscribes to `employees` and `user_roles` via `useRealtimeRefresh` (companyId-scoped).
+- `app.time` now subscribes to `time_entries`, `timesheets`, `time_clock_punches` and reloads the timesheet grid live.
+- `employee.documents` now subscribes to `hr_documents`, `hr_document_signatures`, `hr_forms` (companyId-scoped) and reloads forms + signed-set together.
+- `app.attendance` and `app.tracking` already maintain their own scoped `supabase.channel(...)` subscriptions — left as-is to avoid double-subscribe.
+
+### Batch E — Dead UI cleanup
+- Marketing index "PAYLO.APP/DASHBOARD" mockup now carries an explicit "Preview" pill so the illustrative numbers can't be mistaken for live tenant data. (E1)
+- E2 (sitemap host) and E3 (SSN padding) resolved in the previous pass and verified intact.
+
+### Batch G — Validation / error boundaries (partial)
+- `src/router.tsx` now sets `defaultErrorComponent` (TanStack's built-in) and a clean `defaultNotFoundComponent` so every route inherits sensible fallbacks even if a specific route forgets to declare them.
+
+### Remaining blockers (still NOT done)
+- Per-route `errorComponent` / `notFoundComponent` sweep on every loader-driven route (F2/F3 follow-through).
+- Zod `.inputValidator()` pass on the remaining `*.functions.ts` files (F1) — only a handful are validated today.
+- A5 perf optimization (cache role lookup in `app.tsx` / `employee.tsx` beforeLoad).
+- A7 "resend confirmation email" branch on the auth page.
+- Per-route dead-button / placeholder walk (E4) across the remaining ~40 route files.
+- Payroll engine, certified tax engine, Plaid, Modern Treasury, W-2/1099 production output, ACH origination — still gated behind sandbox; require vendor contracts + compliance sign-off before they can be wired.

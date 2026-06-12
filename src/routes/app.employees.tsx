@@ -23,6 +23,7 @@ import { fmtUSD } from "@/lib/payroll";
 import { useCompany } from "@/hooks/useCompany";
 import { terminateEmployee } from "@/lib/employee-lifecycle.functions";
 import { AddEmployeeWizard } from "@/components/AddEmployeeWizard";
+import { useRealtimeRefresh } from "@/lib/useRealtimeRefresh";
 
 export const Route = createFileRoute("/app/employees")({
   head: () => ({ meta: [{ title: "Employees — Paylo" }] }),
@@ -155,6 +156,7 @@ function EmployeesPage() {
     setLoading(false);
   }
   useEffect(() => { refresh(); /* eslint-disable-next-line */ }, [currentId]);
+  useRealtimeRefresh(["employees", "user_roles"], () => { refresh(); }, { companyId: currentId });
 
   async function doTerminate() {
     if (!terminateTarget) return;

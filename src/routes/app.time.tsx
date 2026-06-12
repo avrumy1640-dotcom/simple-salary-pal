@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { useCompany } from "@/hooks/useCompany";
 import { TimesheetApprovals } from "@/components/TimesheetApprovals";
+import { useRealtimeRefresh } from "@/lib/useRealtimeRefresh";
 
 export const Route = createFileRoute("/app/time")({
   head: () => ({ meta: [{ title: "Time & attendance — Paylo" }] }),
@@ -118,6 +119,7 @@ function TimePage() {
     setLoading(false);
   }
   useEffect(() => { load(); /* eslint-disable-next-line */ }, [weekStart]);
+  useRealtimeRefresh(["time_entries", "timesheets", "time_clock_punches"], () => { load(); }, { companyId: currentId });
 
   function setCell(empId: string, dateIso: string, value: string) {
     const n = value === "" ? 0 : Number(value);
