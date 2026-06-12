@@ -303,6 +303,11 @@ function TaxFilingPage() {
         </div>
       </section>
 
+      <div className="unit-in flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50/60 px-5 py-3 text-sm text-amber-800">
+        <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+        <p>Tax calculations and forms generated here are <strong>estimates for reference only</strong> and not certified by a CPA or tax professional. Please verify all figures with your accountant or tax advisor before filing with the IRS or state agencies.</p>
+      </div>
+
       {/* Compliance hero */}
       <section className="unit-in rounded-2xl border unit-hairline bg-white p-6 shadow-soft">
         <div className="grid gap-6 md:grid-cols-[1.4fr,1fr] items-center">
