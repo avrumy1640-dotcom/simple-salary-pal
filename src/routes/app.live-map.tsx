@@ -61,6 +61,7 @@ function LiveMapPage() {
     const t = setInterval(() => { load(); setTick((n) => n + 1); }, 15_000);
     return () => clearInterval(t);
   }, [currentId]);
+  useRealtimeRefresh(["employee_live_locations"], () => { load(); }, { companyId: currentId });
 
   const markers = useMemo(() => rows.map((r) => {
     const ageMin = (Date.now() - new Date(r.updated_at).getTime()) / 60000;
