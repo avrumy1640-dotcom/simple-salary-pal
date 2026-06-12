@@ -162,7 +162,9 @@ export function EmployeeShell() {
 
   return (
     <div className="min-h-screen text-foreground bg-surface">
+      <OfflineBanner />
       <EmployeeNotificationBanner />
+
 
       {/* Mobile top bar */}
       <div className="sticky top-0 z-50 flex items-center gap-3 border-b border-border bg-white px-4 pt-[max(env(safe-area-inset-top),0.25rem)] pb-3 md:hidden">
