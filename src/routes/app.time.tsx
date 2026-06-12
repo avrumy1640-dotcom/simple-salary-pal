@@ -10,6 +10,7 @@ import {
   ChevronLeft, ChevronRight, Clock, Calendar as CalendarIcon, Check, X, CalendarDays, Plus, Trash2, ShieldCheck,
 } from "lucide-react";
 import { useCompany } from "@/hooks/useCompany";
+import { useRealtimeRefresh } from "@/lib/useRealtimeRefresh";
 import { TimesheetApprovals } from "@/components/TimesheetApprovals";
 
 export const Route = createFileRoute("/app/time")({
