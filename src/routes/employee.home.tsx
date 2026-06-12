@@ -6,12 +6,11 @@ import { useRealtimeRefresh } from "@/lib/useRealtimeRefresh";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import {
-  Wallet, Play, Square, CalendarDays, FileText, CheckCircle2, Clock as ClockIcon,
-  MapPin, FolderOpen, ChevronRight, Zap, HeartHandshake,
+  Wallet, Play, Square, CalendarDays, FileText, ChevronRight, HeartHandshake,
 } from "lucide-react";
 
 export const Route = createFileRoute("/employee/home")({
-  head: () => ({ meta: [{ title: "My workplace — Paylo" }] }),
+  head: () => ({ meta: [{ title: "Home — Paylo" }] }),
   component: EmployeeHome,
 });
 
@@ -30,25 +29,15 @@ function elapsedFmt(ms: number) {
   return `${h}h ${m.toString().padStart(2, "0")}m`;
 }
 
-const PTO_TYPES = {
-  vacation: { color: "bg-emerald-500", tone: "text-emerald-700", bg: "bg-emerald-50" },
-  sick:     { color: "bg-sky-500",     tone: "text-sky-700",     bg: "bg-sky-50" },
-  personal: { color: "bg-violet-500",  tone: "text-violet-700",  bg: "bg-violet-50" },
-} as const;
-type PtoKind = keyof typeof PTO_TYPES;
-
-
 function EmployeeHome() {
   const { employee, loading } = useMyEmployee();
   const [nextPayDate, setNextPayDate] = useState<string | null>(null);
   const [lastNet, setLastNet] = useState<number | null>(null);
   const [lastPunch, setLastPunch] = useState<{ id: string; punched_at: string; punch_type: string } | null>(null);
   const [punches, setPunches] = useState<{ punched_at: string; punch_type: string }[]>([]);
-  const [ptoUsedByType, setPtoUsedByType] = useState<Record<PtoKind, number>>({ vacation: 0, sick: 0, personal: 0 });
-  const [accrualPolicy, setAccrualPolicy] = useState<{ name: string; hours_per_period: number; frequency: string; max_balance_hours: number | null } | null>(null);
+  const [ptoUsed, setPtoUsed] = useState(0);
   const [activity, setActivity] = useState<{ icon: "pay" | "pto" | "doc"; text: string; date: string }[]>([]);
-  const [podAvailable, setPodAvailable] = useState(0);
-  const [openEnrollment, setOpenEnrollment] = useState<{ id: string; name: string; ends_at: string; coverage_effective_date: string } | null>(null);
+  const [openEnrollment, setOpenEnrollment] = useState<{ id: string; name: string; ends_at: string } | null>(null);
   const [busy, setBusy] = useState(false);
   const [now, setNow] = useState(new Date());
 
@@ -88,27 +77,12 @@ function EmployeeHome() {
     setLastPunch((lastPunches.data?.[0] as any) ?? null);
     setPunches((allPunches.data ?? []) as any);
 
-    // PTO used per type (approved only) from pto_entries
-    const used: Record<PtoKind, number> = { vacation: 0, sick: 0, personal: 0 };
+    let used = 0;
     for (const e of (ptos.data ?? []) as any[]) {
-      if (e.status === "approved" && (used as any)[e.pto_type] !== undefined) {
-        (used as any)[e.pto_type] += Number(e.hours);
-      }
+      if (e.status === "approved") used += Number(e.hours);
     }
-    setPtoUsedByType(used);
+    setPtoUsed(used);
 
-    // Accrual policy (if assigned)
-    const policyId = (employee as any).pto_policy_id;
-    if (policyId) {
-      const { data: pol } = await supabase.from("pto_accrual_policies")
-        .select("name, hours_per_period, frequency, max_balance_hours")
-        .eq("id", policyId).maybeSingle();
-      if (pol) setAccrualPolicy(pol as any);
-    } else {
-      setAccrualPolicy(null);
-    }
-
-    // Recent activity
     const acts: { icon: "pay" | "pto" | "doc"; text: string; date: string }[] = [];
     for (const p of (items.data ?? []) as any[]) {
       if (p.payroll_runs?.pay_date) {
@@ -122,37 +96,19 @@ function EmployeeHome() {
     for (const e of ((ptos.data ?? []) as any[]).slice(0, 2)) {
       acts.push({
         icon: "pto",
-        text: `Time off request for ${e.start_date}${e.end_date !== e.start_date ? ` to ${e.end_date}` : ""} — ${e.status}`,
+        text: `Time off ${e.start_date}${e.end_date !== e.start_date ? `–${e.end_date}` : ""} · ${e.status}`,
         date: e.start_date,
       });
     }
     for (const d of (docs.data ?? []) as any[]) {
-      acts.push({ icon: "doc", text: `${d.title} is available`, date: d.created_at });
+      acts.push({ icon: "doc", text: `${d.title}`, date: d.created_at });
     }
     acts.sort((a, b) => +new Date(b.date) - +new Date(a.date));
-    setActivity(acts.slice(0, 5));
+    setActivity(acts.slice(0, 4));
 
-    // Pay On-Demand available
-    const { data: lastRun } = await supabase.from("payroll_runs")
-      .select("period_end").eq("company_id", employee.company_id).eq("status", "paid")
-      .order("pay_date", { ascending: false }).limit(1);
-    const sinceDate = lastRun?.[0]?.period_end ?? new Date(Date.now() - 14 * 86400000).toISOString().slice(0, 10);
-    const { data: te } = await supabase.from("time_entries")
-      .select("hours, overtime_hours").eq("employee_id", employee.id).gt("work_date", sinceDate);
-    const totalHours = (te ?? []).reduce((acc: number, r: any) =>
-      acc + Number(r.hours || 0) + Number(r.overtime_hours || 0) * 1.5, 0);
-    const rate = Number((employee as any).pay_rate || 0);
-    const earned = (employee as any).pay_type === "salary" ? rate / 26 : rate * totalHours;
-    const { data: podPending } = await supabase.from("pay_on_demand_requests")
-      .select("requested_amount, status").eq("employee_id", employee.id)
-      .in("status", ["pending", "approved"]);
-    const pendingTotal = (podPending ?? []).reduce((a: number, r: any) => a + Number(r.requested_amount || 0), 0);
-    setPodAvailable(Math.max(0, Math.round(earned * 0.5 * 100) / 100 - pendingTotal));
-
-    // Open enrollment window
     const nowIso = new Date().toISOString();
     const { data: oe } = await supabase.from("open_enrollment_windows")
-      .select("id, name, ends_at, coverage_effective_date, starts_at, is_active")
+      .select("id, name, ends_at, starts_at, is_active")
       .eq("company_id", employee.company_id).eq("is_active", true)
       .lte("starts_at", nowIso).gte("ends_at", nowIso)
       .order("ends_at", { ascending: true }).limit(1);
@@ -167,7 +123,6 @@ function EmployeeHome() {
 
   const clockedIn = lastPunch?.punch_type === "in" || lastPunch?.punch_type === "break_end";
 
-  // Today's worked total (rough): pair sequential in -> out segments
   const todayWorkedMs = useMemo(() => {
     let total = 0;
     let start: Date | null = null;
@@ -197,7 +152,7 @@ function EmployeeHome() {
     setBusy(false);
     if (error) { toast.error(error.message); return; }
     if (type === "in") toast.success("Clocked in");
-    else toast.success(`Clocked out. You worked ${elapsedFmt(todayWorkedMs)} today.`);
+    else toast.success(`Clocked out. ${elapsedFmt(todayWorkedMs)} today.`);
     load();
   }
 
@@ -216,248 +171,116 @@ function EmployeeHome() {
 
   const first = employee.full_name.split(" ")[0];
   const greet = now.getHours() < 12 ? "Good morning" : now.getHours() < 18 ? "Good afternoon" : "Good evening";
-  const todayStr = now.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
-  const timeStr = now.toLocaleTimeString([], { hour: "numeric", minute: "2-digit", second: "2-digit" });
-
+  const timeStr = now.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
   const clockedInSince = clockedIn && lastPunch ? +now - +new Date(lastPunch.punched_at) : 0;
   const payDays = nextPayDate ? daysUntil(nextPayDate) : null;
-  const nextPayPretty = nextPayDate
-    ? new Date(nextPayDate + "T00:00:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })
-    : "Not scheduled";
+  const ptoBalH = Number((employee as any).pto_balance_hours ?? 0);
 
   return (
-    <div className="space-y-6 unit-in">
+    <div className="space-y-5 unit-in">
       {/* Greeting */}
-      <div>
-        <h1 className="font-display text-[28px] sm:text-[40px] font-extrabold tracking-tight text-slate-900">
-          {greet}, {first}
-        </h1>
-        <p className="mt-1 text-sm sm:text-base text-slate-500">{todayStr}</p>
-      </div>
+      <h1 className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
+        {greet}, {first}
+      </h1>
 
-      {/* Open enrollment banner */}
+      {/* Open enrollment — only when active */}
       {openEnrollment && (() => {
         const daysLeft = Math.max(0, Math.ceil((+new Date(openEnrollment.ends_at) - +now) / 86400000));
         return (
-          <Link to="/employee/benefits" className="block">
-            <div className="flex items-center gap-3 rounded-2xl border border-violet-200 bg-gradient-to-r from-violet-50 to-fuchsia-50 p-4 shadow-soft transition hover:shadow-md">
-              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-violet-600 text-white">
-                <HeartHandshake className="h-5 w-5" />
-              </span>
-              <div className="min-w-0 flex-1">
-                <div className="font-bold text-violet-900">{openEnrollment.name} is open</div>
-                <div className="text-xs text-violet-800">
-                  {daysLeft === 0 ? "Closes today" : daysLeft === 1 ? "Closes tomorrow" : `${daysLeft} days left`} · coverage starts {new Date(openEnrollment.coverage_effective_date + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-                </div>
-              </div>
-              <ChevronRight className="h-5 w-5 text-violet-700" />
+          <Link to="/employee/benefits" className="flex items-center gap-3 rounded-2xl border border-violet-200 bg-violet-50 p-3.5 shadow-soft">
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-violet-600 text-white">
+              <HeartHandshake className="h-4 w-4" />
+            </span>
+            <div className="min-w-0 flex-1">
+              <div className="truncate text-sm font-bold text-violet-900">{openEnrollment.name} is open</div>
+              <div className="text-xs text-violet-800">{daysLeft === 0 ? "Closes today" : daysLeft === 1 ? "Closes tomorrow" : `${daysLeft} days left`}</div>
             </div>
+            <ChevronRight className="h-4 w-4 text-violet-700" />
           </Link>
         );
       })()}
 
-      {/* Hero payday card */}
-      <div className="relative overflow-hidden rounded-3xl border border-border p-6 sm:p-8 shadow-soft"
-           style={{ background: "var(--gradient-primary, linear-gradient(135deg, oklch(0.94 0.05 250), oklch(0.96 0.03 280)))" }}>
-        <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-white/30 blur-3xl" />
-        <div className="relative grid gap-6 sm:grid-cols-2">
-          <div>
-            <div className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-700/70">Next Payday</div>
-            <div className="mt-2 font-display text-3xl sm:text-4xl font-extrabold tabular text-slate-900">
-              {nextPayPretty}
-            </div>
-            <div className="mt-1 text-sm text-slate-600">
-              {payDays === null ? "—" : payDays === 0 ? "Today" : payDays === 1 ? "Tomorrow" : `in ${payDays} days`}
-            </div>
-          </div>
-          <div className="sm:border-l sm:border-white/40 sm:pl-6">
-            <div className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-700/70">Last Paycheck</div>
-            <div className="mt-2 font-display text-3xl sm:text-4xl font-extrabold tabular text-slate-900">
-              {lastNet != null ? fmt(lastNet) : "—"}
-            </div>
-            <Link to="/employee/paystubs" className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline">
-              View pay stub →
-            </Link>
-          </div>
+      {/* PRIMARY ACTION: Clock in/out */}
+      <div className="rounded-3xl border border-border bg-card p-5 shadow-soft">
+        <div className="flex items-baseline justify-between">
+          <div className="font-display text-3xl font-extrabold tabular text-slate-900">{timeStr}</div>
+          {todayWorkedMs > 0 && (
+            <div className="text-xs font-semibold text-slate-500">{elapsedFmt(todayWorkedMs)} today</div>
+          )}
         </div>
-      </div>
-
-      {/* Pay On-Demand */}
-      <Link
-        to="/employee/pay-on-demand"
-        className="group flex items-center gap-4 rounded-3xl border border-border bg-card p-5 sm:p-6 shadow-soft transition hover:border-primary/40 hover:shadow-md active:translate-y-px"
-      >
-        <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-amber-50 text-amber-700">
-          <Zap className="h-6 w-6" />
-        </span>
-        <div className="min-w-0 flex-1">
-          <div className="font-display text-base font-bold text-slate-900">Pay On-Demand</div>
-          <div className="mt-0.5 text-sm text-slate-500">
-            Available now: <span className="font-display font-extrabold tabular text-slate-900">{fmt(podAvailable)}</span>
-          </div>
-        </div>
-        <span className="hidden sm:inline-flex items-center rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-soft">
-          Get Paid Early
-        </span>
-        <ChevronRight className="h-5 w-5 shrink-0 text-slate-300 transition group-hover:text-slate-500 sm:hidden" />
-      </Link>
-
-      {/* Clock In/Out widget */}
-      <div className="rounded-3xl border border-border bg-card p-6 shadow-soft text-center">
-        <div className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Time clock</div>
-        <div className="mt-2 font-display text-4xl sm:text-5xl font-extrabold tabular text-slate-900">{timeStr}</div>
-        <div className="mt-1 text-sm text-slate-500">{todayStr}</div>
-
         {clockedIn ? (
           <>
             <Button
               onClick={() => punch("out")}
               disabled={busy}
-              className="mt-5 h-[120px] sm:h-[200px] w-full rounded-3xl bg-rose-600 text-2xl sm:text-3xl font-extrabold text-white shadow-lg shadow-rose-600/25 transition active:scale-[0.99] hover:bg-rose-700"
+              className="mt-4 h-20 w-full rounded-2xl bg-rose-600 text-xl font-extrabold text-white shadow-lg shadow-rose-600/25 hover:bg-rose-700"
             >
-              <Square className="mr-3 h-7 w-7" /> Clock Out
+              <Square className="mr-2 h-6 w-6" /> Clock Out
             </Button>
-            <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-800 ring-1 ring-emerald-200">
+            <div className="mt-2.5 flex items-center justify-center gap-2 text-xs font-semibold text-emerald-700">
               <span className="relative inline-flex h-2 w-2">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-70" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
               </span>
-              Clocked in for {elapsedFmt(clockedInSince)}
+              On the clock · {elapsedFmt(clockedInSince)}
             </div>
           </>
         ) : (
-          <>
-            <Button
-              onClick={() => punch("in")}
-              disabled={busy}
-              className="mt-5 h-[120px] sm:h-[200px] w-full rounded-3xl bg-emerald-600 text-2xl sm:text-3xl font-extrabold text-white shadow-lg shadow-emerald-600/25 transition active:scale-[0.99] hover:bg-emerald-700"
-            >
-              <Play className="mr-3 h-7 w-7" /> Clock In
-            </Button>
-            {todayWorkedMs > 0 && (
-              <div className="mt-3 text-sm text-slate-500">You worked {elapsedFmt(todayWorkedMs)} today.</div>
-            )}
-          </>
+          <Button
+            onClick={() => punch("in")}
+            disabled={busy}
+            className="mt-4 h-20 w-full rounded-2xl bg-emerald-600 text-xl font-extrabold text-white shadow-lg shadow-emerald-600/25 hover:bg-emerald-700"
+          >
+            <Play className="mr-2 h-6 w-6" /> Clock In
+          </Button>
         )}
       </div>
 
-      {/* PTO balance bars */}
-      <div className="rounded-3xl border border-border bg-card p-6 shadow-soft">
-        <div className="flex items-end justify-between gap-3">
-          <div>
-            <div className="font-display text-lg font-bold text-slate-900">Time off available</div>
-            <p className="text-sm text-slate-500">Hours remaining and used this year</p>
+      {/* Compact 3-stat strip */}
+      <div className="grid grid-cols-3 gap-2">
+        <Link to="/employee/paystubs" className="rounded-2xl border border-border bg-card p-3.5 shadow-soft active:translate-y-px">
+          <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">Last pay</div>
+          <div className="mt-1 font-display text-base sm:text-lg font-extrabold tabular text-slate-900 truncate">
+            {lastNet != null ? fmt(lastNet) : "—"}
           </div>
-          <Link to="/employee/pto" className="text-sm font-semibold text-primary hover:underline">
-            Request →
-          </Link>
-        </div>
-        {(() => {
-          const balanceH = Number((employee as any).pto_balance_hours ?? 0);
-          const usedTotal = (Object.keys(PTO_TYPES) as PtoKind[]).reduce((s, k) => s + ptoUsedByType[k], 0);
-          const earnedTotal = balanceH + usedTotal; // best-effort yearly total
-          return (
-            <div className="mt-5 grid gap-5 sm:grid-cols-3">
-              {(Object.keys(PTO_TYPES) as PtoKind[]).map((k) => {
-                const t = PTO_TYPES[k];
-                const usedH = ptoUsedByType[k];
-                // Allocate the live balance proportionally by usage; if no usage yet, split evenly.
-                const share = usedTotal > 0 ? usedH / usedTotal : 1 / 3;
-                const totalH = Math.max(usedH, Math.round(earnedTotal * share));
-                const remH = Math.max(0, totalH - usedH);
-                const pct = totalH > 0 ? Math.min(100, Math.round((remH / totalH) * 100)) : 0;
-                return (
-                  <div key={k}>
-                    <div className="flex items-baseline justify-between">
-                      <span className="text-sm font-semibold capitalize text-slate-700">{k}</span>
-                      <span className="font-display text-base font-bold text-slate-900">{remH.toFixed(0)}h</span>
-                    </div>
-                    <div className="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-slate-100">
-                      <div className={`h-full rounded-full ${t.color}`} style={{ width: `${pct}%` }} />
-                    </div>
-                    <div className="mt-1.5 text-xs text-slate-500">{usedH.toFixed(0)}h used</div>
-                  </div>
-                );
-              })}
-            </div>
-          );
-        })()}
-        <div className="mt-4 flex items-center justify-between rounded-xl bg-surface px-4 py-3 text-xs">
-          <span className="text-slate-500">Total bank balance</span>
-          <span className="font-display font-extrabold tabular text-slate-900">
-            {Number((employee as any).pto_balance_hours ?? 0).toFixed(1)} hours
-          </span>
-        </div>
-        {accrualPolicy && (
-          <div className="mt-2 flex items-center justify-between rounded-xl border border-emerald-100 bg-emerald-50/60 px-4 py-2.5 text-xs">
-            <span className="text-emerald-800">
-              <span className="font-semibold">{accrualPolicy.name}:</span> accrues{" "}
-              {Number(accrualPolicy.hours_per_period).toFixed(2)}h per {String(accrualPolicy.frequency).replace(/_/g, " ")}
-            </span>
-            {accrualPolicy.max_balance_hours != null && (
-              <span className="font-semibold text-emerald-900">cap {Number(accrualPolicy.max_balance_hours).toFixed(0)}h</span>
-            )}
+        </Link>
+        <Link to="/employee/paystubs" className="rounded-2xl border border-border bg-card p-3.5 shadow-soft active:translate-y-px">
+          <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">Next pay</div>
+          <div className="mt-1 font-display text-base sm:text-lg font-extrabold text-slate-900 truncate">
+            {payDays === null ? "—" : payDays === 0 ? "Today" : payDays === 1 ? "Tomorrow" : `${payDays}d`}
           </div>
-        )}
+        </Link>
+        <Link to="/employee/pto" className="rounded-2xl border border-border bg-card p-3.5 shadow-soft active:translate-y-px">
+          <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">PTO</div>
+          <div className="mt-1 font-display text-base sm:text-lg font-extrabold tabular text-slate-900">
+            {ptoBalH.toFixed(0)}h
+          </div>
+        </Link>
       </div>
 
-
-      {/* More tools */}
-      <div>
-        <div className="mb-3 px-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">More</div>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          {[
-            { to: "/employee/schedule", label: "My schedule", desc: "Shifts & swaps", icon: CalendarDays, tone: "bg-violet-50 text-violet-700" },
-            { to: "/employee/punch", label: "Clock in / out", desc: "Punches & geofence", icon: MapPin, tone: "bg-emerald-50 text-emerald-700" },
-            { to: "/employee/documents", label: "Documents", desc: "Handbook & forms", icon: FolderOpen, tone: "bg-sky-50 text-sky-700" },
-          ].map((q) => (
-            <Link
-              key={q.to}
-              to={q.to}
-              className="group flex items-center gap-3 rounded-2xl border border-border bg-card p-4 shadow-soft transition hover:border-primary/40 hover:shadow-md active:translate-y-px"
-            >
-              <span className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl ${q.tone}`}>
-                <q.icon className="h-5 w-5" />
-              </span>
-              <span className="min-w-0 flex-1">
-                <span className="block truncate text-sm font-bold text-slate-900">{q.label}</span>
-                <span className="block truncate text-[12px] text-slate-500">{q.desc}</span>
-              </span>
-              <ChevronRight className="h-4 w-4 shrink-0 text-slate-300 transition group-hover:text-slate-500" />
-            </Link>
-          ))}
-        </div>
-      </div>
-
-      {/* Recent activity */}
-      <div className="rounded-3xl border border-border bg-card shadow-soft">
-        <div className="border-b border-border px-6 py-4">
-          <div className="font-display text-lg font-bold text-slate-900">Recent activity</div>
-        </div>
-        {activity.length === 0 ? (
-          <div className="p-6 text-sm text-slate-500">Nothing yet — check back after your first paycheck.</div>
-        ) : (
+      {/* Recent activity (compact) */}
+      {activity.length > 0 && (
+        <div className="rounded-2xl border border-border bg-card shadow-soft">
+          <div className="px-4 pt-3.5 pb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Recent</div>
           <ul className="divide-y divide-border">
             {activity.map((a, i) => {
               const Icon = a.icon === "pay" ? Wallet : a.icon === "pto" ? CalendarDays : FileText;
               const tone = a.icon === "pay" ? "bg-emerald-50 text-emerald-700" : a.icon === "pto" ? "bg-amber-50 text-amber-700" : "bg-sky-50 text-sky-700";
               return (
-                <li key={i} className="flex items-center gap-3 px-6 py-4">
-                  <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-full ${tone}`}>
-                    <Icon className="h-4 w-4" />
+                <li key={i} className="flex items-center gap-3 px-4 py-2.5">
+                  <span className={`grid h-7 w-7 shrink-0 place-items-center rounded-full ${tone}`}>
+                    <Icon className="h-3.5 w-3.5" />
                   </span>
                   <div className="min-w-0 flex-1">
-                    <div className="truncate text-sm font-semibold text-slate-900">{a.text}</div>
-                    <div className="text-xs text-slate-500">{new Date(a.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</div>
+                    <div className="truncate text-sm text-slate-900">{a.text}</div>
+                    <div className="text-[11px] text-slate-500">{new Date(a.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</div>
                   </div>
-                  {a.icon === "pto" && <CheckCircle2 className="h-4 w-4 text-emerald-500" />}
-                  {a.icon === "pay" && <ClockIcon className="h-4 w-4 text-slate-300" />}
                 </li>
               );
             })}
           </ul>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
