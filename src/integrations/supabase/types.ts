@@ -5771,6 +5771,282 @@ export type Database = {
           },
         ]
       }
+      tax_year_corrections: {
+        Row: {
+          changes: Json
+          company_id: string
+          created_at: string
+          created_by: string | null
+          id: string
+          kind: string
+          parent_form_id: string
+          reason: string | null
+          reissued_at: string
+          reissued_form_id: string | null
+        }
+        Insert: {
+          changes?: Json
+          company_id: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          kind: string
+          parent_form_id: string
+          reason?: string | null
+          reissued_at?: string
+          reissued_form_id?: string | null
+        }
+        Update: {
+          changes?: Json
+          company_id?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          kind?: string
+          parent_form_id?: string
+          reason?: string | null
+          reissued_at?: string
+          reissued_form_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tax_year_corrections_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tax_year_corrections_parent_form_id_fkey"
+            columns: ["parent_form_id"]
+            isOneToOne: false
+            referencedRelation: "tax_year_forms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tax_year_corrections_reissued_form_id_fkey"
+            columns: ["reissued_form_id"]
+            isOneToOne: false
+            referencedRelation: "tax_year_forms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tax_year_forms: {
+        Row: {
+          box_1_wages: number
+          box_10_dep_care: number
+          box_11_nonqual: number
+          box_12_codes: Json
+          box_13_flags: Json
+          box_14_other: Json
+          box_2_fed_tax: number
+          box_3_ss_wages: number
+          box_4_ss_tax: number
+          box_5_medicare_wages: number
+          box_6_medicare_tax: number
+          company_id: string
+          contractor_id: string | null
+          created_at: string
+          employee_id: string | null
+          generated_at: string
+          id: string
+          kind: Database["public"]["Enums"]["tax_year_run_kind"]
+          local_lines: Json
+          nec_box_1_nonemployee_comp: number
+          nec_box_4_fed_tax: number
+          pdf_storage_path: string | null
+          recipient_address: Json | null
+          recipient_consent_at: string | null
+          recipient_consent_electronic: boolean
+          recipient_name: string
+          recipient_tin_last4: string | null
+          run_id: string
+          state_lines: Json
+          superseded_by: string | null
+          tax_year: number
+          updated_at: string
+        }
+        Insert: {
+          box_1_wages?: number
+          box_10_dep_care?: number
+          box_11_nonqual?: number
+          box_12_codes?: Json
+          box_13_flags?: Json
+          box_14_other?: Json
+          box_2_fed_tax?: number
+          box_3_ss_wages?: number
+          box_4_ss_tax?: number
+          box_5_medicare_wages?: number
+          box_6_medicare_tax?: number
+          company_id: string
+          contractor_id?: string | null
+          created_at?: string
+          employee_id?: string | null
+          generated_at?: string
+          id?: string
+          kind: Database["public"]["Enums"]["tax_year_run_kind"]
+          local_lines?: Json
+          nec_box_1_nonemployee_comp?: number
+          nec_box_4_fed_tax?: number
+          pdf_storage_path?: string | null
+          recipient_address?: Json | null
+          recipient_consent_at?: string | null
+          recipient_consent_electronic?: boolean
+          recipient_name: string
+          recipient_tin_last4?: string | null
+          run_id: string
+          state_lines?: Json
+          superseded_by?: string | null
+          tax_year: number
+          updated_at?: string
+        }
+        Update: {
+          box_1_wages?: number
+          box_10_dep_care?: number
+          box_11_nonqual?: number
+          box_12_codes?: Json
+          box_13_flags?: Json
+          box_14_other?: Json
+          box_2_fed_tax?: number
+          box_3_ss_wages?: number
+          box_4_ss_tax?: number
+          box_5_medicare_wages?: number
+          box_6_medicare_tax?: number
+          company_id?: string
+          contractor_id?: string | null
+          created_at?: string
+          employee_id?: string | null
+          generated_at?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["tax_year_run_kind"]
+          local_lines?: Json
+          nec_box_1_nonemployee_comp?: number
+          nec_box_4_fed_tax?: number
+          pdf_storage_path?: string | null
+          recipient_address?: Json | null
+          recipient_consent_at?: string | null
+          recipient_consent_electronic?: boolean
+          recipient_name?: string
+          recipient_tin_last4?: string | null
+          run_id?: string
+          state_lines?: Json
+          superseded_by?: string | null
+          tax_year?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tax_year_forms_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tax_year_forms_contractor_id_fkey"
+            columns: ["contractor_id"]
+            isOneToOne: false
+            referencedRelation: "contractors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tax_year_forms_contractor_id_fkey"
+            columns: ["contractor_id"]
+            isOneToOne: false
+            referencedRelation: "form_1099_annual_summary"
+            referencedColumns: ["contractor_id"]
+          },
+          {
+            foreignKeyName: "tax_year_forms_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "tax_year_forms_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tax_year_forms_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "tax_year_forms_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "tax_year_runs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tax_year_forms_superseded_by_fkey"
+            columns: ["superseded_by"]
+            isOneToOne: false
+            referencedRelation: "tax_year_forms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tax_year_runs: {
+        Row: {
+          company_id: string
+          created_at: string
+          created_by: string | null
+          filed_at: string | null
+          filing_ref: string | null
+          generated_at: string | null
+          id: string
+          kind: Database["public"]["Enums"]["tax_year_run_kind"]
+          status: Database["public"]["Enums"]["tax_year_run_status"]
+          tax_year: number
+          totals: Json
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          created_by?: string | null
+          filed_at?: string | null
+          filing_ref?: string | null
+          generated_at?: string | null
+          id?: string
+          kind: Database["public"]["Enums"]["tax_year_run_kind"]
+          status?: Database["public"]["Enums"]["tax_year_run_status"]
+          tax_year: number
+          totals?: Json
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          created_by?: string | null
+          filed_at?: string | null
+          filing_ref?: string | null
+          generated_at?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["tax_year_run_kind"]
+          status?: Database["public"]["Enums"]["tax_year_run_status"]
+          tax_year?: number
+          totals?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tax_year_runs_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       team_members: {
         Row: {
           company_id: string
@@ -6791,6 +7067,8 @@ export type Database = {
         | "acknowledged"
       shift_status: "draft" | "published" | "cancelled"
       swap_request_status: "pending" | "approved" | "denied" | "cancelled"
+      tax_year_run_kind: "w2" | "1099nec"
+      tax_year_run_status: "draft" | "employee_preview" | "filed" | "corrected"
       timesheet_status:
         | "open"
         | "submitted"
@@ -7087,6 +7365,8 @@ export const Constants = {
       ],
       shift_status: ["draft", "published", "cancelled"],
       swap_request_status: ["pending", "approved", "denied", "cancelled"],
+      tax_year_run_kind: ["w2", "1099nec"],
+      tax_year_run_status: ["draft", "employee_preview", "filed", "corrected"],
       timesheet_status: ["open", "submitted", "approved", "rejected", "locked"],
     },
   },
