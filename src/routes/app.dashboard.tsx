@@ -435,11 +435,6 @@ function Dashboard() {
                     </div>
                     <div className="flex items-center gap-3">
                       <span className="text-[15px] font-bold tabular-nums text-foreground">{fmtUSD(Number(r.net_total ?? 0))}</span>
-                      <div className="hidden md:flex items-center gap-1 text-slate-400">
-                        <button className="grid h-7 w-7 place-items-center rounded-md hover:bg-slate-100 hover:text-foreground" title="Edit"><Pencil className="h-3.5 w-3.5" /></button>
-                        <button className="grid h-7 w-7 place-items-center rounded-md hover:bg-slate-100 hover:text-foreground" title="Note"><StickyNote className="h-3.5 w-3.5" /></button>
-                        <button className="grid h-7 w-7 place-items-center rounded-md hover:bg-slate-100 hover:text-foreground" title="Comment"><MessageSquare className="h-3.5 w-3.5" /></button>
-                      </div>
                     </div>
                   </li>
                 );
