@@ -60,6 +60,7 @@ import { Route as AppPayOnDemandRouteImport } from './routes/app.pay-on-demand'
 import { Route as AppPayHistoryRouteImport } from './routes/app.pay-history'
 import { Route as AppOnboardingTemplatesRouteImport } from './routes/app.onboarding-templates'
 import { Route as AppOnboardingRouteImport } from './routes/app.onboarding'
+import { Route as AppOffboardingRouteImport } from './routes/app.offboarding'
 import { Route as AppNotificationsRouteImport } from './routes/app.notifications'
 import { Route as AppLocationsRouteImport } from './routes/app.locations'
 import { Route as AppLiveMapRouteImport } from './routes/app.live-map'
@@ -342,6 +343,11 @@ const AppOnboardingRoute = AppOnboardingRouteImport.update({
   path: '/onboarding',
   getParentRoute: () => AppRoute,
 } as any)
+const AppOffboardingRoute = AppOffboardingRouteImport.update({
+  id: '/offboarding',
+  path: '/offboarding',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppNotificationsRoute = AppNotificationsRouteImport.update({
   id: '/notifications',
   path: '/notifications',
@@ -510,6 +516,7 @@ export interface FileRoutesByFullPath {
   '/app/live-map': typeof AppLiveMapRoute
   '/app/locations': typeof AppLocationsRoute
   '/app/notifications': typeof AppNotificationsRoute
+  '/app/offboarding': typeof AppOffboardingRoute
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/onboarding-templates': typeof AppOnboardingTemplatesRoute
   '/app/pay-history': typeof AppPayHistoryRoute
@@ -589,6 +596,7 @@ export interface FileRoutesByTo {
   '/app/live-map': typeof AppLiveMapRoute
   '/app/locations': typeof AppLocationsRoute
   '/app/notifications': typeof AppNotificationsRoute
+  '/app/offboarding': typeof AppOffboardingRoute
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/onboarding-templates': typeof AppOnboardingTemplatesRoute
   '/app/pay-history': typeof AppPayHistoryRoute
@@ -668,6 +676,7 @@ export interface FileRoutesById {
   '/app/live-map': typeof AppLiveMapRoute
   '/app/locations': typeof AppLocationsRoute
   '/app/notifications': typeof AppNotificationsRoute
+  '/app/offboarding': typeof AppOffboardingRoute
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/onboarding-templates': typeof AppOnboardingTemplatesRoute
   '/app/pay-history': typeof AppPayHistoryRoute
@@ -749,6 +758,7 @@ export interface FileRouteTypes {
     | '/app/live-map'
     | '/app/locations'
     | '/app/notifications'
+    | '/app/offboarding'
     | '/app/onboarding'
     | '/app/onboarding-templates'
     | '/app/pay-history'
@@ -828,6 +838,7 @@ export interface FileRouteTypes {
     | '/app/live-map'
     | '/app/locations'
     | '/app/notifications'
+    | '/app/offboarding'
     | '/app/onboarding'
     | '/app/onboarding-templates'
     | '/app/pay-history'
@@ -906,6 +917,7 @@ export interface FileRouteTypes {
     | '/app/live-map'
     | '/app/locations'
     | '/app/notifications'
+    | '/app/offboarding'
     | '/app/onboarding'
     | '/app/onboarding-templates'
     | '/app/pay-history'
@@ -1325,6 +1337,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppOnboardingRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/offboarding': {
+      id: '/app/offboarding'
+      path: '/offboarding'
+      fullPath: '/app/offboarding'
+      preLoaderRoute: typeof AppOffboardingRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/notifications': {
       id: '/app/notifications'
       path: '/notifications'
@@ -1560,6 +1579,7 @@ interface AppRouteChildren {
   AppLiveMapRoute: typeof AppLiveMapRoute
   AppLocationsRoute: typeof AppLocationsRoute
   AppNotificationsRoute: typeof AppNotificationsRoute
+  AppOffboardingRoute: typeof AppOffboardingRoute
   AppOnboardingRoute: typeof AppOnboardingRoute
   AppOnboardingTemplatesRoute: typeof AppOnboardingTemplatesRoute
   AppPayHistoryRoute: typeof AppPayHistoryRoute
@@ -1608,6 +1628,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppLiveMapRoute: AppLiveMapRoute,
   AppLocationsRoute: AppLocationsRoute,
   AppNotificationsRoute: AppNotificationsRoute,
+  AppOffboardingRoute: AppOffboardingRoute,
   AppOnboardingRoute: AppOnboardingRoute,
   AppOnboardingTemplatesRoute: AppOnboardingTemplatesRoute,
   AppPayHistoryRoute: AppPayHistoryRoute,
