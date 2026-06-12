@@ -74,6 +74,7 @@ const PAGE_TITLES: Record<string, string> = {
 
 export function EmployeeShell() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const getIdentity = useServerFn(getEmployeePortalIdentity);
   const path = useRouterState({ select: (s) => s.location.pathname });
   const [checking, setChecking] = useState(true);
