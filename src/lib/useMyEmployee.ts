@@ -68,5 +68,21 @@ export function useMyEmployee() {
     };
   }, [refresh]);
 
+  // Realtime: when admin updates this employee row, pick it up automatically.
+  useEffect(() => {
+    if (!employee?.id) return;
+    const ch = supabase
+      .channel(`me-employee-${employee.id}`)
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "employees", filter: `id=eq.${employee.id}` },
+        (payload) => {
+          setEmployee((prev) => (prev ? { ...prev, ...(payload.new as EmployeeRecord) } : prev));
+        }
+      )
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [employee?.id]);
+
   return { employee, loading, reload: () => setRefresh((r) => r + 1) };
 }
