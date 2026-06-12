@@ -337,7 +337,6 @@ function Dashboard() {
             </ul>
           </div>
         </div>
-        </div>
 
         {/* Attendance */}
         <div className="rounded-xl border border-border bg-white p-6 shadow-soft">
