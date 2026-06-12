@@ -206,34 +206,30 @@ function TimePage() {
 
   const pendingPto = pto.filter((p) => p.status === "pending");
 
-  const chips = [
-    { label: "Total hours", value: totals.total.toFixed(1) },
-    { label: "Regular", value: totals.regular.toFixed(1) },
-    { label: "Overtime", value: totals.ot.toFixed(1), tone: totals.ot > 0 ? "amber" : undefined as any },
-    { label: "Pending PTO", value: String(pendingPto.length), tone: pendingPto.length > 0 ? "amber" : undefined as any },
-    { label: "Active people", value: String(emps.length) },
-  ];
+
+
 
   return (
     <div className="p-6 md:p-10 space-y-8 unit-in">
-      <header className="flex flex-wrap items-end justify-between gap-4">
-        <div className="space-y-2">
-          <div className="flex items-center gap-3">
-            <h1 className="font-display text-[40px] leading-none font-extrabold tracking-tight text-slate-900">Time</h1>
-            <span className="inline-flex items-center rounded-full border border-border bg-white px-2.5 py-1 text-xs font-semibold text-slate-600 unit-num">{fmtRange(weekStart, weekEnd)}</span>
-          </div>
-          <p className="text-[15px] text-slate-500">Timesheets, approvals, PTO, and the company holiday calendar.</p>
+      <header className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-3 min-w-0">
+          <h1 className="font-display text-2xl sm:text-3xl leading-none font-extrabold tracking-tight text-slate-900">Time</h1>
+          <span className="inline-flex items-center rounded-full border border-border bg-white px-2.5 py-1 text-xs font-semibold text-slate-600 unit-num">{fmtRange(weekStart, weekEnd)}</span>
+          <span className="inline-flex items-center rounded-full bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-600 ring-1 ring-slate-200 tabular-nums">
+            {totals.total.toFixed(1)}h
+          </span>
+          {totals.ot > 0 && (
+            <span className="inline-flex items-center rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700 ring-1 ring-amber-200 tabular-nums">
+              {totals.ot.toFixed(1)}h OT
+            </span>
+          )}
+          {pendingPto.length > 0 && (
+            <span className="inline-flex items-center rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700 ring-1 ring-amber-200 tabular-nums">
+              {pendingPto.length} PTO pending
+            </span>
+          )}
         </div>
       </header>
-
-      <div className="flex flex-wrap gap-2">
-        {chips.map((c) => (
-          <div key={c.label} className={`inline-flex items-baseline gap-2 rounded-full border px-3.5 py-1.5 text-sm ${c.tone === "amber" ? "border-amber-200 bg-amber-50" : "border-border bg-white"}`}>
-            <span className="text-slate-500">{c.label}</span>
-            <span className={`font-semibold unit-num ${c.tone === "amber" ? "text-amber-700" : "text-slate-900"}`}>{c.value}</span>
-          </div>
-        ))}
-      </div>
 
       <Tabs defaultValue="timesheet">
         <TabsList className="grid w-full grid-cols-4 max-w-xl bg-surface rounded-xl p-1">

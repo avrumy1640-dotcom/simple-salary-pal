@@ -145,9 +145,13 @@ function ApprovalsInbox() {
 
   return (
     <div className="space-y-6 p-6">
-      <header>
-        <h1 className="text-2xl font-bold">Approvals</h1>
-        <p className="text-sm text-muted-foreground">Review and decide on pending requests from your team.</p>
+      <header className="flex items-center gap-3">
+        <h1 className="text-2xl font-bold tracking-tight">Approvals</h1>
+        {(counts.pto + counts.expense + counts.swap) > 0 && (
+          <span className="inline-flex items-center rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700 ring-1 ring-amber-200 tabular-nums">
+            {counts.pto + counts.expense + counts.swap} pending
+          </span>
+        )}
       </header>
 
       <div className="flex flex-wrap gap-2 border-b">

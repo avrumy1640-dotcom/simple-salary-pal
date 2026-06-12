@@ -232,33 +232,24 @@ function EmployeesPage() {
   return (
     <div className="space-y-8 unit-scope unit-in">
       {/* HEADER */}
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div className="space-y-2">
-          <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="font-display text-4xl sm:text-5xl font-semibold tracking-tight text-slate-900">Employees</h1>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-sm font-semibold text-primary ring-1 ring-primary/20">
-              <span className="tabular-nums">{items.length}</span>
-              {items.length === 1 ? "employee" : "employees"}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-3 min-w-0">
+          <h1 className="font-display text-2xl sm:text-3xl font-semibold tracking-tight text-slate-900">Employees</h1>
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary ring-1 ring-primary/20">
+            <span className="tabular-nums">{items.length}</span> total
+          </span>
+          {totalActive > 0 && (
+            <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-200 tabular-nums">
+              {totalActive} active
             </span>
-          </div>
-          <p className="text-base text-slate-500">Manage your team — contact, pay, and tax setup in one place.</p>
+          )}
         </div>
         <Button
           onClick={() => setWizardOpen(true)}
-          size="lg"
-          className="h-12 gap-2 rounded-full bg-foreground px-6 text-base font-semibold text-background hover:bg-foreground/90"
+          className="h-10 gap-2 rounded-full bg-foreground px-4 text-sm font-semibold text-background hover:bg-foreground/90"
         >
-          <UserPlus className="h-5 w-5" /> Add Employee
+          <UserPlus className="h-4 w-4" /> Add Employee
         </Button>
-      </div>
-
-      {/* STAT CHIPS */}
-      <div className="flex flex-wrap gap-2">
-        <StatChip label="Active" value={totalActive} tone="active" />
-        <StatChip label="Inactive" value={totalInactive} tone="muted" />
-        <StatChip label="W-2" value={totalW2} tone="accent" />
-        <StatChip label="1099" value={total1099} tone="accent" />
-        <StatChip label="New this month" value={newThisMonth} tone="amber" />
       </div>
 
       {/* SEARCH + FILTERS */}
