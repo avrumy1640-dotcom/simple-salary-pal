@@ -41,6 +41,7 @@ import { Route as EmployeeBenefitsRouteImport } from './routes/employee.benefits
 import { Route as AppUsersRouteImport } from './routes/app.users'
 import { Route as AppTrackingRouteImport } from './routes/app.tracking'
 import { Route as AppTimeRouteImport } from './routes/app.time'
+import { Route as AppTeamsRouteImport } from './routes/app.teams'
 import { Route as AppTaxesRouteImport } from './routes/app.taxes'
 import { Route as AppTaxFilingRouteImport } from './routes/app.tax-filing'
 import { Route as AppShiftSwapsRouteImport } from './routes/app.shift-swaps'
@@ -244,6 +245,11 @@ const AppTrackingRoute = AppTrackingRouteImport.update({
 const AppTimeRoute = AppTimeRouteImport.update({
   id: '/time',
   path: '/time',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTeamsRoute = AppTeamsRouteImport.update({
+  id: '/teams',
+  path: '/teams',
   getParentRoute: () => AppRoute,
 } as any)
 const AppTaxesRoute = AppTaxesRouteImport.update({
@@ -522,6 +528,7 @@ export interface FileRoutesByFullPath {
   '/app/shift-swaps': typeof AppShiftSwapsRoute
   '/app/tax-filing': typeof AppTaxFilingRoute
   '/app/taxes': typeof AppTaxesRoute
+  '/app/teams': typeof AppTeamsRoute
   '/app/time': typeof AppTimeRoute
   '/app/tracking': typeof AppTrackingRoute
   '/app/users': typeof AppUsersRoute
@@ -599,6 +606,7 @@ export interface FileRoutesByTo {
   '/app/shift-swaps': typeof AppShiftSwapsRoute
   '/app/tax-filing': typeof AppTaxFilingRoute
   '/app/taxes': typeof AppTaxesRoute
+  '/app/teams': typeof AppTeamsRoute
   '/app/time': typeof AppTimeRoute
   '/app/tracking': typeof AppTrackingRoute
   '/app/users': typeof AppUsersRoute
@@ -678,6 +686,7 @@ export interface FileRoutesById {
   '/app/shift-swaps': typeof AppShiftSwapsRoute
   '/app/tax-filing': typeof AppTaxFilingRoute
   '/app/taxes': typeof AppTaxesRoute
+  '/app/teams': typeof AppTeamsRoute
   '/app/time': typeof AppTimeRoute
   '/app/tracking': typeof AppTrackingRoute
   '/app/users': typeof AppUsersRoute
@@ -758,6 +767,7 @@ export interface FileRouteTypes {
     | '/app/shift-swaps'
     | '/app/tax-filing'
     | '/app/taxes'
+    | '/app/teams'
     | '/app/time'
     | '/app/tracking'
     | '/app/users'
@@ -835,6 +845,7 @@ export interface FileRouteTypes {
     | '/app/shift-swaps'
     | '/app/tax-filing'
     | '/app/taxes'
+    | '/app/teams'
     | '/app/time'
     | '/app/tracking'
     | '/app/users'
@@ -913,6 +924,7 @@ export interface FileRouteTypes {
     | '/app/shift-swaps'
     | '/app/tax-filing'
     | '/app/taxes'
+    | '/app/teams'
     | '/app/time'
     | '/app/tracking'
     | '/app/users'
@@ -1178,6 +1190,13 @@ declare module '@tanstack/react-router' {
       path: '/time'
       fullPath: '/app/time'
       preLoaderRoute: typeof AppTimeRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/teams': {
+      id: '/app/teams'
+      path: '/teams'
+      fullPath: '/app/teams'
+      preLoaderRoute: typeof AppTeamsRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/taxes': {
@@ -1559,6 +1578,7 @@ interface AppRouteChildren {
   AppShiftSwapsRoute: typeof AppShiftSwapsRoute
   AppTaxFilingRoute: typeof AppTaxFilingRoute
   AppTaxesRoute: typeof AppTaxesRoute
+  AppTeamsRoute: typeof AppTeamsRoute
   AppTimeRoute: typeof AppTimeRoute
   AppTrackingRoute: typeof AppTrackingRoute
   AppUsersRoute: typeof AppUsersRoute
@@ -1606,6 +1626,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppShiftSwapsRoute: AppShiftSwapsRoute,
   AppTaxFilingRoute: AppTaxFilingRoute,
   AppTaxesRoute: AppTaxesRoute,
+  AppTeamsRoute: AppTeamsRoute,
   AppTimeRoute: AppTimeRoute,
   AppTrackingRoute: AppTrackingRoute,
   AppUsersRoute: AppUsersRoute,
