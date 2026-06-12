@@ -231,6 +231,12 @@ function Page() {
           </Dialog>
         </div>
       </div>
+
+      {/* New sections: multiple emergency contacts + split direct deposits */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        <EmergencyContactsCard employeeId={employee.id} />
+        <DirectDepositAccountsCard employeeId={employee.id} readOnly />
+      </div>
     </div>
   );
 }
