@@ -1,0 +1,1 @@
+ALTER VIEW public.tax_tables_status SET (security_invoker = true);
