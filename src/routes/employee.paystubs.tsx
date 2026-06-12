@@ -173,6 +173,11 @@ function Page() {
         <p className="mt-1 text-sm sm:text-base text-slate-500">All your paychecks, ready to view or download.</p>
       </div>
 
+      <div className="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50/60 px-5 py-3 text-sm text-amber-800">
+        <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+        <p>Taxes and net pay shown are <strong>estimates for reference only</strong> and not certified by a CPA or tax professional. Please verify all figures with your accountant or tax advisor before filing.</p>
+      </div>
+
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         <div className="rounded-2xl border border-border bg-card p-4 shadow-soft">
           <div className="text-xs uppercase tracking-wider text-slate-500">YTD Net</div>
