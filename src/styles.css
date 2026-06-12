@@ -544,3 +544,32 @@ html { scroll-behavior: smooth; }
   .admin-main .keep-min-width,
   .employee-main .keep-min-width { min-width: revert !important; }
 }
+
+/* ============================================================
+   Employee portal filter polish (mobile-first)
+   - In any toolbar containing both a search input and a dropdown,
+     give the search input full width and let dropdowns wrap below.
+   - Stack 2-col grids when they get too narrow (e.g. dialog forms).
+   ============================================================ */
+@media (max-width: 540px) {
+  /* Search inputs (placeholder begins with "Search") get full width */
+  .employee-main input[placeholder^="Search" i],
+  .employee-main input[type="search"] {
+    width: 100% !important;
+    flex: 1 1 100% !important;
+    min-width: 0 !important;
+  }
+  /* Select triggers inside toolbars wrap to a sensible min */
+  .employee-main [data-radix-select-trigger],
+  .employee-main button[role="combobox"] {
+    min-width: 0 !important;
+    max-width: 100%;
+  }
+}
+@media (max-width: 380px) {
+  /* Stack tight 2-col grids when the screen is very narrow */
+  .employee-main [class*="grid-cols-2"]:not([class*="sm:grid-cols"]):not([class*="md:grid-cols"]) {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
