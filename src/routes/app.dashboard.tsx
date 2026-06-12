@@ -2,9 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  ArrowRight, ArrowUpRight, CheckCircle2, Users, CalendarClock, Clock,
-  AlertTriangle, FileWarning, Wallet, UserPlus, FileText, BarChart3,
-  Cake, PartyPopper, Pencil, MessageSquare, StickyNote,
+  ArrowRight, CheckCircle2, Users, CalendarClock, Clock,
+  FileWarning, Wallet,
+  Cake, PartyPopper,
 } from "lucide-react";
 import { fmtUSD } from "@/lib/payroll";
 import { useCountUp } from "@/hooks/useCountUp";
