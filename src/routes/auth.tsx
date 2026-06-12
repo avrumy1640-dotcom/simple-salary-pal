@@ -243,22 +243,6 @@ function AuthPage() {
   const handleGoogle = () => handleOAuth("google");
   const handleApple = () => handleOAuth("apple");
 
-  async function _unusedHandleGoogle() {
-    setLoading(true);
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: `${window.location.origin}/auth`,
-      extraParams: { prompt: "select_account" },
-    });
-    setLoading(false);
-    if (result.error) { toast.error("Something went wrong. Please try again."); return; }
-    if (result.redirected) return;
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      setEmail(user.email ?? "");
-      setFullName((user.user_metadata?.full_name as string | undefined) ?? (user.user_metadata?.name as string | undefined) ?? "");
-      await routeByCurrentUser(navigate, user.id, setMode, claimAccounts);
-    }
-  }
 
   async function handleSetup(e: React.FormEvent) {
     e.preventDefault();
