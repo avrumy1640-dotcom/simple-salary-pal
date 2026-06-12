@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useMyEmployee } from "@/lib/useMyEmployee";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Download, FileText, Wallet } from "lucide-react";
+import { Download, FileText, Wallet, AlertTriangle } from "lucide-react";
 
 export const Route = createFileRoute("/employee/paystubs")({
   head: () => ({ meta: [{ title: "Pay stubs — Paylo" }] }),
@@ -171,6 +171,11 @@ function Page() {
       <div>
         <h1 className="font-display text-[28px] sm:text-[40px] font-extrabold tracking-tight text-slate-900">Pay Stubs</h1>
         <p className="mt-1 text-sm sm:text-base text-slate-500">All your paychecks, ready to view or download.</p>
+      </div>
+
+      <div className="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50/60 px-5 py-3 text-sm text-amber-800">
+        <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+        <p>Taxes and net pay shown are <strong>estimates for reference only</strong> and not certified by a CPA or tax professional. Please verify all figures with your accountant or tax advisor before filing.</p>
       </div>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">

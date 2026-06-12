@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { fmtUSD } from "@/lib/payroll";
 import { Button } from "@/components/ui/button";
-import { Receipt, Download, Banknote } from "lucide-react";
+import { Receipt, Download, Banknote, AlertTriangle } from "lucide-react";
 import { useCompany } from "@/hooks/useCompany";
 
 export const Route = createFileRoute("/app/paystubs")({
@@ -104,6 +104,11 @@ function PayStubsPage() {
       <div>
         <h1 className="text-3xl font-semibold tracking-tight">Pay stubs & direct deposit</h1>
         <p className="text-sm text-muted-foreground">Download per-employee pay stubs and export the ACH batch for your bank.</p>
+      </div>
+
+      <div className="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50/60 px-5 py-3 text-sm text-amber-800">
+        <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+        <p>Taxes and net pay shown are <strong>estimates for reference only</strong> and not certified by a CPA or tax professional. Please verify all figures with your accountant or tax advisor before filing.</p>
       </div>
 
       <div className="rounded-2xl border bg-card">

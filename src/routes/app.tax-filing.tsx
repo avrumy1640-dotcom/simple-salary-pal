@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { fmtUSD } from "@/lib/payroll";
-import { Landmark, CheckCircle2, AlertCircle, Calendar, Download, FileText, FileCode2, FileSpreadsheet } from "lucide-react";
+import { Landmark, CheckCircle2, AlertCircle, Calendar, Download, FileText, FileCode2, FileSpreadsheet, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
@@ -302,6 +302,11 @@ function TaxFilingPage() {
           <Button className="gap-1.5"><FileText className="h-4 w-4" />File now</Button>
         </div>
       </section>
+
+      <div className="unit-in flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50/60 px-5 py-3 text-sm text-amber-800">
+        <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+        <p>Tax calculations and forms generated here are <strong>estimates for reference only</strong> and not certified by a CPA or tax professional. Please verify all figures with your accountant or tax advisor before filing with the IRS or state agencies.</p>
+      </div>
 
       {/* Compliance hero */}
       <section className="unit-in rounded-2xl border unit-hairline bg-white p-6 shadow-soft">
