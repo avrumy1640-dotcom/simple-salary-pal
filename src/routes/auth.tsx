@@ -224,11 +224,11 @@ function AuthPage() {
     }
   }
 
-  async function handleGoogle() {
+  async function handleOAuth(provider: "google" | "apple") {
     setLoading(true);
-    const result = await lovable.auth.signInWithOAuth("google", {
+    const result = await lovable.auth.signInWithOAuth(provider, {
       redirect_uri: `${window.location.origin}/auth`,
-      extraParams: { prompt: "select_account" },
+      extraParams: provider === "google" ? { prompt: "select_account" } : {},
     });
     setLoading(false);
     if (result.error) { toast.error("Something went wrong. Please try again."); return; }
@@ -240,6 +240,9 @@ function AuthPage() {
       await routeByCurrentUser(navigate, user.id, setMode, claimAccounts);
     }
   }
+  const handleGoogle = () => handleOAuth("google");
+  const handleApple = () => handleOAuth("apple");
+
 
   async function handleSetup(e: React.FormEvent) {
     e.preventDefault();
@@ -288,6 +291,15 @@ function AuthPage() {
                 disabled={loading}
               >
                 Continue with Google
+              </Button>
+              <Button
+                variant="outline"
+                type="button"
+                className="mt-2 w-full border-border bg-card text-foreground hover:bg-muted hover:border-primary/30 transition-all"
+                onClick={handleApple}
+                disabled={loading}
+              >
+                 Continue with Apple
               </Button>
 
               <div className="my-4 flex items-center gap-3 text-xs text-muted-foreground">
