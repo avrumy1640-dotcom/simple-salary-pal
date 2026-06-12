@@ -421,7 +421,7 @@ function EmployeeProfilePage() {
 
         {/* TAX (Phase B multi-state) */}
         <TabsContent value="tax" className="mt-6 space-y-5">
-          <TaxProfileCard employeeId={emp.id} companyId={emp.company_id} canEdit={true} />
+          {emp.company_id && <TaxProfileCard employeeId={emp.id} companyId={emp.company_id} canEdit={true} />}
         </TabsContent>
 
         {/* DOCUMENTS */}
