@@ -5,6 +5,7 @@ import { useMyEmployee } from "@/lib/useMyEmployee";
 import { loadMaps } from "@/components/GoogleMap";
 import { Clock, MapPin, ShieldCheck, ShieldAlert, ShieldOff, RefreshCw, Check } from "lucide-react";
 import { toast } from "sonner";
+import { withOfflineCache } from "@/lib/offlineCache";
 
 export const Route = createFileRoute("/employee/time")({
   head: () => ({ meta: [{ title: "Time clock — Paylo" }] }),
@@ -98,19 +99,29 @@ function Page() {
 
   async function load() {
     if (!employee) return;
-    const [pRes, lRes] = await Promise.all([
-      supabase.from("time_clock_punches")
-        .select("id, punched_at, punch_type, latitude, longitude, address, work_location_id, geofence_ok")
-        .eq("employee_id", employee.id)
-        .order("punched_at", { ascending: false }).limit(20),
-      supabase.from("work_locations")
-        .select("id, name, address, latitude, longitude, geofence_radius_m, geofence_required")
-        .eq("company_id", employee.company_id)
-        .eq("is_active", true)
-        .order("name"),
-    ]);
-    setRecent((pRes.data ?? []) as Punch[]);
-    setLocations((lRes.data ?? []) as WorkLoc[]);
+    const result = await withOfflineCache(`time:${employee.id}`, async () => {
+      const [pRes, lRes] = await Promise.all([
+        supabase.from("time_clock_punches")
+          .select("id, punched_at, punch_type, latitude, longitude, address, work_location_id, geofence_ok")
+          .eq("employee_id", employee.id)
+          .order("punched_at", { ascending: false }).limit(20),
+        supabase.from("work_locations")
+          .select("id, name, address, latitude, longitude, geofence_radius_m, geofence_required")
+          .eq("company_id", employee.company_id)
+          .eq("is_active", true)
+          .order("name"),
+      ]);
+      if (pRes.error) throw pRes.error;
+      if (lRes.error) throw lRes.error;
+      return {
+        punches: (pRes.data ?? []) as Punch[],
+        locations: (lRes.data ?? []) as WorkLoc[],
+      };
+    });
+    if (result.value) {
+      setRecent(result.value.punches);
+      setLocations(result.value.locations);
+    }
   }
   useEffect(() => { load(); }, [employee?.id]);
 

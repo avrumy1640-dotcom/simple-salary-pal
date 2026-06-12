@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useMyEmployee } from "@/lib/useMyEmployee";
 import { useRealtimeRefresh } from "@/lib/useRealtimeRefresh";
+import { withOfflineCache } from "@/lib/offlineCache";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Download, FileText, Wallet, AlertTriangle } from "lucide-react";
@@ -39,16 +40,26 @@ function Page() {
 
   async function load() {
     if (!employee) return;
-    const [{ data }, { data: comp }] = await Promise.all([
-      supabase.from("payroll_items")
-        .select("id, gross_pay, net_pay, federal_tax, state_tax, fica_tax, medicare_tax, regular_hours, overtime_hours, payroll_runs(pay_date, period_start, period_end, status)")
-        .eq("employee_id", employee.id)
-        .order("created_at", { ascending: false })
-        .limit(48),
-      supabase.from("companies").select("legal_name, dba").eq("id", employee.company_id).maybeSingle(),
-    ]);
-    setItems((data ?? []) as unknown as PayItem[]);
-    setCompanyName((comp?.dba || comp?.legal_name) ?? "");
+    const result = await withOfflineCache(`paystubs:${employee.id}`, async () => {
+      const [{ data, error }, { data: comp, error: compErr }] = await Promise.all([
+        supabase.from("payroll_items")
+          .select("id, gross_pay, net_pay, federal_tax, state_tax, fica_tax, medicare_tax, regular_hours, overtime_hours, payroll_runs(pay_date, period_start, period_end, status)")
+          .eq("employee_id", employee.id)
+          .order("created_at", { ascending: false })
+          .limit(48),
+        supabase.from("companies").select("legal_name, dba").eq("id", employee.company_id).maybeSingle(),
+      ]);
+      if (error) throw error;
+      if (compErr) throw compErr;
+      return {
+        items: (data ?? []) as unknown as PayItem[],
+        companyName: (comp?.dba || comp?.legal_name) ?? "",
+      };
+    });
+    if (result.value) {
+      setItems(result.value.items);
+      setCompanyName(result.value.companyName);
+    }
   }
   useEffect(() => { load(); /* eslint-disable-next-line */ }, [employee?.id]);
   useRealtimeRefresh(["payroll_items", "payroll_runs"], load, { companyId: employee?.company_id ?? null });

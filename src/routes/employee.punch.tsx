@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { toast } from "sonner";
 import { useLiveLocationTracking, hasLiveTrackingConsent, setLiveTrackingConsent } from "@/hooks/useLiveLocationTracking";
 import { friendlyGeoError } from "@/lib/geo";
+import { withOfflineCache } from "@/lib/offlineCache";
 
 export const Route = createFileRoute("/employee/punch")({
   head: () => ({ meta: [{ title: "Punch in / out — Paylo" }] }),
@@ -76,21 +77,33 @@ function PunchPage() {
 
   async function load() {
     if (!employee) return;
-    const [r, l, sh] = await Promise.all([
-      supabase.from("time_clock_punches")
-        .select("id, punched_at, punch_type, geofence_ok, geofence_required, work_location_id, shift_id")
-        .eq("employee_id", employee.id).order("punched_at", { ascending: false }).limit(15),
-      supabase.from("work_locations").select("id, name, latitude, longitude, geofence_radius_m, geofence_required")
-        .eq("company_id", employee.company_id).eq("is_active", true).order("name"),
-      supabase.from("shifts").select("id, start_at, end_at, role, location, work_location_id, status")
-        .eq("company_id", employee.company_id).eq("employee_id", employee.id).eq("status", "published")
-        .gte("end_at", new Date(Date.now() - 2 * 3600_000).toISOString())
-        .lte("start_at", new Date(Date.now() + 24 * 3600_000).toISOString())
-        .order("start_at"),
-    ]);
-    setRecent((r.data ?? []) as Punch[]);
-    setLocations((l.data ?? []) as WorkLocation[]);
-    setUpcomingShifts((sh.data ?? []) as Shift[]);
+    const result = await withOfflineCache(`punch:${employee.id}`, async () => {
+      const [r, l, sh] = await Promise.all([
+        supabase.from("time_clock_punches")
+          .select("id, punched_at, punch_type, geofence_ok, geofence_required, work_location_id, shift_id")
+          .eq("employee_id", employee.id).order("punched_at", { ascending: false }).limit(15),
+        supabase.from("work_locations").select("id, name, latitude, longitude, geofence_radius_m, geofence_required")
+          .eq("company_id", employee.company_id).eq("is_active", true).order("name"),
+        supabase.from("shifts").select("id, start_at, end_at, role, location, work_location_id, status")
+          .eq("company_id", employee.company_id).eq("employee_id", employee.id).eq("status", "published")
+          .gte("end_at", new Date(Date.now() - 2 * 3600_000).toISOString())
+          .lte("start_at", new Date(Date.now() + 24 * 3600_000).toISOString())
+          .order("start_at"),
+      ]);
+      if (r.error) throw r.error;
+      if (l.error) throw l.error;
+      if (sh.error) throw sh.error;
+      return {
+        recent: (r.data ?? []) as Punch[],
+        locations: (l.data ?? []) as WorkLocation[],
+        upcomingShifts: (sh.data ?? []) as Shift[],
+      };
+    });
+    if (result.value) {
+      setRecent(result.value.recent);
+      setLocations(result.value.locations);
+      setUpcomingShifts(result.value.upcomingShifts);
+    }
   }
   useEffect(() => { load(); }, [employee?.id]);
 

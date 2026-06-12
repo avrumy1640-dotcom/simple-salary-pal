@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { EmployeeNotificationBanner } from "@/components/EmployeeNotificationBanner";
+import { OfflineBanner } from "@/components/OfflineBanner";
 
 type NavItem = { to: string; label: string; icon: typeof Home };
 type NavGroup = { label: string; items: NavItem[] };
@@ -161,7 +162,9 @@ export function EmployeeShell() {
 
   return (
     <div className="min-h-screen text-foreground bg-surface">
+      <OfflineBanner />
       <EmployeeNotificationBanner />
+
 
       {/* Mobile top bar */}
       <div className="sticky top-0 z-50 flex items-center gap-3 border-b border-border bg-white px-4 pt-[max(env(safe-area-inset-top),0.25rem)] pb-3 md:hidden">
