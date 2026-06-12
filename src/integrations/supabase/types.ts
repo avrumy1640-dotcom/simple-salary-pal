@@ -4559,6 +4559,198 @@ export type Database = {
           },
         ]
       }
+      pii_access_log: {
+        Row: {
+          action: Database["public"]["Enums"]["pii_access_action"]
+          actor_id: string | null
+          company_id: string
+          context: Json | null
+          contractor_id: string | null
+          employee_id: string | null
+          id: string
+          ip_address: string | null
+          kind: Database["public"]["Enums"]["pii_kind"]
+          occurred_at: string
+          reason: string | null
+          success: boolean
+          user_agent: string | null
+        }
+        Insert: {
+          action: Database["public"]["Enums"]["pii_access_action"]
+          actor_id?: string | null
+          company_id: string
+          context?: Json | null
+          contractor_id?: string | null
+          employee_id?: string | null
+          id?: string
+          ip_address?: string | null
+          kind: Database["public"]["Enums"]["pii_kind"]
+          occurred_at?: string
+          reason?: string | null
+          success?: boolean
+          user_agent?: string | null
+        }
+        Update: {
+          action?: Database["public"]["Enums"]["pii_access_action"]
+          actor_id?: string | null
+          company_id?: string
+          context?: Json | null
+          contractor_id?: string | null
+          employee_id?: string | null
+          id?: string
+          ip_address?: string | null
+          kind?: Database["public"]["Enums"]["pii_kind"]
+          occurred_at?: string
+          reason?: string | null
+          success?: boolean
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pii_access_log_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pii_access_log_contractor_id_fkey"
+            columns: ["contractor_id"]
+            isOneToOne: false
+            referencedRelation: "contractors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pii_access_log_contractor_id_fkey"
+            columns: ["contractor_id"]
+            isOneToOne: false
+            referencedRelation: "form_1099_annual_summary"
+            referencedColumns: ["contractor_id"]
+          },
+          {
+            foreignKeyName: "pii_access_log_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "pii_access_log_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pii_access_log_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
+          },
+        ]
+      }
+      pii_secrets: {
+        Row: {
+          auth_tag: string
+          ciphertext: string
+          company_id: string
+          contractor_id: string | null
+          created_at: string
+          created_by: string | null
+          dd_account_id: string | null
+          employee_id: string | null
+          id: string
+          iv: string
+          key_version: number
+          kind: Database["public"]["Enums"]["pii_kind"]
+          last4_hint: string | null
+          updated_at: string
+        }
+        Insert: {
+          auth_tag: string
+          ciphertext: string
+          company_id: string
+          contractor_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          dd_account_id?: string | null
+          employee_id?: string | null
+          id?: string
+          iv: string
+          key_version?: number
+          kind: Database["public"]["Enums"]["pii_kind"]
+          last4_hint?: string | null
+          updated_at?: string
+        }
+        Update: {
+          auth_tag?: string
+          ciphertext?: string
+          company_id?: string
+          contractor_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          dd_account_id?: string | null
+          employee_id?: string | null
+          id?: string
+          iv?: string
+          key_version?: number
+          kind?: Database["public"]["Enums"]["pii_kind"]
+          last4_hint?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pii_secrets_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pii_secrets_contractor_id_fkey"
+            columns: ["contractor_id"]
+            isOneToOne: false
+            referencedRelation: "contractors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pii_secrets_contractor_id_fkey"
+            columns: ["contractor_id"]
+            isOneToOne: false
+            referencedRelation: "form_1099_annual_summary"
+            referencedColumns: ["contractor_id"]
+          },
+          {
+            foreignKeyName: "pii_secrets_dd_account_id_fkey"
+            columns: ["dd_account_id"]
+            isOneToOne: false
+            referencedRelation: "direct_deposit_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pii_secrets_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "pii_secrets_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pii_secrets_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           account_type: string | null
@@ -6068,6 +6260,14 @@ export type Database = {
         | "processed"
         | "reversed"
         | "corrected"
+      pii_access_action: "read" | "write" | "delete" | "attempt_denied"
+      pii_kind:
+        | "ssn"
+        | "bank_account"
+        | "bank_routing"
+        | "tax_id"
+        | "drivers_license"
+        | "passport"
       review_cycle_status: "draft" | "active" | "closed"
       review_status:
         | "not_started"
@@ -6353,6 +6553,15 @@ export const Constants = {
         "processed",
         "reversed",
         "corrected",
+      ],
+      pii_access_action: ["read", "write", "delete", "attempt_denied"],
+      pii_kind: [
+        "ssn",
+        "bank_account",
+        "bank_routing",
+        "tax_id",
+        "drivers_license",
+        "passport",
       ],
       review_cycle_status: ["draft", "active", "closed"],
       review_status: [
