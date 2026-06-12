@@ -1,0 +1,10 @@
+GRANT EXECUTE ON FUNCTION public.current_employee_id(uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.is_company_member(uuid, uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.employee_can_self_enroll(uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.can_access_hr_doc_object(text) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.admin_shares_company_with_path_user(text) TO authenticated;
+REVOKE EXECUTE ON FUNCTION public.current_employee_id(uuid) FROM anon, PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.is_company_member(uuid, uuid) FROM anon, PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.employee_can_self_enroll(uuid) FROM anon, PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.can_access_hr_doc_object(text) FROM anon, PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.admin_shares_company_with_path_user(text) FROM anon, PUBLIC;
