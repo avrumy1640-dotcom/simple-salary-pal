@@ -92,6 +92,8 @@ function PricingPage() {
           <nav className="hidden items-center gap-8 text-sm font-medium text-white md:flex">
             <Link to="/" className="hover:text-foreground">Home</Link>
             <Link to="/pricing" className="text-foreground">Pricing</Link>
+            <Link to="/faq" className="hover:text-foreground">FAQ</Link>
+            <Link to="/about" className="hover:text-foreground">About</Link>
             <Link to="/auth" className="hover:text-foreground">Sign in</Link>
           </nav>
           <Link to="/auth" className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-glow">
@@ -175,6 +177,27 @@ function PricingPage() {
           </Link>
         </div>
       </section>
+
+      {/* FOOTER */}
+      <footer className="border-t border-border/60 py-10">
+        <div className="mx-auto flex max-w-7xl flex-col items-center gap-4 px-5 md:px-8">
+          <div className="flex flex-wrap items-center justify-center gap-6 text-sm font-medium text-muted-foreground">
+            <Link to="/about" className="hover:text-foreground">About</Link>
+            <Link to="/pricing" className="hover:text-foreground">Pricing</Link>
+            <Link to="/faq" className="hover:text-foreground">FAQ</Link>
+            <Link to="/contact" className="hover:text-foreground">Contact</Link>
+            <Link to="/privacy" className="hover:text-foreground">Privacy</Link>
+            <Link to="/terms" className="hover:text-foreground">Terms</Link>
+          </div>
+          <div className="flex items-center gap-2 opacity-60">
+            <div className="grid h-6 w-6 place-items-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">P</div>
+            <span className="text-sm font-semibold tracking-tight">paylo</span>
+          </div>
+          <p className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground">
+            © {new Date().getFullYear()} Paylo · Payroll for small business
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }
