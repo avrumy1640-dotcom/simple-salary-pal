@@ -87,6 +87,7 @@ import { Route as AppAiAssistantRouteImport } from './routes/app.ai-assistant'
 import { Route as AppPayrollIndexRouteImport } from './routes/app.payroll.index'
 import { Route as AppPayrollRunRouteImport } from './routes/app.payroll.run'
 import { Route as AppEmployeesIdRouteImport } from './routes/app.employees.$id'
+import { Route as AuthenticatedAppTaxTablesRouteImport } from './routes/_authenticated.app.tax-tables'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -478,6 +479,12 @@ const AppEmployeesIdRoute = AppEmployeesIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => AppEmployeesRoute,
 } as any)
+const AuthenticatedAppTaxTablesRoute =
+  AuthenticatedAppTaxTablesRouteImport.update({
+    id: '/_authenticated/app/tax-tables',
+    path: '/app/tax-tables',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -555,6 +562,7 @@ export interface FileRoutesByFullPath {
   '/employee/schedule': typeof EmployeeScheduleRoute
   '/employee/time': typeof EmployeeTimeRoute
   '/help/access-denied': typeof HelpAccessDeniedRoute
+  '/app/tax-tables': typeof AuthenticatedAppTaxTablesRoute
   '/app/employees/$id': typeof AppEmployeesIdRoute
   '/app/payroll/run': typeof AppPayrollRunRoute
   '/app/payroll/': typeof AppPayrollIndexRoute
@@ -634,6 +642,7 @@ export interface FileRoutesByTo {
   '/employee/schedule': typeof EmployeeScheduleRoute
   '/employee/time': typeof EmployeeTimeRoute
   '/help/access-denied': typeof HelpAccessDeniedRoute
+  '/app/tax-tables': typeof AuthenticatedAppTaxTablesRoute
   '/app/employees/$id': typeof AppEmployeesIdRoute
   '/app/payroll/run': typeof AppPayrollRunRoute
   '/app/payroll': typeof AppPayrollIndexRoute
@@ -715,6 +724,7 @@ export interface FileRoutesById {
   '/employee/schedule': typeof EmployeeScheduleRoute
   '/employee/time': typeof EmployeeTimeRoute
   '/help/access-denied': typeof HelpAccessDeniedRoute
+  '/_authenticated/app/tax-tables': typeof AuthenticatedAppTaxTablesRoute
   '/app/employees/$id': typeof AppEmployeesIdRoute
   '/app/payroll/run': typeof AppPayrollRunRoute
   '/app/payroll/': typeof AppPayrollIndexRoute
@@ -797,6 +807,7 @@ export interface FileRouteTypes {
     | '/employee/schedule'
     | '/employee/time'
     | '/help/access-denied'
+    | '/app/tax-tables'
     | '/app/employees/$id'
     | '/app/payroll/run'
     | '/app/payroll/'
@@ -876,6 +887,7 @@ export interface FileRouteTypes {
     | '/employee/schedule'
     | '/employee/time'
     | '/help/access-denied'
+    | '/app/tax-tables'
     | '/app/employees/$id'
     | '/app/payroll/run'
     | '/app/payroll'
@@ -956,6 +968,7 @@ export interface FileRouteTypes {
     | '/employee/schedule'
     | '/employee/time'
     | '/help/access-denied'
+    | '/_authenticated/app/tax-tables'
     | '/app/employees/$id'
     | '/app/payroll/run'
     | '/app/payroll/'
@@ -976,6 +989,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   HelpAccessDeniedRoute: typeof HelpAccessDeniedRoute
+  AuthenticatedAppTaxTablesRoute: typeof AuthenticatedAppTaxTablesRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1526,6 +1540,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppEmployeesIdRouteImport
       parentRoute: typeof AppEmployeesRoute
     }
+    '/_authenticated/app/tax-tables': {
+      id: '/_authenticated/app/tax-tables'
+      path: '/app/tax-tables'
+      fullPath: '/app/tax-tables'
+      preLoaderRoute: typeof AuthenticatedAppTaxTablesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -1710,6 +1731,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   HelpAccessDeniedRoute: HelpAccessDeniedRoute,
+  AuthenticatedAppTaxTablesRoute: AuthenticatedAppTaxTablesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
