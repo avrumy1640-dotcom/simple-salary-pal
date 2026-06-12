@@ -1,0 +1,4 @@
+REVOKE SELECT (plaid_access_token), UPDATE (plaid_access_token) ON public.bank_connections FROM authenticated;
+REVOKE SELECT (plaid_access_token), UPDATE (plaid_access_token) ON public.bank_connections FROM anon;
+GRANT SELECT (id, owner_id, employee_id, contractor_id, is_company, provider, plaid_item_id, account_id, institution_name, account_name, account_mask, account_type, account_subtype, routing_number_last4, status, linked_at, created_at, updated_at, company_id) ON public.bank_connections TO authenticated;
+GRANT UPDATE (status, account_name, updated_at) ON public.bank_connections TO authenticated;
