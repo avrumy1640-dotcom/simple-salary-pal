@@ -505,3 +505,34 @@ html { scroll-behavior: smooth; }
   animation: radix-pop-open 220ms cubic-bezier(0.22, 1, 0.36, 1) both !important;
   transform-origin: var(--radix-popper-transform-origin, top center);
 }
+
+/* ============================================================
+   Admin shell mobile responsiveness
+   - Prevent any descendant from forcing horizontal page scroll
+   - Convert any table to a horizontally-scrollable block on small screens
+   - Loosen rigid filter min-widths so they wrap rather than overflow
+   ============================================================ */
+.admin-main { min-width: 0; max-width: 100%; }
+@media (max-width: 767px) {
+  /* Only convert tables whose parent isn't already an overflow scroller.
+     Tables already wrapped in an .overflow-x-auto container keep their
+     proper layout (including sticky columns) and scroll within. */
+  .admin-main :where(div, section, article, td, form):not([class*="overflow-x-auto"]):not([class*="overflow-auto"]) > table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+  }
+  /* Soften rigid mobile-unfriendly min-widths from filter rows */
+  .admin-main [class*="min-w-[200px]"],
+  .admin-main [class*="min-w-[220px]"],
+  .admin-main [class*="min-w-[260px]"],
+  .admin-main [class*="min-w-[280px]"],
+  .admin-main [class*="min-w-[160px]"],
+  .admin-main [class*="min-w-[140px]"] {
+    min-width: 0 !important;
+  }
+  /* Anything that explicitly opts in shouldn't shrink */
+  .admin-main .keep-min-width { min-width: revert !important; }
+}
