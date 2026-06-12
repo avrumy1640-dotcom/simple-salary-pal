@@ -139,3 +139,46 @@ Gating first because today the app can run a no-op fake payroll. RLS second beca
 - Mobile-app review (Capacitor) — separate pass.
 
 Pick up these phases in a future engagement with vendor credentials and a compliance reviewer in place.
+
+---
+
+## Resolved this pass (2026-06-12)
+
+### Batch F — Sandbox gating
+- Added `src/lib/sandbox.ts` (`PRODUCTION_PAYROLL_ENABLED`, `assertProductionPayrollEnabled`, banner strings). Default `false` until `VITE_PRODUCTION_PAYROLL_ENABLED=true` / `PRODUCTION_PAYROLL_ENABLED=true` are set.
+- `<SandboxBanner />` rendered at the top of both admin (`AppShell`) and employee (`EmployeeShell`) shells.
+- Server-side gate added to `markRunPaid` and `reversePayrollRun` — they now throw a clear sandbox error before touching `payroll_runs.status` or writing `tax_records`.
+- `efile-generators.ts` now **throws** when an employee SSN isn't a full 9 digits (no more `0000` placeholders in W-2 EFW2 output). Resolves E3.
+- `src/routes/sitemap[.]xml.ts` BASE_URL pointed at the published host. Resolves E2.
+
+### Batch B — RLS / DB security
+- `REVOKE EXECUTE … FROM anon, authenticated, public` on all internal `SECURITY DEFINER` helpers (`has_role`, `has_any_role`, `is_company_member`, `current_employee_id`, `employee_can_self_enroll`, `admin_shares_company_with_path_user`, `can_access_hr_doc_object`, `haversine_m`).
+- Same revoke on privileged operations (`publish_shifts`, `generate_compliance_alerts`, `generate_gl_for_run`, `assign_onboarding_template`, `notify_managers`) — only callable via authorized server functions.
+- Same revoke on every trigger function (`tg_*`, `guard_employee_self_update`) — they continue to fire from the trigger system but are no longer reachable via PostgREST RPC.
+
+### Batch C — Audit & integrity triggers
+- Attached `tg_audit_events_immutable` BEFORE UPDATE/DELETE on `audit_events` (append-only).
+- Attached `tg_audit_row` AFTER INSERT/UPDATE/DELETE on: `employees`, `payroll_runs`, `payroll_items`, `payroll_item_lines`, `deductions`, `garnishments`, `user_roles`, `company_users`, `hr_documents`, `bank_connections`, `companies`, `compliance_records`, `tax_records`, `benefit_enrollments`.
+- Attached `tg_set_updated_at` on every base table with an `updated_at` column.
+- Re-attached the lifecycle / lock / notify / validation triggers that were defined but not bound (employees, payroll_runs + items + item_lines, time_entries, time_clock_punches, shifts, shift_swap_requests, pay_on_demand_requests, pto_entries, pto_ledger, expense_requests, general_requests, benefit_enrollments, hr_document_signatures, departments).
+- Re-attached `handle_new_user` on `auth.users` AFTER INSERT.
+
+### Batch A — Auth hardening
+- Root `__root.tsx` now registers a single filtered `supabase.auth.onAuthStateChange` listener (only `SIGNED_IN` / `SIGNED_OUT` / `USER_UPDATED`) → `router.invalidate()` + `queryClient.invalidateQueries()` (skipped on `SIGNED_OUT` to prevent 401 storm).
+- Sign-out path centralized in `src/lib/sign-out.ts`: `cancelQueries → clear → signOut`, then `navigate({ replace: true })`. Wired into `AppShell`, `EmployeeShell`, and `TopBar`.
+- Signup no longer auto-signs-in when email confirmation is required: user is sent to `signin` with a "check your email" toast (A4).
+- Supabase auth configured: `password_hibp_enabled=true`, `auto_confirm_email=false`, `external_anonymous_users_enabled=false`, `disable_signup=false`.
+
+### Batch D — Realtime sync (partial)
+- Subscriptions added on: `employee_live_locations` (app.live-map), `notifications` (employee.notifications), `payroll_items` (employee.paystubs), `audit_events` (app.audit).
+- Still to wire: `time_clock_punches`/`time_entries`/`timesheets` on app.attendance + app.time, `employees`/`user_roles` on app.employees, `hr_documents` on employee.documents. Same one-line `useRealtimeRefresh` pattern.
+
+### Remaining blockers (NOT done; require a follow-up pass)
+- Per-route dead-button / placeholder walk (E4) across ~40 route files.
+- Zod input validation pass on remaining `*.functions.ts` (G — F1).
+- Route error/notFound boundaries (G — F2/F3) on every loader-driven route.
+- Realtime D2/D3/D4/D5 leftover pages.
+- A5 perf optimization (cache role lookup in `app.tsx`/`employee.tsx` beforeLoad).
+- A7 "resend confirmation email" branch on the auth page.
+- Payroll engine, certified tax engine, Plaid, Modern Treasury, W-2/1099 production output, ACH origination — all still gated behind sandbox and require vendor contracts + compliance sign-off.
+
