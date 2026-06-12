@@ -41,6 +41,7 @@ import { Route as EmployeeBenefitsRouteImport } from './routes/employee.benefits
 import { Route as AppUsersRouteImport } from './routes/app.users'
 import { Route as AppTrackingRouteImport } from './routes/app.tracking'
 import { Route as AppTimeRouteImport } from './routes/app.time'
+import { Route as AppTeamsRouteImport } from './routes/app.teams'
 import { Route as AppTaxesRouteImport } from './routes/app.taxes'
 import { Route as AppTaxFilingRouteImport } from './routes/app.tax-filing'
 import { Route as AppShiftSwapsRouteImport } from './routes/app.shift-swaps'
@@ -59,6 +60,7 @@ import { Route as AppPayOnDemandRouteImport } from './routes/app.pay-on-demand'
 import { Route as AppPayHistoryRouteImport } from './routes/app.pay-history'
 import { Route as AppOnboardingTemplatesRouteImport } from './routes/app.onboarding-templates'
 import { Route as AppOnboardingRouteImport } from './routes/app.onboarding'
+import { Route as AppOffboardingRouteImport } from './routes/app.offboarding'
 import { Route as AppNotificationsRouteImport } from './routes/app.notifications'
 import { Route as AppLocationsRouteImport } from './routes/app.locations'
 import { Route as AppLiveMapRouteImport } from './routes/app.live-map'
@@ -246,6 +248,11 @@ const AppTimeRoute = AppTimeRouteImport.update({
   path: '/time',
   getParentRoute: () => AppRoute,
 } as any)
+const AppTeamsRoute = AppTeamsRouteImport.update({
+  id: '/teams',
+  path: '/teams',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppTaxesRoute = AppTaxesRouteImport.update({
   id: '/taxes',
   path: '/taxes',
@@ -334,6 +341,11 @@ const AppOnboardingTemplatesRoute = AppOnboardingTemplatesRouteImport.update({
 const AppOnboardingRoute = AppOnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppOffboardingRoute = AppOffboardingRouteImport.update({
+  id: '/offboarding',
+  path: '/offboarding',
   getParentRoute: () => AppRoute,
 } as any)
 const AppNotificationsRoute = AppNotificationsRouteImport.update({
@@ -504,6 +516,7 @@ export interface FileRoutesByFullPath {
   '/app/live-map': typeof AppLiveMapRoute
   '/app/locations': typeof AppLocationsRoute
   '/app/notifications': typeof AppNotificationsRoute
+  '/app/offboarding': typeof AppOffboardingRoute
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/onboarding-templates': typeof AppOnboardingTemplatesRoute
   '/app/pay-history': typeof AppPayHistoryRoute
@@ -522,6 +535,7 @@ export interface FileRoutesByFullPath {
   '/app/shift-swaps': typeof AppShiftSwapsRoute
   '/app/tax-filing': typeof AppTaxFilingRoute
   '/app/taxes': typeof AppTaxesRoute
+  '/app/teams': typeof AppTeamsRoute
   '/app/time': typeof AppTimeRoute
   '/app/tracking': typeof AppTrackingRoute
   '/app/users': typeof AppUsersRoute
@@ -582,6 +596,7 @@ export interface FileRoutesByTo {
   '/app/live-map': typeof AppLiveMapRoute
   '/app/locations': typeof AppLocationsRoute
   '/app/notifications': typeof AppNotificationsRoute
+  '/app/offboarding': typeof AppOffboardingRoute
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/onboarding-templates': typeof AppOnboardingTemplatesRoute
   '/app/pay-history': typeof AppPayHistoryRoute
@@ -599,6 +614,7 @@ export interface FileRoutesByTo {
   '/app/shift-swaps': typeof AppShiftSwapsRoute
   '/app/tax-filing': typeof AppTaxFilingRoute
   '/app/taxes': typeof AppTaxesRoute
+  '/app/teams': typeof AppTeamsRoute
   '/app/time': typeof AppTimeRoute
   '/app/tracking': typeof AppTrackingRoute
   '/app/users': typeof AppUsersRoute
@@ -660,6 +676,7 @@ export interface FileRoutesById {
   '/app/live-map': typeof AppLiveMapRoute
   '/app/locations': typeof AppLocationsRoute
   '/app/notifications': typeof AppNotificationsRoute
+  '/app/offboarding': typeof AppOffboardingRoute
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/onboarding-templates': typeof AppOnboardingTemplatesRoute
   '/app/pay-history': typeof AppPayHistoryRoute
@@ -678,6 +695,7 @@ export interface FileRoutesById {
   '/app/shift-swaps': typeof AppShiftSwapsRoute
   '/app/tax-filing': typeof AppTaxFilingRoute
   '/app/taxes': typeof AppTaxesRoute
+  '/app/teams': typeof AppTeamsRoute
   '/app/time': typeof AppTimeRoute
   '/app/tracking': typeof AppTrackingRoute
   '/app/users': typeof AppUsersRoute
@@ -740,6 +758,7 @@ export interface FileRouteTypes {
     | '/app/live-map'
     | '/app/locations'
     | '/app/notifications'
+    | '/app/offboarding'
     | '/app/onboarding'
     | '/app/onboarding-templates'
     | '/app/pay-history'
@@ -758,6 +777,7 @@ export interface FileRouteTypes {
     | '/app/shift-swaps'
     | '/app/tax-filing'
     | '/app/taxes'
+    | '/app/teams'
     | '/app/time'
     | '/app/tracking'
     | '/app/users'
@@ -818,6 +838,7 @@ export interface FileRouteTypes {
     | '/app/live-map'
     | '/app/locations'
     | '/app/notifications'
+    | '/app/offboarding'
     | '/app/onboarding'
     | '/app/onboarding-templates'
     | '/app/pay-history'
@@ -835,6 +856,7 @@ export interface FileRouteTypes {
     | '/app/shift-swaps'
     | '/app/tax-filing'
     | '/app/taxes'
+    | '/app/teams'
     | '/app/time'
     | '/app/tracking'
     | '/app/users'
@@ -895,6 +917,7 @@ export interface FileRouteTypes {
     | '/app/live-map'
     | '/app/locations'
     | '/app/notifications'
+    | '/app/offboarding'
     | '/app/onboarding'
     | '/app/onboarding-templates'
     | '/app/pay-history'
@@ -913,6 +936,7 @@ export interface FileRouteTypes {
     | '/app/shift-swaps'
     | '/app/tax-filing'
     | '/app/taxes'
+    | '/app/teams'
     | '/app/time'
     | '/app/tracking'
     | '/app/users'
@@ -1180,6 +1204,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppTimeRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/teams': {
+      id: '/app/teams'
+      path: '/teams'
+      fullPath: '/app/teams'
+      preLoaderRoute: typeof AppTeamsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/taxes': {
       id: '/app/taxes'
       path: '/taxes'
@@ -1304,6 +1335,13 @@ declare module '@tanstack/react-router' {
       path: '/onboarding'
       fullPath: '/app/onboarding'
       preLoaderRoute: typeof AppOnboardingRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/offboarding': {
+      id: '/app/offboarding'
+      path: '/offboarding'
+      fullPath: '/app/offboarding'
+      preLoaderRoute: typeof AppOffboardingRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/notifications': {
@@ -1541,6 +1579,7 @@ interface AppRouteChildren {
   AppLiveMapRoute: typeof AppLiveMapRoute
   AppLocationsRoute: typeof AppLocationsRoute
   AppNotificationsRoute: typeof AppNotificationsRoute
+  AppOffboardingRoute: typeof AppOffboardingRoute
   AppOnboardingRoute: typeof AppOnboardingRoute
   AppOnboardingTemplatesRoute: typeof AppOnboardingTemplatesRoute
   AppPayHistoryRoute: typeof AppPayHistoryRoute
@@ -1559,6 +1598,7 @@ interface AppRouteChildren {
   AppShiftSwapsRoute: typeof AppShiftSwapsRoute
   AppTaxFilingRoute: typeof AppTaxFilingRoute
   AppTaxesRoute: typeof AppTaxesRoute
+  AppTeamsRoute: typeof AppTeamsRoute
   AppTimeRoute: typeof AppTimeRoute
   AppTrackingRoute: typeof AppTrackingRoute
   AppUsersRoute: typeof AppUsersRoute
@@ -1588,6 +1628,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppLiveMapRoute: AppLiveMapRoute,
   AppLocationsRoute: AppLocationsRoute,
   AppNotificationsRoute: AppNotificationsRoute,
+  AppOffboardingRoute: AppOffboardingRoute,
   AppOnboardingRoute: AppOnboardingRoute,
   AppOnboardingTemplatesRoute: AppOnboardingTemplatesRoute,
   AppPayHistoryRoute: AppPayHistoryRoute,
@@ -1606,6 +1647,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppShiftSwapsRoute: AppShiftSwapsRoute,
   AppTaxFilingRoute: AppTaxFilingRoute,
   AppTaxesRoute: AppTaxesRoute,
+  AppTeamsRoute: AppTeamsRoute,
   AppTimeRoute: AppTimeRoute,
   AppTrackingRoute: AppTrackingRoute,
   AppUsersRoute: AppUsersRoute,

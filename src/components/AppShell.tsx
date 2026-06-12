@@ -6,7 +6,7 @@ import {
   LayoutDashboard, Users, Clock, Wallet, FileText, LogOut, Menu, X,
   CalendarDays, Settings as SettingsIcon, UserPlus, Target, ShieldCheck,
   BarChart3, FolderOpen, ChevronLeft, ChevronRight, HelpCircle,
-  HeartHandshake, LineChart, Landmark, ListChecks, Bell, ArrowLeftRight, MapPin, Receipt, MessageSquare, Inbox, Building2, ClipboardCheck,
+  HeartHandshake, LineChart, Landmark, ListChecks, Bell, ArrowLeftRight, MapPin, Receipt, MessageSquare, Inbox, Building2, ClipboardCheck, UsersRound, UserMinus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TopBar } from "@/components/TopBar";
@@ -35,10 +35,12 @@ const navGroups: NavGroup[] = [
     label: "People",
     items: [
       { to: "/app/departments", label: "Departments", icon: Building2, roles: HR_ROLES },
+      { to: "/app/teams", label: "Teams", icon: UsersRound, roles: [...MANAGER_ROLES] },
       { to: "/app/scheduling", label: "Scheduling", icon: CalendarDays, roles: [...MANAGER_ROLES] },
       { to: "/app/shift-swaps", label: "Shift Swaps", icon: ArrowLeftRight, roles: [...MANAGER_ROLES] },
       { to: "/app/recruiting", label: "Recruiting", icon: UserPlus, roles: HR_ROLES },
       { to: "/app/onboarding", label: "Onboarding", icon: ListChecks, roles: HR_ROLES },
+      { to: "/app/offboarding", label: "Offboarding", icon: UserMinus, roles: HR_ROLES },
       { to: "/app/benefits", label: "Benefits", icon: HeartHandshake, roles: HR_ROLES },
       { to: "/app/performance", label: "Performance", icon: Target, roles: [...HR_ROLES, "manager", "supervisor"] },
     ],
@@ -66,7 +68,9 @@ const ALL_NAV_LABELS: Record<string, string> = {
   "/app/scheduling": "Scheduling",
   "/app/recruiting": "Recruiting",
   "/app/onboarding": "Onboarding",
+  "/app/offboarding": "Offboarding",
   "/app/onboarding-templates": "Onboarding Templates",
+  "/app/teams": "Teams",
   "/app/benefits": "Benefits",
   "/app/performance": "Performance",
   "/app/compliance": "Compliance",
