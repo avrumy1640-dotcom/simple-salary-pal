@@ -52,6 +52,7 @@ const navGroups: NavGroup[] = [
       { to: "/app/form-review", label: "Form Review", icon: ClipboardCheck, roles: HR_ROLES },
       { to: "/app/policies", label: "Policies", icon: FolderOpen, roles: HR_ROLES },
       { to: "/app/tax-filing", label: "Tax Filing", icon: Landmark, roles: PAYROLL_ROLES },
+      { to: "/app/tax-tables", label: "Tax Tables", icon: Landmark, roles: PAYROLL_ROLES },
       { to: "/app/reports", label: "Reports", icon: BarChart3, roles: ANY_ADMIN },
       { to: "/app/analytics", label: "Analytics", icon: LineChart, roles: ANY_ADMIN },
       { to: "/app/documents", label: "Documents", icon: FolderOpen, roles: HR_ROLES },
