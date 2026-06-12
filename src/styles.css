@@ -512,12 +512,13 @@ html { scroll-behavior: smooth; }
    - Convert any table to a horizontally-scrollable block on small screens
    - Loosen rigid filter min-widths so they wrap rather than overflow
    ============================================================ */
-.admin-main { min-width: 0; max-width: 100%; }
+.admin-main, .employee-main { min-width: 0; max-width: 100%; }
 @media (max-width: 767px) {
   /* Only convert tables whose parent isn't already an overflow scroller.
      Tables already wrapped in an .overflow-x-auto container keep their
      proper layout (including sticky columns) and scroll within. */
-  .admin-main :where(div, section, article, td, form):not([class*="overflow-x-auto"]):not([class*="overflow-auto"]) > table {
+  .admin-main :where(div, section, article, td, form):not([class*="overflow-x-auto"]):not([class*="overflow-auto"]) > table,
+  .employee-main :where(div, section, article, td, form):not([class*="overflow-x-auto"]):not([class*="overflow-auto"]) > table {
     display: block;
     max-width: 100%;
     overflow-x: auto;
@@ -530,9 +531,16 @@ html { scroll-behavior: smooth; }
   .admin-main [class*="min-w-[260px]"],
   .admin-main [class*="min-w-[280px]"],
   .admin-main [class*="min-w-[160px]"],
-  .admin-main [class*="min-w-[140px]"] {
+  .admin-main [class*="min-w-[140px]"],
+  .employee-main [class*="min-w-[200px]"],
+  .employee-main [class*="min-w-[220px]"],
+  .employee-main [class*="min-w-[260px]"],
+  .employee-main [class*="min-w-[280px]"],
+  .employee-main [class*="min-w-[160px]"],
+  .employee-main [class*="min-w-[140px]"] {
     min-width: 0 !important;
   }
   /* Anything that explicitly opts in shouldn't shrink */
-  .admin-main .keep-min-width { min-width: revert !important; }
+  .admin-main .keep-min-width,
+  .employee-main .keep-min-width { min-width: revert !important; }
 }

@@ -288,8 +288,8 @@ export function EmployeeShell() {
           />
         )}
 
-        <main className="flex-1 min-w-0">
-          <div key={path} className="page-in mx-auto max-w-6xl px-4 py-6 pb-[calc(env(safe-area-inset-bottom)+5rem)] sm:p-6 md:p-8 md:pb-8">
+        <main className="employee-main flex-1 min-w-0 max-w-full overflow-x-hidden">
+          <div key={path} className="page-in mx-auto max-w-6xl px-3 py-4 pb-[calc(env(safe-area-inset-bottom)+5rem)] sm:px-6 sm:py-6 md:p-8 md:pb-8">
             <Outlet />
           </div>
         </main>
