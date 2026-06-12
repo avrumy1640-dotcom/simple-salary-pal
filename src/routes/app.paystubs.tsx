@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { fmtUSD } from "@/lib/payroll";
 import { Button } from "@/components/ui/button";
-import { Receipt, Download, Banknote } from "lucide-react";
+import { Receipt, Download, Banknote, AlertTriangle } from "lucide-react";
 import { useCompany } from "@/hooks/useCompany";
 
 export const Route = createFileRoute("/app/paystubs")({
