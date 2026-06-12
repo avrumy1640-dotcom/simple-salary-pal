@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { performSignOut } from "@/lib/sign-out";
 import {
   Search, Bell, ChevronDown, LogOut, User, Settings as SettingsIcon,
   LayoutDashboard, Wallet, Users, Clock, Receipt, FileText, History as HistoryIcon,
