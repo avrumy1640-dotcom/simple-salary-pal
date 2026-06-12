@@ -120,7 +120,7 @@ gated by `payroll_admin`/`hr_admin`.
 
 ---
 
-## Phase C — Year-end W-2 / 1099-NEC generation
+## Phase C — Year-end W-2 / 1099-NEC generation ✅
 
 **Goal.** Produce IRS-accurate W-2s for every W-2 employee with paid
 payroll in the year, and 1099-NECs for contractors paid ≥ $600.
