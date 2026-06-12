@@ -61,6 +61,7 @@ const PAGE_TITLES: Record<string, string> = {
   "/employee/requests": "Requests",
   "/employee/help": "Assistant",
   "/employee/profile": "My Info",
+  "/employee/tax-profile": "Tax Profile",
   "/employee/benefits": "Benefits",
   "/employee/onboarding": "Get Started",
   "/employee/notifications": "Notifications",
