@@ -336,20 +336,7 @@ function Dashboard() {
               ))}
             </ul>
           </div>
-          <div className="mt-6 grid grid-cols-3 gap-4 border-t border-border pt-4">
-            <div>
-              <div className="text-[11px] uppercase tracking-wider text-slate-400">Total Gross</div>
-              <div className="mt-1 text-[18px] font-bold tabular-nums text-foreground">{fmtUSD(data.monthGross)}</div>
-            </div>
-            <div>
-              <div className="text-[11px] uppercase tracking-wider text-slate-400">Total Taxes</div>
-              <div className="mt-1 text-[18px] font-bold tabular-nums text-foreground">{fmtUSD(data.monthTaxes)}</div>
-            </div>
-            <div>
-              <div className="text-[11px] uppercase tracking-wider text-slate-400">Total Net</div>
-              <div className="mt-1 text-[18px] font-bold tabular-nums text-foreground">{fmtUSD(data.monthTotal)}</div>
-            </div>
-          </div>
+        </div>
         </div>
 
         {/* Attendance */}
