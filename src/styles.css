@@ -513,7 +513,6 @@ html { scroll-behavior: smooth; }
    - Loosen rigid filter min-widths so they wrap rather than overflow
    ============================================================ */
 .admin-main { min-width: 0; max-width: 100%; }
-.admin-main, .admin-main * { min-width: 0; }
 @media (max-width: 767px) {
   .admin-main table {
     display: block;
