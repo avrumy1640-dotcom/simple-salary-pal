@@ -92,6 +92,8 @@ function PricingPage() {
           <nav className="hidden items-center gap-8 text-sm font-medium text-white md:flex">
             <Link to="/" className="hover:text-foreground">Home</Link>
             <Link to="/pricing" className="text-foreground">Pricing</Link>
+            <Link to="/faq" className="hover:text-foreground">FAQ</Link>
+            <Link to="/about" className="hover:text-foreground">About</Link>
             <Link to="/auth" className="hover:text-foreground">Sign in</Link>
           </nav>
           <Link to="/auth" className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-glow">
