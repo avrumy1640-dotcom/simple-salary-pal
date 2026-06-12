@@ -9,6 +9,8 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { Lock, Pencil, Check } from "lucide-react";
+import { EmergencyContactsCard } from "@/components/EmergencyContactsCard";
+import { DirectDepositAccountsCard } from "@/components/DirectDepositAccountsCard";
 
 export const Route = createFileRoute("/employee/profile")({
   head: () => ({ meta: [{ title: "My info — Paylo" }] }),
