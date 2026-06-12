@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogT
 import { toast } from "sonner";
 import { FolderOpen, FileText, Download, Eye, CheckCircle2, PenSquare, ClipboardList, Clock } from "lucide-react";
 import { submitEmployeeForm, listMyForms } from "@/lib/employee-self.functions";
+import { useRealtimeRefresh } from "@/lib/useRealtimeRefresh";
 
 export const Route = createFileRoute("/employee/documents")({
   head: () => ({ meta: [{ title: "My documents — Paylo" }] }),
