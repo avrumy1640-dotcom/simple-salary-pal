@@ -7,12 +7,13 @@ const ADMIN_ROLES = new Set(["owner", "admin", "payroll_admin", "hr_admin", "rec
 export const Route = createFileRoute("/app")({
   ssr: false,
   beforeLoad: async () => {
-    const { data, error } = await supabase.auth.getUser();
-    if (error || !data.user) throw redirect({ to: "/auth" });
+    const { data } = await supabase.auth.getSession();
+    const user = data.session?.user;
+    if (!user) throw redirect({ to: "/auth" });
 
     const [{ data: roles }, { data: profile }] = await Promise.all([
-      supabase.from("user_roles").select("role").eq("user_id", data.user.id).limit(1),
-      supabase.from("profiles").select("account_type").eq("id", data.user.id).maybeSingle(),
+      supabase.from("user_roles").select("role").eq("user_id", user.id).limit(1),
+      supabase.from("profiles").select("account_type").eq("id", user.id).maybeSingle(),
     ]);
     const role = roles?.[0]?.role;
     if ((role && ADMIN_ROLES.has(role)) || profile?.account_type === "employer") return;
