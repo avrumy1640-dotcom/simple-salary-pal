@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { EmployeeNotificationBanner } from "@/components/EmployeeNotificationBanner";
+import { OfflineBanner } from "@/components/OfflineBanner";
 
 type NavItem = { to: string; label: string; icon: typeof Home };
 type NavGroup = { label: string; items: NavItem[] };
