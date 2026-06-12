@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useMyEmployee } from "@/lib/useMyEmployee";
 import { useRealtimeRefresh } from "@/lib/useRealtimeRefresh";
+import { withOfflineCache } from "@/lib/offlineCache";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Download, FileText, Wallet, AlertTriangle } from "lucide-react";
