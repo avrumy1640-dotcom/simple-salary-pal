@@ -514,15 +514,16 @@ html { scroll-behavior: smooth; }
    ============================================================ */
 .admin-main { min-width: 0; max-width: 100%; }
 @media (max-width: 767px) {
-  .admin-main table {
+  /* Only convert tables whose parent isn't already an overflow scroller.
+     Tables already wrapped in an .overflow-x-auto container keep their
+     proper layout (including sticky columns) and scroll within. */
+  .admin-main :where(div, section, article, td, form):not([class*="overflow-x-auto"]):not([class*="overflow-auto"]) > table {
     display: block;
     max-width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     white-space: nowrap;
   }
-  .admin-main table thead,
-  .admin-main table tbody { width: max-content; min-width: 100%; }
   /* Soften rigid mobile-unfriendly min-widths from filter rows */
   .admin-main [class*="min-w-[200px]"],
   .admin-main [class*="min-w-[220px]"],
