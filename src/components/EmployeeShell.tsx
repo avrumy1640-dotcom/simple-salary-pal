@@ -1,6 +1,8 @@
 import { Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { performSignOut } from "@/lib/sign-out";
 import { supabase } from "@/integrations/supabase/client";
 import { getEmployeePortalIdentity } from "@/lib/company-sync.functions";
 import {
