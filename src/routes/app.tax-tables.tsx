@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 
-export const Route = createFileRoute('/_authenticated/app/tax-tables')({
+export const Route = createFileRoute('/app/tax-tables')({
   component: TaxTablesPage,
   errorComponent: ({ error, reset }) => {
     const router = useRouter();
