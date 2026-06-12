@@ -45,6 +45,7 @@ const navGroups: NavGroup[] = [
     items: [
       { to: "/employee/profile", label: "My Info", icon: User },
       { to: "/employee/tax-profile", label: "Tax", icon: User },
+      { to: "/employee/tax-forms", label: "Tax Forms", icon: FolderOpen },
       { to: "/employee/benefits", label: "Benefits", icon: HeartHandshake },
       { to: "/employee/documents", label: "Documents", icon: FolderOpen },
       { to: "/employee/onboarding", label: "Get Started", icon: ClipboardCheck },

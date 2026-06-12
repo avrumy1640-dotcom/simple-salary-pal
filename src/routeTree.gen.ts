@@ -25,6 +25,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as HelpAccessDeniedRouteImport } from './routes/help.access-denied'
 import { Route as EmployeeTimeRouteImport } from './routes/employee.time'
 import { Route as EmployeeTaxProfileRouteImport } from './routes/employee.tax-profile'
+import { Route as EmployeeTaxFormsRouteImport } from './routes/employee.tax-forms'
 import { Route as EmployeeScheduleRouteImport } from './routes/employee.schedule'
 import { Route as EmployeeRequestsRouteImport } from './routes/employee.requests'
 import { Route as EmployeePunchRouteImport } from './routes/employee.punch'
@@ -169,6 +170,11 @@ const EmployeeTimeRoute = EmployeeTimeRouteImport.update({
 const EmployeeTaxProfileRoute = EmployeeTaxProfileRouteImport.update({
   id: '/tax-profile',
   path: '/tax-profile',
+  getParentRoute: () => EmployeeRoute,
+} as any)
+const EmployeeTaxFormsRoute = EmployeeTaxFormsRouteImport.update({
+  id: '/tax-forms',
+  path: '/tax-forms',
   getParentRoute: () => EmployeeRoute,
 } as any)
 const EmployeeScheduleRoute = EmployeeScheduleRouteImport.update({
@@ -573,6 +579,7 @@ export interface FileRoutesByFullPath {
   '/employee/punch': typeof EmployeePunchRoute
   '/employee/requests': typeof EmployeeRequestsRoute
   '/employee/schedule': typeof EmployeeScheduleRoute
+  '/employee/tax-forms': typeof EmployeeTaxFormsRoute
   '/employee/tax-profile': typeof EmployeeTaxProfileRoute
   '/employee/time': typeof EmployeeTimeRoute
   '/help/access-denied': typeof HelpAccessDeniedRoute
@@ -655,6 +662,7 @@ export interface FileRoutesByTo {
   '/employee/punch': typeof EmployeePunchRoute
   '/employee/requests': typeof EmployeeRequestsRoute
   '/employee/schedule': typeof EmployeeScheduleRoute
+  '/employee/tax-forms': typeof EmployeeTaxFormsRoute
   '/employee/tax-profile': typeof EmployeeTaxProfileRoute
   '/employee/time': typeof EmployeeTimeRoute
   '/help/access-denied': typeof HelpAccessDeniedRoute
@@ -739,6 +747,7 @@ export interface FileRoutesById {
   '/employee/punch': typeof EmployeePunchRoute
   '/employee/requests': typeof EmployeeRequestsRoute
   '/employee/schedule': typeof EmployeeScheduleRoute
+  '/employee/tax-forms': typeof EmployeeTaxFormsRoute
   '/employee/tax-profile': typeof EmployeeTaxProfileRoute
   '/employee/time': typeof EmployeeTimeRoute
   '/help/access-denied': typeof HelpAccessDeniedRoute
@@ -824,6 +833,7 @@ export interface FileRouteTypes {
     | '/employee/punch'
     | '/employee/requests'
     | '/employee/schedule'
+    | '/employee/tax-forms'
     | '/employee/tax-profile'
     | '/employee/time'
     | '/help/access-denied'
@@ -906,6 +916,7 @@ export interface FileRouteTypes {
     | '/employee/punch'
     | '/employee/requests'
     | '/employee/schedule'
+    | '/employee/tax-forms'
     | '/employee/tax-profile'
     | '/employee/time'
     | '/help/access-denied'
@@ -989,6 +1000,7 @@ export interface FileRouteTypes {
     | '/employee/punch'
     | '/employee/requests'
     | '/employee/schedule'
+    | '/employee/tax-forms'
     | '/employee/tax-profile'
     | '/employee/time'
     | '/help/access-denied'
@@ -1126,6 +1138,13 @@ declare module '@tanstack/react-router' {
       path: '/tax-profile'
       fullPath: '/employee/tax-profile'
       preLoaderRoute: typeof EmployeeTaxProfileRouteImport
+      parentRoute: typeof EmployeeRoute
+    }
+    '/employee/tax-forms': {
+      id: '/employee/tax-forms'
+      path: '/tax-forms'
+      fullPath: '/employee/tax-forms'
+      preLoaderRoute: typeof EmployeeTaxFormsRouteImport
       parentRoute: typeof EmployeeRoute
     }
     '/employee/schedule': {
@@ -1731,6 +1750,7 @@ interface EmployeeRouteChildren {
   EmployeePunchRoute: typeof EmployeePunchRoute
   EmployeeRequestsRoute: typeof EmployeeRequestsRoute
   EmployeeScheduleRoute: typeof EmployeeScheduleRoute
+  EmployeeTaxFormsRoute: typeof EmployeeTaxFormsRoute
   EmployeeTaxProfileRoute: typeof EmployeeTaxProfileRoute
   EmployeeTimeRoute: typeof EmployeeTimeRoute
 }
@@ -1750,6 +1770,7 @@ const EmployeeRouteChildren: EmployeeRouteChildren = {
   EmployeePunchRoute: EmployeePunchRoute,
   EmployeeRequestsRoute: EmployeeRequestsRoute,
   EmployeeScheduleRoute: EmployeeScheduleRoute,
+  EmployeeTaxFormsRoute: EmployeeTaxFormsRoute,
   EmployeeTaxProfileRoute: EmployeeTaxProfileRoute,
   EmployeeTimeRoute: EmployeeTimeRoute,
 }
