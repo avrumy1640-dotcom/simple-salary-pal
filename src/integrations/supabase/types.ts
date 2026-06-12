@@ -5261,6 +5261,164 @@ export type Database = {
           },
         ]
       }
+      tax_allowances: {
+        Row: {
+          amount_per_allowance: number
+          created_at: string
+          id: string
+          pay_frequency: string
+          version_id: string
+        }
+        Insert: {
+          amount_per_allowance: number
+          created_at?: string
+          id?: string
+          pay_frequency?: string
+          version_id: string
+        }
+        Update: {
+          amount_per_allowance?: number
+          created_at?: string
+          id?: string
+          pay_frequency?: string
+          version_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tax_allowances_version_id_fkey"
+            columns: ["version_id"]
+            isOneToOne: false
+            referencedRelation: "tax_table_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tax_brackets: {
+        Row: {
+          base_tax: number
+          created_at: string
+          filing_status: string
+          id: string
+          lower_amount: number
+          marginal_rate: number
+          pay_frequency: string
+          upper_amount: number | null
+          version_id: string
+        }
+        Insert: {
+          base_tax?: number
+          created_at?: string
+          filing_status: string
+          id?: string
+          lower_amount: number
+          marginal_rate: number
+          pay_frequency: string
+          upper_amount?: number | null
+          version_id: string
+        }
+        Update: {
+          base_tax?: number
+          created_at?: string
+          filing_status?: string
+          id?: string
+          lower_amount?: number
+          marginal_rate?: number
+          pay_frequency?: string
+          upper_amount?: number | null
+          version_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tax_brackets_version_id_fkey"
+            columns: ["version_id"]
+            isOneToOne: false
+            referencedRelation: "tax_table_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tax_flat_rates: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          is_employee: boolean
+          is_employer: boolean
+          rate: number
+          threshold: number | null
+          version_id: string
+          wage_base_cap: number | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          is_employee?: boolean
+          is_employer?: boolean
+          rate: number
+          threshold?: number | null
+          version_id: string
+          wage_base_cap?: number | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          is_employee?: boolean
+          is_employer?: boolean
+          rate?: number
+          threshold?: number | null
+          version_id?: string
+          wage_base_cap?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tax_flat_rates_version_id_fkey"
+            columns: ["version_id"]
+            isOneToOne: false
+            referencedRelation: "tax_table_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tax_jurisdictions: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          kind: string
+          name: string
+          parent_jurisdiction_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          kind: string
+          name: string
+          parent_jurisdiction_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          kind?: string
+          name?: string
+          parent_jurisdiction_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tax_jurisdictions_parent_jurisdiction_id_fkey"
+            columns: ["parent_jurisdiction_id"]
+            isOneToOne: false
+            referencedRelation: "tax_jurisdictions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tax_records: {
         Row: {
           company_id: string
@@ -5320,6 +5478,97 @@ export type Database = {
             columns: ["run_id"]
             isOneToOne: false
             referencedRelation: "payroll_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tax_standard_deductions: {
+        Row: {
+          amount: number
+          created_at: string
+          dependent_credit_other: number
+          dependent_credit_under17: number
+          filing_status: string
+          id: string
+          pay_frequency: string
+          version_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          dependent_credit_other?: number
+          dependent_credit_under17?: number
+          filing_status: string
+          id?: string
+          pay_frequency?: string
+          version_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          dependent_credit_other?: number
+          dependent_credit_under17?: number
+          filing_status?: string
+          id?: string
+          pay_frequency?: string
+          version_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tax_standard_deductions_version_id_fkey"
+            columns: ["version_id"]
+            isOneToOne: false
+            referencedRelation: "tax_table_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tax_table_versions: {
+        Row: {
+          created_at: string
+          effective_end: string | null
+          effective_start: string
+          id: string
+          is_active: boolean
+          jurisdiction_id: string
+          notes: string | null
+          published_at: string
+          source_url: string | null
+          tax_type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          effective_end?: string | null
+          effective_start: string
+          id?: string
+          is_active?: boolean
+          jurisdiction_id: string
+          notes?: string | null
+          published_at?: string
+          source_url?: string | null
+          tax_type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          effective_end?: string | null
+          effective_start?: string
+          id?: string
+          is_active?: boolean
+          jurisdiction_id?: string
+          notes?: string | null
+          published_at?: string
+          source_url?: string | null
+          tax_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tax_table_versions_jurisdiction_id_fkey"
+            columns: ["jurisdiction_id"]
+            isOneToOne: false
+            referencedRelation: "tax_jurisdictions"
             referencedColumns: ["id"]
           },
         ]
@@ -6032,6 +6281,18 @@ export type Database = {
           },
         ]
       }
+      tax_tables_status: {
+        Row: {
+          code: string | null
+          effective_end: string | null
+          effective_start: string | null
+          is_active: boolean | null
+          kind: string | null
+          name: string | null
+          tax_type: string | null
+        }
+        Relationships: []
+      }
       w2_annual_summary: {
         Row: {
           company_id: string | null
@@ -6125,6 +6386,10 @@ export type Database = {
       publish_shifts: {
         Args: { _company_id: string; _end: string; _start: string }
         Returns: number
+      }
+      resolve_tax_version: {
+        Args: { _jurisdiction: string; _on: string; _tax_type: string }
+        Returns: string
       }
     }
     Enums: {
