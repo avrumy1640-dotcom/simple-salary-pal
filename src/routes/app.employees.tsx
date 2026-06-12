@@ -155,6 +155,7 @@ function EmployeesPage() {
     setLoading(false);
   }
   useEffect(() => { refresh(); /* eslint-disable-next-line */ }, [currentId]);
+  useRealtimeRefresh(["employees", "user_roles"], () => { refresh(); }, { companyId: currentId });
 
   async function doTerminate() {
     if (!terminateTarget) return;
