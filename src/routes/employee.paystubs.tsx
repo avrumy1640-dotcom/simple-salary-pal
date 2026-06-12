@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useMyEmployee } from "@/lib/useMyEmployee";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Download, FileText, Wallet } from "lucide-react";
+import { Download, FileText, Wallet, AlertTriangle } from "lucide-react";
 
 export const Route = createFileRoute("/employee/paystubs")({
   head: () => ({ meta: [{ title: "Pay stubs — Paylo" }] }),
