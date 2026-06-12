@@ -85,7 +85,12 @@ function TaxesPage() {
       </div>
 
       <div className="rounded-2xl border bg-card">
-        <div className="border-b px-5 py-3 text-sm font-medium flex items-center gap-2"><FileBadge className="h-4 w-4" /> {year} W-2 previews</div>
+        <div className="flex items-center justify-between border-b px-5 py-3">
+          <div className="text-sm font-medium flex items-center gap-2"><FileBadge className="h-4 w-4" /> {year} W-2 previews</div>
+          <Button asChild size="sm" variant="outline" className="rounded-full gap-1">
+            <Link to="/app/tax-year">Generate official W-2s <ArrowRight className="h-3.5 w-3.5" /></Link>
+          </Button>
+        </div>
         {totals.length === 0 ? (
           <div className="p-6 text-sm text-muted-foreground">No payroll runs in {year} yet. Once you run payroll, W-2 previews will appear here.</div>
         ) : (
@@ -98,7 +103,6 @@ function TaxesPage() {
                   <th className="px-3 py-3">Federal</th>
                   <th className="px-3 py-3">FICA</th>
                   <th className="px-3 py-3">State</th>
-                  <th className="px-5 py-3 text-right">W-2</th>
                 </tr>
               </thead>
               <tbody>
@@ -109,16 +113,17 @@ function TaxesPage() {
                     <td className="px-3 py-3">{fmtUSD(t.federal)}</td>
                     <td className="px-3 py-3">{fmtUSD(t.ss + t.medicare)}</td>
                     <td className="px-3 py-3">{fmtUSD(t.state)}</td>
-                    <td className="px-5 py-3 text-right">
-                      <Button size="sm" variant="outline" className="gap-1 rounded-full" onClick={() => downloadW2(t)}><Download className="h-3.5 w-3.5" /> Download</Button>
-                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+            <div className="border-t bg-accent/20 px-5 py-3 text-xs text-foreground/70">
+              These are running totals — generate the official substitute W-2 PDFs and the SSA EFW2 export from the <Link to="/app/tax-year" className="font-semibold underline">Tax year forms</Link> page.
+            </div>
           </div>
         )}
       </div>
+
 
       <div className="grid gap-3 md:grid-cols-3">
         <FormCard title="Form 941" desc="Quarterly federal tax return. File 4× per year." due="Apr 30 · Jul 31 · Oct 31 · Jan 31" />
