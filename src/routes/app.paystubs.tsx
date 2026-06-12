@@ -1,10 +1,12 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { fmtUSD } from "@/lib/payroll";
 import { Button } from "@/components/ui/button";
 import { Receipt, Download, Banknote, AlertTriangle } from "lucide-react";
 import { useCompany } from "@/hooks/useCompany";
+import { downloadPaystubPdf, downloadAchCsv } from "@/lib/paystub-export";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/paystubs")({
   head: () => ({ meta: [{ title: "Pay stubs & ACH — Paylo" }] }),
@@ -13,6 +15,7 @@ export const Route = createFileRoute("/app/paystubs")({
 
 interface Item {
   id: string;
+  employee_id: string;
   employee_name: string;
   gross_pay: number;
   federal_tax: number;
@@ -21,20 +24,33 @@ interface Item {
   state_tax: number;
   net_pay: number;
   run_id: string;
+  regular_hours?: number | null;
+  overtime_hours?: number | null;
 }
 interface Run { id: string; period_start: string; period_end: string; pay_date: string; net_total: number; status: string }
+interface Company { legal_name: string | null; ein: string | null; address_line1: string | null; address_line2: string | null }
+interface Emp { id: string; full_name: string; address_line1: string | null; city: string | null; state: string | null; zip: string | null; bank_routing_last4: string | null; bank_account_last4: string | null; bank_account_type: string | null }
 
 function PayStubsPage() {
   const { currentId } = useCompany();
   const [runs, setRuns] = useState<Run[]>([]);
   const [items, setItems] = useState<Item[]>([]);
+  const [employees, setEmployees] = useState<Map<string, Emp>>(new Map());
+  const [company, setCompany] = useState<Company | null>(null);
   const [activeRun, setActiveRun] = useState<string | null>(null);
+  const [busy, setBusy] = useState<string | null>(null);
 
   useEffect(() => {
     if (!currentId) return;
     (async () => {
-      const { data: r } = await supabase.from("payroll_runs").select("id, period_start, period_end, pay_date, net_total, status").eq("company_id", currentId).order("pay_date", { ascending: false });
+      const [{ data: r }, { data: c }, { data: emps }] = await Promise.all([
+        supabase.from("payroll_runs").select("id, period_start, period_end, pay_date, net_total, status").eq("company_id", currentId).order("pay_date", { ascending: false }),
+        supabase.from("companies").select("legal_name, ein, address_line1, address_line2").eq("id", currentId).maybeSingle(),
+        supabase.from("employees").select("id, full_name, address_line1, city, state, zip, bank_routing_last4, bank_account_last4, bank_account_type").eq("company_id", currentId),
+      ]);
       setRuns((r ?? []) as Run[]);
+      setCompany((c ?? null) as Company | null);
+      setEmployees(new Map((emps ?? []).map((e) => [e.id as string, e as Emp])));
       if (r && r.length) setActiveRun(r[0].id);
     })();
   }, [currentId]);
@@ -42,73 +58,107 @@ function PayStubsPage() {
   useEffect(() => {
     if (!activeRun || !currentId) return;
     (async () => {
-      const { data } = await supabase.from("payroll_items").select("*").eq("company_id", currentId).eq("run_id", activeRun);
+      const { data } = await supabase
+        .from("payroll_items")
+        .select("id, employee_id, employee_name, gross_pay, federal_tax, social_security, medicare, state_tax, net_pay, run_id, regular_hours, overtime_hours")
+        .eq("company_id", currentId)
+        .eq("run_id", activeRun);
       setItems((data ?? []) as Item[]);
     })();
   }, [activeRun, currentId]);
 
-  function downloadStub(it: Item) {
-    const run = runs.find((r) => r.id === it.run_id);
-    const total = it.federal_tax + it.social_security + it.medicare + it.state_tax;
-    const lines = [
-      `PAY STUB`,
-      `Pay date: ${run?.pay_date ?? "-"}`,
-      `Period:   ${run?.period_start ?? "-"} → ${run?.period_end ?? "-"}`,
-      ``,
-      `Employee: ${it.employee_name}`,
-      ``,
-      `EARNINGS`,
-      `  Gross pay ............ ${fmtUSD(it.gross_pay)}`,
-      ``,
-      `TAXES WITHHELD`,
-      `  Federal income tax ... ${fmtUSD(it.federal_tax)}`,
-      `  Social Security ...... ${fmtUSD(it.social_security)}`,
-      `  Medicare ............. ${fmtUSD(it.medicare)}`,
-      `  State income tax ..... ${fmtUSD(it.state_tax)}`,
-      `  ───────────────────────────────`,
-      `  Total withheld ....... ${fmtUSD(total)}`,
-      ``,
-      `NET PAY .............. ${fmtUSD(it.net_pay)}`,
-    ].join("\n");
-    const blob = new Blob([lines], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url; a.download = `paystub-${it.employee_name.replace(/\s+/g, "_")}-${run?.pay_date ?? "stub"}.txt`;
-    a.click(); URL.revokeObjectURL(url);
+  const companyAddress =
+    company ? [company.address_line1, company.address_line2].filter(Boolean).join(", ") || null : null;
+
+  async function ytdFor(empId: string, payDateIso: string) {
+    if (!currentId) return null;
+    const year = payDateIso.slice(0, 4);
+    const { data } = await supabase
+      .from("payroll_items")
+      .select("gross_pay, federal_tax, social_security, medicare, state_tax, net_pay, payroll_runs!inner(pay_date)")
+      .eq("company_id", currentId)
+      .eq("employee_id", empId);
+    const ytd = { gross: 0, fed: 0, ss: 0, med: 0, state: 0, net: 0 };
+    for (const row of (data ?? []) as any[]) {
+      const pd = row.payroll_runs?.pay_date as string | undefined;
+      if (!pd || !pd.startsWith(year) || pd > payDateIso) continue;
+      ytd.gross += Number(row.gross_pay);
+      ytd.fed += Number(row.federal_tax);
+      ytd.ss += Number(row.social_security);
+      ytd.med += Number(row.medicare);
+      ytd.state += Number(row.state_tax);
+      ytd.net += Number(row.net_pay);
+    }
+    return ytd;
   }
 
-  async function downloadAchBatch() {
+  async function downloadStub(it: Item) {
+    const run = runs.find((r) => r.id === it.run_id);
+    if (!run) return;
+    setBusy(it.id);
+    try {
+      const emp = employees.get(it.employee_id);
+      const empAddr = emp
+        ? [emp.address_line1, [emp.city, emp.state, emp.zip].filter(Boolean).join(" ")].filter(Boolean).join(" · ")
+        : null;
+      const ytd = await ytdFor(it.employee_id, run.pay_date);
+      await downloadPaystubPdf({
+        employee_name: it.employee_name,
+        employee_address: empAddr,
+        pay_date: run.pay_date,
+        period_start: run.period_start,
+        period_end: run.period_end,
+        company_name: company?.legal_name || "Payroll",
+        company_address: companyAddress,
+        company_ein: company?.ein || null,
+        regular_hours: it.regular_hours ?? null,
+        overtime_hours: it.overtime_hours ?? null,
+        gross_pay: Number(it.gross_pay),
+        federal_tax: Number(it.federal_tax),
+        social_security: Number(it.social_security),
+        medicare: Number(it.medicare),
+        state_tax: Number(it.state_tax),
+        net_pay: Number(it.net_pay),
+        ytd,
+      });
+    } catch (e: any) {
+      toast.error(e?.message ?? "Could not generate paystub");
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  function downloadAchBatch() {
     if (!activeRun) return;
     const run = runs.find((r) => r.id === activeRun);
-    if (!currentId) return;
-    const { data: emps } = await supabase.from("employees").select("id, full_name, bank_routing_last4, bank_account_last4").eq("company_id", currentId);
-    const empMap = new Map((emps ?? []).map((e) => [e.id as string, e]));
-    const { data: rich } = await supabase.from("payroll_items").select("employee_id, employee_name, net_pay").eq("company_id", currentId).eq("run_id", activeRun);
-
-    const header = `ACH BATCH FILE (preview — not a NACHA-formatted file)`;
-    const meta = `Pay date: ${run?.pay_date ?? "-"} | Items: ${(rich ?? []).length} | Total net: ${fmtUSD(run?.net_total ?? 0)}`;
-    const body = (rich ?? []).map((i, idx) => {
-      const emp = empMap.get(i.employee_id as string);
-      return `${String(idx + 1).padStart(3, "0")}  ${(i.employee_name as string).padEnd(28)}  routing •${emp?.bank_routing_last4 ?? "----"}  acct •${emp?.bank_account_last4 ?? "----"}  ${fmtUSD(Number(i.net_pay))}`;
-    }).join("\n");
-    const out = [header, meta, "", body].join("\n");
-    const blob = new Blob([out], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url; a.download = `ach-batch-${run?.pay_date ?? "run"}.txt`;
-    a.click(); URL.revokeObjectURL(url);
+    if (!run) return;
+    downloadAchCsv({
+      company_name: company?.legal_name || "Payroll",
+      pay_date: run.pay_date,
+      lines: items.map((i) => {
+        const emp = employees.get(i.employee_id);
+        return {
+          employee_name: i.employee_name,
+          routing_last4: emp?.bank_routing_last4 ?? null,
+          account_last4: emp?.bank_account_last4 ?? null,
+          account_type: emp?.bank_account_type ?? "checking",
+          net_pay: Number(i.net_pay),
+        };
+      }),
+    });
+    toast.success("ACH batch CSV downloaded");
   }
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-semibold tracking-tight">Pay stubs & direct deposit</h1>
-        <p className="text-sm text-muted-foreground">Download per-employee pay stubs and export the ACH batch for your bank.</p>
+        <p className="text-sm text-muted-foreground">Download per-employee pay stubs (PDF) and export the ACH batch for your bank.</p>
       </div>
 
       <div className="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50/60 px-5 py-3 text-sm text-amber-800">
         <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
-        <p>Taxes and net pay shown are <strong>estimates for reference only</strong> and not certified by a CPA or tax professional. Please verify all figures with your accountant or tax advisor before filing.</p>
+        <p>Taxes and net pay shown are <strong>estimates for reference only</strong> and not certified by a CPA. Verify with your accountant before filing. Year-end W-2s are generated from the <Link to="/app/tax-year" className="font-semibold underline">Tax year forms</Link> page.</p>
       </div>
 
       <div className="rounded-2xl border bg-card">
@@ -138,8 +188,8 @@ function PayStubsPage() {
         <div className="rounded-2xl border bg-card">
           <div className="flex items-center justify-between border-b px-5 py-3">
             <div className="text-sm font-medium">Employee pay stubs</div>
-            <Button size="sm" onClick={downloadAchBatch} className="rounded-full gap-1.5 bg-primary text-background hover:bg-foreground/90">
-              <Banknote className="h-3.5 w-3.5" /> Export ACH batch
+            <Button size="sm" onClick={downloadAchBatch} disabled={!items.length} className="rounded-full gap-1.5 bg-primary text-background hover:bg-foreground/90">
+              <Banknote className="h-3.5 w-3.5" /> Export ACH batch (CSV)
             </Button>
           </div>
           {items.length === 0 ? (
@@ -164,7 +214,9 @@ function PayStubsPage() {
                       <td className="px-3 py-3">{fmtUSD(it.federal_tax + it.social_security + it.medicare + it.state_tax)}</td>
                       <td className="px-3 py-3 font-semibold">{fmtUSD(it.net_pay)}</td>
                       <td className="px-5 py-3 text-right">
-                        <Button size="sm" variant="outline" className="rounded-full gap-1" onClick={() => downloadStub(it)}><Download className="h-3.5 w-3.5" /> Stub</Button>
+                        <Button size="sm" variant="outline" className="rounded-full gap-1" disabled={busy === it.id} onClick={() => downloadStub(it)}>
+                          <Download className="h-3.5 w-3.5" /> {busy === it.id ? "…" : "PDF"}
+                        </Button>
                       </td>
                     </tr>
                   ))}
