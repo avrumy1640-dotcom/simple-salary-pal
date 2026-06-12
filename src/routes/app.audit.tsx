@@ -2,15 +2,18 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useCompany } from "@/hooks/useCompany";
+import { useServerFn } from "@tanstack/react-start";
+import { listPiiAccessLog } from "@/lib/pii-vault.functions";
 import {
   ShieldCheck, Search, Download, Filter, Activity, AlertTriangle,
-  CheckCircle2, Clock, User, Database,
+  CheckCircle2, Clock, User, Database, Eye, Lock,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 export const Route = createFileRoute("/app/audit")({
   head: () => ({ meta: [{ title: "Audit log — Paylo" }] }),
