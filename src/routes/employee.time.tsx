@@ -5,6 +5,7 @@ import { useMyEmployee } from "@/lib/useMyEmployee";
 import { loadMaps } from "@/components/GoogleMap";
 import { Clock, MapPin, ShieldCheck, ShieldAlert, ShieldOff, RefreshCw, Check } from "lucide-react";
 import { toast } from "sonner";
+import { withOfflineCache } from "@/lib/offlineCache";
 
 export const Route = createFileRoute("/employee/time")({
   head: () => ({ meta: [{ title: "Time clock — Paylo" }] }),
