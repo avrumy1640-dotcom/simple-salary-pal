@@ -1,8 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { fmtUSD } from "@/lib/payroll";
-import { FileBadge, Download, Calendar, Info } from "lucide-react";
+import { FileBadge, ArrowRight, Calendar, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCompany } from "@/hooks/useCompany";
 
