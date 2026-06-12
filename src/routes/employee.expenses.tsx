@@ -125,17 +125,10 @@ function EmployeeExpensesPage() {
   };
 
   return (
-    <div className="space-y-6 unit-in">
-      <div className="flex items-start justify-between gap-4 flex-wrap">
-        <div>
-          <h1 className="font-display text-[28px] sm:text-[40px] font-extrabold tracking-tight text-slate-900">
-            My Expenses
-          </h1>
-          <p className="mt-1 text-sm sm:text-base text-slate-500">
-            Submit business expenses and track reimbursement.
-          </p>
-        </div>
-        <Button onClick={() => setOpen(true)}><Plus className="h-4 w-4 mr-1"/>New expense</Button>
+    <div className="space-y-5 unit-in">
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">Expenses</h1>
+        <Button onClick={() => setOpen(true)}><Plus className="h-4 w-4 mr-1"/>New</Button>
       </div>
 
       {rows.length === 0 ? (

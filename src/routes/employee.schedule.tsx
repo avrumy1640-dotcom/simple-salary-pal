@@ -120,11 +120,8 @@ function EmployeeSchedulePage() {
   }
 
   return (
-    <div className="space-y-8 unit-in">
-      <div>
-        <h1 className="font-display text-[32px] sm:text-[40px] font-extrabold tracking-tight text-slate-900">My schedule</h1>
-        <p className="mt-2 text-base text-slate-600">Upcoming published shifts and swap requests.</p>
-      </div>
+    <div className="space-y-5 unit-in">
+      <h1 className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">Schedule</h1>
 
       {incoming.length > 0 && (
         <div className="rounded-xl border border-primary/30 bg-primary/5">
