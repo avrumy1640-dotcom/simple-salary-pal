@@ -49,6 +49,7 @@ interface Notification {
 
 export function TopBar({ companyName, userEmail, pageTitle }: { companyName: string; userEmail: string; pageTitle?: string }) {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const path = useRouterState({ select: (s) => s.location.pathname });
   const [searchOpen, setSearchOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
