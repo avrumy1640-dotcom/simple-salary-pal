@@ -9,7 +9,7 @@ Status legend: ☐ planned · ◐ partial · ✅ done
 
 ---
 
-## Phase A — Tax engine: bracketed tax tables
+## Phase A — Tax engine: bracketed tax tables ✅
 
 **Goal.** Replace the current flat-rate withholding heuristic with a real
 bracketed calculation engine driven by versioned tables. Same engine handles
@@ -17,24 +17,24 @@ federal, state, and local income taxes; FICA/FUTA/SUTA stay rate-based.
 
 ### A.1 Schema
 
-- ☐ `tax_jurisdictions` — `code`, `kind` ('federal'|'state'|'local'),
+- ✅ `tax_jurisdictions` — `code`, `kind` ('federal'|'state'|'local'),
   `name`, `parent_jurisdiction_id`. Seeded with US federal + 50 states + DC
   + PR. Local rows added on demand.
-- ☐ `tax_table_versions` — `jurisdiction_id`, `tax_type`
+- ✅ `tax_table_versions` — `jurisdiction_id`, `tax_type`
   ('income','sui','sdi','fli','local'), `effective_start` date,
   `effective_end` date, `source_url`, `published_at`, `is_active`. One
   version per (jurisdiction, tax_type, effective_start).
-- ☐ `tax_brackets` — `version_id`, `filing_status`
+- ✅ `tax_brackets` — `version_id`, `filing_status`
   ('single','married','married_separate','head_of_household'),
   `pay_frequency` ('annual','biweekly','semimonthly','weekly','monthly'),
   `lower_amount`, `upper_amount` (nullable for last bracket), `base_tax`,
   `marginal_rate`. Stored as the IRS Publication 15-T "Percentage Method"
   table shape so we can compute per-paycheck withholding directly.
-- ☐ `tax_standard_deductions` — version_id × filing_status × per-period
+- ✅ `tax_standard_deductions` — version_id × filing_status × per-period
   amount (W-4 step adjustments + standard deduction folded in).
-- ☐ `tax_allowances` — version_id × allowance amount per dependent /
+- ✅ `tax_allowances` — version_id × allowance amount per dependent /
   per pay period (used by the legacy W-4 path).
-- ☐ `tax_flat_rates` — version_id × rate × `wage_base_cap` for
+- ✅ `tax_flat_rates` — version_id × rate × `wage_base_cap` for
   FICA, Medicare, additional Medicare, FUTA, employer SUTA defaults.
 
 All tables: `service_role` write, `authenticated` read (reference data, no
