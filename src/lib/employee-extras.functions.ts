@@ -152,7 +152,7 @@ export const upsertDirectDepositAccount = createServerFn({ method: "POST" })
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    const payload: Record<string, unknown> = {
+    const payload = {
       company_id: emp.company_id,
       employee_id: emp.id,
       nickname: data.nickname ?? null,
@@ -162,9 +162,9 @@ export const upsertDirectDepositAccount = createServerFn({ method: "POST" })
       split_value: splitValue,
       priority: data.priority ?? 1,
       active: data.active ?? true,
+      routing_last4: routingLast4 ?? null,
+      account_last4: accountLast4 ?? null,
     };
-    if (routingLast4) payload.routing_last4 = routingLast4;
-    if (accountLast4) payload.account_last4 = accountLast4;
 
     const { data: row, error } = data.id
       ? await supabaseAdmin.from("direct_deposit_accounts").update(payload).eq("id", data.id).select().single()
