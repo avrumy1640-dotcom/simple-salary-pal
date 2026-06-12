@@ -69,7 +69,7 @@ jurisdictions have current-year data.
 
 ---
 
-## Phase B — Multi-state withholding
+## Phase B — Multi-state withholding ✅
 
 **Goal.** Correctly withhold for employees who live in one state, work in
 another, work across multiple states in one pay period, or travel
@@ -77,16 +77,16 @@ temporarily.
 
 ### B.1 Schema
 
-- ☐ `employee_tax_profiles` — replaces the flat `employees.filing_status`
+- ✅ `employee_tax_profiles` — replaces the flat `employees.filing_status`
   fields. Columns: `employee_id`, `jurisdiction_id`, `is_resident`,
   `is_work_location`, `filing_status`, `allowances`, `dependents_credit`,
   `extra_withholding`, `exempt` (boolean + reason), `effective_start`,
   `effective_end`. Many rows per employee. Federal is always one row.
-- ☐ `state_reciprocity` — `home_state`, `work_state`, `kind`
+- ✅ `state_reciprocity` — `home_state`, `work_state`, `kind`
   ('full','partial'), `requires_certificate` boolean, `certificate_form`
   (e.g. WV/IT-104). Drives auto-suppression of work-state withholding
   when a reciprocity agreement is on file.
-- ☐ `work_state_allocations` (per `payroll_items`) — array of
+- ✅ `work_state_allocations` (per `payroll_items`) — array of
   `{ jurisdiction_id, pct_or_hours }`. Defaults to 100% of the employee's
   primary work-state but can be split per run for travelers.
 

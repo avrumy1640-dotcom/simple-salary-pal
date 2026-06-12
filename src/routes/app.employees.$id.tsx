@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { EmergencyContactsCard } from "@/components/EmergencyContactsCard";
 import { DirectDepositAccountsCard } from "@/components/DirectDepositAccountsCard";
+import { TaxProfileCard } from "@/routes/employee.tax-profile";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -319,6 +320,7 @@ function EmployeeProfilePage() {
             { v: "personal", l: "Personal Info" },
             { v: "job", l: "Job Info" },
             { v: "pay", l: "Pay Info" },
+            { v: "tax", l: "Tax" },
             { v: "documents", l: "Documents" },
             { v: "timeoff", l: "Time Off" },
             { v: "activity", l: "Activity Log" },
@@ -415,6 +417,11 @@ function EmployeeProfilePage() {
           <div className="mt-6">
             <DirectDepositAccountsCard employeeId={emp.id} />
           </div>
+        </TabsContent>
+
+        {/* TAX (Phase B multi-state) */}
+        <TabsContent value="tax" className="mt-6 space-y-5">
+          {emp.company_id && <TaxProfileCard employeeId={emp.id} companyId={emp.company_id} canEdit={true} />}
         </TabsContent>
 
         {/* DOCUMENTS */}

@@ -1711,6 +1711,105 @@ export type Database = {
           },
         ]
       }
+      employee_tax_profiles: {
+        Row: {
+          allowances: number
+          company_id: string
+          created_at: string
+          dependents_credit: number
+          dependents_other: number
+          dependents_under17: number
+          effective_end: string | null
+          effective_start: string
+          employee_id: string
+          exempt: boolean
+          exempt_reason: string | null
+          extra_withholding: number
+          filing_status: string
+          id: string
+          is_resident: boolean
+          is_work_location: boolean
+          jurisdiction_id: string
+          updated_at: string
+        }
+        Insert: {
+          allowances?: number
+          company_id: string
+          created_at?: string
+          dependents_credit?: number
+          dependents_other?: number
+          dependents_under17?: number
+          effective_end?: string | null
+          effective_start?: string
+          employee_id: string
+          exempt?: boolean
+          exempt_reason?: string | null
+          extra_withholding?: number
+          filing_status?: string
+          id?: string
+          is_resident?: boolean
+          is_work_location?: boolean
+          jurisdiction_id: string
+          updated_at?: string
+        }
+        Update: {
+          allowances?: number
+          company_id?: string
+          created_at?: string
+          dependents_credit?: number
+          dependents_other?: number
+          dependents_under17?: number
+          effective_end?: string | null
+          effective_start?: string
+          employee_id?: string
+          exempt?: boolean
+          exempt_reason?: string | null
+          extra_withholding?: number
+          filing_status?: string
+          id?: string
+          is_resident?: boolean
+          is_work_location?: boolean
+          jurisdiction_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employee_tax_profiles_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employee_tax_profiles_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "employee_tax_profiles_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employee_tax_profiles_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "employee_tax_profiles_jurisdiction_id_fkey"
+            columns: ["jurisdiction_id"]
+            isOneToOne: false
+            referencedRelation: "tax_jurisdictions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       employees: {
         Row: {
           address_line1: string | null
@@ -5261,6 +5360,105 @@ export type Database = {
           },
         ]
       }
+      state_employer_taxes: {
+        Row: {
+          created_at: string
+          effective_year: number
+          id: string
+          is_employee: boolean
+          is_employer: boolean
+          notes: string | null
+          rate: number
+          state_code: string
+          tax_code: string
+          wage_base_cap: number | null
+        }
+        Insert: {
+          created_at?: string
+          effective_year: number
+          id?: string
+          is_employee?: boolean
+          is_employer?: boolean
+          notes?: string | null
+          rate: number
+          state_code: string
+          tax_code: string
+          wage_base_cap?: number | null
+        }
+        Update: {
+          created_at?: string
+          effective_year?: number
+          id?: string
+          is_employee?: boolean
+          is_employer?: boolean
+          notes?: string | null
+          rate?: number
+          state_code?: string
+          tax_code?: string
+          wage_base_cap?: number | null
+        }
+        Relationships: []
+      }
+      state_nonresident_rules: {
+        Row: {
+          created_at: string
+          id: string
+          notes: string | null
+          state_code: string
+          threshold_days: number | null
+          threshold_wages: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          state_code: string
+          threshold_days?: number | null
+          threshold_wages?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          state_code?: string
+          threshold_days?: number | null
+          threshold_wages?: number | null
+        }
+        Relationships: []
+      }
+      state_reciprocity: {
+        Row: {
+          certificate_form: string | null
+          created_at: string
+          home_state: string
+          id: string
+          kind: string
+          notes: string | null
+          requires_certificate: boolean
+          work_state: string
+        }
+        Insert: {
+          certificate_form?: string | null
+          created_at?: string
+          home_state: string
+          id?: string
+          kind?: string
+          notes?: string | null
+          requires_certificate?: boolean
+          work_state: string
+        }
+        Update: {
+          certificate_form?: string | null
+          created_at?: string
+          home_state?: string
+          id?: string
+          kind?: string
+          notes?: string | null
+          requires_certificate?: boolean
+          work_state?: string
+        }
+        Relationships: []
+      }
       tax_allowances: {
         Row: {
           amount_per_allowance: number
@@ -6081,6 +6279,58 @@ export type Database = {
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      work_state_allocations: {
+        Row: {
+          company_id: string
+          created_at: string
+          hours: number | null
+          id: string
+          jurisdiction_id: string
+          payroll_item_id: string
+          pct: number | null
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          hours?: number | null
+          id?: string
+          jurisdiction_id: string
+          payroll_item_id: string
+          pct?: number | null
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          hours?: number | null
+          id?: string
+          jurisdiction_id?: string
+          payroll_item_id?: string
+          pct?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "work_state_allocations_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "work_state_allocations_jurisdiction_id_fkey"
+            columns: ["jurisdiction_id"]
+            isOneToOne: false
+            referencedRelation: "tax_jurisdictions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "work_state_allocations_payroll_item_id_fkey"
+            columns: ["payroll_item_id"]
+            isOneToOne: false
+            referencedRelation: "payroll_items"
             referencedColumns: ["id"]
           },
         ]

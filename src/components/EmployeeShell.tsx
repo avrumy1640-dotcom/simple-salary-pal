@@ -44,6 +44,7 @@ const navGroups: NavGroup[] = [
     label: "Account",
     items: [
       { to: "/employee/profile", label: "My Info", icon: User },
+      { to: "/employee/tax-profile", label: "Tax", icon: User },
       { to: "/employee/benefits", label: "Benefits", icon: HeartHandshake },
       { to: "/employee/documents", label: "Documents", icon: FolderOpen },
       { to: "/employee/onboarding", label: "Get Started", icon: ClipboardCheck },
@@ -60,6 +61,7 @@ const PAGE_TITLES: Record<string, string> = {
   "/employee/requests": "Requests",
   "/employee/help": "Assistant",
   "/employee/profile": "My Info",
+  "/employee/tax-profile": "Tax Profile",
   "/employee/benefits": "Benefits",
   "/employee/onboarding": "Get Started",
   "/employee/notifications": "Notifications",
