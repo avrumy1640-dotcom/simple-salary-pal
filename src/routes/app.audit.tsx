@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useCompany } from "@/hooks/useCompany";
+import { useRealtimeRefresh } from "@/lib/useRealtimeRefresh";
 import {
   ShieldCheck, Search, Download, Filter, Activity, AlertTriangle,
   CheckCircle2, Clock, User, Database,
@@ -43,22 +44,23 @@ function AuditPage() {
   const [rangeDays, setRangeDays] = useState<number>(30);
   const [selected, setSelected] = useState<AuditEvent | null>(null);
 
-  useEffect(() => {
+  async function load() {
     if (!current) return;
     setLoading(true);
     const since = new Date(Date.now() - rangeDays * 86400000).toISOString();
-    (async () => {
-      const { data } = await supabase
-        .from("audit_events")
-        .select("*")
-        .eq("company_id", current.company_id)
-        .gte("occurred_at", since)
-        .order("occurred_at", { ascending: false })
-        .limit(1000);
-      setEvents((data ?? []) as AuditEvent[]);
-      setLoading(false);
-    })();
-  }, [current?.company_id, rangeDays]);
+    const { data } = await supabase
+      .from("audit_events")
+      .select("*")
+      .eq("company_id", current.company_id)
+      .gte("occurred_at", since)
+      .order("occurred_at", { ascending: false })
+      .limit(1000);
+    setEvents((data ?? []) as AuditEvent[]);
+    setLoading(false);
+  }
+
+  useEffect(() => { load(); }, [current?.company_id, rangeDays]);
+  useRealtimeRefresh(["audit_events"], load, { companyId: current?.company_id });
 
   const entityTypes = useMemo(
     () => Array.from(new Set(events.map((e) => e.entity_type))).sort(),

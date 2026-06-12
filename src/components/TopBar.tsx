@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { performSignOut } from "@/lib/sign-out";
 import {
   Search, Bell, ChevronDown, LogOut, User, Settings as SettingsIcon,
   LayoutDashboard, Wallet, Users, Clock, Receipt, FileText, History as HistoryIcon,
@@ -47,6 +49,7 @@ interface Notification {
 
 export function TopBar({ companyName, userEmail, pageTitle }: { companyName: string; userEmail: string; pageTitle?: string }) {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const path = useRouterState({ select: (s) => s.location.pathname });
   const [searchOpen, setSearchOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -102,7 +105,7 @@ export function TopBar({ companyName, userEmail, pageTitle }: { companyName: str
   const unread = notifications.filter((n) => n.unread).length;
 
   async function signOut() {
-    await supabase.auth.signOut();
+    await performSignOut(queryClient);
     navigate({ to: "/auth", replace: true });
   }
 

@@ -1,5 +1,7 @@
 import { Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { performSignOut } from "@/lib/sign-out";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,6 +12,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TopBar } from "@/components/TopBar";
+import { SandboxBanner } from "@/components/SandboxBanner";
 import { ADMIN_ROLES, PAYROLL_ROLES, HR_ROLES, MANAGER_ROLES, ANY_ADMIN, isAdmin, isManager, type AppRole } from "@/lib/roles";
 
 type NavItem = { to: string; label: string; icon: typeof Users; roles: readonly AppRole[] };
@@ -100,6 +103,7 @@ const ALL_NAV_LABELS: Record<string, string> = {
 
 export function AppShell() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const path = useRouterState({ select: (s) => s.location.pathname });
   const [checking, setChecking] = useState(true);
   const [companyName, setCompanyName] = useState("");
@@ -149,7 +153,7 @@ export function AppShell() {
   }, [navigate]);
 
   async function signOut() {
-    await supabase.auth.signOut();
+    await performSignOut(queryClient);
     navigate({ to: "/auth", replace: true });
   }
 
@@ -369,6 +373,7 @@ export function AppShell() {
 
         <main className="flex-1 min-w-0">
           <TopBar companyName={companyName} userEmail={userEmail} pageTitle={currentPageTitle} />
+          <SandboxBanner />
           <div key={path} className="page-in mx-auto max-w-[1400px] px-4 py-6 pb-[calc(env(safe-area-inset-bottom)+5rem)] sm:p-6 md:p-8 md:pb-8">
             <Outlet />
           </div>
