@@ -206,13 +206,8 @@ function TimePage() {
 
   const pendingPto = pto.filter((p) => p.status === "pending");
 
-  const chips = [
-    { label: "Total hours", value: totals.total.toFixed(1) },
-    { label: "Regular", value: totals.regular.toFixed(1) },
-    { label: "Overtime", value: totals.ot.toFixed(1), tone: totals.ot > 0 ? "amber" : undefined as any },
-    { label: "Pending PTO", value: String(pendingPto.length), tone: pendingPto.length > 0 ? "amber" : undefined as any },
-    { label: "Active people", value: String(emps.length) },
-  ];
+
+
 
   return (
     <div className="p-6 md:p-10 space-y-8 unit-in">
