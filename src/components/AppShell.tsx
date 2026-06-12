@@ -150,7 +150,7 @@ export function AppShell() {
   }, [navigate]);
 
   async function signOut() {
-    await supabase.auth.signOut();
+    await performSignOut(queryClient);
     navigate({ to: "/auth", replace: true });
   }
 

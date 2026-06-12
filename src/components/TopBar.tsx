@@ -102,7 +102,7 @@ export function TopBar({ companyName, userEmail, pageTitle }: { companyName: str
   const unread = notifications.filter((n) => n.unread).length;
 
   async function signOut() {
-    await supabase.auth.signOut();
+    await performSignOut(queryClient);
     navigate({ to: "/auth", replace: true });
   }
 
