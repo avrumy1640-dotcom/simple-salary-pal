@@ -362,29 +362,6 @@ function Dashboard() {
               ))}
             </ul>
           </div>
-          <div className="mt-6 grid grid-cols-3 gap-4 border-t border-border pt-4">
-            <div className="flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full bg-emerald-500" />
-              <div>
-                <div className="text-[11px] uppercase tracking-wider text-slate-400">Currently In</div>
-                <div className="text-[18px] font-bold tabular-nums">{data.clockedIn}</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full bg-amber-500" />
-              <div>
-                <div className="text-[11px] uppercase tracking-wider text-slate-400">On Leave</div>
-                <div className="text-[18px] font-bold tabular-nums">{data.onLeave}</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full bg-slate-400" />
-              <div>
-                <div className="text-[11px] uppercase tracking-wider text-slate-400">Absent</div>
-                <div className="text-[18px] font-bold tabular-nums">{data.absent}</div>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
