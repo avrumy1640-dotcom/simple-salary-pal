@@ -106,6 +106,11 @@ function PayStubsPage() {
         <p className="text-sm text-muted-foreground">Download per-employee pay stubs and export the ACH batch for your bank.</p>
       </div>
 
+      <div className="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50/60 px-5 py-3 text-sm text-amber-800">
+        <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+        <p>Taxes and net pay shown are <strong>estimates for reference only</strong> and not certified by a CPA or tax professional. Please verify all figures with your accountant or tax advisor before filing.</p>
+      </div>
+
       <div className="rounded-2xl border bg-card">
         <div className="border-b px-5 py-3 text-sm font-medium flex items-center gap-2"><Receipt className="h-4 w-4" /> Payroll runs</div>
         {runs.length === 0 ? (
