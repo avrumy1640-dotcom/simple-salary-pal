@@ -190,11 +190,8 @@ function PunchPage() {
 
 
   return (
-    <div className="space-y-8 unit-in">
-      <div>
-        <h1 className="font-display text-[32px] sm:text-[40px] font-extrabold tracking-tight text-slate-900">Punch in / out</h1>
-        <p className="mt-2 text-base text-slate-600">Confirm your worksite, then punch in.</p>
-      </div>
+    <div className="space-y-5 unit-in">
+      <h1 className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">Clock in / out</h1>
 
       {/* Live status hero */}
       <div className={`rounded-3xl border border-border ${statusMeta.bg} p-6 shadow-soft`}>
