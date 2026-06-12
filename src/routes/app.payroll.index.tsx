@@ -14,7 +14,7 @@ import {
 import {
   PlayCircle, CalendarClock, Users, Wallet, TrendingUp, Search, Download,
   ChevronDown, ChevronRight, CheckCircle2, Clock, ArrowUpRight, FileText,
-  Banknote, Undo2,
+  Banknote, Undo2, AlertTriangle,
 } from "lucide-react";
 import { useCompany } from "@/hooks/useCompany";
 import { useRealtimeRefresh } from "@/lib/useRealtimeRefresh";
