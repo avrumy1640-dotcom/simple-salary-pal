@@ -251,43 +251,31 @@ function PayrollOverview() {
   return (
     <div className="space-y-8 unit-scope unit-in">
       {/* Header */}
-      <header className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-[34px] font-bold tracking-tight text-slate-900 leading-none">Payroll</h1>
-            <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600 ring-1 ring-slate-200">
-              {runs.length} run{runs.length === 1 ? "" : "s"}
+      <header className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-3 min-w-0">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 leading-none">Payroll</h1>
+          <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600 ring-1 ring-slate-200">
+            {runs.length} run{runs.length === 1 ? "" : "s"}
+          </span>
+          {draftRuns > 0 && (
+            <span className="inline-flex items-center rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700 ring-1 ring-amber-200">
+              {draftRuns} draft
             </span>
-          </div>
-          <p className="mt-2 text-sm text-slate-500">Review past payrolls, track YTD totals, and run the next one in minutes.</p>
+          )}
         </div>
         <div className="flex items-center gap-2">
-          <Button asChild variant="outline" className="rounded-xl">
+          <Button asChild variant="outline" size="sm" className="rounded-xl">
             <Link to="/app/pay-history">
-              <FileText className="h-4 w-4 mr-2" /> Full history
+              <FileText className="h-4 w-4 mr-1.5" /> History
             </Link>
           </Button>
-          <Button asChild size="lg" className="rounded-xl bg-slate-900 text-white hover:bg-slate-800 shadow-sm">
+          <Button asChild className="rounded-xl bg-slate-900 text-white hover:bg-slate-800 shadow-sm">
             <Link to="/app/payroll/run">
-              <PlayCircle className="h-5 w-5 mr-2" /> Run payroll
+              <PlayCircle className="h-4 w-4 mr-1.5" /> Run payroll
             </Link>
           </Button>
         </div>
       </header>
-
-      <div className="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50/60 px-5 py-3 text-sm text-amber-800">
-        <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
-        <p>Taxes and net pay shown are <strong>estimates for reference only</strong> and not certified by a CPA or tax professional. Please verify all figures with your accountant or tax advisor before filing.</p>
-      </div>
-
-      {/* Stat chips */}
-      <div className="flex flex-wrap items-center gap-2">
-        <StatChip label="Active employees" value={activeEmps} tone="accent" />
-        <StatChip label="Runs YTD" value={ytdRuns.length} tone="muted" />
-        <StatChip label={`${now.getFullYear()} gross`} value={fmtUSD(ytdGross)} tone="active" />
-        <StatChip label={`${now.getFullYear()} taxes`} value={fmtUSD(ytdTax)} tone="muted" />
-        {draftRuns > 0 && <StatChip label="Drafts" value={draftRuns} tone="amber" />}
-      </div>
 
       {/* Hero cards: Next payroll + Last payroll + YTD net */}
       <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr_1fr]">
