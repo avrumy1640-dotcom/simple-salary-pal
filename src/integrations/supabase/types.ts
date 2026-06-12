@@ -1400,6 +1400,240 @@ export type Database = {
           },
         ]
       }
+      direct_deposit_accounts: {
+        Row: {
+          account_last4: string | null
+          account_type: Database["public"]["Enums"]["dd_account_type"]
+          active: boolean
+          bank_name: string | null
+          company_id: string
+          created_at: string
+          employee_id: string
+          id: string
+          nickname: string | null
+          priority: number
+          routing_last4: string | null
+          split_type: Database["public"]["Enums"]["dd_split_type"]
+          split_value: number | null
+          updated_at: string
+          verified_at: string | null
+        }
+        Insert: {
+          account_last4?: string | null
+          account_type?: Database["public"]["Enums"]["dd_account_type"]
+          active?: boolean
+          bank_name?: string | null
+          company_id: string
+          created_at?: string
+          employee_id: string
+          id?: string
+          nickname?: string | null
+          priority?: number
+          routing_last4?: string | null
+          split_type?: Database["public"]["Enums"]["dd_split_type"]
+          split_value?: number | null
+          updated_at?: string
+          verified_at?: string | null
+        }
+        Update: {
+          account_last4?: string | null
+          account_type?: Database["public"]["Enums"]["dd_account_type"]
+          active?: boolean
+          bank_name?: string | null
+          company_id?: string
+          created_at?: string
+          employee_id?: string
+          id?: string
+          nickname?: string | null
+          priority?: number
+          routing_last4?: string | null
+          split_type?: Database["public"]["Enums"]["dd_split_type"]
+          split_value?: number | null
+          updated_at?: string
+          verified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "direct_deposit_accounts_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "direct_deposit_accounts_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "direct_deposit_accounts_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "direct_deposit_accounts_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
+          },
+        ]
+      }
+      emergency_contacts: {
+        Row: {
+          address: string | null
+          company_id: string
+          created_at: string
+          email: string | null
+          employee_id: string
+          id: string
+          is_primary: boolean
+          name: string
+          phone: string | null
+          relationship: string | null
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          company_id: string
+          created_at?: string
+          email?: string | null
+          employee_id: string
+          id?: string
+          is_primary?: boolean
+          name: string
+          phone?: string | null
+          relationship?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          company_id?: string
+          created_at?: string
+          email?: string | null
+          employee_id?: string
+          id?: string
+          is_primary?: boolean
+          name?: string
+          phone?: string | null
+          relationship?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "emergency_contacts_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "emergency_contacts_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "emergency_contacts_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "emergency_contacts_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
+          },
+        ]
+      }
+      employee_assets: {
+        Row: {
+          asset_type: string
+          company_id: string
+          condition: Database["public"]["Enums"]["asset_condition"]
+          created_at: string
+          employee_id: string
+          id: string
+          issued_on: string | null
+          name: string
+          notes: string | null
+          returned_on: string | null
+          serial_number: string | null
+          updated_at: string
+          value: number | null
+        }
+        Insert: {
+          asset_type: string
+          company_id: string
+          condition?: Database["public"]["Enums"]["asset_condition"]
+          created_at?: string
+          employee_id: string
+          id?: string
+          issued_on?: string | null
+          name: string
+          notes?: string | null
+          returned_on?: string | null
+          serial_number?: string | null
+          updated_at?: string
+          value?: number | null
+        }
+        Update: {
+          asset_type?: string
+          company_id?: string
+          condition?: Database["public"]["Enums"]["asset_condition"]
+          created_at?: string
+          employee_id?: string
+          id?: string
+          issued_on?: string | null
+          name?: string
+          notes?: string | null
+          returned_on?: string | null
+          serial_number?: string | null
+          updated_at?: string
+          value?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employee_assets_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employee_assets_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "employee_assets_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employee_assets_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
+          },
+        ]
+      }
       employee_live_locations: {
         Row: {
           accuracy_m: number | null
@@ -2871,6 +3105,285 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "notifications_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      offboarding_assignments: {
+        Row: {
+          assigned_by: string | null
+          company_id: string
+          completed_at: string | null
+          created_at: string
+          employee_id: string
+          id: string
+          reason: string | null
+          status: string
+          template_id: string | null
+          termination_date: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_by?: string | null
+          company_id: string
+          completed_at?: string | null
+          created_at?: string
+          employee_id: string
+          id?: string
+          reason?: string | null
+          status?: string
+          template_id?: string | null
+          termination_date: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_by?: string | null
+          company_id?: string
+          completed_at?: string | null
+          created_at?: string
+          employee_id?: string
+          id?: string
+          reason?: string | null
+          status?: string
+          template_id?: string | null
+          termination_date?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offboarding_assignments_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offboarding_assignments_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "offboarding_assignments_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offboarding_assignments_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "offboarding_assignments_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "offboarding_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      offboarding_tasks: {
+        Row: {
+          assignment_id: string | null
+          category: string
+          company_id: string
+          completed_at: string | null
+          completed_by: string | null
+          created_at: string
+          description: string | null
+          due_date: string | null
+          employee_id: string
+          id: string
+          notes: string | null
+          required: boolean
+          sort_order: number
+          status: string
+          template_id: string | null
+          template_task_id: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assignment_id?: string | null
+          category?: string
+          company_id: string
+          completed_at?: string | null
+          completed_by?: string | null
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          employee_id: string
+          id?: string
+          notes?: string | null
+          required?: boolean
+          sort_order?: number
+          status?: string
+          template_id?: string | null
+          template_task_id?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assignment_id?: string | null
+          category?: string
+          company_id?: string
+          completed_at?: string | null
+          completed_by?: string | null
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          employee_id?: string
+          id?: string
+          notes?: string | null
+          required?: boolean
+          sort_order?: number
+          status?: string
+          template_id?: string | null
+          template_task_id?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offboarding_tasks_assignment_id_fkey"
+            columns: ["assignment_id"]
+            isOneToOne: false
+            referencedRelation: "offboarding_assignments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offboarding_tasks_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offboarding_tasks_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "offboarding_tasks_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offboarding_tasks_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "offboarding_tasks_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "offboarding_templates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offboarding_tasks_template_task_id_fkey"
+            columns: ["template_task_id"]
+            isOneToOne: false
+            referencedRelation: "offboarding_template_tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      offboarding_template_tasks: {
+        Row: {
+          category: string
+          created_at: string
+          day_offset: number
+          description: string | null
+          id: string
+          is_required: boolean
+          sort_order: number
+          template_id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          day_offset?: number
+          description?: string | null
+          id?: string
+          is_required?: boolean
+          sort_order?: number
+          template_id: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          day_offset?: number
+          description?: string | null
+          id?: string
+          is_required?: boolean
+          sort_order?: number
+          template_id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offboarding_template_tasks_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "offboarding_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      offboarding_templates: {
+        Row: {
+          active: boolean
+          company_id: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          company_id: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          company_id?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offboarding_templates_company_id_fkey"
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
@@ -4619,6 +5132,144 @@ export type Database = {
           },
         ]
       }
+      team_members: {
+        Row: {
+          company_id: string
+          created_at: string
+          employee_id: string
+          id: string
+          role: string | null
+          team_id: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          employee_id: string
+          id?: string
+          role?: string | null
+          team_id: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          employee_id?: string
+          id?: string
+          role?: string | null
+          team_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_members_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_members_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "team_members_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_members_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "team_members_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      teams: {
+        Row: {
+          active: boolean
+          color: string | null
+          company_id: string
+          created_at: string
+          department_id: string | null
+          description: string | null
+          id: string
+          manager_id: string | null
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          color?: string | null
+          company_id: string
+          created_at?: string
+          department_id?: string | null
+          description?: string | null
+          id?: string
+          manager_id?: string | null
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          color?: string | null
+          company_id?: string
+          created_at?: string
+          department_id?: string | null
+          description?: string | null
+          id?: string
+          manager_id?: string | null
+          name?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teams_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teams_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teams_manager_id_fkey"
+            columns: ["manager_id"]
+            isOneToOne: false
+            referencedRelation: "employee_pto_balances"
+            referencedColumns: ["employee_id"]
+          },
+          {
+            foreignKeyName: "teams_manager_id_fkey"
+            columns: ["manager_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teams_manager_id_fkey"
+            columns: ["manager_id"]
+            isOneToOne: false
+            referencedRelation: "w2_annual_summary"
+            referencedColumns: ["employee_id"]
+          },
+        ]
+      }
       time_clock_punches: {
         Row: {
           accuracy_m: number | null
@@ -5300,6 +5951,7 @@ export type Database = {
         | "benefits_admin"
         | "accountant"
         | "auditor"
+      asset_condition: "new" | "good" | "fair" | "damaged" | "lost"
       audit_action:
         | "create"
         | "update"
@@ -5360,6 +6012,8 @@ export type Database = {
         | "handbook"
         | "other"
       compliance_severity: "low" | "medium" | "high" | "critical"
+      dd_account_type: "checking" | "savings"
+      dd_split_type: "percent" | "fixed" | "remainder"
       employee_lifecycle:
         | "prospect"
         | "onboarding"
@@ -5571,6 +6225,7 @@ export const Constants = {
         "accountant",
         "auditor",
       ],
+      asset_condition: ["new", "good", "fair", "damaged", "lost"],
       audit_action: [
         "create",
         "update",
@@ -5637,6 +6292,8 @@ export const Constants = {
         "other",
       ],
       compliance_severity: ["low", "medium", "high", "critical"],
+      dd_account_type: ["checking", "savings"],
+      dd_split_type: ["percent", "fixed", "remainder"],
       employee_lifecycle: [
         "prospect",
         "onboarding",
