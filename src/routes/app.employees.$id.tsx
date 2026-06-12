@@ -319,6 +319,7 @@ function EmployeeProfilePage() {
             { v: "personal", l: "Personal Info" },
             { v: "job", l: "Job Info" },
             { v: "pay", l: "Pay Info" },
+            { v: "tax", l: "Tax" },
             { v: "documents", l: "Documents" },
             { v: "timeoff", l: "Time Off" },
             { v: "activity", l: "Activity Log" },
