@@ -369,6 +369,7 @@ export function AppShell() {
 
         <main className="flex-1 min-w-0">
           <TopBar companyName={companyName} userEmail={userEmail} pageTitle={currentPageTitle} />
+          <SandboxBanner />
           <div key={path} className="page-in mx-auto max-w-[1400px] px-4 py-6 pb-[calc(env(safe-area-inset-bottom)+5rem)] sm:p-6 md:p-8 md:pb-8">
             <Outlet />
           </div>
