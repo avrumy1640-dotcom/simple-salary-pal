@@ -52,27 +52,10 @@ function TaxesPage() {
     })();
   }, [year, currentId]);
 
-  function downloadW2(emp: EmpTotal) {
-    const lines = [
-      `W-2 SUMMARY (preview only — not an official IRS form)`,
-      `Tax Year: ${year}`,
-      ``,
-      `Employee: ${emp.employee_name}`,
-      ``,
-      `Box 1  Wages, tips, other comp:       ${fmtUSD(emp.gross)}`,
-      `Box 2  Federal income tax withheld:   ${fmtUSD(emp.federal)}`,
-      `Box 3  Social Security wages:         ${fmtUSD(emp.gross)}`,
-      `Box 4  Social Security tax withheld:  ${fmtUSD(emp.ss)}`,
-      `Box 5  Medicare wages:                ${fmtUSD(emp.gross)}`,
-      `Box 6  Medicare tax withheld:         ${fmtUSD(emp.medicare)}`,
-      `Box 17 State income tax:              ${fmtUSD(emp.state)}`,
-    ].join("\n");
-    const blob = new Blob([lines], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url; a.download = `W2-preview-${emp.employee_name.replace(/\s+/g, "_")}-${year}.txt`;
-    a.click(); URL.revokeObjectURL(url);
-  }
+  // W-2 generation has moved to the dedicated Tax Year forms flow
+  // (/app/tax-year), which produces real substitute statements with proper
+  // Box 12 / state-line aggregation and an SSA EFW2 export.
+
 
   return (
     <div className="space-y-6">
