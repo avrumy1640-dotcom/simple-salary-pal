@@ -247,12 +247,8 @@ export const computePeriodWithholding = createServerFn({ method: 'POST' })
 
 // --- helpers ---
 
-async function resolveVersion(
-  supabase: { rpc: (fn: string, args: Record<string, unknown>) => Promise<{ data: string | null; error: unknown }> },
-  jurisdiction: string,
-  taxType: string,
-  on: string,
-): Promise<string | null> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function resolveVersion(supabase: any, jurisdiction: string, taxType: string, on: string): Promise<string | null> {
   const { data } = await supabase.rpc('resolve_tax_version', {
     _jurisdiction: jurisdiction,
     _tax_type: taxType,
