@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { EmergencyContactsCard } from "@/components/EmergencyContactsCard";
+import { DirectDepositAccountsCard } from "@/components/DirectDepositAccountsCard";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -348,6 +350,9 @@ function EmployeeProfilePage() {
               <PField label="Emergency Contact Phone" editing={editPersonal} value={e.emergency_contact_phone ?? ""} onChange={(v) => setDraft({ ...draft, emergency_contact_phone: v })} />
             </Grid>
           </SectionCard>
+          <div className="mt-6">
+            <EmergencyContactsCard employeeId={emp.id} />
+          </div>
         </TabsContent>
 
         {/* JOB */}
@@ -407,6 +412,9 @@ function EmployeeProfilePage() {
               <PField label="Routing Number" editing={false} value={e.bank_routing_last4 ? `XXXX${e.bank_routing_last4}` : "—"} />
             </Grid>
           </SectionCard>
+          <div className="mt-6">
+            <DirectDepositAccountsCard employeeId={emp.id} />
+          </div>
         </TabsContent>
 
         {/* DOCUMENTS */}
