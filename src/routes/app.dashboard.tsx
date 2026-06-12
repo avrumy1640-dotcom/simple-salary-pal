@@ -107,7 +107,7 @@ function StatCard({
         {loading ? <span className="skeleton inline-block h-10 w-20" /> : <BigNumber value={value} start={!loading} />}
       </div>
       <div className="mt-2 text-[13px] text-slate-500">{sub}</div>
-      <ArrowUpRight className="absolute right-4 bottom-4 h-4 w-4 text-slate-300 opacity-0 transition group-hover:opacity-100" />
+      <ArrowRight className="absolute right-4 bottom-4 h-4 w-4 text-slate-300 opacity-0 transition group-hover:opacity-100" />
     </Link>
   );
 }
