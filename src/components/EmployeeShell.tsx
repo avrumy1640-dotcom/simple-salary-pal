@@ -1,8 +1,6 @@
 import { Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
-import { performSignOut } from "@/lib/sign-out";
 import { supabase } from "@/integrations/supabase/client";
 import { getEmployeePortalIdentity } from "@/lib/company-sync.functions";
 import {
@@ -12,7 +10,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { EmployeeNotificationBanner } from "@/components/EmployeeNotificationBanner";
-import { SandboxBanner } from "@/components/SandboxBanner";
 
 type NavItem = { to: string; label: string; icon: typeof Home };
 type NavGroup = { label: string; items: NavItem[] };
@@ -74,7 +71,6 @@ const PAGE_TITLES: Record<string, string> = {
 
 export function EmployeeShell() {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const getIdentity = useServerFn(getEmployeePortalIdentity);
   const path = useRouterState({ select: (s) => s.location.pathname });
   const [checking, setChecking] = useState(true);
@@ -113,7 +109,7 @@ export function EmployeeShell() {
   }, [getIdentity, navigate]);
 
   async function signOut() {
-    await performSignOut(queryClient);
+    await supabase.auth.signOut();
     navigate({ to: "/auth", replace: true });
   }
 
@@ -293,7 +289,6 @@ export function EmployeeShell() {
         )}
 
         <main className="flex-1 min-w-0">
-          <SandboxBanner />
           <div key={path} className="page-in mx-auto max-w-6xl px-4 py-6 pb-[calc(env(safe-area-inset-bottom)+5rem)] sm:p-6 md:p-8 md:pb-8">
             <Outlet />
           </div>

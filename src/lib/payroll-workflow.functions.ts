@@ -17,7 +17,6 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { resolveTaxProvider } from "./tax-provider";
 import type { PayrollCalcResult } from "./payroll";
-import { assertProductionPayrollEnabled } from "./sandbox";
 
 const PAYROLL_ROLES = ["owner", "admin", "payroll_admin"] as const;
 
@@ -302,7 +301,6 @@ export const markRunPaid = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => payInput.parse(d))
   .handler(async ({ data, context }) => {
-    assertProductionPayrollEnabled("Marking a payroll run as paid (ACH origination)");
     const { supabase, userId } = context as { supabase: any; userId: string };
     const { data: run, error } = await supabase.from("payroll_runs").select("*").eq("id", data.run_id).maybeSingle();
     if (error) throw new Error(error.message);
@@ -344,7 +342,6 @@ export const reversePayrollRun = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => reverseInput.parse(d))
   .handler(async ({ data, context }) => {
-    assertProductionPayrollEnabled("Reversing a paid payroll run");
     const { supabase, userId } = context as { supabase: any; userId: string };
     const { data: run, error } = await supabase.from("payroll_runs").select("*").eq("id", data.run_id).maybeSingle();
     if (error) throw new Error(error.message);

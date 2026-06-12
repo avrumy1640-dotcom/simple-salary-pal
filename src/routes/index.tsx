@@ -104,7 +104,6 @@ function Landing() {
               <div className="h-2.5 w-2.5 rounded-full bg-amber-400/40" />
               <div className="h-2.5 w-2.5 rounded-full bg-emerald-400/40" />
               <span className="ml-2 text-[10px] font-medium tracking-wide text-muted-foreground/60">PAYLO.APP/DASHBOARD</span>
-              <span className="ml-auto rounded-full bg-muted px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-muted-foreground">Preview</span>
             </div>
 
             <div className="space-y-5 px-7 pb-7 pt-3">

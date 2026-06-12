@@ -195,16 +195,15 @@ function AuthPage() {
           throw new Error("An account with this email already exists. Please sign in instead.");
         }
 
-        // If the project has email confirmation enabled (recommended), no session
-        // is returned yet. Stop here and ask the user to confirm via email — DO NOT
-        // sign them in automatically; that defeats the verification gate.
-        if (!data.session) {
-          toast.success("Check your email to confirm your account before signing in.");
-          setMode("signin");
-          setPassword("");
-          return;
+        let user = data.user ?? data.session?.user ?? null;
+        if (!data.session || !user) {
+          const { data: signIn, error: signInError } = await supabase.auth.signInWithPassword({
+            email: email.trim(),
+            password,
+          });
+          if (signInError) throw signInError;
+          user = signIn.user;
         }
-        const user = data.user ?? data.session.user;
         if (!user) throw new Error("Something went wrong. Please try again.");
 
         const setup = await setupAccount({ data: { accountType, fullName: fullName.trim(), companyName: "My Company" } });

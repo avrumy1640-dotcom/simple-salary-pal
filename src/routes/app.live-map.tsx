@@ -3,7 +3,6 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { GoogleMap } from "@/components/GoogleMap";
 import { useCompany } from "@/hooks/useCompany";
-import { useRealtimeRefresh } from "@/lib/useRealtimeRefresh";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MapPin, Navigation, RefreshCw } from "lucide-react";
@@ -62,7 +61,6 @@ function LiveMapPage() {
     const t = setInterval(() => { load(); setTick((n) => n + 1); }, 15_000);
     return () => clearInterval(t);
   }, [currentId]);
-  useRealtimeRefresh(["employee_live_locations"], () => { load(); }, { companyId: currentId });
 
   const markers = useMemo(() => rows.map((r) => {
     const ageMin = (Date.now() - new Date(r.updated_at).getTime()) / 60000;

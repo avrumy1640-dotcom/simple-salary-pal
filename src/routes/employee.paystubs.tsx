@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useMyEmployee } from "@/lib/useMyEmployee";
-import { useRealtimeRefresh } from "@/lib/useRealtimeRefresh";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Download, FileText, Wallet } from "lucide-react";
@@ -37,22 +36,21 @@ function Page() {
   const [companyName, setCompanyName] = useState("");
   const [preview, setPreview] = useState<PayItem | null>(null);
 
-  async function loadPaystubs() {
+  useEffect(() => {
     if (!employee) return;
-    const [{ data }, { data: comp }] = await Promise.all([
-      supabase.from("payroll_items")
-        .select("id, gross_pay, net_pay, federal_tax, state_tax, fica_tax, medicare_tax, regular_hours, overtime_hours, payroll_runs(pay_date, period_start, period_end, status)")
-        .eq("employee_id", employee.id)
-        .order("created_at", { ascending: false })
-        .limit(48),
-      supabase.from("companies").select("legal_name, dba").eq("id", employee.company_id).maybeSingle(),
-    ]);
-    setItems((data ?? []) as unknown as PayItem[]);
-    setCompanyName((comp?.dba || comp?.legal_name) ?? "");
-  }
-
-  useEffect(() => { loadPaystubs(); }, [employee?.id]);
-  useRealtimeRefresh(["payroll_items"], loadPaystubs, { enabled: !!employee });
+    (async () => {
+      const [{ data }, { data: comp }] = await Promise.all([
+        supabase.from("payroll_items")
+          .select("id, gross_pay, net_pay, federal_tax, state_tax, fica_tax, medicare_tax, regular_hours, overtime_hours, payroll_runs(pay_date, period_start, period_end, status)")
+          .eq("employee_id", employee.id)
+          .order("created_at", { ascending: false })
+          .limit(48),
+        supabase.from("companies").select("legal_name, dba").eq("id", employee.company_id).maybeSingle(),
+      ]);
+      setItems((data ?? []) as unknown as PayItem[]);
+      setCompanyName((comp?.dba || comp?.legal_name) ?? "");
+    })();
+  }, [employee?.id]);
 
   if (loading) return null;
   if (!employee) return <p className="text-sm text-muted-foreground">No employee record found.</p>;
