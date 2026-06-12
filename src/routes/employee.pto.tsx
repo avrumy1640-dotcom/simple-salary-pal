@@ -118,11 +118,8 @@ function Page() {
   if (!employee) return <p className="text-sm text-muted-foreground">No employee record found.</p>;
 
   return (
-    <div className="space-y-8 unit-in">
-      <div>
-        <h1 className="font-display text-[28px] sm:text-[40px] font-extrabold tracking-tight text-slate-900">Time Off</h1>
-        <p className="mt-1 text-sm sm:text-base text-slate-500">Plan your time off and track your balance.</p>
-      </div>
+    <div className="space-y-5 unit-in">
+      <h1 className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">Time Off</h1>
 
       {/* Donut balance cards */}
       <div className="grid gap-4 sm:grid-cols-3">
