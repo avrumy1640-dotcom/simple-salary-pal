@@ -177,6 +177,27 @@ function PricingPage() {
           </Link>
         </div>
       </section>
+
+      {/* FOOTER */}
+      <footer className="border-t border-border/60 py-10">
+        <div className="mx-auto flex max-w-7xl flex-col items-center gap-4 px-5 md:px-8">
+          <div className="flex flex-wrap items-center justify-center gap-6 text-sm font-medium text-muted-foreground">
+            <Link to="/about" className="hover:text-foreground">About</Link>
+            <Link to="/pricing" className="hover:text-foreground">Pricing</Link>
+            <Link to="/faq" className="hover:text-foreground">FAQ</Link>
+            <Link to="/contact" className="hover:text-foreground">Contact</Link>
+            <Link to="/privacy" className="hover:text-foreground">Privacy</Link>
+            <Link to="/terms" className="hover:text-foreground">Terms</Link>
+          </div>
+          <div className="flex items-center gap-2 opacity-60">
+            <div className="grid h-6 w-6 place-items-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">P</div>
+            <span className="text-sm font-semibold tracking-tight">paylo</span>
+          </div>
+          <p className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground">
+            © {new Date().getFullYear()} Paylo · Payroll for small business
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }
