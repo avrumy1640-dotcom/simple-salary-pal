@@ -10,6 +10,7 @@ import {
   ChevronLeft, ChevronRight, Clock, Calendar as CalendarIcon, Check, X, CalendarDays, Plus, Trash2, ShieldCheck,
 } from "lucide-react";
 import { useCompany } from "@/hooks/useCompany";
+import { useRealtimeRefresh } from "@/lib/useRealtimeRefresh";
 import { TimesheetApprovals } from "@/components/TimesheetApprovals";
 
 export const Route = createFileRoute("/app/time")({
@@ -118,6 +119,7 @@ function TimePage() {
     setLoading(false);
   }
   useEffect(() => { load(); /* eslint-disable-next-line */ }, [weekStart]);
+  useRealtimeRefresh(["time_entries", "pto_entries", "employees"], load, { companyId: currentId });
 
   function setCell(empId: string, dateIso: string, value: string) {
     const n = value === "" ? 0 : Number(value);
