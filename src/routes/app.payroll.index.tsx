@@ -275,6 +275,11 @@ function PayrollOverview() {
         </div>
       </header>
 
+      <div className="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50/60 px-5 py-3 text-sm text-amber-800">
+        <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+        <p>Taxes and net pay shown are <strong>estimates for reference only</strong> and not certified by a CPA or tax professional. Please verify all figures with your accountant or tax advisor before filing.</p>
+      </div>
+
       {/* Stat chips */}
       <div className="flex flex-wrap items-center gap-2">
         <StatChip label="Active employees" value={activeEmps} tone="accent" />
