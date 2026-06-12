@@ -273,7 +273,11 @@ export function buildEFW2(opts: {
     totalMed += t.medicare;
     totalStateWH += t.stateWH;
 
-    const fullSsn = padR(digitsOnly(emp.ssn_last4 || "0000").slice(0, 9), 9, "0"); // last4 zero-padded as placeholder
+    const ssnDigits = digitsOnly(emp.ssn_last4 || "");
+    if (ssnDigits.length !== 9) {
+      throw new Error(`Cannot generate e-file: employee "${emp.full_name}" is missing a complete 9-digit SSN. E-files with placeholder SSNs are never acceptable.`);
+    }
+    const fullSsn = ssnDigits;
     const [first, ...rest] = emp.full_name.split(" ");
     const last = rest.join(" ") || first;
     const rw =
