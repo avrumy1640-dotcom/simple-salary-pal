@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TopBar } from "@/components/TopBar";
+import { SandboxBanner } from "@/components/SandboxBanner";
 import { ADMIN_ROLES, PAYROLL_ROLES, HR_ROLES, MANAGER_ROLES, ANY_ADMIN, isAdmin, isManager, type AppRole } from "@/lib/roles";
 
 type NavItem = { to: string; label: string; icon: typeof Users; roles: readonly AppRole[] };
