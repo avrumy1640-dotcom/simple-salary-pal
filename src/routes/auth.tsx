@@ -289,6 +289,15 @@ function AuthPage() {
               >
                 Continue with Google
               </Button>
+              <Button
+                variant="outline"
+                type="button"
+                className="mt-2 w-full border-border bg-card text-foreground hover:bg-muted hover:border-primary/30 transition-all"
+                onClick={handleApple}
+                disabled={loading}
+              >
+                 Continue with Apple
+              </Button>
 
               <div className="my-4 flex items-center gap-3 text-xs text-muted-foreground">
                 <div className="h-px flex-1 bg-border" /> OR <div className="h-px flex-1 bg-border" />
