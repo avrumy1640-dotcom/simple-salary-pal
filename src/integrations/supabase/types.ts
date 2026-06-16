@@ -246,7 +246,7 @@ export type Database = {
           institution_name: string | null
           is_company: boolean
           linked_at: string
-          owner_id: string
+          owner_id: string | null
           plaid_access_token: string | null
           plaid_item_id: string | null
           provider: string
@@ -268,7 +268,7 @@ export type Database = {
           institution_name?: string | null
           is_company?: boolean
           linked_at?: string
-          owner_id: string
+          owner_id?: string | null
           plaid_access_token?: string | null
           plaid_item_id?: string | null
           provider?: string
@@ -290,7 +290,7 @@ export type Database = {
           institution_name?: string | null
           is_company?: boolean
           linked_at?: string
-          owner_id?: string
+          owner_id?: string | null
           plaid_access_token?: string | null
           plaid_item_id?: string | null
           provider?: string
@@ -848,7 +848,7 @@ export type Database = {
           legal_name: string | null
           next_pay_date: string | null
           onboarding_complete: boolean
-          owner_id: string
+          owner_id: string | null
           pay_frequency: string
           state_tax_id: string | null
           updated_at: string
@@ -865,7 +865,7 @@ export type Database = {
           legal_name?: string | null
           next_pay_date?: string | null
           onboarding_complete?: boolean
-          owner_id: string
+          owner_id?: string | null
           pay_frequency?: string
           state_tax_id?: string | null
           updated_at?: string
@@ -882,7 +882,7 @@ export type Database = {
           legal_name?: string | null
           next_pay_date?: string | null
           onboarding_complete?: boolean
-          owner_id?: string
+          owner_id?: string | null
           pay_frequency?: string
           state_tax_id?: string | null
           updated_at?: string
@@ -1099,7 +1099,7 @@ export type Database = {
           created_at: string
           description: string | null
           id: string
-          owner_id: string
+          owner_id: string | null
           payment_date: string
           payment_method: string | null
           status: string
@@ -1114,7 +1114,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
-          owner_id: string
+          owner_id?: string | null
           payment_date?: string
           payment_method?: string | null
           status?: string
@@ -1129,7 +1129,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
-          owner_id?: string
+          owner_id?: string | null
           payment_date?: string
           payment_method?: string | null
           status?: string
@@ -1177,7 +1177,7 @@ export type Database = {
           latitude: number | null
           longitude: number | null
           notes: string | null
-          owner_id: string
+          owner_id: string | null
           payment_method: string | null
           phone: string | null
           state: string | null
@@ -1204,7 +1204,7 @@ export type Database = {
           latitude?: number | null
           longitude?: number | null
           notes?: string | null
-          owner_id: string
+          owner_id?: string | null
           payment_method?: string | null
           phone?: string | null
           state?: string | null
@@ -1231,7 +1231,7 @@ export type Database = {
           latitude?: number | null
           longitude?: number | null
           notes?: string | null
-          owner_id?: string
+          owner_id?: string | null
           payment_method?: string | null
           phone?: string | null
           state?: string | null
@@ -1263,7 +1263,7 @@ export type Database = {
           enrollment_id: string | null
           id: string
           name: string
-          owner_id: string
+          owner_id: string | null
           pre_tax: boolean
           source: string
           updated_at: string
@@ -1279,7 +1279,7 @@ export type Database = {
           enrollment_id?: string | null
           id?: string
           name: string
-          owner_id: string
+          owner_id?: string | null
           pre_tax?: boolean
           source?: string
           updated_at?: string
@@ -1295,7 +1295,7 @@ export type Database = {
           enrollment_id?: string | null
           id?: string
           name?: string
-          owner_id?: string
+          owner_id?: string | null
           pre_tax?: boolean
           source?: string
           updated_at?: string
@@ -1844,7 +1844,7 @@ export type Database = {
           lifecycle_status: Database["public"]["Enums"]["employee_lifecycle"]
           longitude: number | null
           manager_id: string | null
-          owner_id: string
+          owner_id: string | null
           pay_rate: number
           pay_type: string
           phone: string | null
@@ -1898,7 +1898,7 @@ export type Database = {
           lifecycle_status?: Database["public"]["Enums"]["employee_lifecycle"]
           longitude?: number | null
           manager_id?: string | null
-          owner_id: string
+          owner_id?: string | null
           pay_rate?: number
           pay_type?: string
           phone?: string | null
@@ -1952,7 +1952,7 @@ export type Database = {
           lifecycle_status?: Database["public"]["Enums"]["employee_lifecycle"]
           longitude?: number | null
           manager_id?: string | null
-          owner_id?: string
+          owner_id?: string | null
           pay_rate?: number
           pay_type?: string
           phone?: string | null
@@ -2771,7 +2771,7 @@ export type Database = {
           id: string
           mime_type: string | null
           notes: string | null
-          owner_id: string
+          owner_id: string | null
           signature_ip: string | null
           signature_requested_at: string | null
           signature_status: string
@@ -2794,7 +2794,7 @@ export type Database = {
           id?: string
           mime_type?: string | null
           notes?: string | null
-          owner_id: string
+          owner_id?: string | null
           signature_ip?: string | null
           signature_requested_at?: string | null
           signature_status?: string
@@ -2817,7 +2817,7 @@ export type Database = {
           id?: string
           mime_type?: string | null
           notes?: string | null
-          owner_id?: string
+          owner_id?: string | null
           signature_ip?: string | null
           signature_requested_at?: string | null
           signature_status?: string
@@ -2883,7 +2883,7 @@ export type Database = {
           employee_id: string | null
           form_type: string
           id: string
-          owner_id: string
+          owner_id: string | null
           pdf_storage_path: string | null
           signed_at: string | null
           signed_ip: string | null
@@ -2900,7 +2900,7 @@ export type Database = {
           employee_id?: string | null
           form_type: string
           id?: string
-          owner_id: string
+          owner_id?: string | null
           pdf_storage_path?: string | null
           signed_at?: string | null
           signed_ip?: string | null
@@ -2917,7 +2917,7 @@ export type Database = {
           employee_id?: string | null
           form_type?: string
           id?: string
-          owner_id?: string
+          owner_id?: string | null
           pdf_storage_path?: string | null
           signed_at?: string | null
           signed_ip?: string | null
@@ -3663,7 +3663,7 @@ export type Database = {
           due_date: string | null
           employee_id: string | null
           id: string
-          owner_id: string
+          owner_id: string | null
           required: boolean
           sort_order: number
           status: string
@@ -3683,7 +3683,7 @@ export type Database = {
           due_date?: string | null
           employee_id?: string | null
           id?: string
-          owner_id: string
+          owner_id?: string | null
           required?: boolean
           sort_order?: number
           status?: string
@@ -3703,7 +3703,7 @@ export type Database = {
           due_date?: string | null
           employee_id?: string | null
           id?: string
-          owner_id?: string
+          owner_id?: string | null
           required?: boolean
           sort_order?: number
           status?: string
@@ -4234,7 +4234,7 @@ export type Database = {
           medicare: number
           net_pay: number
           overtime_hours: number
-          owner_id: string
+          owner_id: string | null
           regular_hours: number
           run_id: string
           social_security: number
@@ -4251,7 +4251,7 @@ export type Database = {
           medicare?: number
           net_pay?: number
           overtime_hours?: number
-          owner_id: string
+          owner_id?: string | null
           regular_hours?: number
           run_id: string
           social_security?: number
@@ -4268,7 +4268,7 @@ export type Database = {
           medicare?: number
           net_pay?: number
           overtime_hours?: number
-          owner_id?: string
+          owner_id?: string | null
           regular_hours?: number
           run_id?: string
           social_security?: number
@@ -4366,7 +4366,7 @@ export type Database = {
           locked_at: string | null
           locked_by: string | null
           net_total: number
-          owner_id: string
+          owner_id: string | null
           pay_date: string
           period_end: string
           period_start: string
@@ -4387,7 +4387,7 @@ export type Database = {
           locked_at?: string | null
           locked_by?: string | null
           net_total?: number
-          owner_id: string
+          owner_id?: string | null
           pay_date: string
           period_end: string
           period_start: string
@@ -4408,7 +4408,7 @@ export type Database = {
           locked_at?: string | null
           locked_by?: string | null
           net_total?: number
-          owner_id?: string
+          owner_id?: string | null
           pay_date?: string
           period_end?: string
           period_start?: string
@@ -5199,7 +5199,7 @@ export type Database = {
           hours: number
           id: string
           notes: string | null
-          owner_id: string
+          owner_id: string | null
           pto_type: string
           start_date: string
           status: string
@@ -5213,7 +5213,7 @@ export type Database = {
           hours?: number
           id?: string
           notes?: string | null
-          owner_id: string
+          owner_id?: string | null
           pto_type?: string
           start_date: string
           status?: string
@@ -5227,7 +5227,7 @@ export type Database = {
           hours?: number
           id?: string
           notes?: string | null
-          owner_id?: string
+          owner_id?: string | null
           pto_type?: string
           start_date?: string
           status?: string
@@ -6489,7 +6489,7 @@ export type Database = {
           id: string
           notes: string | null
           overtime_hours: number
-          owner_id: string
+          owner_id: string | null
           timesheet_id: string | null
           work_date: string
         }
@@ -6503,7 +6503,7 @@ export type Database = {
           id?: string
           notes?: string | null
           overtime_hours?: number
-          owner_id: string
+          owner_id?: string | null
           timesheet_id?: string | null
           work_date: string
         }
@@ -6517,7 +6517,7 @@ export type Database = {
           id?: string
           notes?: string | null
           overtime_hours?: number
-          owner_id?: string
+          owner_id?: string | null
           timesheet_id?: string | null
           work_date?: string
         }

@@ -104,7 +104,7 @@ function DocumentsPage() {
       });
       if (upErr) throw upErr;
       const { error: insErr } = await supabase.from("hr_documents").insert({
-        owner_id: user.id,
+        
         company_id: currentId!,
         employee_id: person?.kind === "employee" ? person.id : null,
         contractor_id: person?.kind === "contractor" ? person.id : null,

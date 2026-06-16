@@ -147,7 +147,7 @@ function TimePage() {
           work_date: date,
           hours: regular,
           overtime_hours: ot,
-          owner_id: user.id,
+          
           company_id: currentId!,
         });
       });

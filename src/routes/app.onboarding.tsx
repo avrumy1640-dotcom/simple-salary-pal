@@ -120,7 +120,7 @@ function OnboardingPage() {
       const rows = template
         .filter((tpl) => !personTasks.some((t) => t.category === tpl.category))
         .map((tpl) => ({
-          owner_id: user.id,
+          
           company_id: currentId!,
           employee_id: person.kind === "employee" ? person.id : null,
           contractor_id: person.kind === "contractor" ? person.id : null,

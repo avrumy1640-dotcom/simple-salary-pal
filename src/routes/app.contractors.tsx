@@ -68,7 +68,6 @@ function ContractorsPage() {
     if (!user) return;
     if (!currentId) { toast.error("No active company selected"); return; }
     const payload = {
-      owner_id: user.id,
       company_id: currentId,
       full_name: String(form.get("full_name") || "").trim(),
       business_name: String(form.get("business_name") || "") || null,
@@ -105,7 +104,7 @@ function ContractorsPage() {
     const amount = Number(form.get("amount") || 0);
     if (amount <= 0) { toast.error("Amount must be > 0"); return; }
     const { error } = await supabase.from("contractor_payments").insert({
-      owner_id: user.id,
+      
       company_id: currentId,
       contractor_id: cid,
       contractor_name: c.full_name,
