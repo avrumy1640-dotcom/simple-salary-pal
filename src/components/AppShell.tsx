@@ -275,7 +275,7 @@ export function AppShell() {
             </button>
           </div>
 
-          {/* Grouped nav */}
+          {/* Grouped nav (includes Settings/Help at the end — scroll to reach) */}
           <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-5">
             {navGroups.map((group) => {
               const items = group.items.filter((n) => (n.roles as readonly string[]).includes(role));
@@ -292,52 +292,63 @@ export function AppShell() {
                 </div>
               );
             })}
+
+            {/* Support group merged into the scrollable nav */}
+            <div>
+              {!collapsed && (
+                <div className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400">
+                  Support
+                </div>
+              )}
+              {collapsed && <div className="mx-2 mb-2 border-t border-border" />}
+              <div className="space-y-0.5">
+                {(ADMIN_ROLES as readonly string[]).includes(role) && (
+                  <Link
+                    to="/app/settings"
+                    onClick={() => setOpen(false)}
+                    title={collapsed ? "Settings" : undefined}
+                    className={cn(
+                      "flex items-center gap-3 rounded-lg px-3 py-2.5 text-[14px] font-medium text-slate-600 hover:bg-slate-50 hover:text-foreground transition",
+                      collapsed && "justify-center px-2",
+                      path.startsWith("/app/settings") && "bg-primary/10 text-foreground",
+                    )}
+                  >
+                    <SettingsIcon className="h-[18px] w-[18px] shrink-0 text-slate-400" />
+                    {!collapsed && <span>Settings</span>}
+                  </Link>
+                )}
+                <Link
+                  to="/app/getting-started"
+                  onClick={() => setOpen(false)}
+                  title={collapsed ? "Help Center" : undefined}
+                  className={cn(
+                    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-[14px] font-medium text-slate-600 hover:bg-slate-50 hover:text-foreground transition",
+                    collapsed && "justify-center px-2",
+                  )}
+                >
+                  <HelpCircle className="h-[18px] w-[18px] shrink-0 text-slate-400" />
+                  {!collapsed && <span>Help Center</span>}
+                </Link>
+                <Link
+                  to="/help/access-denied"
+                  onClick={() => setOpen(false)}
+                  title={collapsed ? "Access help" : undefined}
+                  className={cn(
+                    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-[14px] font-medium text-slate-600 hover:bg-slate-50 hover:text-foreground transition",
+                    collapsed && "justify-center px-2",
+                  )}
+                >
+                  <ShieldCheck className="h-[18px] w-[18px] shrink-0 text-slate-400" />
+                  {!collapsed && <span>Access help</span>}
+                </Link>
+              </div>
+            </div>
           </nav>
 
-          {/* Bottom pinned */}
+          {/* Bottom: user + collapse only */}
           <div className="border-t border-border p-3 pb-[max(env(safe-area-inset-bottom),0.75rem)] space-y-1">
-            {(ADMIN_ROLES as readonly string[]).includes(role) && (
-              <Link
-                to="/app/settings"
-                onClick={() => setOpen(false)}
-                title={collapsed ? "Settings" : undefined}
-                className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-[14px] font-medium text-slate-600 hover:bg-slate-50 hover:text-foreground transition",
-                  collapsed && "justify-center px-2",
-                  path.startsWith("/app/settings") && "bg-primary/10 text-foreground",
-                )}
-              >
-                <SettingsIcon className="h-[18px] w-[18px] shrink-0 text-slate-400" />
-                {!collapsed && <span>Settings</span>}
-              </Link>
-            )}
-            <Link
-              to="/app/getting-started"
-              onClick={() => setOpen(false)}
-              title={collapsed ? "Help Center" : undefined}
-              className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-[14px] font-medium text-slate-600 hover:bg-slate-50 hover:text-foreground transition",
-                collapsed && "justify-center px-2",
-              )}
-            >
-              <HelpCircle className="h-[18px] w-[18px] shrink-0 text-slate-400" />
-              {!collapsed && <span>Help Center</span>}
-            </Link>
-            <Link
-              to="/help/access-denied"
-              onClick={() => setOpen(false)}
-              title={collapsed ? "Access help" : undefined}
-              className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-[14px] font-medium text-slate-600 hover:bg-slate-50 hover:text-foreground transition",
-                collapsed && "justify-center px-2",
-              )}
-            >
-              <ShieldCheck className="h-[18px] w-[18px] shrink-0 text-slate-400" />
-              {!collapsed && <span>Access help</span>}
-            </Link>
-
             {!collapsed && (
-              <div className="mt-2 flex items-center gap-3 rounded-lg bg-surface px-3 py-2">
+              <div className="flex items-center gap-3 rounded-lg bg-surface px-3 py-2">
                 <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary/20 text-primary text-xs font-bold">
                   {userInitials}
                 </div>
@@ -368,6 +379,7 @@ export function AppShell() {
               {collapsed ? <ChevronRight className="h-4 w-4" /> : (<><ChevronLeft className="h-4 w-4" /> Collapse</>)}
             </button>
           </div>
+
         </aside>
 
         {open && (
