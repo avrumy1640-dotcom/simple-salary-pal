@@ -177,12 +177,12 @@ const managerSteps: ChecklistStep[] = [
   },
   {
     key: "tax_setup",
-    title: "Configure state tax accounts",
-    hint: "Add your state withholding and unemployment IDs for accurate filings.",
+    title: "Configure tax accounts",
+    hint: "Add your federal and state tax IDs so we can file on your behalf.",
     to: "/app/tax-filing",
     detect: async ({ companyId }) => {
       const { data } = await supabase
-        .from("state_employer_taxes")
+        .from("employer_tax_payments")
         .select("id")
         .eq("company_id", companyId)
         .limit(1);
