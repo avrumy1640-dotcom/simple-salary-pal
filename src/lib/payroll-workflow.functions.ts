@@ -155,7 +155,6 @@ export const calculatePayrollRun = createServerFn({ method: "POST" })
     const { data: run, error: rErr } = await supabase
       .from("payroll_runs")
       .insert({
-        owner_id: userId,
         company_id: data.company_id,
         period_start: data.period_start,
         period_end: data.period_end,
