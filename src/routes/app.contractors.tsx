@@ -104,7 +104,7 @@ function ContractorsPage() {
     const amount = Number(form.get("amount") || 0);
     if (amount <= 0) { toast.error("Amount must be > 0"); return; }
     const { error } = await supabase.from("contractor_payments").insert({
-      owner_id: user.id,
+      
       company_id: currentId,
       contractor_id: cid,
       contractor_name: c.full_name,
