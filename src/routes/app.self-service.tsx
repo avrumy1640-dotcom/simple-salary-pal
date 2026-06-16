@@ -142,7 +142,7 @@ function SelfServicePage() {
       hours: Number(ptoForm.hours) || 0,
       employee_id: active.id,
       company_id: (active as any).company_id,
-      owner_id: user.id,
+      
       status: "pending",
     });
     if (error) { toast.error(error.message); return; }
