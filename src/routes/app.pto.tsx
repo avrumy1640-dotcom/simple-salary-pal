@@ -86,7 +86,7 @@ function PTOPage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
     if (!currentId) { toast.error("No active company selected"); return; }
-    const { error } = await supabase.from("pto_entries").insert({ ...form, hours: Number(form.hours) || 0, owner_id: user.id, company_id: currentId });
+    const { error } = await supabase.from("pto_entries").insert({ ...form, hours: Number(form.hours) || 0, company_id: currentId });
     if (error) { toast.error(error.message); return; }
     toast.success("Time off requested");
     setOpen(false);
