@@ -33,14 +33,7 @@ export const submitEmployeeForm = createServerFn({ method: "POST" })
     if (empErr) throw new Error(empErr.message);
     if (!emp) throw new Error("No employee record found for this user.");
 
-    // Resolve company owner for owner_id column (admin client)
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: company } = await supabaseAdmin
-      .from("companies")
-      .select("owner_id")
-      .eq("id", emp.company_id)
-      .maybeSingle();
-    if (!company?.owner_id) throw new Error("Company not found.");
 
     const ip =
       (typeof globalThis !== "undefined" &&
@@ -50,7 +43,6 @@ export const submitEmployeeForm = createServerFn({ method: "POST" })
     const { data: row, error } = await supabaseAdmin
       .from("hr_forms")
       .insert({
-        owner_id: company.owner_id,
         company_id: emp.company_id,
         employee_id: emp.id,
         form_type: data.form_type,
