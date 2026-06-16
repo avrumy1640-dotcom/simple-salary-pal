@@ -139,6 +139,7 @@ function RootComponent() {
         <Outlet />
       </PageTransition>
       <Toaster />
+      <OnboardingTourCard />
     </QueryClientProvider>
   );
 }
