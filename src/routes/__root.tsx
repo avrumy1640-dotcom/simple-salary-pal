@@ -14,6 +14,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { ParallaxBackground } from "../components/ParallaxBackground";
 import { PageTransition } from "../components/motion/PageTransition";
 import { Toaster } from "../components/ui/sonner";
+import { OnboardingTourCard } from "../components/OnboardingTourCard";
 
 function NotFoundComponent() {
   return (
