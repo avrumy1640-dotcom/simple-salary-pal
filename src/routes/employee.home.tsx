@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useMyEmployee } from "@/lib/useMyEmployee";
 import { useRealtimeRefresh } from "@/lib/useRealtimeRefresh";
 import { Button } from "@/components/ui/button";
+import { OnboardingChecklist } from "@/components/OnboardingChecklist";
 import { toast } from "sonner";
 import {
   Wallet, Play, Square, CalendarDays, FileText, ChevronRight, HeartHandshake,
