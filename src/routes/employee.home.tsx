@@ -184,6 +184,10 @@ function EmployeeHome() {
         {greet}, {first}
       </h1>
 
+      {/* Guided onboarding checklist */}
+      <OnboardingChecklist scope="employee" />
+
+
       {/* Open enrollment — only when active */}
       {openEnrollment && (() => {
         const daysLeft = Math.max(0, Math.ceil((+new Date(openEnrollment.ends_at) - +now) / 86400000));
