@@ -10,6 +10,7 @@ import { fmtUSD } from "@/lib/payroll";
 import { useCountUp } from "@/hooks/useCountUp";
 import { useCompany } from "@/hooks/useCompany";
 import { useRealtimeRefresh } from "@/lib/useRealtimeRefresh";
+import { OnboardingChecklist } from "@/components/OnboardingChecklist";
 
 export const Route = createFileRoute("/app/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — Paylo" }] }),
