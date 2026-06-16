@@ -205,7 +205,7 @@ export const calculatePayrollRun = createServerFn({ method: "POST" })
       });
       calcsByEmp.set(row.employee_id, calc);
       itemsToInsert.push({
-        owner_id: userId, company_id: data.company_id,
+        company_id: data.company_id,
         run_id: run.id, employee_id: row.employee_id, employee_name: emp.full_name,
         regular_hours: calc.regularHours, overtime_hours: calc.overtimeHours,
         gross_pay: calc.gross, federal_tax: calc.federalTax, social_security: calc.socialSecurity,
