@@ -70,16 +70,9 @@ export const saveSyncedCompanySettings = createServerFn({ method: "POST" })
     if (!canManage) throw new Error("You don't have permission to update this company.");
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: company, error: companyReadError } = await supabaseAdmin
-      .from("companies")
-      .select("owner_id")
-      .eq("id", data.company_id)
-      .maybeSingle();
-    if (companyReadError) throw new Error(companyReadError.message);
 
     const legalName = data.legal_name.trim();
     const payload = {
-      owner_id: company?.owner_id ?? userId,
       company_id: data.company_id,
       legal_name: legalName,
       ein: data.ein || null,
