@@ -151,7 +151,7 @@ export function AddEmployeeWizard({ open, onOpenChange, onCreated }: {
       bank_account_last4: (data.bank_account_last4 || "").slice(-4),
       direct_deposit_enabled: !!data.bank_account_last4,
       status: "active",
-      owner_id: user.id,
+      
       company_id: currentId,
     };
     const { data: row, error } = await supabase.from("employees").insert(payload).select("id").single();
