@@ -263,8 +263,12 @@ function Dashboard() {
 
   return (
     <div className="space-y-6">
+      {/* Guided onboarding checklist for managers/admins */}
+      <OnboardingChecklist scope="manager" />
+
       {/* ===== Section 1: Hero ===== */}
       <section className="surface-hero relative overflow-hidden rounded-2xl border border-border p-5 md:p-6">
+
         <div className="absolute inset-0 -z-10 opacity-90"
              style={{ background: "linear-gradient(135deg,#F0FDFF 0%,#F5F3FF 50%,#EFF6FF 100%)" }} />
         <div className="flex flex-wrap items-end justify-between gap-4">
