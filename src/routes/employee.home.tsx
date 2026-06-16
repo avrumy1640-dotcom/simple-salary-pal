@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useMyEmployee } from "@/lib/useMyEmployee";
 import { useRealtimeRefresh } from "@/lib/useRealtimeRefresh";
 import { Button } from "@/components/ui/button";
+import { OnboardingChecklist } from "@/components/OnboardingChecklist";
 import { toast } from "sonner";
 import {
   Wallet, Play, Square, CalendarDays, FileText, ChevronRight, HeartHandshake,
@@ -182,6 +183,10 @@ function EmployeeHome() {
       <h1 className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
         {greet}, {first}
       </h1>
+
+      {/* Guided onboarding checklist */}
+      <OnboardingChecklist scope="employee" />
+
 
       {/* Open enrollment — only when active */}
       {openEnrollment && (() => {
