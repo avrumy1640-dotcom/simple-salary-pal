@@ -112,7 +112,7 @@ export const rollupTimesheet = createServerFn({ method: "POST" })
 
     if (rollup.daily.length > 0) {
       const rows = rollup.daily.map((d) => ({
-        owner_id: userId,
+        
         company_id: data.company_id,
         employee_id: data.employee_id,
         timesheet_id: timesheetId,
