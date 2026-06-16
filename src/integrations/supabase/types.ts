@@ -7135,6 +7135,10 @@ export type Database = {
         Args: { _jurisdiction: string; _on: string; _tax_type: string }
         Returns: string
       }
+      rollup_punches_to_entry: {
+        Args: { _employee_id: string; _work_date: string }
+        Returns: undefined
+      }
     }
     Enums: {
       announcement_audience: "all" | "department" | "role" | "custom"
