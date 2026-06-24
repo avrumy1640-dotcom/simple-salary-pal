@@ -40,6 +40,7 @@ import { Route as EmployeeHelpRouteImport } from './routes/employee.help'
 import { Route as EmployeeExpensesRouteImport } from './routes/employee.expenses'
 import { Route as EmployeeDocumentsRouteImport } from './routes/employee.documents'
 import { Route as EmployeeBenefitsRouteImport } from './routes/employee.benefits'
+import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AppUsersRouteImport } from './routes/app.users'
 import { Route as AppTrackingRouteImport } from './routes/app.tracking'
 import { Route as AppTimeRouteImport } from './routes/app.time'
@@ -247,6 +248,11 @@ const EmployeeBenefitsRoute = EmployeeBenefitsRouteImport.update({
   id: '/benefits',
   path: '/benefits',
   getParentRoute: () => EmployeeRoute,
+} as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/callback',
+  path: '/callback',
+  getParentRoute: () => AuthRoute,
 } as any)
 const AppUsersRoute = AppUsersRouteImport.update({
   id: '/users',
@@ -513,7 +519,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/app': typeof AppRouteWithChildren
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/contact': typeof ContactRoute
   '/employee': typeof EmployeeRouteWithChildren
   '/faq': typeof FaqRoute
@@ -572,6 +578,7 @@ export interface FileRoutesByFullPath {
   '/app/time': typeof AppTimeRoute
   '/app/tracking': typeof AppTrackingRoute
   '/app/users': typeof AppUsersRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/employee/benefits': typeof EmployeeBenefitsRoute
   '/employee/documents': typeof EmployeeDocumentsRoute
   '/employee/expenses': typeof EmployeeExpensesRoute
@@ -598,7 +605,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/app': typeof AppRouteWithChildren
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/contact': typeof ContactRoute
   '/employee': typeof EmployeeRouteWithChildren
   '/faq': typeof FaqRoute
@@ -656,6 +663,7 @@ export interface FileRoutesByTo {
   '/app/time': typeof AppTimeRoute
   '/app/tracking': typeof AppTrackingRoute
   '/app/users': typeof AppUsersRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/employee/benefits': typeof EmployeeBenefitsRoute
   '/employee/documents': typeof EmployeeDocumentsRoute
   '/employee/expenses': typeof EmployeeExpensesRoute
@@ -683,7 +691,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/app': typeof AppRouteWithChildren
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/contact': typeof ContactRoute
   '/employee': typeof EmployeeRouteWithChildren
   '/faq': typeof FaqRoute
@@ -742,6 +750,7 @@ export interface FileRoutesById {
   '/app/time': typeof AppTimeRoute
   '/app/tracking': typeof AppTrackingRoute
   '/app/users': typeof AppUsersRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/employee/benefits': typeof EmployeeBenefitsRoute
   '/employee/documents': typeof EmployeeDocumentsRoute
   '/employee/expenses': typeof EmployeeExpensesRoute
@@ -829,6 +838,7 @@ export interface FileRouteTypes {
     | '/app/time'
     | '/app/tracking'
     | '/app/users'
+    | '/auth/callback'
     | '/employee/benefits'
     | '/employee/documents'
     | '/employee/expenses'
@@ -913,6 +923,7 @@ export interface FileRouteTypes {
     | '/app/time'
     | '/app/tracking'
     | '/app/users'
+    | '/auth/callback'
     | '/employee/benefits'
     | '/employee/documents'
     | '/employee/expenses'
@@ -998,6 +1009,7 @@ export interface FileRouteTypes {
     | '/app/time'
     | '/app/tracking'
     | '/app/users'
+    | '/auth/callback'
     | '/employee/benefits'
     | '/employee/documents'
     | '/employee/expenses'
@@ -1025,7 +1037,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   AppRoute: typeof AppRouteWithChildren
-  AuthRoute: typeof AuthRoute
+  AuthRoute: typeof AuthRouteWithChildren
   ContactRoute: typeof ContactRoute
   EmployeeRoute: typeof EmployeeRouteWithChildren
   FaqRoute: typeof FaqRoute
@@ -1256,6 +1268,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/employee/benefits'
       preLoaderRoute: typeof EmployeeBenefitsRouteImport
       parentRoute: typeof EmployeeRoute
+    }
+    '/auth/callback': {
+      id: '/auth/callback'
+      path: '/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/app/users': {
       id: '/app/users'
@@ -1756,6 +1775,16 @@ const AppRouteChildren: AppRouteChildren = {
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
+interface AuthRouteChildren {
+  AuthCallbackRoute: typeof AuthCallbackRoute
+}
+
+const AuthRouteChildren: AuthRouteChildren = {
+  AuthCallbackRoute: AuthCallbackRoute,
+}
+
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+
 interface EmployeeRouteChildren {
   EmployeeBenefitsRoute: typeof EmployeeBenefitsRoute
   EmployeeDocumentsRoute: typeof EmployeeDocumentsRoute
@@ -1804,7 +1833,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   AppRoute: AppRouteWithChildren,
-  AuthRoute: AuthRoute,
+  AuthRoute: AuthRouteWithChildren,
   ContactRoute: ContactRoute,
   EmployeeRoute: EmployeeRouteWithChildren,
   FaqRoute: FaqRoute,
