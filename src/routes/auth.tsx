@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate, Link, useSearch } from "@tanstack/react-r
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
+import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { completeAccountSetup, claimEmployeeAccounts } from "@/lib/auth.functions";
@@ -51,23 +52,26 @@ function isValidEmail(value: string) {
 }
 
 function authErrorMessage(message: string, context: "signin" | "signup" | "reset" = "signup") {
-  const m = message.toLowerCase();
+  const m = (message || "").toLowerCase();
+  if (m.includes("invalid login") || m.includes("invalid credentials")) {
+    return "Incorrect email or password. Please try again.";
+  }
   if (m.includes("already registered") || m.includes("user already") || m.includes("already exists") || m.includes("duplicate")) {
     return "An account with this email already exists. Please sign in instead.";
+  }
+  if (m.includes("email not confirmed")) {
+    return "Please check your email and click the confirmation link before signing in.";
+  }
+  if (m.includes("password") && (m.includes("short") || m.includes("weak") || m.includes("6 characters") || m.includes("8 characters") || m.includes("at least"))) {
+    return "Password must be at least 8 characters.";
   }
   if (m.includes("invalid email") || m.includes("email address is invalid")) {
     return "Please enter a valid email address.";
   }
-  if (m.includes("password") && (m.includes("short") || m.includes("weak") || m.includes("6 characters") || m.includes("8 characters"))) {
-    return "Password must be at least 8 characters.";
+  if (context === "signin" && (m.includes("not found") || m.includes("user not found"))) {
+    return "Incorrect email or password. Please try again.";
   }
-  if (m.includes("invalid login") || m.includes("invalid credentials") || m.includes("wrong") || m.includes("email not confirmed")) {
-    return context === "signin" ? "Incorrect email or password. Please try again." : "Something went wrong. Please try again.";
-  }
-  if (m.includes("not found") || m.includes("user not found")) {
-    return "No account found with this email. Please create an account.";
-  }
-  return context === "signin" ? "Something went wrong. Please try again." : message || "Something went wrong. Please try again.";
+  return "Something went wrong. Please try again.";
 }
 
 async function getUserDestination(uid: string) {
@@ -102,6 +106,17 @@ async function routeByCurrentUser(
   else setMode("setup");
 }
 
+function GoogleIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden focusable="false">
+      <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.91c1.7-1.57 2.69-3.88 2.69-6.62z" />
+      <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.91-2.26c-.81.54-1.84.86-3.05.86-2.34 0-4.33-1.58-5.04-3.71H.96v2.33A9 9 0 0 0 9 18z" />
+      <path fill="#FBBC05" d="M3.96 10.71A5.41 5.41 0 0 1 3.68 9c0-.59.1-1.17.28-1.71V4.96H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.04l3-2.33z" />
+      <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.96l3 2.33C4.67 5.16 6.66 3.58 9 3.58z" />
+    </svg>
+  );
+}
+
 function AuthPage() {
   const navigate = useNavigate();
   const search = useSearch({ from: "/auth" });
@@ -115,12 +130,13 @@ function AuthPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [companyName, setCompanyName] = useState("My Company");
   const [errors, setErrors] = useState<FieldErrors>({});
+  const [formError, setFormError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const title = useMemo(() => {
     if (mode === "signup") return "Create your account";
     if (mode === "setup") return "Finish account setup";
-    return "Sign in";
+    return "Welcome back";
   }, [mode]);
 
   useEffect(() => {
@@ -169,11 +185,13 @@ function AuthPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (loading) return;
     setErrors({});
+    setFormError(null);
+    if (mode === "signup" ? !validateSignup() : !validateSignin()) return;
     setLoading(true);
     try {
       if (mode === "signup") {
-        if (!validateSignup()) return;
         const { firstName, lastName } = splitName(fullName);
 
         const { data, error } = await supabase.auth.signUp({
@@ -210,7 +228,6 @@ function AuthPage() {
         toast.success("Account created. Welcome.");
         navigate({ to: setup.destination === "employer" ? "/app/dashboard" : "/employee/home", replace: true });
       } else {
-        if (!validateSignin()) return;
         const { data, error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
         if (error) throw error;
         if (data.user) await routeByCurrentUser(navigate, data.user.id, setMode, claimAccounts);
@@ -218,35 +235,43 @@ function AuthPage() {
     } catch (err) {
       console.error("[auth] submit error:", err);
       const raw = err instanceof Error ? err.message : "Something went wrong";
-      toast.error(authErrorMessage(raw, mode === "signin" ? "signin" : "signup"));
+      const msg = authErrorMessage(raw, mode === "signin" ? "signin" : "signup");
+      setFormError(msg);
     } finally {
       setLoading(false);
     }
   }
 
-  async function handleOAuth(provider: "google" | "apple") {
+  async function handleGoogle() {
+    if (loading) return;
+    setFormError(null);
     setLoading(true);
-    const result = await lovable.auth.signInWithOAuth(provider, {
-      redirect_uri: `${window.location.origin}/auth`,
-      extraParams: provider === "google" ? { prompt: "select_account" } : {},
-    });
-    setLoading(false);
-    if (result.error) { toast.error("Something went wrong. Please try again."); return; }
-    if (result.redirected) return;
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      setEmail(user.email ?? "");
-      setFullName((user.user_metadata?.full_name as string | undefined) ?? (user.user_metadata?.name as string | undefined) ?? "");
-      await routeByCurrentUser(navigate, user.id, setMode, claimAccounts);
+    try {
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: `${window.location.origin}/auth/callback`,
+        extraParams: { prompt: "select_account" },
+      });
+      if (result.error) {
+        setFormError("Something went wrong. Please try again.");
+        return;
+      }
+      if (result.redirected) return;
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setEmail(user.email ?? "");
+        setFullName((user.user_metadata?.full_name as string | undefined) ?? (user.user_metadata?.name as string | undefined) ?? "");
+        await routeByCurrentUser(navigate, user.id, setMode, claimAccounts);
+      }
+    } finally {
+      setLoading(false);
     }
   }
-  const handleGoogle = () => handleOAuth("google");
-  const handleApple = () => handleOAuth("apple");
-
 
   async function handleSetup(e: React.FormEvent) {
     e.preventDefault();
+    if (loading) return;
     setErrors({});
+    setFormError(null);
     if (!validateSetup()) return;
     setLoading(true);
     try {
@@ -257,28 +282,30 @@ function AuthPage() {
       navigate({ to: setup.destination === "employer" ? "/app/dashboard" : "/employee/home", replace: true });
     } catch (err) {
       console.error("[auth] setup error:", err);
-      toast.error("Something went wrong. Please try again.");
+      setFormError("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
   }
 
-  return (
-    <div className="relative grid min-h-screen place-items-center overflow-hidden px-4 py-10">
-      <div aria-hidden className="pointer-events-none absolute -left-32 top-10 h-[28rem] w-[28rem] rounded-full bg-primary/10 blur-3xl orb-1" />
-      <div aria-hidden className="pointer-events-none absolute -right-24 bottom-10 h-[28rem] w-[28rem] rounded-full bg-card/80 blur-3xl orb-2" />
-      <div aria-hidden className="pointer-events-none absolute inset-0 grid-bg opacity-30" />
+  const submitLabel = mode === "signin" ? "Sign in" : "Create account";
 
-      <div className="relative z-10 w-full max-w-md">
-        <Link to="/" className="mb-6 flex flex-col items-center justify-center gap-3">
-          <div className="grid h-14 w-14 place-items-center rounded-2xl gradient-brand text-xl font-extrabold text-primary-foreground shadow-glow">P</div>
-          <span className="font-display text-3xl font-bold tracking-tight text-foreground">Paylo</span>
+  return (
+    <div className="min-h-screen bg-white px-4 py-10 grid place-items-center">
+      <div className="w-full max-w-md">
+        <Link to="/" className="mb-6 flex flex-col items-center gap-2">
+          <div className="grid h-12 w-12 place-items-center rounded-2xl bg-primary text-lg font-extrabold text-primary-foreground">P</div>
+          <span className="text-xl font-bold tracking-tight text-foreground">Paylo</span>
         </Link>
 
-        <div className="surface-glass rounded-[2rem] p-6 shadow-float text-center md:p-7">
-          <h1 className="font-display text-3xl font-bold text-foreground">{title}</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {mode === "signin" ? "Pick up where you left off." : mode === "setup" ? "Choose the workspace you need." : "Start with email and password."}
+        <div className="rounded-2xl border border-border bg-card p-6 shadow-sm md:p-8">
+          <h1 className="text-center text-2xl font-bold text-foreground">{title}</h1>
+          <p className="mt-1 text-center text-sm text-muted-foreground">
+            {mode === "signin"
+              ? "Sign in to your account to continue."
+              : mode === "setup"
+                ? "Choose the workspace you need."
+                : "Get started in less than a minute."}
           </p>
 
           {mode !== "setup" && (
@@ -286,105 +313,135 @@ function AuthPage() {
               <Button
                 variant="outline"
                 type="button"
-                className="mt-6 w-full border-border bg-card text-foreground hover:bg-muted hover:border-primary/30 transition-all"
+                className="mt-6 w-full"
                 onClick={handleGoogle}
                 disabled={loading}
               >
-                Continue with Google
-              </Button>
-              <Button
-                variant="outline"
-                type="button"
-                className="mt-2 w-full border-border bg-card text-foreground hover:bg-muted hover:border-primary/30 transition-all"
-                onClick={handleApple}
-                disabled={loading}
-              >
-                 Continue with Apple
+                <GoogleIcon />
+                <span>Continue with Google</span>
               </Button>
 
-              <div className="my-4 flex items-center gap-3 text-xs text-muted-foreground">
-                <div className="h-px flex-1 bg-border" /> OR <div className="h-px flex-1 bg-border" />
+              <div className="my-5 flex items-center gap-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                <div className="h-px flex-1 bg-border" /> or <div className="h-px flex-1 bg-border" />
               </div>
             </>
           )}
 
           {mode === "setup" ? (
-            <form onSubmit={handleSetup} className="mt-6 space-y-4 text-left">
+            <form onSubmit={handleSetup} className="space-y-5 text-left">
               <AccountTypePicker accountType={accountType} setAccountType={setAccountType} />
-              {errors.accountType && <p className="text-xs font-medium text-destructive">{errors.accountType}</p>}
+              {errors.accountType && <p className="text-sm font-medium text-destructive">{errors.accountType}</p>}
               {accountType === "employer" && (
-                <div>
-                  <Label htmlFor="setupCompany" className="text-foreground">Company name</Label>
+                <div className="space-y-1.5">
+                  <Label htmlFor="setupCompany">Company name</Label>
                   <Input id="setupCompany" value={companyName} onChange={(e) => setCompanyName(e.target.value)} required maxLength={120} />
-                  {errors.companyName && <p className="mt-1 text-xs font-medium text-destructive">{errors.companyName}</p>}
+                  {errors.companyName && <p className="text-sm font-medium text-destructive">{errors.companyName}</p>}
                 </div>
               )}
-              <Button type="submit" className="w-full bg-primary font-bold text-primary-foreground" disabled={loading}>
-                {loading ? "Saving…" : "Continue"}
+              {formError && (
+                <div role="alert" className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">
+                  {formError}
+                </div>
+              )}
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? (<><Loader2 className="animate-spin" /> Saving…</>) : "Continue"}
               </Button>
             </form>
           ) : (
-          <form onSubmit={handleSubmit} className="space-y-4 text-left">
-            {mode === "signup" && (
-              <>
-                <AccountTypePicker accountType={accountType} setAccountType={setAccountType} />
-                {errors.accountType && <p className="text-xs font-medium text-destructive">{errors.accountType}</p>}
+            <form onSubmit={handleSubmit} className="space-y-4 text-left">
+              {mode === "signup" && (
+                <>
+                  <AccountTypePicker accountType={accountType} setAccountType={setAccountType} />
+                  {errors.accountType && <p className="text-sm font-medium text-destructive">{errors.accountType}</p>}
 
-                <div>
-                  <Label htmlFor="fullName" className="text-foreground">Full Name</Label>
-                  <Input id="fullName" autoComplete="name" value={fullName} onChange={(e) => setFullName(e.target.value)} required maxLength={120} />
-                  {errors.fullName && <p className="mt-1 text-xs font-medium text-destructive">{errors.fullName}</p>}
+                  <div className="space-y-1.5">
+                    <Label htmlFor="fullName">Full name</Label>
+                    <Input id="fullName" autoComplete="name" value={fullName} onChange={(e) => setFullName(e.target.value)} required maxLength={120} />
+                    {errors.fullName && <p className="text-sm font-medium text-destructive">{errors.fullName}</p>}
+                  </div>
+                </>
+              )}
+
+              <div className="space-y-1.5">
+                <Label htmlFor="email">Email address</Label>
+                <Input id="email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="you@company.com" />
+                {errors.email && <p className="text-sm font-medium text-destructive">{errors.email}</p>}
+              </div>
+
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="password">Password</Label>
+                  {mode === "signin" && (
+                    <Link to="/forgot-password" className="text-sm font-medium text-primary hover:underline">
+                      Forgot password?
+                    </Link>
+                  )}
                 </div>
-              </>
-            )}
+                <Input
+                  id="password"
+                  type="password"
+                  autoComplete={mode === "signin" ? "current-password" : "new-password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  minLength={8}
+                  placeholder={mode === "signup" ? "At least 8 characters" : "••••••••"}
+                />
+                {errors.password && <p className="text-sm font-medium text-destructive">{errors.password}</p>}
+              </div>
 
-            <div>
-              <Label htmlFor="email" className="text-foreground">Email Address</Label>
-              <Input id="email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-              {errors.email && <p className="mt-1 text-xs font-medium text-destructive">{errors.email}</p>}
-            </div>
-            <div>
-              <Label htmlFor="password" className="text-foreground">Password</Label>
-              <Input id="password" type="password" autoComplete={mode === "signin" ? "current-password" : "new-password"} value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8} />
-              {errors.password && <p className="mt-1 text-xs font-medium text-destructive">{errors.password}</p>}
-              {mode === "signin" && (
-                <div className="mt-1 text-center">
-                  <Link to="/forgot-password" className="text-xs text-primary hover:underline">Forgot password?</Link>
+              {mode === "signup" && (
+                <div className="space-y-1.5">
+                  <Label htmlFor="confirmPassword">Confirm password</Label>
+                  <Input id="confirmPassword" type="password" autoComplete="new-password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required minLength={8} />
+                  {errors.confirmPassword && <p className="text-sm font-medium text-destructive">{errors.confirmPassword}</p>}
                 </div>
               )}
-            </div>
-            {mode === "signup" && (
-              <div>
-                <Label htmlFor="confirmPassword" className="text-foreground">Confirm Password</Label>
-                <Input id="confirmPassword" type="password" autoComplete="new-password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required minLength={8} />
-                {errors.confirmPassword && <p className="mt-1 text-xs font-medium text-destructive">{errors.confirmPassword}</p>}
-              </div>
-            )}
 
-            <Button
-              type="submit"
-              className="mt-2 w-full bg-primary font-bold text-primary-foreground hover:-translate-y-0.5 transition-all"
-              disabled={loading}
-            >
-              {loading ? "Please wait…" : mode === "signin" ? "Sign in" : "Create account"}
-            </Button>
-          </form>
+              {formError && (
+                <div role="alert" className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">
+                  {formError}
+                </div>
+              )}
+
+              <Button type="submit" className="w-full" disabled={loading} aria-busy={loading}>
+                {loading ? (<><Loader2 className="animate-spin" /> Please wait…</>) : submitLabel}
+              </Button>
+            </form>
           )}
 
           {mode !== "setup" && (
-            <button
-              type="button"
-              className="mt-4 w-full text-center text-sm text-muted-foreground hover:text-foreground transition-colors"
-              onClick={() => { setErrors({}); setMode(mode === "signin" ? "signup" : "signin"); }}
-            >
-              {mode === "signin" ? "Create Account" : "Already have an account? Sign in"}
-            </button>
+            <div className="mt-6 text-center text-sm text-muted-foreground">
+              {mode === "signin" ? (
+                <>
+                  Don't have an account?{" "}
+                  <button
+                    type="button"
+                    className="font-semibold text-primary hover:underline"
+                    onClick={() => { setErrors({}); setFormError(null); setMode("signup"); }}
+                  >
+                    Create account
+                  </button>
+                </>
+              ) : (
+                <>
+                  Already have an account?{" "}
+                  <button
+                    type="button"
+                    className="font-semibold text-primary hover:underline"
+                    onClick={() => { setErrors({}); setFormError(null); setMode("signin"); }}
+                  >
+                    Sign in
+                  </button>
+                </>
+              )}
+            </div>
           )}
-          <Link to="/help/access-denied" className="mt-3 block text-center text-xs font-semibold text-muted-foreground hover:text-foreground hover:underline">
+
+          <Link to="/help/access-denied" className="mt-4 block text-center text-xs font-medium text-muted-foreground hover:text-foreground hover:underline">
             Seeing access denied?
           </Link>
         </div>
-
       </div>
     </div>
   );
@@ -392,19 +449,19 @@ function AuthPage() {
 
 function AccountTypePicker({ accountType, setAccountType }: { accountType: AccountType; setAccountType: (value: AccountType) => void }) {
   return (
-    <div>
-      <Label className="text-foreground">Account Type</Label>
+    <div className="space-y-2">
+      <Label>Account type</Label>
       <RadioGroup
         value={accountType}
         onValueChange={(v) => setAccountType(v as AccountType)}
-        className="mt-2 grid grid-cols-2 gap-2"
+        className="grid grid-cols-2 gap-2"
       >
-        <label className={`flex min-h-28 cursor-pointer flex-col items-center justify-center rounded-lg border p-3 text-center text-sm transition ${accountType === "employer" ? "border-primary bg-primary/5" : "border-border hover:bg-muted/40"}`}>
+        <label className={`flex min-h-24 cursor-pointer flex-col items-center justify-center rounded-lg border p-3 text-center text-sm transition ${accountType === "employer" ? "border-primary bg-primary/5" : "border-border hover:bg-muted/40"}`}>
           <RadioGroupItem value="employer" className="sr-only" />
           <div className="font-semibold text-foreground">Employer</div>
           <div className="mt-1 text-xs text-muted-foreground">Run payroll and manage a team</div>
         </label>
-        <label className={`flex min-h-28 cursor-pointer flex-col items-center justify-center rounded-lg border p-3 text-center text-sm transition ${accountType === "employee" ? "border-primary bg-primary/5" : "border-border hover:bg-muted/40"}`}>
+        <label className={`flex min-h-24 cursor-pointer flex-col items-center justify-center rounded-lg border p-3 text-center text-sm transition ${accountType === "employee" ? "border-primary bg-primary/5" : "border-border hover:bg-muted/40"}`}>
           <RadioGroupItem value="employee" className="sr-only" />
           <div className="font-semibold text-foreground">Employee</div>
           <div className="mt-1 text-xs text-muted-foreground">Access pay, time off, and profile</div>
