@@ -45,6 +45,7 @@ type App = {
 };
 
 const apps: App[] = [
+  { id: "payroll_shack", name: "Payroll Shack", category: "Payroll", desc: "Run pay runs and sync employees through Payroll Shack's white-label payroll API.", keyLabel: "API key", keyPlaceholder: "ps_live_…", helpUrl: "https://www.linkedin.com/company/payroll-shack", extraFields: [{ key: "base_url", label: "API base URL (optional)", placeholder: "https://api.payrollshack.com/v1" }, { key: "workspace_id", label: "Workspace ID (optional)", placeholder: "ws_…" }] },
   { id: "quickbooks", name: "QuickBooks Online", category: "Accounting", desc: "Sync payroll journals to your general ledger.", keyLabel: "OAuth access token", keyPlaceholder: "eyJhbGciOi…", helpUrl: "https://developer.intuit.com" },
   { id: "xero", name: "Xero", category: "Accounting", desc: "Push payroll entries directly into Xero.", keyLabel: "OAuth access token", keyPlaceholder: "eyJhbGciOi…", helpUrl: "https://developer.xero.com" },
   { id: "plaid", name: "Plaid", category: "Payroll", desc: "Verify bank accounts for direct deposit.", keyLabel: "Plaid secret", keyPlaceholder: "prod-sk-…", helpUrl: "https://dashboard.plaid.com/team/keys", extraFields: [{ key: "client_id", label: "Client ID", placeholder: "5f…" }] },
