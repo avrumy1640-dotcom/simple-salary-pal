@@ -24,7 +24,6 @@ const PROVIDERS = [
   "google_workspace",
   "guideline_401k",
   "gusto_benefits",
-  "payroll_shack",
 ] as const;
 export type ProviderId = (typeof PROVIDERS)[number];
 
