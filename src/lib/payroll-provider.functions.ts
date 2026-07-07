@@ -5,12 +5,14 @@ import { z } from "zod";
 /**
  * Payroll provider server functions.
  *
- * Every call uses a single backend-wide API key (`PAYROLL_SHACK_API_KEY`).
- * No per-company credentials, no settings UI, no admin key entry — once the
- * secret is set on the backend, these functions just work.
+ * Every call uses a single backend-wide API key (`PAYROLL_SHACK_API_KEY`),
+ * which is a company-scoped `apay_...` key. The upstream API scopes results
+ * to that key's company, so we do not send a company_id parameter — we only
+ * use the local companyId to authorize the caller against Supabase RLS.
  *
- * The provider name is intentionally not exposed in errors or return values;
- * customers see a generic "payroll" surface.
+ * No per-company credentials, no settings UI, no admin key entry — once the
+ * secret is set on the backend, these functions just work. The provider
+ * name is intentionally not exposed in errors or return values.
  */
 
 const PRIVILEGED = ["owner", "admin", "payroll_admin", "manager"] as const;
@@ -35,10 +37,10 @@ export const listPayrollEmployees = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertCompanyAccess(context.supabase, context.userId, data.companyId);
     const { callPayrollProvider } = await import("@/lib/providers/payrollShack.server");
-    return callPayrollProvider<any>("/employees", { query: { company_id: data.companyId } });
+    return callPayrollProvider<any>("/api/v1/payroll/employees");
   });
 
-export const getPayrollStatus = createServerFn({ method: "POST" })
+export const getPayrollRun = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) =>
     companyOnly.extend({ runId: z.string().min(1) }).parse(d),
@@ -46,22 +48,31 @@ export const getPayrollStatus = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertCompanyAccess(context.supabase, context.userId, data.companyId);
     const { callPayrollProvider } = await import("@/lib/providers/payrollShack.server");
-    return callPayrollProvider<any>(`/payroll-runs/${encodeURIComponent(data.runId)}`, {
-      query: { company_id: data.companyId },
-    });
+    return callPayrollProvider<any>(
+      `/api/v1/payroll/pay-runs/${encodeURIComponent(data.runId)}`,
+    );
   });
 
-export const getPayStub = createServerFn({ method: "POST" })
+export const listPayRuns = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => companyOnly.parse(d))
+  .handler(async ({ data, context }) => {
+    await assertCompanyAccess(context.supabase, context.userId, data.companyId);
+    const { callPayrollProvider } = await import("@/lib/providers/payrollShack.server");
+    return callPayrollProvider<any>("/api/v1/payroll/pay-runs");
+  });
+
+export const getPayRunPayslips = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) =>
-    companyOnly.extend({ payStubId: z.string().min(1) }).parse(d),
+    companyOnly.extend({ runId: z.string().min(1) }).parse(d),
   )
   .handler(async ({ data, context }) => {
     await assertCompanyAccess(context.supabase, context.userId, data.companyId);
     const { callPayrollProvider } = await import("@/lib/providers/payrollShack.server");
-    return callPayrollProvider<any>(`/pay-stubs/${encodeURIComponent(data.payStubId)}`, {
-      query: { company_id: data.companyId },
-    });
+    return callPayrollProvider<any>(
+      `/api/v1/payroll/pay-runs/${encodeURIComponent(data.runId)}/payslips`,
+    );
   });
 
 export const runPayroll = createServerFn({ method: "POST" })
@@ -69,22 +80,37 @@ export const runPayroll = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
     companyOnly
       .extend({
-        payPeriodStart: z.string().min(1),
-        payPeriodEnd: z.string().min(1),
+        periodStart: z.string().min(1),
+        periodEnd: z.string().min(1),
         payDate: z.string().min(1),
+        employeeIds: z.array(z.string().min(1)).min(1),
       })
       .parse(d),
   )
   .handler(async ({ data, context }) => {
     await assertCompanyAccess(context.supabase, context.userId, data.companyId);
     const { callPayrollProvider } = await import("@/lib/providers/payrollShack.server");
-    return callPayrollProvider<any>("/payroll-runs", {
+    return callPayrollProvider<any>("/api/v1/payroll/pay-runs", {
       method: "POST",
       body: {
-        company_id: data.companyId,
-        pay_period_start: data.payPeriodStart,
-        pay_period_end: data.payPeriodEnd,
+        period_start: data.periodStart,
+        period_end: data.periodEnd,
         pay_date: data.payDate,
+        employee_ids: data.employeeIds,
       },
     });
+  });
+
+export const approvePayRun = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    companyOnly.extend({ runId: z.string().min(1) }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await assertCompanyAccess(context.supabase, context.userId, data.companyId);
+    const { callPayrollProvider } = await import("@/lib/providers/payrollShack.server");
+    return callPayrollProvider<any>(
+      `/api/v1/payroll/pay-runs/${encodeURIComponent(data.runId)}/approve`,
+      { method: "POST" },
+    );
   });
