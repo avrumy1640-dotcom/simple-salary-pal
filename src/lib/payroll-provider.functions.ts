@@ -35,7 +35,7 @@ export const listPayrollEmployees = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertCompanyAccess(context.supabase, context.userId, data.companyId);
     const { callPayrollProvider } = await import("@/lib/providers/payrollShack.server");
-    return callPayrollProvider<Record<string, unknown>>("/employees", { query: { company_id: data.companyId } });
+    return callPayrollProvider<any>("/employees", { query: { company_id: data.companyId } });
   });
 
 export const getPayrollStatus = createServerFn({ method: "POST" })
@@ -46,7 +46,7 @@ export const getPayrollStatus = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertCompanyAccess(context.supabase, context.userId, data.companyId);
     const { callPayrollProvider } = await import("@/lib/providers/payrollShack.server");
-    return callPayrollProvider<Record<string, unknown>>(`/payroll-runs/${encodeURIComponent(data.runId)}`, {
+    return callPayrollProvider<any>(`/payroll-runs/${encodeURIComponent(data.runId)}`, {
       query: { company_id: data.companyId },
     });
   });
@@ -59,7 +59,7 @@ export const getPayStub = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertCompanyAccess(context.supabase, context.userId, data.companyId);
     const { callPayrollProvider } = await import("@/lib/providers/payrollShack.server");
-    return callPayrollProvider<Record<string, unknown>>(`/pay-stubs/${encodeURIComponent(data.payStubId)}`, {
+    return callPayrollProvider<any>(`/pay-stubs/${encodeURIComponent(data.payStubId)}`, {
       query: { company_id: data.companyId },
     });
   });
@@ -78,7 +78,7 @@ export const runPayroll = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertCompanyAccess(context.supabase, context.userId, data.companyId);
     const { callPayrollProvider } = await import("@/lib/providers/payrollShack.server");
-    return callPayrollProvider<Record<string, unknown>>("/payroll-runs", {
+    return callPayrollProvider<any>("/payroll-runs", {
       method: "POST",
       body: {
         company_id: data.companyId,
