@@ -4745,6 +4745,56 @@ export type Database = {
           },
         ]
       }
+      provider_secrets: {
+        Row: {
+          auth_tag: string
+          ciphertext: string
+          company_id: string
+          created_at: string
+          created_by: string | null
+          id: string
+          iv: string
+          key_version: number
+          last4_hint: string | null
+          provider: string
+          updated_at: string
+        }
+        Insert: {
+          auth_tag: string
+          ciphertext: string
+          company_id: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          iv: string
+          key_version?: number
+          last4_hint?: string | null
+          provider: string
+          updated_at?: string
+        }
+        Update: {
+          auth_tag?: string
+          ciphertext?: string
+          company_id?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          iv?: string
+          key_version?: number
+          last4_hint?: string | null
+          provider?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "provider_secrets_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pto_accrual_policies: {
         Row: {
           carryover_hours: number | null
