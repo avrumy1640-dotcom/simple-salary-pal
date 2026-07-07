@@ -21,7 +21,7 @@ import { readProviderCredentials } from "./vault.server";
 const DEFAULT_BASE_URL = "https://api.payrollshack.com/v1";
 
 type Ok<T> = { ok: true; data: T };
-type Err = { ok: false; status?: number; reason: string; body?: unknown };
+type Err = { ok: false; status?: number; reason: string; body?: string };
 
 async function request<T>(
   companyId: string,
