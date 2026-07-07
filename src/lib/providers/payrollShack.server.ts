@@ -8,7 +8,7 @@
  * "payroll" operations.
  */
 
-const DEFAULT_BASE_URL = "https://api.payrollshack.com/v1";
+const DEFAULT_BASE_URL = "https://api.payrollshack.com";
 
 function getConfig() {
   const apiKey = process.env.PAYROLL_SHACK_API_KEY;
