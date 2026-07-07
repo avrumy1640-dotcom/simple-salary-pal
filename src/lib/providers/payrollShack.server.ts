@@ -66,7 +66,7 @@ async function request<T>(
   }
   if (!response.ok) {
     console.error(`Payroll Shack ${init.method} ${init.path} failed [${response.status}]:`, text);
-    return { ok: false, status: response.status, reason: `Payroll Shack ${response.status}`, body: parsed };
+    return { ok: false, status: response.status, reason: `Payroll Shack ${response.status}`, body: text };
   }
   return { ok: true, data: parsed as T };
 }
