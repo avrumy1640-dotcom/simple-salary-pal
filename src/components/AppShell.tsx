@@ -397,37 +397,42 @@ export function AppShell() {
         </main>
       </div>
 
-      {/* Mobile bottom tab bar */}
-      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/85 pb-[max(env(safe-area-inset-bottom),0px)] md:hidden">
-        <div className="grid grid-cols-5">
+      {/* Mobile floating tab bar */}
+      <nav className="fixed inset-x-0 bottom-0 z-40 md:hidden pointer-events-none pb-[max(env(safe-area-inset-bottom),0.5rem)]">
+        <div className="pointer-events-auto mx-auto flex w-fit items-center gap-1 rounded-full border border-border/60 bg-white/80 px-2 py-1.5 backdrop-blur-xl shadow-[0_10px_30px_-8px_rgba(15,23,42,0.18)]">
           {mobileTabs.map((t) => {
             const active = isTabActive(t.to);
             return (
               <Link
                 key={t.to}
                 to={t.to}
+                aria-label={t.label}
                 className={cn(
-                  "flex flex-col items-center gap-1 py-2.5 text-[11px] font-semibold transition-colors",
-                  active ? "text-primary" : "text-slate-500",
+                  "flex h-11 w-11 items-center justify-center rounded-full transition-all",
+                  active
+                    ? "bg-primary text-primary-foreground shadow-[0_6px_16px_-4px_rgba(61,255,255,0.55)] scale-105"
+                    : "text-slate-500 hover:text-primary",
                 )}
               >
                 <t.icon className={cn("h-5 w-5", active && "stroke-[2.5]")} />
-                <span>{t.label}</span>
               </Link>
             );
           })}
           <button
             onClick={() => setOpen(true)}
+            aria-label="More"
             className={cn(
-              "flex flex-col items-center gap-1 py-2.5 text-[11px] font-semibold transition-colors",
-              open ? "text-primary" : "text-slate-500",
+              "flex h-11 w-11 items-center justify-center rounded-full transition-all",
+              open
+                ? "bg-primary text-primary-foreground shadow-[0_6px_16px_-4px_rgba(61,255,255,0.55)] scale-105"
+                : "text-slate-500 hover:text-primary",
             )}
           >
             <Menu className="h-5 w-5" />
-            <span>More</span>
           </button>
         </div>
       </nav>
+
     </div>
   );
 }
